@@ -129,6 +129,7 @@ export function BrowseTable<T extends { id: string }>({
         }
       />
       <Pagination
+        label={`${title} 페이지 이동`}
         page={current}
         pageSize={size}
         total={ordered.length}

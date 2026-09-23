@@ -105,13 +105,23 @@ export function ServiceAccountsList({ rows }: { rows: AccountRow[] }) {
             key: "roleCount",
             header: "역할",
             sortable: true,
-            render: (r) => `${r.roleCount}개`,
+            render: (r) =>
+              link(
+                "/service-accounts",
+                `${r.id}?tab=roles`,
+                `${r.roleCount}개`,
+              ),
           },
           {
             key: "keyCount",
             header: "API 키",
             sortable: true,
-            render: (r) => `${r.keyCount}개`,
+            render: (r) =>
+              link(
+                "/service-accounts",
+                `${r.id}?tab=api-keys`,
+                `${r.keyCount}개`,
+              ),
           },
           {
             key: "createdAt",

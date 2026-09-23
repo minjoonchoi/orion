@@ -67,13 +67,19 @@ test("approval history filters, paginates, restores tabs and shows decision meta
   });
   await expect(table.locator("tbody tr")).toHaveCount(5);
   await expect(table.locator("tbody tr").first()).toContainText("approval-006");
-  await page.getByRole("button", { name: "다음", exact: true }).click();
+  await page
+    .getByRole("region", { name: "결재 이력 목록 조회", exact: true })
+    .getByRole("button", { name: "다음", exact: true })
+    .click();
   await expect(table).toContainText("approval-001");
   await page.getByLabel("결재 상태 필터").selectOption("pending");
   await expect(table.locator("tbody tr")).toHaveCount(1);
   await expect(table).toContainText("미처리");
   await expect(table).toContainText("미지정");
-  await page.getByRole("button", { name: "초기화", exact: true }).click();
+  await page
+    .getByRole("region", { name: "결재 이력 목록 조회", exact: true })
+    .getByRole("button", { name: "초기화", exact: true })
+    .click();
   await page.getByLabel("결재 상태 필터").selectOption("rejected");
   await page.getByLabel("요청 유형 필터").selectOption("renew");
   await expect(table.locator("tbody tr")).toHaveCount(1);

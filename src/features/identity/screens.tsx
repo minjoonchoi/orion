@@ -108,7 +108,11 @@ export function UsersList({
             key: "roleCount",
             header: "연결 역할",
             sortable: true,
-            render: (r) => `${r.roleCount}개`,
+            render: (r) => (
+              <DetailLink href={`/users/${r.id}?tab=roles`}>
+                {r.roleCount}개
+              </DetailLink>
+            ),
           },
         ]}
       />
@@ -160,17 +164,29 @@ export function OrganizationsList({ rows }: { rows: OrganizationRow[] }) {
             key: "memberCount",
             header: "멤버",
             sortable: true,
-            render: (r) => `${r.memberCount}명`,
+            render: (r) => (
+              <DetailLink href={`/organizations/${r.id}?tab=members`}>
+                {r.memberCount}명
+              </DetailLink>
+            ),
           },
           {
             key: "serviceCount",
             header: "관리 서비스",
-            render: (r) => `${r.serviceCount}개`,
+            render: (r) => (
+              <DetailLink href={`/organizations/${r.id}?tab=services`}>
+                {r.serviceCount}개
+              </DetailLink>
+            ),
           },
           {
             key: "roleCount",
             header: "역할",
-            render: (r) => `${r.roleCount}개`,
+            render: (r) => (
+              <DetailLink href={`/organizations/${r.id}?tab=roles`}>
+                {r.roleCount}개
+              </DetailLink>
+            ),
           },
         ]}
       />
