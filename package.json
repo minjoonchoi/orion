@@ -15,20 +15,29 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node --experimental-strip-types --test src/lib/api/client.test.ts",
-    "check": "npm run lint && npm run typecheck && npm run format:check && npm test"
+    "check": "npm run lint && npm run typecheck && npm run format:check && npm test",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@radix-ui/react-alert-dialog": "^1.1.23",
+    "@radix-ui/react-dialog": "^1.1.23",
+    "@radix-ui/react-dropdown-menu": "^2.1.24",
+    "@radix-ui/react-tabs": "^1.1.21",
+    "@radix-ui/react-toast": "^1.2.23",
     "next": "16.3.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "1.56.1",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "eslint": "^9.39.0",
     "eslint-config-next": "16.3.6",
-    "prettier": "^3.6.2"
+    "playwright-core": "1.56.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3"
   }
 }

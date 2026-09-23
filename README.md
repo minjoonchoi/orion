@@ -38,7 +38,7 @@ Next.js App Router, React, TypeScript strict, CSS, ESLint, Prettier를 사용합
 
 ## 초기 범위
 
-개요, 사용자, 역할, 서버 리소스, 접근 권한, 감사 로그 경로와 공통 레이아웃을 제공합니다. 관리 화면은 준비 중 상태이며 CRUD, 목 데이터, 로그인, 실제 권한 판정은 포함하지 않습니다.
+개요, 사용자, 역할, 서버 리소스, 접근 권한, 감사 로그 경로와 공통 레이아웃을 제공합니다. 실제 관리 화면은 준비 중 상태이며 로그인, 서버 CRUD, 실제 권한 판정은 포함하지 않습니다. `/components`에는 메모리 예제로 동작하는 공통 컴포넌트 확인 화면이 있습니다.
 
 ## API 연결
 
@@ -56,3 +56,7 @@ Next.js App Router, React, TypeScript strict, CSS, ESLint, Prettier를 사용합
 2. 사용자·역할·리소스·권한 API 계약 확정
 3. 기능별 조회/변경 UI 및 응답 검증 구현
 4. 실제 권한 정책을 반영한 통합 테스트
+
+## 백오피스 컴포넌트
+
+[조사 결과와 사용 가이드](docs/backoffice-components.md)를 참고하세요. `/components`에서 목록·폼·모달·알림·권한 매트릭스를 확인할 수 있습니다. 브라우저 테스트는 `npm run build`, `npx playwright install chromium`, `npm run test:e2e` 순서로 실행합니다.

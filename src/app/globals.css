@@ -57,20 +57,20 @@ button:focus-visible {
   color: var(--muted);
   letter-spacing: 2px;
 }
-nav {
+.sidebar nav {
   display: grid;
   gap: 6px;
 }
-nav a {
+.sidebar nav a {
   padding: 11px 14px;
   border-radius: 8px;
   font-size: 14px;
   color: var(--muted);
 }
-nav a:hover {
+.sidebar nav a:hover {
   background: var(--background);
 }
-nav a[aria-current="page"] {
+.sidebar nav a[aria-current="page"] {
   background: #eef2ff;
   color: var(--accent);
   font-weight: 700;
@@ -199,11 +199,11 @@ p {
     font-size: 22px;
     padding: 0 8px 14px;
   }
-  nav {
+  .sidebar nav {
     display: flex;
     overflow-x: auto;
   }
-  nav a {
+  .sidebar nav a {
     white-space: nowrap;
   }
   .topbar {
