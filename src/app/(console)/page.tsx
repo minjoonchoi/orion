@@ -22,20 +22,7 @@ export default function OverviewPage() {
                     <span aria-hidden="true"> →</span>
                   </h3>
                   <p>{item.description}</p>
-                  <span className="muted">
-                    {[
-                      "/users",
-                      "/organizations",
-                      "/roles",
-                      "/policies",
-                      "/services",
-                      "/service-endpoints",
-                      "/workspaces",
-                      "/pages",
-                    ].includes(item.href)
-                      ? "조회 화면 · 예제 데이터"
-                      : "준비 중"}
-                  </span>
+                  <span className="muted">조회 화면 · 예제 데이터</span>
                 </Link>
               ))}
             </div>

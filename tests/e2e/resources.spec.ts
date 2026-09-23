@@ -89,6 +89,10 @@ test("workspace and page relations preserve detail tab URLs", async ({
     page.getByRole("tab", { name: "페이지 (6)", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
   await page.getByRole("link", { name: "사용자 관리", exact: true }).click();
+  await expect(page).toHaveURL(/pages\/page-users$/);
+  await expect(
+    page.getByRole("heading", { name: "페이지 정보", exact: true }),
+  ).toBeVisible();
   await page.getByRole("link", { name: "플랫폼 운영", exact: true }).click();
   await expect(page).toHaveURL(/workspaces\/ws-platform$/);
 });
