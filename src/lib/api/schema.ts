@@ -62,3 +62,9 @@ export const datetime: Schema<string> = {
     return result;
   },
 };
+
+export function optional<T>(schema: Schema<T>): Schema<T | undefined> {
+  return {
+    parse: (value) => (value === undefined ? undefined : schema.parse(value)),
+  };
+}

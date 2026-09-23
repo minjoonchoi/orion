@@ -1,4 +1,5 @@
 import {
+  optional,
   datetime as dt,
   string as s,
   number as n,
@@ -67,6 +68,8 @@ const policyRow = obj({
   serviceCount: n,
   endpointCount: n,
   workspaceCount: n,
+  effect: optional(en(["allow", "deny"])),
+  pageIds: optional(arr(s)),
 });
 const endpoint = obj({
   id: s,
@@ -178,6 +181,7 @@ export const contracts = {
       services: arr(service),
       endpoints: arr(endpoint),
       workspaces: arr(workspace),
+      pages: optional(arr(page)),
     }),
   },
   services: {

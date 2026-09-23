@@ -325,7 +325,7 @@ export function RoleScreen({ data }: { data: RoleDetail }) {
 }
 export function PolicyScreen({ data }: { data: PolicyDetail }) {
   const { t } = useI18n();
-  const { policy, services, endpoints, workspaces } = data;
+  const { policy, services, endpoints, workspaces, pages = [] } = data;
   return (
     <Frame kind="policies" item={policy}>
       <p className="identity-role-note">
@@ -338,7 +338,21 @@ export function PolicyScreen({ data }: { data: PolicyDetail }) {
           {
             value: "info",
             label: t("기본 정보"),
-            content: <Info item={policy} label={t("정책")} />,
+            content: (
+              <>
+                <Info item={policy} label={t("정책")} />
+                <Details
+                  items={[
+                    {
+                      label: t("정책 효과"),
+                      value: policy.effect
+                        ? t(policy.effect === "allow" ? "허용" : "거부")
+                        : t("미설정"),
+                    },
+                  ]}
+                />
+              </>
+            ),
           },
           {
             value: "services",
@@ -407,6 +421,24 @@ export function PolicyScreen({ data }: { data: PolicyDetail }) {
                     key: "path",
                     header: t("경로"),
                     sortable: true,
+                    render: (r) => <code>{r.path}</code>,
+                  },
+                ]}
+              />
+            ),
+          },
+          {
+            value: "pages",
+            label: t(`페이지 (${pages.length})`),
+            content: (
+              <ResourceTable
+                title={t("페이지 목록")}
+                rows={pages}
+                route="/pages"
+                columns={[
+                  {
+                    key: "path",
+                    header: t("경로"),
                     render: (r) => <code>{r.path}</code>,
                   },
                 ]}

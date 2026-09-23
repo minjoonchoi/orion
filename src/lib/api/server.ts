@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import "server-only";
 import { cookies } from "next/headers";
 import { resolveDeployment } from "./deployment";
@@ -9,12 +10,20 @@ export const deployment = () => resolveDeployment(process.env);
 async function request<T>(path: string, schema: Schema<T>) {
   const config = deployment();
   const jar = await cookies();
-  return requestData(config, path, schema, {
-    locale: await getLocale(),
-    session: config.sessionCookie
-      ? jar.get(config.sessionCookie)?.value
-      : undefined,
-  });
+  try {
+    return await requestData(config, path, schema, {
+      locale: await getLocale(),
+      session: config.sessionCookie
+        ? jar.get(config.sessionCookie)?.value
+        : undefined,
+    });
+  } catch (error) {
+    if (error instanceof DataApiError && error.status === 403)
+      redirect("/forbidden");
+    if (error instanceof DataApiError && error.status === 401)
+      redirect("/login");
+    throw error;
+  }
 }
 type Resource = keyof typeof contracts;
 export async function listData<T>(resource: Resource): Promise<T[]> {

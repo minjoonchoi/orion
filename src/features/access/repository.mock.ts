@@ -1,5 +1,5 @@
 import { endpoints, workspaces } from "../resources/fixtures";
-import type { Endpoint, Workspace } from "../resources/types";
+import type { Endpoint, Workspace, PageRow } from "../resources/types";
 import * as identity from "../identity/fixtures";
 import type {
   ManagedService,
@@ -8,6 +8,8 @@ import type {
   User,
 } from "../identity/types";
 export type Policy = {
+  effect?: "allow" | "deny";
+  pageIds?: string[];
   id: string;
   name: string;
   description: string;
@@ -36,6 +38,7 @@ export type PolicyDetail = {
   services: ManagedService[];
   endpoints: (Endpoint & { serviceName: string })[];
   workspaces: Workspace[];
+  pages?: PageRow[];
 };
 // Synthetic relationships describe linked resources only, not effective permissions.
 const policies: Policy[] = [
@@ -119,6 +122,7 @@ rolePolicies["role-finance"] = ["policy-settlement"];
 const policyRows = (): PolicyRow[] =>
   policies.map((p) => ({
     ...p,
+    effect: "allow" as const,
     serviceCount: p.serviceIds.length,
     endpointCount: p.endpointIds.length,
     workspaceCount: p.workspaceIds.length,
