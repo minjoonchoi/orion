@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 import type { ReactNode } from "react";
 import { PageHeading } from "@/components/ui/page-heading";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Tabs } from "@/components/ui/tabs";
+import { DetailTabs } from "./detail-tabs";
 import { BrowseTable, statusOptions } from "./browse-table";
 import { date, DemoNotice, Details, StatusBadge, Summary } from "./shared";
 import type {
@@ -177,29 +177,6 @@ export function OrganizationsList({ rows }: { rows: OrganizationRow[] }) {
     </>
   );
 }
-function DetailTabs({
-  items,
-}: {
-  items: { value: string; label: string; content: ReactNode }[];
-}) {
-  const params = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
-  const requested = params.get("tab");
-  const value = items.some((i) => i.value === requested) ? requested! : "info";
-  return (
-    <Tabs
-      label="상세 정보"
-      items={items}
-      value={value}
-      onValueChange={(next) => {
-        const query = new URLSearchParams(params.toString());
-        query.set("tab", next);
-        router.push(`${pathname}?${query}`, { scroll: false });
-      }}
-    />
-  );
-}
 function Roles({ rows }: { rows: Role[] }) {
   return (
     <>
@@ -212,7 +189,12 @@ function Roles({ rows }: { rows: Role[] }) {
         searchText={(r) => `${r.name} ${r.id} ${r.description}`}
         sortValue={(r) => r.name}
         columns={[
-          { ...nameColumn, render: (r) => r.name },
+          {
+            ...nameColumn,
+            render: (r) => (
+              <DetailLink href={`/roles/${r.id}`}>{r.name}</DetailLink>
+            ),
+          },
           { key: "id", header: "역할 ID", render: (r) => r.id },
           { key: "description", header: "설명", render: (r) => r.description },
         ]}

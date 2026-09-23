@@ -23,7 +23,12 @@ export default function OverviewPage() {
                   </h3>
                   <p>{item.description}</p>
                   <span className="muted">
-                    {["/users", "/organizations"].includes(item.href)
+                    {[
+                      "/users",
+                      "/organizations",
+                      "/roles",
+                      "/policies",
+                    ].includes(item.href)
                       ? "조회 화면 · 예제 데이터"
                       : "준비 중"}
                   </span>
