@@ -1,9 +1,19 @@
 :root {
-  --ui-danger: #b42318;
-  --ui-success: #146c43;
-  --ui-radius: 8px;
-  --ui-border: #bac5d5;
-  --ui-focus: #3459cf;
+  --ui-danger: #98473e;
+  --ui-success: #3e624a;
+  --ui-radius: var(--radius);
+  --ui-border: #8b9086;
+  --ui-focus: var(--accent);
+  --tone-neutral-fg: #5b6257;
+  --tone-neutral-bg: #efefea;
+  --tone-info-fg: #4c5e54;
+  --tone-info-bg: #f0f2ed;
+  --tone-success-fg: #365e43;
+  --tone-success-bg: #eaf0e7;
+  --tone-warning-fg: #795b28;
+  --tone-warning-bg: #f6f1e5;
+  --tone-danger-fg: #91453b;
+  --tone-danger-bg: #f8eeea;
 }
 .sr-only {
   position: absolute;
@@ -55,7 +65,15 @@
   font-size: 13px;
 }
 .ui-button:hover:not(:disabled) {
-  filter: brightness(0.94);
+  filter: brightness(0.96);
+}
+.ui-button--primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  filter: none;
+}
+.ui-button--ghost:hover:not(:disabled) {
+  background: var(--accent-subtle);
+  filter: none;
 }
 .ui-button:disabled {
   opacity: 0.5;
@@ -69,7 +87,7 @@
   [role="menuitem"],
   button
 ):focus-visible {
-  outline: 3px solid var(--ui-focus);
+  outline: 2px solid var(--ui-focus);
   outline-offset: 3px;
 }
 .ui-spinner {
@@ -88,31 +106,31 @@
 .ui-badge {
   display: inline-flex;
   align-items: center;
-  border-radius: 20px;
+  border-radius: 4px;
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
 .ui-tone--neutral {
-  color: #49566a;
-  background: #edf0f5;
+  color: var(--tone-neutral-fg);
+  background: var(--tone-neutral-bg);
 }
 .ui-tone--info {
-  color: #2347a8;
-  background: #edf2ff;
+  color: var(--tone-info-fg);
+  background: var(--tone-info-bg);
 }
 .ui-tone--success {
-  color: #146c43;
-  background: #e8f6ee;
+  color: var(--tone-success-fg);
+  background: var(--tone-success-bg);
 }
 .ui-tone--warning {
-  color: #85500d;
-  background: #fff4da;
+  color: var(--tone-warning-fg);
+  background: var(--tone-warning-bg);
 }
 .ui-tone--danger {
-  color: #a21f16;
-  background: #fef0ed;
+  color: var(--tone-danger-fg);
+  background: var(--tone-danger-bg);
 }
 .ui-field {
   display: grid;
@@ -144,12 +162,12 @@ select.ui-input {
   border-color: var(--ui-danger);
 }
 .ui-input:disabled {
-  background: #edf0f5;
+  background: var(--surface-subtle);
   color: var(--muted);
   cursor: not-allowed;
 }
 .ui-input::placeholder {
-  color: #66748a;
+  color: var(--muted);
 }
 .ui-hint {
   color: var(--muted);
@@ -191,7 +209,7 @@ select.ui-input {
   width: 38px;
   height: 22px;
   border-radius: 22px;
-  background: #718096;
+  background: #777f70;
   flex-shrink: 0;
 }
 .ui-switch-track::before {
@@ -210,7 +228,7 @@ select.ui-input {
   transform: translateX(16px);
 }
 .ui-switch input:focus-visible + .ui-switch-track {
-  outline: 3px solid var(--ui-focus);
+  outline: 2px solid var(--ui-focus);
   outline-offset: 3px;
 }
 .ui-switch input:disabled ~ span {
@@ -223,7 +241,8 @@ select.ui-input {
   align-items: center;
   gap: 16px;
   padding: 14px 18px;
-  border: 1px solid currentColor;
+  border: 1px solid var(--line);
+  border-left: 3px solid currentColor;
   border-radius: var(--ui-radius);
   font-size: 14px;
 }
@@ -238,7 +257,7 @@ select.ui-input {
 .ui-skeleton {
   height: 22px;
   border-radius: 5px;
-  background: #e2e7f0;
+  background: #e5e6df;
   animation: ui-pulse 1.5s ease-in-out infinite;
 }
 @keyframes ui-pulse {
@@ -296,7 +315,7 @@ select.ui-input {
   font-weight: 600;
   padding: 12px 4px;
   border-radius: 0;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   white-space: nowrap;
 }
 .ui-tab[data-state="active"] {
@@ -309,7 +328,7 @@ select.ui-input {
 .ui-overlay {
   position: fixed;
   inset: 0;
-  background: rgb(14 24 42 / 48%);
+  background: rgb(30 35 28 / 38%);
   z-index: 50;
 }
 .ui-dialog {
@@ -322,9 +341,10 @@ select.ui-input {
   max-height: calc(100dvh - 48px);
   overflow-y: auto;
   background: var(--surface);
-  border-radius: 14px;
+  border-radius: 8px;
   padding: 28px;
-  box-shadow: 0 20px 80px #10204033;
+  box-shadow: 0 20px 64px rgb(30 35 28 / 20%);
+  border: 1px solid var(--line);
 }
 .ui-dialog > p,
 .ui-dialog-header p {
@@ -362,8 +382,8 @@ select.ui-input {
   padding: 6px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
-  box-shadow: 0 8px 24px #10204022;
+  border-radius: var(--ui-radius);
+  box-shadow: var(--shadow);
   z-index: 60;
 }
 .ui-menu-item {
@@ -374,7 +394,7 @@ select.ui-input {
   outline: none;
 }
 .ui-menu-item[data-highlighted] {
-  background: #edf2ff;
+  background: var(--accent-subtle);
   color: var(--accent);
 }
 .ui-menu-item[data-danger] {
@@ -405,10 +425,10 @@ select.ui-input {
   justify-content: space-between;
   padding: 18px;
   border: 1px solid var(--ui-border);
-  border-left: 4px solid var(--accent);
-  border-radius: 10px;
+  border-left: 3px solid var(--accent);
+  border-radius: var(--ui-radius);
   background: var(--surface);
-  box-shadow: 0 8px 32px #10204022;
+  box-shadow: var(--shadow);
   font-size: 14px;
 }
 .ui-toast-title {
@@ -423,7 +443,7 @@ select.ui-input {
   padding: 24px;
   border: 1px solid var(--line);
   background: var(--surface);
-  border-radius: 12px;
+  border-radius: var(--ui-radius);
 }
 .ui-panel-header {
   display: flex;
@@ -474,8 +494,8 @@ select.ui-input {
   flex-wrap: wrap;
   gap: 12px;
   padding: 12px 16px;
-  background: #f2f5fc;
-  border-radius: 8px 8px 0 0;
+  background: var(--surface-subtle);
+  border-radius: var(--ui-radius) var(--ui-radius) 0 0;
   font-size: 13px;
 }
 .ui-table-scroll {
@@ -496,21 +516,21 @@ select.ui-input {
 }
 .ui-table th,
 .ui-table td {
-  padding: 14px 16px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
 }
 .ui-table thead th {
   color: var(--muted);
   font-size: 13px;
-  background: #f7f9fc;
+  background: #f8f8f5;
   font-weight: 600;
 }
 .ui-table tbody tr:hover {
-  background: #f8faff;
+  background: #f8f9f5;
 }
-.ui-table tr[data-selected] {
-  background: #eef3ff;
+.ui-table tbody tr[data-selected] {
+  background: var(--selected);
 }
 .ui-table .ui-selection-cell {
   width: 44px;
