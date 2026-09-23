@@ -1,43 +1,20 @@
-import { serviceAccounts, organizations, roles } from "../identity/fixtures";
-import type { ServiceAccount, Role } from "../identity/types";
-import type { KeyRow } from "../api-keys/types";
-import { apiKeyRepository } from "../api-keys/repository";
-import { serviceAccountRoles, serviceAccountKeys } from "./fixtures";
-export type AccountRow = ServiceAccount & {
-  organization: { id: string; name: string };
-  roleCount: number;
-  keyCount: number;
-};
-export type AccountDetail = {
-  account: AccountRow;
-  roles: Role[];
-  keys: KeyRow[];
-};
-const rows = (): AccountRow[] =>
-  serviceAccounts.map((a) => {
-    const org = organizations.find((o) => o.id === a.organizationId)!;
-    return {
-      ...a,
-      organization: { id: org.id, name: org.name },
-      roleCount: (serviceAccountRoles[a.id] ?? []).length,
-      keyCount: (serviceAccountKeys[a.id] ?? []).length,
-    };
-  });
-export const serviceAccountRepository = {
+import "server-only";
+import { deployment, listData, detailData } from "@/lib/api/server";
+export type { AccountRow, AccountDetail } from "./repository.mock";
+type Repository = typeof import("./repository.mock").serviceAccountRepository;
+export const serviceAccountRepository: Repository = {
   async listAccounts() {
-    return rows();
+    if (deployment().mode === "demo")
+      return (
+        await import("./repository.mock")
+      ).serviceAccountRepository.listAccounts();
+    return listData("service-accounts");
   },
-  async getAccount(id: string): Promise<AccountDetail | null> {
-    const account = rows().find((a) => a.id === id);
-    if (!account) return null;
-    return {
-      account,
-      roles: roles.filter((r) =>
-        (serviceAccountRoles[id] ?? []).includes(r.id),
-      ),
-      keys: (await apiKeyRepository.listKeys()).filter((k) =>
-        (serviceAccountKeys[id] ?? []).includes(k.id),
-      ),
-    };
+  async getAccount(id: string) {
+    if (deployment().mode === "demo")
+      return (
+        await import("./repository.mock")
+      ).serviceAccountRepository.getAccount(id);
+    return detailData("service-accounts", id);
   },
 };

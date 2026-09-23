@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import * as Primitive from "@radix-ui/react-tabs";
 import type { ReactNode } from "react";
 export function Tabs({
@@ -12,20 +13,21 @@ export function Tabs({
   value: string;
   onValueChange: (value: string) => void;
 }) {
+  const { t } = useI18n();
   return (
     <Primitive.Root
       value={value}
       onValueChange={onValueChange}
       activationMode="manual"
     >
-      <Primitive.List aria-label={label} className="ui-tab-list">
+      <Primitive.List aria-label={t(label)} className="ui-tab-list">
         {items.map((item) => (
           <Primitive.Trigger
             className="ui-tab"
             key={item.value}
             value={item.value}
           >
-            {item.label}
+            {t(item.label)}
           </Primitive.Trigger>
         ))}
       </Primitive.List>

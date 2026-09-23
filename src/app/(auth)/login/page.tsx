@@ -1,12 +1,17 @@
+import { getT } from "@/i18n/server";
 import type { Metadata } from "next";
-import { resolveLoginUrl } from "@/features/auth/login-url";
+import { deployment } from "@/lib/api/server";
+import { LanguageSelect } from "@/i18n/provider";
 import "./login.css";
 
-export const metadata: Metadata = {
-  title: "로그인",
-  description: "Orion — 사내 업무 도구를 위한 통합 인증과 접근 권한 관리",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return {
+    title: t("로그인"),
+    description: t("Orion — 사내 업무 도구를 위한 통합 인증과 접근 권한 관리"),
+    robots: { index: false, follow: false },
+  };
+}
 // Read deployment configuration at request time; no browser-side OIDC credentials.
 export const dynamic = "force-dynamic";
 
@@ -25,12 +30,16 @@ function OrionMark() {
   );
 }
 
-export default function LoginPage() {
-  const loginUrl = resolveLoginUrl(process.env.ORION_AUTH_LOGIN_URL);
+export default async function LoginPage() {
+  const t = await getT();
+  const loginUrl = deployment().loginUrl;
   return (
     <main className="login-page" id="main">
       <div className="login-shell">
-        <section className="login-identity" aria-label="Orion 통합 인증 플랫폼">
+        <section
+          className="login-identity"
+          aria-label={t("Orion 통합 인증 플랫폼")}
+        >
           <div className="login-brand">
             <OrionMark />
             <span>ORION</span>
@@ -38,14 +47,14 @@ export default function LoginPage() {
           <div className="login-story">
             <p className="login-eyebrow">ONE IDENTITY. CONNECTED WORK.</p>
             <h2>
-              하나의 계정.
+              {t("하나의 계정.")}
               <br />
-              연결된 업무.
+              {t("연결된 업무.")}
             </h2>
             <p className="login-story-description">
-              사내 업무 도구를 연결하는
+              {t("사내 업무 도구를 연결하는")}
               <br />
-              통합 인증과 접근 권한의 시작점.
+              {t("통합 인증과 접근 권한의 시작점.")}
             </p>
           </div>
           <div className="login-constellation" aria-hidden="true">
@@ -68,12 +77,14 @@ export default function LoginPage() {
           <p className="login-identity-caption">IDENTITY & ACCESS PLATFORM</p>
         </section>
         <section className="login-entry" aria-labelledby="login-title">
+          <LanguageSelect />
           <div className="login-entry-heading">
             <span className="login-overline">WORKSPACE SIGN IN</span>
-            <h1 id="login-title">Orion에 로그인</h1>
+            <h1 id="login-title">{t("Orion에 로그인")}</h1>
             <p>
-              사내 계정으로 로그인하고
-              <br className="login-copy-break" /> 필요한 업무 도구에 접근하세요.
+              {t("사내 계정으로 로그인하고")}
+              <br className="login-copy-break" />{" "}
+              {t("필요한 업무 도구에 접근하세요.")}
             </p>
           </div>
           <div className="login-action-area">
@@ -104,7 +115,7 @@ export default function LoginPage() {
                     strokeWidth="1.5"
                   />
                 </svg>
-                <span>Okta로 로그인</span>
+                <span>{t("Okta로 로그인")}</span>
                 <span className="login-arrow" aria-hidden="true">
                   →
                 </span>
@@ -115,32 +126,34 @@ export default function LoginPage() {
                   className="ui-button ui-button--primary login-action"
                   disabled
                 >
-                  Okta로 로그인
+                  {t("Okta로 로그인")}
                 </button>
                 <p className="login-unavailable" role="status">
-                  지금은 로그인을 이용할 수 없습니다.
+                  {t("지금은 로그인을 이용할 수 없습니다.")}
                   <br />
-                  잠시 후 다시 시도해 주세요.
+                  {t("잠시 후 다시 시도해 주세요.")}
                 </p>
               </>
             )}
             <p className="login-redirect-note">
-              회사의 Okta 인증 화면으로 이동합니다.
+              {t("회사의 Okta 인증 화면으로 이동합니다.")}
             </p>
           </div>
           <div className="login-help">
-            <span className="login-help-label">도움이 필요하신가요?</span>
+            <span className="login-help-label">
+              {t("도움이 필요하신가요?")}
+            </span>
             <p>
-              계정 또는 접근 권한은
+              {t("계정 또는 접근 권한은")}
               <br />
-              사내 관리자에게 문의해 주세요.
+              {t("사내 관리자에게 문의해 주세요.")}
             </p>
           </div>
         </section>
       </div>
       <footer className="login-footer">
         <span>ORION</span>
-        <p>사내 구성원을 위한 업무 플랫폼</p>
+        <p>{t("사내 구성원을 위한 업무 플랫폼")}</p>
       </footer>
     </main>
   );

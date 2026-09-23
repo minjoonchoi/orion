@@ -1,11 +1,13 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navigationGroups, isNavigationActive } from "@/config/navigation";
 export function Navigation() {
+  const { t } = useI18n();
   const pathname = usePathname();
   return (
-    <nav aria-label="주 메뉴">
+    <nav aria-label={t("주 메뉴")}>
       {navigationGroups.map((group) => (
         <section
           className="navigation-group"
@@ -13,7 +15,7 @@ export function Navigation() {
           aria-labelledby={`nav-${group.id}`}
         >
           <h2 id={`nav-${group.id}`} className="navigation-group-title">
-            {group.label}
+            {t(group.label)}
           </h2>
           <ul className="navigation-items">
             {group.items.map((item) => (
@@ -24,7 +26,7 @@ export function Navigation() {
                     isNavigationActive(pathname, item.href) ? "page" : undefined
                   }
                 >
-                  {item.label}
+                  {t(item.label)}
                 </Link>
               </li>
             ))}

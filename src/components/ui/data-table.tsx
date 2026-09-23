@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import type { ReactNode } from "react";
 import { Checkbox } from "./checkbox";
 import { EmptyState } from "./empty-state";
@@ -46,23 +47,26 @@ export function DataTable<T>({
   emptyTitle?: string;
   emptyDescription?: string;
 }) {
-  if (loading) return <Skeleton label={`${caption} 불러오는 중`} />;
+  const { t } = useI18n();
+  if (loading) return <Skeleton label={t(`${caption} 불러오는 중`)} />;
   if (error)
     return (
       <Alert
         tone="danger"
-        title={error}
+        title={t(error)}
         action={
           onRetry && (
             <Button variant="secondary" onClick={onRetry}>
-              다시 시도
+              {t("다시 시도")}
             </Button>
           )
         }
       />
     );
   if (!rows.length)
-    return <EmptyState title={emptyTitle} description={emptyDescription} />;
+    return (
+      <EmptyState title={t(emptyTitle)} description={t(emptyDescription)} />
+    );
   const selectable = rows
     .filter(
       (row) => selection && (!selection.canSelect || selection.canSelect(row)),
@@ -84,17 +88,17 @@ export function DataTable<T>({
     <div
       className="ui-table-scroll"
       role="region"
-      aria-label={caption}
+      aria-label={t(caption)}
       tabIndex={0}
     >
       <table className="ui-table">
-        <caption className="sr-only">{caption}</caption>
+        <caption className="sr-only">{t(caption)}</caption>
         <thead>
           <tr>
             {selection && (
               <th scope="col" className="ui-selection-cell">
                 <Checkbox
-                  aria-label="현재 페이지 전체 선택"
+                  aria-label={t("현재 페이지 전체 선택")}
                   checked={
                     selectable.length > 0 && selectedCount === selectable.length
                   }
@@ -133,7 +137,7 @@ export function DataTable<T>({
                       )
                     }
                   >
-                    {column.header}
+                    {t(column.header)}
                     <span aria-hidden="true">
                       {sort?.key === column.key
                         ? sort.direction === "asc"
@@ -143,7 +147,7 @@ export function DataTable<T>({
                     </span>
                   </button>
                 ) : (
-                  column.header
+                  t(column.header)
                 )}
               </th>
             ))}
@@ -157,7 +161,7 @@ export function DataTable<T>({
                 {selection && (
                   <td className="ui-selection-cell">
                     <Checkbox
-                      aria-label={`${selection.label(row)} 선택`}
+                      aria-label={t(`${selection.label(row)} 선택`)}
                       checked={selection.ids.has(id)}
                       disabled={
                         selection.canSelect ? !selection.canSelect(row) : false

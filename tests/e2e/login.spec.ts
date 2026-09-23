@@ -23,6 +23,8 @@ test("login has a standalone layout and ignores untrusted destination query para
     0,
   );
   await page.keyboard.press("Tab");
+  await expect(page.getByLabel("Language / 언어")).toBeFocused();
+  await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "Okta로 로그인" })).toBeFocused();
   expect(
     (

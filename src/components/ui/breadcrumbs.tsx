@@ -1,11 +1,14 @@
+"use client";
+import { useI18n } from "@/i18n/provider";
 import Link from "next/link";
 export function Breadcrumbs({
   items,
 }: {
   items: { label: string; href?: string }[];
 }) {
+  const { t } = useI18n();
   return (
-    <nav aria-label="현재 위치" className="ui-breadcrumbs">
+    <nav aria-label={t("현재 위치")} className="ui-breadcrumbs">
       <ol>
         {items.map((item, i) => (
           <li key={`${item.label}-${i}`}>

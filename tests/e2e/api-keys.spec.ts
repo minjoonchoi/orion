@@ -22,7 +22,7 @@ test("API key list searches, filters, sorts and paginates", async ({
   ).toBeVisible();
   await page.getByRole("button", { name: "초기화", exact: true }).click();
   const header = page.getByRole("columnheader", {
-    name: "발급일 (한국 시간)",
+    name: "발급일",
     exact: true,
   });
   await header.getByRole("button").click();

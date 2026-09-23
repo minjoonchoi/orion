@@ -288,3 +288,20 @@ p {
     margin-left: 12px;
   }
 }
+
+.language-select {
+  font: inherit;
+  font-size: 0.8rem;
+  color: inherit;
+  background: var(--surface, #fff);
+  border: 1px solid #d8dcd7;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+}
+.topbar .language-select {
+  margin-left: auto;
+}
+.login-entry > .language-select {
+  align-self: flex-end;
+  margin-bottom: 1.5rem;
+}

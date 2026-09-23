@@ -6,13 +6,21 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
   reporter: "list",
-  use: { baseURL: "http://127.0.0.1:3100", trace: "retain-on-failure" },
+  use: {
+    baseURL: "http://127.0.0.1:3100",
+    trace: "retain-on-failure",
+    locale: "ko-KR",
+  },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command: "npm run start -- --hostname 127.0.0.1 --port 3100",
     url: "http://127.0.0.1:3100",
     reuseExistingServer: false,
-    env: { ORION_AUTH_LOGIN_URL: "http://127.0.0.1:3100/__test/auth/login" },
+    env: {
+      ORION_DATA_SOURCE: "demo",
+      ORION_ENVIRONMENT: "test",
+      ORION_AUTH_LOGIN_URL: "http://127.0.0.1:3100/__test/auth/login",
+    },
     timeout: 30000,
   },
 });

@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import * as Primitive from "@radix-ui/react-alert-dialog";
 import type { ReactNode, RefObject } from "react";
 import { Button } from "./button";
@@ -26,6 +27,7 @@ export function ConfirmDialog({
   error?: string;
   returnFocusRef?: RefObject<HTMLElement | null>;
 }) {
+  const { t } = useI18n();
   return (
     <Primitive.Root
       open={open}
@@ -49,13 +51,13 @@ export function ConfirmDialog({
             if (pending) e.preventDefault();
           }}
         >
-          <Primitive.Title>{title}</Primitive.Title>
-          <Primitive.Description>{description}</Primitive.Description>
-          {error && <Alert tone="danger" title={error} />}
+          <Primitive.Title>{t(title)}</Primitive.Title>
+          <Primitive.Description>{t(description)}</Primitive.Description>
+          {error && <Alert tone="danger" title={t(error)} />}
           <div className="ui-dialog-footer">
             <Primitive.Cancel asChild>
               <Button variant="secondary" disabled={pending}>
-                취소
+                {t("취소")}
               </Button>
             </Primitive.Cancel>
             <Button variant="danger" loading={pending} onClick={onConfirm}>

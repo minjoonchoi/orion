@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import Link from "next/link";
 import { PageHeading } from "@/components/ui/page-heading";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -25,31 +26,34 @@ const keyStates: Record<KeyStatus, { label: string; tone: Tone }> = {
   revoked: { label: "폐기", tone: "neutral" },
 };
 export function ServiceAccountsList({ rows }: { rows: AccountRow[] }) {
+  const { t } = useI18n();
   const organizations = Array.from(
     new Map(rows.map((a) => [a.organization.id, a.organization])).values(),
   );
   return (
     <>
       <PageHeading
-        title="서비스 어카운트"
-        description="자동화 작업과 서비스 연동에 사용하는 계정의 조직·역할·API 키를 조회합니다."
+        title={t("서비스 어카운트")}
+        description={t(
+          "자동화 작업과 서비스 연동에 사용하는 계정의 조직·역할·API 키를 조회합니다.",
+        )}
       />
       <DemoNotice />
       <Summary
         items={[
-          { label: "전체 서비스 어카운트", value: rows.length },
+          { label: t("전체 서비스 어카운트"), value: rows.length },
           {
-            label: "활성",
+            label: t("활성"),
             value: rows.filter((a) => a.status === "active").length,
           },
           {
-            label: "비활성",
+            label: t("비활성"),
             value: rows.filter((a) => a.status === "inactive").length,
           },
         ]}
       />
       <BrowseTable
-        title="서비스 어카운트 목록"
+        title={t("서비스 어카운트 목록")}
         rows={rows}
         searchText={(r) =>
           `${r.id} ${r.name} ${r.description} ${r.organization.name}`
@@ -66,13 +70,13 @@ export function ServiceAccountsList({ rows }: { rows: AccountRow[] }) {
         filters={[
           {
             key: "status",
-            label: "상태 필터",
+            label: t("상태 필터"),
             options: statusOptions,
             matches: (r, v) => r.status === v,
           },
           {
             key: "organization",
-            label: "소속 조직 필터",
+            label: t("소속 조직 필터"),
             options: organizations.map((o) => ({ value: o.id, label: o.name })),
             matches: (r, v) => r.organization.id === v,
           },
@@ -80,7 +84,7 @@ export function ServiceAccountsList({ rows }: { rows: AccountRow[] }) {
         columns={[
           {
             key: "name",
-            header: "이름",
+            header: t("이름"),
             sortable: true,
             render: (r) => (
               <>
@@ -89,43 +93,47 @@ export function ServiceAccountsList({ rows }: { rows: AccountRow[] }) {
               </>
             ),
           },
-          { key: "description", header: "설명", render: (r) => r.description },
+          {
+            key: "description",
+            header: t("설명"),
+            render: (r) => r.description,
+          },
           {
             key: "organization",
-            header: "소속 조직",
+            header: t("소속 조직"),
             render: (r) =>
               link("/organizations", r.organization.id, r.organization.name),
           },
           {
             key: "status",
-            header: "상태",
+            header: t("상태"),
             render: (r) => <StatusBadge status={r.status} />,
           },
           {
             key: "roleCount",
-            header: "역할",
+            header: t("역할"),
             sortable: true,
             render: (r) =>
               link(
                 "/service-accounts",
                 `${r.id}?tab=roles`,
-                `${r.roleCount}개`,
+                t(`${r.roleCount}개`),
               ),
           },
           {
             key: "keyCount",
-            header: "API 키",
+            header: t("API 키"),
             sortable: true,
             render: (r) =>
               link(
                 "/service-accounts",
                 `${r.id}?tab=api-keys`,
-                `${r.keyCount}개`,
+                t(`${r.keyCount}개`),
               ),
           },
           {
             key: "createdAt",
-            header: "등록일",
+            header: t("등록일"),
             sortable: true,
             render: (r) => date(r.createdAt),
           },
@@ -135,12 +143,13 @@ export function ServiceAccountsList({ rows }: { rows: AccountRow[] }) {
   );
 }
 export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
+  const { t } = useI18n();
   const { account: a, roles, keys } = data;
   return (
     <>
       <Breadcrumbs
         items={[
-          { label: "서비스 어카운트", href: "/service-accounts" },
+          { label: t("서비스 어카운트"), href: "/service-accounts" },
           { label: a.name },
         ]}
       />
@@ -150,27 +159,30 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
         items={[
           {
             value: "info",
-            label: "기본 정보",
+            label: t("기본 정보"),
             content: (
               <section className="ui-panel">
-                <h2>서비스 어카운트 정보</h2>
+                <h2>{t("서비스 어카운트 정보")}</h2>
                 <Details
                   items={[
-                    { label: "서비스 어카운트 ID", value: a.id },
-                    { label: "이름", value: a.name },
-                    { label: "설명", value: a.description },
-                    { label: "상태", value: <StatusBadge status={a.status} /> },
+                    { label: t("서비스 어카운트 ID"), value: a.id },
+                    { label: t("이름"), value: a.name },
+                    { label: t("설명"), value: a.description },
                     {
-                      label: "소속 조직",
+                      label: t("상태"),
+                      value: <StatusBadge status={a.status} />,
+                    },
+                    {
+                      label: t("소속 조직"),
                       value: link(
                         "/organizations",
                         a.organization.id,
                         a.organization.name,
                       ),
                     },
-                    { label: "등록일 (한국 시간)", value: date(a.createdAt) },
+                    { label: t("등록일"), value: date(a.createdAt) },
                     {
-                      label: "최근 사용일 (한국 시간)",
+                      label: t("최근 사용일"),
                       value: date(a.lastUsedAt),
                     },
                   ]}
@@ -180,29 +192,30 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
           },
           {
             value: "roles",
-            label: `역할 (${roles.length})`,
+            label: t(`역할 (${roles.length})`),
             content: (
               <>
                 <p className="identity-role-note">
-                  직접 연결된 역할입니다. 소속 조직의 역할 상속이나 유효 권한을
-                  의미하지 않습니다.
+                  {t(
+                    "직접 연결된 역할입니다. 소속 조직의 역할 상속이나 유효 권한을 의미하지 않습니다.",
+                  )}
                 </p>
                 <BrowseTable
-                  title="연결 역할 목록"
+                  title={t("연결 역할 목록")}
                   rows={roles}
                   searchText={(r) => `${r.id} ${r.name} ${r.description}`}
                   sortValue={(r) => r.name}
                   columns={[
                     {
                       key: "name",
-                      header: "이름",
+                      header: t("이름"),
                       sortable: true,
                       render: (r) => link("/roles", r.id, r.name),
                     },
-                    { key: "id", header: "역할 ID", render: (r) => r.id },
+                    { key: "id", header: t("역할 ID"), render: (r) => r.id },
                     {
                       key: "description",
-                      header: "설명",
+                      header: t("설명"),
                       render: (r) => r.description,
                     },
                   ]}
@@ -212,14 +225,16 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
           },
           {
             value: "api-keys",
-            label: `API 키 (${keys.length})`,
+            label: t(`API 키 (${keys.length})`),
             content: (
               <>
                 <p className="identity-role-note">
-                  연결된 API 키의 메타데이터입니다. 키 원문은 표시하지 않습니다.
+                  {t(
+                    "연결된 API 키의 메타데이터입니다. 키 원문은 표시하지 않습니다.",
+                  )}
                 </p>
                 <BrowseTable
-                  title="연결 API 키 목록"
+                  title={t("연결 API 키 목록")}
                   rows={keys}
                   searchText={(r) =>
                     `${r.id} ${r.name} ${r.displayHint} ${r.description}`
@@ -230,7 +245,7 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
                   filters={[
                     {
                       key: "status",
-                      label: "키 상태 필터",
+                      label: t("키 상태 필터"),
                       options: Object.entries(keyStates).map(([value, s]) => ({
                         value,
                         label: s.label,
@@ -241,7 +256,7 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
                   columns={[
                     {
                       key: "name",
-                      header: "이름",
+                      header: t("이름"),
                       sortable: true,
                       render: (r) => (
                         <>
@@ -252,12 +267,12 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
                     },
                     {
                       key: "hint",
-                      header: "키 식별 표시",
+                      header: t("키 식별 표시"),
                       render: (r) => <code>{r.displayHint}</code>,
                     },
                     {
                       key: "status",
-                      header: "키 상태",
+                      header: t("키 상태"),
                       render: (r) => (
                         <Badge tone={keyStates[r.status].tone}>
                           {keyStates[r.status].label}
@@ -266,10 +281,10 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
                     },
                     {
                       key: "expiresAt",
-                      header: "만료일 (한국 시간)",
+                      header: t("만료일"),
                       sortable: true,
                       render: (r) =>
-                        r.expiresAt ? date(r.expiresAt) : "만료일 없음",
+                        r.expiresAt ? date(r.expiresAt) : t("만료일 없음"),
                     },
                   ]}
                 />

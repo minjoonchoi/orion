@@ -1,38 +1,33 @@
-import { users } from "../identity/fixtures";
-import { apiKeys } from "../api-keys/fixtures";
-import { approvals, templates } from "./fixtures";
-import type { ApprovalRecord } from "./types";
-const person = (id: string) => {
-  const u = users.find((u) => u.id === id)!;
-  return { id: u.id, name: u.name };
-};
-const rows = (): ApprovalRecord[] =>
-  approvals
-    .map((a) => {
-      const key = apiKeys.find((k) => k.id === a.keyId)!;
-      const template = templates.find((t) => t.id === a.templateId)!;
-      return {
-        ...a,
-        title: `${key.name} · ${template.name}`,
-        keyName: key.name,
-        templateName: template.name,
-        templateVersion: template.version,
-        requester: person(a.requesterId),
-        reviewer: a.reviewerId ? person(a.reviewerId) : null,
-      };
-    })
-    .sort((a, b) => b.requestedAt.localeCompare(a.requestedAt));
-export const approvalRepository = {
+import "server-only";
+import { deployment, listData, detailData } from "@/lib/api/server";
+type Repository = typeof import("./repository.mock").approvalRepository;
+export const approvalRepository: Repository = {
   async listTemplates() {
-    return templates;
-  },
-  async getTemplate(id: string) {
-    return templates.find((t) => t.id === id) ?? null;
+    if (deployment().mode === "demo")
+      return (
+        await import("./repository.mock")
+      ).approvalRepository.listTemplates();
+    return listData("approval-templates");
   },
   async listApprovals() {
-    return rows();
+    if (deployment().mode === "demo")
+      return (
+        await import("./repository.mock")
+      ).approvalRepository.listApprovals();
+    return listData("approvals");
+  },
+  async getTemplate(id: string) {
+    if (deployment().mode === "demo")
+      return (await import("./repository.mock")).approvalRepository.getTemplate(
+        id,
+      );
+    return detailData("approval-templates", id);
   },
   async getApproval(id: string) {
-    return rows().find((a) => a.id === id) ?? null;
+    if (deployment().mode === "demo")
+      return (await import("./repository.mock")).approvalRepository.getApproval(
+        id,
+      );
+    return detailData("approvals", id);
   },
 };

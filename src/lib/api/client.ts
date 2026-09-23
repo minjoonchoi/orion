@@ -32,8 +32,3 @@ export function createApiClient(baseUrl: string) {
     return text ? JSON.parse(text) : undefined;
   };
 }
-export function getApiClient() {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!baseUrl) throw new Error("NEXT_PUBLIC_API_BASE_URL is not configured");
-  return createApiClient(baseUrl);
-}

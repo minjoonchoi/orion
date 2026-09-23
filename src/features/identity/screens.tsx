@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import Link from "next/link";
 
 import type { ReactNode } from "react";
@@ -41,28 +42,29 @@ export function UsersList({
   rows: UserRow[];
   organizations: OrganizationRow[];
 }) {
+  const { t } = useI18n();
   return (
     <>
       <PageHeading
-        title="사용자"
-        description="사내 사용자와 소속 조직, 연결된 역할을 조회합니다."
+        title={t("사용자")}
+        description={t("사내 사용자와 소속 조직, 연결된 역할을 조회합니다.")}
       />
       <DemoNotice />
       <Summary
         items={[
-          { label: "전체 사용자", value: rows.length },
+          { label: t("전체 사용자"), value: rows.length },
           {
-            label: "활성 사용자",
+            label: t("활성 사용자"),
             value: rows.filter((r) => r.status === "active").length,
           },
           {
-            label: "비활성 사용자",
+            label: t("비활성 사용자"),
             value: rows.filter((r) => r.status === "inactive").length,
           },
         ]}
       />
       <BrowseTable
-        title="사용자 목록"
+        title={t("사용자 목록")}
         rows={rows}
         searchText={(r) => `${r.name} ${r.email} ${r.employeeNumber} ${r.id}`}
         sortValue={(r, k) => (k === "roleCount" ? r.roleCount : r.name)}
@@ -70,7 +72,7 @@ export function UsersList({
           statusFilter,
           {
             key: "organization",
-            label: "소속 조직 필터",
+            label: t("소속 조직 필터"),
             options: organizations.map((o) => ({ value: o.id, label: o.name })),
             matches: (r, v) => r.organizations.some((o) => o.id === v),
           },
@@ -87,11 +89,11 @@ export function UsersList({
               </>
             ),
           },
-          { key: "email", header: "이메일", render: (r) => r.email },
+          { key: "email", header: t("이메일"), render: (r) => r.email },
           statusColumn,
           {
             key: "organizations",
-            header: "소속 조직",
+            header: t("소속 조직"),
             render: (r) => (
               <div className="identity-org-links">
                 {r.organizations.length
@@ -100,17 +102,18 @@ export function UsersList({
                         {o.name}
                       </DetailLink>
                     ))
-                  : "소속 없음"}
+                  : t("소속 없음")}
               </div>
             ),
           },
           {
             key: "roleCount",
-            header: "연결 역할",
+            header: t("연결 역할"),
             sortable: true,
             render: (r) => (
               <DetailLink href={`/users/${r.id}?tab=roles`}>
-                {r.roleCount}개
+                {r.roleCount}
+                {t("개")}
               </DetailLink>
             ),
           },
@@ -120,28 +123,29 @@ export function UsersList({
   );
 }
 export function OrganizationsList({ rows }: { rows: OrganizationRow[] }) {
+  const { t } = useI18n();
   return (
     <>
       <PageHeading
-        title="조직"
-        description="조직별 멤버와 서비스, 역할의 연결 현황을 조회합니다."
+        title={t("조직")}
+        description={t("조직별 멤버와 서비스, 역할의 연결 현황을 조회합니다.")}
       />
       <DemoNotice />
       <Summary
         items={[
-          { label: "전체 조직", value: rows.length },
+          { label: t("전체 조직"), value: rows.length },
           {
-            label: "활성 조직",
+            label: t("활성 조직"),
             value: rows.filter((r) => r.status === "active").length,
           },
           {
-            label: "비활성 조직",
+            label: t("비활성 조직"),
             value: rows.filter((r) => r.status === "inactive").length,
           },
         ]}
       />
       <BrowseTable
-        title="조직 목록"
+        title={t("조직 목록")}
         rows={rows}
         searchText={(r) => `${r.name} ${r.code} ${r.id} ${r.description}`}
         sortValue={(r, k) => (k === "name" ? r.name : r.memberCount)}
@@ -158,33 +162,40 @@ export function OrganizationsList({ rows }: { rows: OrganizationRow[] }) {
               </>
             ),
           },
-          { key: "description", header: "설명", render: (r) => r.description },
+          {
+            key: "description",
+            header: t("설명"),
+            render: (r) => r.description,
+          },
           statusColumn,
           {
             key: "memberCount",
-            header: "멤버",
+            header: t("멤버"),
             sortable: true,
             render: (r) => (
               <DetailLink href={`/organizations/${r.id}?tab=members`}>
-                {r.memberCount}명
+                {r.memberCount}
+                {t("명")}
               </DetailLink>
             ),
           },
           {
             key: "serviceCount",
-            header: "관리 서비스",
+            header: t("관리 서비스"),
             render: (r) => (
               <DetailLink href={`/organizations/${r.id}?tab=services`}>
-                {r.serviceCount}개
+                {r.serviceCount}
+                {t("개")}
               </DetailLink>
             ),
           },
           {
             key: "roleCount",
-            header: "역할",
+            header: t("역할"),
             render: (r) => (
               <DetailLink href={`/organizations/${r.id}?tab=roles`}>
-                {r.roleCount}개
+                {r.roleCount}
+                {t("개")}
               </DetailLink>
             ),
           },
@@ -194,13 +205,16 @@ export function OrganizationsList({ rows }: { rows: OrganizationRow[] }) {
   );
 }
 function Roles({ rows }: { rows: Role[] }) {
+  const { t } = useI18n();
   return (
     <>
       <p className="identity-role-note">
-        직접 연결된 역할입니다. 조직 역할에 따른 권한 상속은 표시하지 않습니다.
+        {t(
+          "직접 연결된 역할입니다. 조직 역할에 따른 권한 상속은 표시하지 않습니다.",
+        )}
       </p>
       <BrowseTable
-        title="역할 목록"
+        title={t("역할 목록")}
         rows={rows}
         searchText={(r) => `${r.name} ${r.id} ${r.description}`}
         sortValue={(r) => r.name}
@@ -211,19 +225,24 @@ function Roles({ rows }: { rows: Role[] }) {
               <DetailLink href={`/roles/${r.id}`}>{r.name}</DetailLink>
             ),
           },
-          { key: "id", header: "역할 ID", render: (r) => r.id },
-          { key: "description", header: "설명", render: (r) => r.description },
+          { key: "id", header: t("역할 ID"), render: (r) => r.id },
+          {
+            key: "description",
+            header: t("설명"),
+            render: (r) => r.description,
+          },
         ]}
       />
     </>
   );
 }
 export function UserScreen({ data }: { data: UserDetail }) {
+  const { t } = useI18n();
   const { user: u, organizations, roles } = data;
   return (
     <>
       <Breadcrumbs
-        items={[{ label: "사용자", href: "/users" }, { label: u.name }]}
+        items={[{ label: t("사용자"), href: "/users" }, { label: u.name }]}
       />
       <PageHeading title={u.name} description={u.email} />
       <DemoNotice />
@@ -231,21 +250,24 @@ export function UserScreen({ data }: { data: UserDetail }) {
         items={[
           {
             value: "info",
-            label: "기본 정보",
+            label: t("기본 정보"),
             content: (
               <section className="ui-panel">
-                <h2 className="identity-info-title">사용자 정보</h2>
+                <h2 className="identity-info-title">{t("사용자 정보")}</h2>
                 <Details
                   items={[
-                    { label: "사용자 ID", value: u.id },
-                    { label: "이름", value: u.name },
-                    { label: "이메일", value: u.email },
-                    { label: "사번", value: u.employeeNumber },
-                    { label: "직무", value: u.title },
-                    { label: "상태", value: <StatusBadge status={u.status} /> },
-                    { label: "등록일 (한국 시간)", value: date(u.createdAt) },
+                    { label: t("사용자 ID"), value: u.id },
+                    { label: t("이름"), value: u.name },
+                    { label: t("이메일"), value: u.email },
+                    { label: t("사번"), value: u.employeeNumber },
+                    { label: t("직무"), value: u.title },
                     {
-                      label: "최근 로그인 (한국 시간)",
+                      label: t("상태"),
+                      value: <StatusBadge status={u.status} />,
+                    },
+                    { label: t("등록일"), value: date(u.createdAt) },
+                    {
+                      label: t("최근 로그인"),
                       value: date(u.lastSignedInAt),
                     },
                   ]}
@@ -255,10 +277,10 @@ export function UserScreen({ data }: { data: UserDetail }) {
           },
           {
             value: "organizations",
-            label: `소속 조직 (${organizations.length})`,
+            label: t(`소속 조직 (${organizations.length})`),
             content: (
               <BrowseTable
-                title="소속 조직 목록"
+                title={t("소속 조직 목록")}
                 rows={organizations}
                 searchText={(r) => `${r.name} ${r.code} ${r.id}`}
                 sortValue={(r) => r.name}
@@ -272,11 +294,15 @@ export function UserScreen({ data }: { data: UserDetail }) {
                       </DetailLink>
                     ),
                   },
-                  { key: "code", header: "조직 코드", render: (r) => r.code },
+                  {
+                    key: "code",
+                    header: t("조직 코드"),
+                    render: (r) => r.code,
+                  },
                   statusColumn,
                   {
                     key: "joinedAt",
-                    header: "소속일",
+                    header: t("소속일"),
                     render: (r) => date(r.joinedAt),
                   },
                 ]}
@@ -285,7 +311,7 @@ export function UserScreen({ data }: { data: UserDetail }) {
           },
           {
             value: "roles",
-            label: `역할 (${roles.length})`,
+            label: t(`역할 (${roles.length})`),
             content: <Roles rows={roles} />,
           },
         ]}
@@ -294,11 +320,15 @@ export function UserScreen({ data }: { data: UserDetail }) {
   );
 }
 export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
+  const { t } = useI18n();
   const { organization: o, members, serviceAccounts, services, roles } = data;
   return (
     <>
       <Breadcrumbs
-        items={[{ label: "조직", href: "/organizations" }, { label: o.name }]}
+        items={[
+          { label: t("조직"), href: "/organizations" },
+          { label: o.name },
+        ]}
       />
       <PageHeading title={o.name} description={o.description} />
       <DemoNotice />
@@ -306,18 +336,21 @@ export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
         items={[
           {
             value: "info",
-            label: "기본 정보",
+            label: t("기본 정보"),
             content: (
               <section className="ui-panel">
-                <h2 className="identity-info-title">조직 정보</h2>
+                <h2 className="identity-info-title">{t("조직 정보")}</h2>
                 <Details
                   items={[
-                    { label: "조직 ID", value: o.id },
-                    { label: "조직명", value: o.name },
-                    { label: "조직 코드", value: o.code },
-                    { label: "설명", value: o.description },
-                    { label: "상태", value: <StatusBadge status={o.status} /> },
-                    { label: "등록일 (한국 시간)", value: date(o.createdAt) },
+                    { label: t("조직 ID"), value: o.id },
+                    { label: t("조직명"), value: o.name },
+                    { label: t("조직 코드"), value: o.code },
+                    { label: t("설명"), value: o.description },
+                    {
+                      label: t("상태"),
+                      value: <StatusBadge status={o.status} />,
+                    },
+                    { label: t("등록일"), value: date(o.createdAt) },
                   ]}
                 />
               </section>
@@ -325,10 +358,10 @@ export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
           },
           {
             value: "members",
-            label: `멤버 (${members.length})`,
+            label: t(`멤버 (${members.length})`),
             content: (
               <BrowseTable
-                title="멤버 목록"
+                title={t("멤버 목록")}
                 rows={members}
                 searchText={(r) =>
                   `${r.name} ${r.email} ${r.employeeNumber} ${r.id}`
@@ -342,12 +375,12 @@ export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
                       <DetailLink href={`/users/${r.id}`}>{r.name}</DetailLink>
                     ),
                   },
-                  { key: "email", header: "이메일", render: (r) => r.email },
-                  { key: "title", header: "직무", render: (r) => r.title },
+                  { key: "email", header: t("이메일"), render: (r) => r.email },
+                  { key: "title", header: t("직무"), render: (r) => r.title },
                   statusColumn,
                   {
                     key: "joinedAt",
-                    header: "소속일",
+                    header: t("소속일"),
                     render: (r) => date(r.joinedAt),
                   },
                 ]}
@@ -356,10 +389,10 @@ export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
           },
           {
             value: "service-accounts",
-            label: `서비스 어카운트 (${serviceAccounts.length})`,
+            label: t(`서비스 어카운트 (${serviceAccounts.length})`),
             content: (
               <BrowseTable
-                title="서비스 어카운트 목록"
+                title={t("서비스 어카운트 목록")}
                 rows={serviceAccounts}
                 searchText={(r) => `${r.name} ${r.id} ${r.description}`}
                 sortValue={(r) => r.name}
@@ -378,18 +411,18 @@ export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
                   },
                   {
                     key: "description",
-                    header: "설명",
+                    header: t("설명"),
                     render: (r) => r.description,
                   },
                   statusColumn,
                   {
                     key: "createdAt",
-                    header: "등록일",
+                    header: t("등록일"),
                     render: (r) => date(r.createdAt),
                   },
                   {
                     key: "lastUsedAt",
-                    header: "최근 사용일",
+                    header: t("최근 사용일"),
                     render: (r) => date(r.lastUsedAt),
                   },
                 ]}
@@ -398,10 +431,10 @@ export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
           },
           {
             value: "services",
-            label: `관리 서비스 (${services.length})`,
+            label: t(`관리 서비스 (${services.length})`),
             content: (
               <BrowseTable
-                title="관리 서비스 목록"
+                title={t("관리 서비스 목록")}
                 rows={services}
                 searchText={(r) => `${r.name} ${r.id} ${r.description}`}
                 sortValue={(r) => r.name}
@@ -420,7 +453,7 @@ export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
                   },
                   {
                     key: "description",
-                    header: "설명",
+                    header: t("설명"),
                     render: (r) => r.description,
                   },
                   statusColumn,
@@ -430,7 +463,7 @@ export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
           },
           {
             value: "roles",
-            label: `역할 (${roles.length})`,
+            label: t(`역할 (${roles.length})`),
             content: <Roles rows={roles} />,
           },
         ]}
