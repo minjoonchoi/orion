@@ -1,6 +1,6 @@
 # Orion
 
-서버 리소스 접근 권한 플랫폼 UI를 위한 Next.js 기반 프론트엔드입니다.
+사내 백오피스 제품의 통합 인증·인가 플랫폼을 위한 Next.js 기반 프론트엔드입니다.
 
 ## 시작하기
 
@@ -38,7 +38,7 @@ Next.js App Router, React, TypeScript strict, CSS, ESLint, Prettier를 사용합
 
 ## 초기 범위
 
-개요, 사용자, 역할, 서버 리소스, 접근 권한, 감사 로그 경로와 공통 레이아웃을 제공합니다. 실제 관리 화면은 준비 중 상태이며 로그인, 서버 CRUD, 실제 권한 판정은 포함하지 않습니다. `/components`에는 메모리 예제로 동작하는 공통 컴포넌트 확인 화면이 있습니다.
+개요, 사용자, 역할, 서버 리소스, 접근 권한, 감사 로그 경로와 공통 레이아웃을 제공합니다. 실제 관리 화면은 준비 중 상태이며 서버 CRUD, 실제 권한 판정은 포함하지 않습니다. `/login`에서 Orion API를 통한 Okta 로그인 시작 화면을 제공합니다. `/components`에는 메모리 예제로 동작하는 공통 컴포넌트 확인 화면이 있습니다.
 
 ## API 연결
 
@@ -60,3 +60,7 @@ Next.js App Router, React, TypeScript strict, CSS, ESLint, Prettier를 사용합
 ## 백오피스 컴포넌트
 
 [조사 결과와 사용 가이드](docs/backoffice-components.md)를 참고하세요. `/components`에서 목록·폼·모달·알림·권한 매트릭스를 확인할 수 있습니다. 브라우저 테스트는 `npm run build`, `npx playwright install chromium`, `npm run test:e2e` 순서로 실행합니다.
+
+## 로그인 화면
+
+`/login`에서 독립된 로그인 UI를 확인합니다. 서버 환경변수 `ORION_AUTH_LOGIN_URL`에 Okta로 리다이렉트하는 실제 Orion API의 절대 URL을 설정하세요. [로그인 API 계약과 설정](docs/login.md)을 참고하세요.

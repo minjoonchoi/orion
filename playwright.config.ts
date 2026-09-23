@@ -12,6 +12,7 @@ export default defineConfig({
     command: "npm run start -- --hostname 127.0.0.1 --port 3100",
     url: "http://127.0.0.1:3100",
     reuseExistingServer: false,
+    env: { ORION_AUTH_LOGIN_URL: "http://127.0.0.1:3100/__test/auth/login" },
     timeout: 30000,
   },
 });

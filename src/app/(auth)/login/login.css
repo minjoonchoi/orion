@@ -1,0 +1,250 @@
+.login-page {
+  min-height: 100dvh;
+  max-width: none;
+  margin: 0;
+  padding: 64px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+}
+.login-shell {
+  width: 100%;
+  max-width: 1080px;
+  display: grid;
+  grid-template-columns: 0.94fr 1.06fr;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgb(37 43 34 / 4%);
+}
+.login-identity {
+  position: relative;
+  min-height: 636px;
+  padding: 44px 48px 32px;
+  background: #354e40;
+  color: #f5f5ec;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 23px;
+  font-weight: 650;
+  letter-spacing: 3px;
+}
+.login-brand svg {
+  width: 30px;
+  height: 30px;
+  color: #d2ddcb;
+}
+.login-story {
+  margin-top: 77px;
+  position: relative;
+  z-index: 1;
+}
+.login-eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.6px;
+  font-weight: 500;
+  color: #c9d5c5;
+  margin-bottom: 22px;
+}
+.login-story h2 {
+  font-size: clamp(30px, 3vw, 38px);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -1.2px;
+  margin-bottom: 20px;
+}
+.login-story-description {
+  color: #d2dccd;
+  font-size: 14px;
+  line-height: 1.85;
+}
+.login-constellation {
+  width: 100%;
+  max-width: 360px;
+  align-self: center;
+  margin: 10px 0 0;
+}
+.login-constellation svg {
+  display: block;
+  width: 100%;
+}
+.login-constellation ellipse {
+  stroke: #718776;
+  stroke-width: 0.65;
+}
+.login-constellation path {
+  stroke: #a1b39d;
+  stroke-width: 0.85;
+}
+.login-constellation circle {
+  fill: #c6d1b4;
+}
+.login-identity-caption {
+  color: #c9d5c5;
+  font-size: 9px;
+  letter-spacing: 2px;
+  margin-top: auto;
+  padding-top: 18px;
+}
+.login-entry {
+  padding: 90px 64px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.login-overline {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.login-entry h1 {
+  font-size: 30px;
+  font-weight: 650;
+  letter-spacing: -0.9px;
+  margin: 0 0 18px;
+}
+.login-entry-heading > p {
+  font-size: 15px;
+  line-height: 1.85;
+}
+.login-action-area {
+  margin-top: 40px;
+}
+.login-action {
+  width: 100%;
+  min-height: 50px;
+  justify-content: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  padding: 14px 18px;
+}
+.login-action:hover {
+  background: var(--accent-hover);
+}
+.login-action:disabled {
+  background: var(--accent);
+}
+.login-arrow {
+  margin-left: auto;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+}
+.login-redirect-note {
+  margin-top: 13px;
+  font-size: 12px;
+  text-align: center;
+}
+.login-unavailable {
+  margin-top: 14px;
+  padding: 12px;
+  background: var(--surface-subtle);
+  border-radius: var(--radius);
+  font-size: 13px;
+}
+.login-help {
+  border-top: 1px solid var(--line);
+  margin-top: 44px;
+  padding-top: 26px;
+}
+.login-help-label {
+  font-size: 12px;
+  font-weight: 600;
+}
+.login-help p {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.login-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1080px;
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 11px;
+  gap: 12px;
+}
+.login-footer > span {
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+@media (max-width: 900px) {
+  .login-identity {
+    padding: 36px;
+  }
+  .login-entry {
+    padding: 60px 36px 40px;
+  }
+}
+@media (max-width: 640px) {
+  .login-page {
+    padding: 20px 16px;
+    justify-content: flex-start;
+  }
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+  .login-identity {
+    min-height: 0;
+    padding: 26px 28px 28px;
+  }
+  .login-brand {
+    font-size: 21px;
+  }
+  .login-story {
+    margin-top: 30px;
+  }
+  .login-eyebrow {
+    font-size: 9px;
+    margin-bottom: 12px;
+  }
+  .login-story h2 {
+    font-size: 27px;
+    margin-bottom: 12px;
+  }
+  .login-story-description {
+    font-size: 13px;
+  }
+  .login-constellation,
+  .login-identity-caption {
+    display: none;
+  }
+  .login-entry {
+    padding: 34px 28px;
+  }
+  .login-overline {
+    margin-bottom: 14px;
+  }
+  .login-entry h1 {
+    font-size: 25px;
+  }
+  .login-entry-heading > p {
+    font-size: 14px;
+  }
+  .login-action-area {
+    margin-top: 28px;
+  }
+  .login-help {
+    margin-top: 28px;
+    padding-top: 20px;
+  }
+  .login-footer {
+    font-size: 10px;
+    margin-top: 18px;
+  }
+}
