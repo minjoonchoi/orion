@@ -1,6 +1,6 @@
+import type { Approval } from "../approvals/types";
+export type { ApprovalStatus, RequestType } from "../approvals/types";
 export type KeyStatus = "active" | "expired" | "revoked";
-export type ApprovalStatus = "pending" | "approved" | "rejected";
-export type RequestType = "issue" | "renew" | "revoke";
 // Only public metadata belongs in these read models. Never include a credential.
 export type ApiKey = {
   id: string;
@@ -14,18 +14,6 @@ export type ApiKey = {
   expiresAt: string | null;
   lastUsedAt: string | null;
   revokedAt: string | null;
-};
-export type Approval = {
-  id: string;
-  keyId: string;
-  type: RequestType;
-  status: ApprovalStatus;
-  requesterId: string;
-  reviewerId: string | null;
-  requestedAt: string;
-  decidedAt: string | null;
-  reason: string;
-  comment: string | null;
 };
 export type Person = { id: string; name: string };
 export type KeyRow = ApiKey & {
