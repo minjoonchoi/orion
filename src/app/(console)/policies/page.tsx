@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import { PageHeading } from "@/components/ui/page-heading";
 import { EmptyState } from "@/components/ui/empty-state";
-export const metadata: Metadata = { title: "서버 리소스" };
+import { navigation } from "@/config/navigation";
+export const metadata: Metadata = { title: "정책" };
 export default function Page() {
-  const item = {
-    label: "서버 리소스",
-    description: "서버 리소스 접근 제어를 관리합니다.",
-  };
+  const item = navigation.find((item) => item.href === "/policies")!;
   return (
     <>
       <PageHeading title={item.label} description={item.description} />

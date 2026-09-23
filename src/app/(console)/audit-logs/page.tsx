@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { PageHeading } from "@/components/ui/page-heading";
 import { EmptyState } from "@/components/ui/empty-state";
-import { navigation } from "@/config/navigation";
 export const metadata: Metadata = { title: "감사 로그" };
 export default function Page() {
-  const item = navigation.find((item) => item.href === "/audit-logs")!;
+  const item = {
+    label: "감사 로그",
+    description: "권한 변경과 접근 이력을 확인합니다.",
+  };
   return (
     <>
       <PageHeading title={item.label} description={item.description} />
