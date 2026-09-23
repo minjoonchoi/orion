@@ -126,6 +126,7 @@ test("row action menu, tabs and drawer support keyboard navigation", async ({
   await expect(trigger).toBeFocused();
   await page.getByRole("tab", { name: "목록과 작업" }).focus();
   await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "입력과 피드백" })).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(
     page.getByRole("tab", { name: "입력과 피드백" }),
