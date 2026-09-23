@@ -465,5 +465,17 @@
   "연결된 권한과 리소스를 확인하고 변경사항을 검토한 후 적용하세요.": "Inspect connected permissions and resources, then review and apply changes.",
   "예제 변경은 현재 브라우저 세션에서만 유지되며 서버 재시작 시 초기화됩니다.": "Demo changes are scoped to this browser session and reset when the server restarts.",
   "다시 불러오기": "Reload",
-  "변경사항을 적용했습니다": "Changes applied"
+  "변경사항을 적용했습니다": "Changes applied",
+  "하위 항목": "Children",
+  "탐색 보기": "Explorer view",
+  "계층 보기": "Column view",
+  "목록 보기": "List view",
+  "탐색 경로": "Navigation path",
+  "단계": "Level",
+  "상세 보기": "View details",
+  "항목을 선택하여 다음 단계로 탐색하세요": "Select an item to explore the next level",
+  "부여 내용 요약": "Assignment summary",
+  "부여받는 대상": "Recipients",
+  "선택한 역할과 접근 범위": "Selected roles and access scope",
+  "조직 멤버": "Organization member"
 }
