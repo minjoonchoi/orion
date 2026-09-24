@@ -190,7 +190,7 @@ export function ResourceSyncScreen() {
       {mode === "demo" && (
         <p className="sync-notice">
           {t(
-            "예제 모드: Argo·Cloud Config를 호출하지 않고 세션 데이터에 적용합니다.",
+            "예제 모드: Cloud Config를 호출하지 않고 세션 데이터에 적용합니다.",
           )}
         </p>
       )}
@@ -227,7 +227,8 @@ export function ResourceSyncScreen() {
                 {snapshot.environment} / {snapshot.region}
               </strong>
               <span>
-                Auto Sync: {snapshot.autoSync} · Config: {snapshot.cloudConfig}
+                {t("동기화 방식")}: {t("수동 적용")} · Config:{" "}
+                {snapshot.cloudConfig}
               </span>
             </section>
           </div>
@@ -257,9 +258,7 @@ export function ResourceSyncScreen() {
                       ? "정책이 연결된 리소스는 삭제할 수 없습니다."
                       : b.startsWith("PARENT_REFERENCE")
                         ? "하위 리소스의 상위 참조를 먼저 해결하세요."
-                        : b === "AUTO_SYNC_ENABLED"
-                          ? "Argo Auto Sync를 먼저 비활성화하세요."
-                          : "설정 준비 상태와 DB revision을 확인하세요.",
+                        : "설정 준비 상태와 DB revision을 확인하세요.",
                   )}{" "}
                   <code>{b}</code>
                 </p>

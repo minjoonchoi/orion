@@ -507,7 +507,6 @@
   "리소스 동기화": "Resource sync",
   "Git 정의서와 DB 차이를 검토하고 수동 동기화합니다.": "Review Git and database differences, then sync manually.",
   "Git 정의서와 현재 DB를 비교하고 검토한 버전을 수동 적용합니다.": "Compare Git definitions with the database and manually apply the reviewed revision.",
-  "예제 모드: Argo·Cloud Config를 호출하지 않고 세션 데이터에 적용합니다.": "Demo: changes apply to session data without calling Argo or Cloud Config.",
   "YAML 정의서가 유효하지 않습니다. 환경·리전과 참조를 확인하세요.": "Invalid YAML. Check scope and references.",
   "현재 DB": "Current database",
   "Cloud Config 후보": "Cloud Config candidate",
@@ -518,7 +517,6 @@
   "동기화 차단": "Sync blocked",
   "정책이 연결된 리소스는 삭제할 수 없습니다.": "Resources referenced by policies cannot be deleted.",
   "하위 리소스의 상위 참조를 먼저 해결하세요.": "Resolve child resource references first.",
-  "Argo Auto Sync를 먼저 비활성화하세요.": "Disable Argo Auto Sync first.",
   "설정 준비 상태와 DB revision을 확인하세요.": "Check configuration readiness and DB revision.",
   "리소스 검색": "Search resources",
   "변경 유형": "Change type",
@@ -562,5 +560,8 @@
   "failed": "Failed",
   "queued": "Queued",
   "running": "Running",
-  "하위 리소스": "Child resources"
+  "하위 리소스": "Child resources",
+  "예제 모드: Cloud Config를 호출하지 않고 세션 데이터에 적용합니다.": "Demo: changes apply to session data without calling Cloud Config.",
+  "동기화 방식": "Sync mode",
+  "수동 적용": "Manual apply"
 }

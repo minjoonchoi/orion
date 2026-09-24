@@ -110,7 +110,6 @@ async function snapshot(): Promise<Snapshot> {
     digest,
     environment: c.environment,
     region: c.region,
-    autoSync: "disabled",
     cloudConfig: "ready",
     yaml,
     graph: snapshotSchema.parse({
@@ -120,7 +119,6 @@ async function snapshot(): Promise<Snapshot> {
       digest,
       environment: c.environment,
       region: c.region,
-      autoSync: "disabled",
       cloudConfig: "ready",
       yaml,
       graph,

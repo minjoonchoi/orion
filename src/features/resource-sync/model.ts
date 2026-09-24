@@ -44,7 +44,6 @@ export const snapshotSchema = object({
   digest: string,
   environment: string,
   region: string,
-  autoSync: enumeration(["disabled", "enabled"] as const),
   cloudConfig: enumeration(["ready", "pending", "failed"] as const),
   yaml: string,
   graph: graphSchema,
@@ -181,7 +180,6 @@ export function diff(snapshot: Snapshot) {
     if (r.after.state === "present") desired.push(r.after);
   }
   const blockers: string[] = [];
-  if (snapshot.autoSync !== "disabled") blockers.push("AUTO_SYNC_ENABLED");
   if (snapshot.cloudConfig !== "ready") blockers.push("CONFIG_NOT_READY");
   for (const row of rows) {
     if (

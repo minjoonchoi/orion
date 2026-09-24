@@ -69,4 +69,4 @@ LSB는 사용자·조직, 역할·정책, 리소스, API 접근, 결재의 5개 
 
 ## 리소스 GitOps
 
-리소스 정의 수정은 `/resource-sync`에서 Git 후보와 DB diff → Sync 영향도 검토 → 명시적 적용으로 진행합니다. [YAML 예제](config/resources/orion-resources.yaml), [Cloud Config·Argo·Orion API 계약](docs/resource-gitops.md)을 참고하세요. `npm run validate:resources`로 스키마와 Argo payload 일치를 검사합니다. 예제 모드는 세션 DB 적용, 운영 모드는 별도 API/Argo importer 연동이 필요합니다.
+리소스 정의 수정은 `/resources`에서 Git/Cloud Config 후보와 DB diff → Sync 영향도 검토 → 명시적 적용으로 진행합니다. [YAML 예제](config/resources/orion-resources.yaml), [Cloud Config·Orion API 계약](docs/resource-gitops.md)을 참고하세요. `npm run validate:resources`로 원본 YAML 스키마를 검사합니다. 예제 모드는 세션 DB 적용이며, 운영 모드는 Orion 백엔드의 Cloud Config 조회·검증·DB 트랜잭션 구현이 필요합니다. 외부 배포 도구는 사용하지 않습니다.

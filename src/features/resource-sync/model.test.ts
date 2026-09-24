@@ -26,7 +26,6 @@ function snapshot(items: Item[]): Snapshot {
     digest: "hash",
     environment: "test",
     region: "local",
-    autoSync: "disabled",
     cloudConfig: "ready",
     yaml: stringify({
       apiVersion: "orion.io/v1alpha1",
@@ -78,7 +77,7 @@ test("policy references block delete atomically", () => {
   assert.throws(() => applySnapshot(s));
   assert.equal(s.graph.resources.length, 1);
 });
-test("parents, automatic sync and cloud readiness block apply", () => {
+test("parents and cloud readiness block apply", () => {
   const s = snapshot([
     {
       ...item,
@@ -90,9 +89,8 @@ test("parents, automatic sync and cloud readiness block apply", () => {
     },
   ]);
   assert.match(diff(s).blockers[0], /PARENT_REFERENCE/);
-  s.autoSync = "enabled";
   s.cloudConfig = "pending";
-  assert.equal(diff(s).blockers.length, 3);
+  assert.equal(diff(s).blockers.length, 2);
 });
 test("update is idempotent in diff and preserves stable id", () => {
   const s = snapshot([{ ...item, name: "Renamed" }]);
