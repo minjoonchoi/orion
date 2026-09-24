@@ -481,3 +481,91 @@
   max-height: 65vh;
   overflow: auto;
 }
+.authorization-steps {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 22px;
+  gap: 24px;
+  border-bottom: 1px solid #d5dcd5;
+}
+.authorization-steps li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  color: #657269;
+}
+.authorization-steps li[aria-current] {
+  color: #244c36;
+  border-bottom: 3px solid #315c49;
+  font-weight: 700;
+}
+.authorization-steps li span {
+  border-radius: 50%;
+  padding: 3px 9px;
+  background: #eef2ec;
+}
+.selection-stage {
+  max-height: 53vh;
+  overflow: auto;
+}
+.selection-stage .access-resource-editor {
+  display: block;
+  max-width: 700px;
+}
+.selection-stage .access-resource-fields {
+  position: static;
+  margin: 0;
+}
+.access-review .assignment-summary {
+  max-height: none;
+  overflow: visible;
+  background: white;
+}
+.access-review > .access-footer,
+.access-fieldset > .access-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.review-resource-details {
+  margin: 12px 0;
+}
+.review-connections {
+  margin-top: 20px;
+}
+.review-table-scroll {
+  max-height: 300px;
+  overflow: auto;
+  border: 1px solid #d5dcd5;
+  border-radius: 6px;
+}
+.review-connections table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+.review-connections th,
+.review-connections td {
+  padding: 12px;
+  border-bottom: 1px solid #e0e5df;
+}
+.review-connections th {
+  background: #f5f7f3;
+  position: sticky;
+  top: 0;
+}
+.review-removed {
+  color: #753b2d;
+  background: #f9eeea;
+}
+.review-added {
+  color: #244c36;
+  background: #e5efe8;
+}
+.review-connections td div {
+  padding: 4px;
+  margin: 2px 0;
+}

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@/components/ui/dialog";
@@ -106,24 +106,6 @@ function roleNodes(
     }),
   }));
 }
-function RolePreview({
-  graph,
-  role,
-}: {
-  graph: Graph;
-  role: Graph["roles"][number];
-}) {
-  const { t } = useI18n();
-  return (
-    <details className="access-preview">
-      <summary>
-        {t("연결 정책과 리소스")} · {role.bindings.length}
-      </summary>
-      <Explorer nodes={roleNodes(graph, [role], t)[0].children ?? []} />
-    </details>
-  );
-}
-
 function ImpactExplorer({
   graph,
   kind,
@@ -315,6 +297,137 @@ function ImpactExplorer({
     </section>
   );
 }
+function ReviewConnections({
+  graph,
+  change,
+}: {
+  graph: Graph;
+  change: Change;
+}) {
+  const { t } = useI18n();
+  if (change.type === "resource") return null;
+  const next = applyChange(graph, change);
+  const changedRoles = graph.roles.filter((r) => {
+    const after = next.roles.find((a) => a.id === r.id)!;
+    return (
+      JSON.stringify(r) !== JSON.stringify(after) ||
+      (change.type === "policy" &&
+        r.bindings.some((b) => b.policyId === change.policyId))
+    );
+  });
+  const roleIds = new Set(changedRoles.map((r) => r.id));
+  const paths = (g: Graph, userId: string) =>
+    g.roles
+      .filter((r) => roleIds.has(r.id))
+      .flatMap((r) => [
+        ...(r.userIds.includes(userId)
+          ? [{ key: `${r.id}:direct`, name: r.name, via: t("직접 연결") }]
+          : []),
+        ...g.organizations
+          .filter(
+            (o) =>
+              r.organizationIds.includes(o.id) && o.memberIds.includes(userId),
+          )
+          .map((o) => ({ key: `${r.id}:${o.id}`, name: r.name, via: o.name })),
+      ]);
+  const people = graph.users
+    .map((u) => ({
+      ...u,
+      before: paths(graph, u.id),
+      after: paths(next, u.id),
+    }))
+    .filter(
+      (u) =>
+        (u.before.length || u.after.length) &&
+        (change.type === "bindings" ||
+          change.type === "policy" ||
+          JSON.stringify(u.before) !== JSON.stringify(u.after)),
+    );
+  return (
+    <section className="review-connections">
+      <h3>
+        {t("변경 역할에 연결된 사용자")} · {people.length}
+      </h3>
+      <p className="muted">
+        {t(
+          "변경 전후 역할 연결 경로입니다. 정책 효과와 만료에 따른 최종 접근 판정은 서버에서 수행합니다.",
+        )}
+      </p>
+      {change.type === "bindings" && (
+        <div className="review-binding-diff">
+          <strong>{t("정책")}</strong>
+          <p>
+            {graph.roles
+              .find((r) => r.id === change.roleId)!
+              .bindings.map(
+                (b) => graph.policies.find((p) => p.id === b.policyId)?.name,
+              )
+              .join(", ") || t("없음")}{" "}
+            →{" "}
+            {change.bindings
+              .map((b) => graph.policies.find((p) => p.id === b.policyId)?.name)
+              .join(", ") || t("없음")}
+          </p>
+        </div>
+      )}
+      <div className="review-table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>{t("사용자")}</th>
+              <th>{t("변경 전")}</th>
+              <th>{t("변경 후")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {people.map((u) => (
+              <tr key={u.id}>
+                <td>
+                  <Link href={`/users/${u.id}`}>{u.name}</Link>
+                </td>
+                <td>
+                  {u.before.map((p) => (
+                    <div
+                      key={p.key}
+                      className={
+                        u.after.some((a) => a.key === p.key)
+                          ? ""
+                          : "review-removed"
+                      }
+                    >
+                      {p.name} · {p.via}
+                      {!u.after.some((a) => a.key === p.key) &&
+                        ` (${t("해제")})`}
+                    </div>
+                  ))}
+                  {!u.before.length && t("없음")}
+                </td>
+                <td>
+                  {u.after.map((p) => (
+                    <div
+                      key={p.key}
+                      className={
+                        u.before.some((a) => a.key === p.key)
+                          ? ""
+                          : "review-added"
+                      }
+                    >
+                      {p.name} · {p.via}
+                      {!u.before.some((a) => a.key === p.key) &&
+                        ` (${t("추가")})`}
+                    </div>
+                  ))}
+                  {!u.after.length && t("없음")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {!people.length && <p>{t("연결된 항목이 없습니다")}</p>}
+      </div>
+    </section>
+  );
+}
 function Editor({
   graph,
   kind,
@@ -329,6 +442,7 @@ function Editor({
   busy: boolean;
 }) {
   const { t } = useI18n();
+  const stepTitle = useRef<HTMLHeadingElement>(null);
   const role = graph.roles.find((r) => r.id === id);
   const policy = graph.policies.find((p) => p.id === id);
   const resource = graph.resources.find((r) => r.kind === kind && r.id === id);
@@ -356,6 +470,9 @@ function Editor({
   const [path, setPath] = useState(resource?.path ?? "");
   const [method, setMethod] = useState(resource?.method ?? "GET");
   const [review, setReview] = useState<Change | null>(null);
+  useEffect(() => {
+    if (review) stepTitle.current?.focus();
+  }, [review]);
   const [invalid, setInvalid] = useState(false);
   const resourceFocus = resourceKinds.includes(kind as ResourceKind);
   const change = (): Change =>
@@ -382,7 +499,7 @@ function Editor({
     refs.some((ref) => ref.kind === r.kind && ref.id === r.id);
   const selectedRoleItems =
     kind === "roles"
-      ? [{ ...role!, bindings }]
+      ? [{ ...role!, bindings: tab === "bindings" ? bindings : role!.bindings }]
       : graph.roles.filter((r) => selectedRoles.includes(r.id));
   const recipients =
     kind === "users" || kind === "organizations"
@@ -391,10 +508,20 @@ function Editor({
           .map((item) => ({ ...item, type: kind }))
       : [
           ...graph.users
-            .filter((u) => userIds.includes(u.id))
+            .filter((u) =>
+              (kind === "roles" && tab === "bindings"
+                ? role!.userIds
+                : userIds
+              ).includes(u.id),
+            )
             .map((u) => ({ ...u, type: "users" })),
           ...graph.organizations
-            .filter((o) => organizationIds.includes(o.id))
+            .filter((o) =>
+              (kind === "roles" && tab === "bindings"
+                ? role!.organizationIds
+                : organizationIds
+              ).includes(o.id),
+            )
             .map((o) => ({ ...o, type: "organizations" })),
         ];
   const beforeItems =
@@ -473,6 +600,37 @@ function Editor({
       <aside className="assignment-summary" aria-label={t("부여 내용 요약")}>
         <h3>{t("부여 내용 요약")}</h3>
         {delta}
+        {!!removed.length && (
+          <details className="review-resource-details">
+            <summary>{t("해제되는 연결의 리소스 확인")}</summary>
+            <Explorer
+              nodes={
+                kind === "roles" && tab === "bindings"
+                  ? roleNodes(
+                      graph,
+                      [
+                        {
+                          ...role!,
+                          bindings: role!.bindings.filter((b) =>
+                            removed.some((r) => r.id === b.policyId),
+                          ),
+                        },
+                      ],
+                      t,
+                    )
+                  : roleNodes(
+                      graph,
+                      kind === "roles"
+                        ? [role!]
+                        : graph.roles.filter((r) =>
+                            removed.some((item) => item.id === r.id),
+                          ),
+                      t,
+                    )
+              }
+            />
+          </details>
+        )}
         <div className="assignment-recipients">
           <strong>
             {t("부여받는 대상")} · {recipients.length}
@@ -489,7 +647,10 @@ function Editor({
         <strong>
           {t("선택한 역할과 접근 범위")} · {selectedRoleItems.length}
         </strong>
-        <Explorer nodes={roleNodes(graph, selectedRoleItems, t)} />
+        <details className="review-resource-details">
+          <summary>{t("변경 후 정책·리소스 확인")}</summary>
+          <Explorer nodes={roleNodes(graph, selectedRoleItems, t)} />
+        </details>
       </aside>
     ) : kind === "policies" ? (
       <aside className="assignment-summary" aria-label={t("부여 내용 요약")}>
@@ -510,6 +671,25 @@ function Editor({
         />
       </aside>
     ) : null;
+  const steps = (
+    <ol className="authorization-steps" aria-label={t("진행 단계")}>
+      <li aria-current={!review ? "step" : undefined}>
+        <span>1</span>
+        {t("대상 선택·수정")}
+      </li>
+      <li aria-current={review ? "step" : undefined}>
+        <span>2</span>
+        {t("영향도 검토")}
+      </li>
+    </ol>
+  );
+  const contextName =
+    resource?.name ??
+    role?.name ??
+    policy?.name ??
+    (kind === "users" ? graph.users : graph.organizations).find(
+      (item) => item.id === id,
+    )?.name;
   if (review) {
     const before =
       kind === "roles"
@@ -519,76 +699,58 @@ function Editor({
           : null;
     return (
       <section className="access-review">
-        <h3>{t("변경사항 확인")}</h3>
+        {steps}
+        <h3 ref={stepTitle} tabIndex={-1}>
+          {t("변경사항 확인")} · {contextName}
+        </h3>
         {assignmentSummary}
+        <ReviewConnections graph={graph} change={review} />
         <p>
           {t(
             "저장하면 연결과 접근 범위에 반영됩니다. 대상과 만료 시점을 확인해 주세요.",
           )}
         </p>
-        {review.type === "subjectRoles" && (
-          <>
-            <p>
-              {t("역할")}:{" "}
-              {graph.roles
-                .filter((r) => selectedRoles.includes(r.id))
-                .map((r) => r.name)
-                .join(", ") || t("없음")}
-            </p>
-            <p>
-              {t("제거되는 역할")}:{" "}
-              {graph.roles
+        {review.type === "bindings" &&
+          bindings.some(
+            (b) =>
+              role!.bindings.find((old) => old.policyId === b.policyId)
+                ?.expiresAt !== b.expiresAt,
+          ) && (
+            <section>
+              <h3>{t("정책 만료 변경")}</h3>
+              {bindings
                 .filter(
-                  (r) =>
-                    (kind === "users" ? r.userIds : r.organizationIds).includes(
-                      id,
-                    ) && !selectedRoles.includes(r.id),
+                  (b) =>
+                    role!.bindings.find((old) => old.policyId === b.policyId)
+                      ?.expiresAt !== b.expiresAt,
                 )
-                .map((r) => r.name)
-                .join(", ") || t("없음")}
-            </p>
-          </>
-        )}
-        {review.type === "grants" && (
-          <>
-            <p>
-              {t("사용자")}:{" "}
-              {graph.users
-                .filter((u) => userIds.includes(u.id))
-                .map((u) => u.name)
-                .join(", ") || t("없음")}
-            </p>
-            <p>
-              {t("조직")}:{" "}
-              {graph.organizations
-                .filter((o) => organizationIds.includes(o.id))
-                .map((o) => o.name)
-                .join(", ") || t("없음")}
-            </p>
-            <p>
-              {t("기존 연결")}:{" "}
-              {role!.userIds.length + role!.organizationIds.length} →{" "}
-              {userIds.length + organizationIds.length}
-            </p>
-          </>
-        )}
-        {review.type === "bindings" && (
-          <>
-            <p>
-              {t("기존 연결")}: {role!.bindings.length} → {bindings.length}
-            </p>
-            {bindings.map((b) => (
-              <p key={b.policyId}>
-                {graph.policies.find((p) => p.id === b.policyId)?.name} ·{" "}
-                {b.expiresAt ? (
-                  <DateValue value={b.expiresAt} time />
-                ) : (
-                  t("무기한")
-                )}
-              </p>
-            ))}
-          </>
-        )}
+                .map((b) => {
+                  const old = role!.bindings.find(
+                    (v) => v.policyId === b.policyId,
+                  );
+                  return (
+                    <p key={b.policyId}>
+                      {graph.policies.find((p) => p.id === b.policyId)?.name} ·{" "}
+                      {old ? (
+                        old.expiresAt ? (
+                          <DateValue value={old.expiresAt} time />
+                        ) : (
+                          t("무기한")
+                        )
+                      ) : (
+                        t("없음")
+                      )}{" "}
+                      →{" "}
+                      {b.expiresAt ? (
+                        <DateValue value={b.expiresAt} time />
+                      ) : (
+                        t("무기한")
+                      )}
+                    </p>
+                  );
+                })}
+            </section>
+          )}
         {review.type === "policy" && (
           <>
             <p>
@@ -599,10 +761,6 @@ function Editor({
             <p>
               {t("기존 연결")}: {policy!.resources.length} → {refs.length}
             </p>
-            <ResourceList
-              graph={graph}
-              policy={{ ...policy!, effect, resources: refs }}
-            />
           </>
         )}
         {review.type === "resource" && (
@@ -610,15 +768,19 @@ function Editor({
             <p>
               {resource!.name} → <strong>{name}</strong>
             </p>
-            <p>{description}</p>
-            <code>
-              {method} {path}
-            </code>
+            <p>
+              {resource!.description} → {description}
+            </p>
+            {(resource!.path || path) && (
+              <code>
+                {resource!.method} {resource!.path} → {method} {path}
+              </code>
+            )}
             <ImpactExplorer graph={graph} kind={kind as ResourceKind} id={id} />
           </>
         )}
         {before && <p className="muted">{before.name}</p>}
-        <div className="ui-actions">
+        <div className="ui-actions access-footer">
           <Button
             variant="secondary"
             disabled={busy}
@@ -647,8 +809,13 @@ function Editor({
         }
       }}
     >
+      {steps}
+      <h3>{contextName}</h3>
+      <p className="muted">
+        {t("대상을 선택한 뒤 다음 단계에서 영향 범위를 확인하세요.")}
+      </p>
       <fieldset disabled={busy} className="access-fieldset">
-        <div className={assignmentSummary ? "assignment-layout" : ""}>
+        <div className="selection-stage">
           <div className="assignment-picker">
             {kind === "roles" && (
               <div className="ui-actions">
@@ -688,7 +855,7 @@ function Editor({
               <>
                 <p>
                   {t(
-                    "직접 부여할 역할을 선택하세요. 각 역할의 정책과 리소스를 확인할 수 있습니다.",
+                    "직접 부여할 역할을 선택하세요. 정책과 리소스는 다음 단계에서 검토합니다.",
                   )}
                 </p>
                 {graph.roles.filter(matches).map((r) => (
@@ -702,14 +869,12 @@ function Editor({
                       <strong>{r.name}</strong>
                     </label>
                     <p>{r.description}</p>
-                    <RolePreview graph={graph} role={r} />
                   </article>
                 ))}
               </>
             )}
             {kind === "roles" && tab === "grants" && (
               <>
-                <RolePreview graph={graph} role={role!} />
                 <div className="access-columns">
                   {(["users", "organizations"] as const).map((type) => (
                     <section key={type}>
@@ -829,10 +994,6 @@ function Editor({
                           )}
                         </div>
                       )}
-                      <details>
-                        <summary>{t("연결 리소스")}</summary>
-                        <ResourceList graph={graph} policy={p} />
-                      </details>
                     </article>
                   );
                 })}
@@ -919,15 +1080,6 @@ function Editor({
                       </span>
                     </label>
                   ))}
-                <details open>
-                  <summary>
-                    {t("선택한 리소스")} · {refs.length}
-                  </summary>
-                  <ResourceList
-                    graph={graph}
-                    policy={{ ...policy!, resources: refs, effect }}
-                  />
-                </details>
               </>
             )}
             {resourceFocus && (
@@ -982,18 +1134,13 @@ function Editor({
                     </label>
                   )}
                 </div>
-                <ImpactExplorer
-                  graph={graph}
-                  kind={kind as ResourceKind}
-                  id={id}
-                />
               </div>
             )}
           </div>
-          {assignmentSummary}
         </div>
         {invalid && <p role="alert">{t(errorLabels.INVALID_CHANGE)}</p>}
         <div className="access-footer">
+          <span>{t("1 / 2 단계")}</span>
           <Button type="submit">{t("변경사항 검토")}</Button>
         </div>
       </fieldset>

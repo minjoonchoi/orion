@@ -490,5 +490,18 @@
   "정책·역할 연결 목록": "Policy and role connections",
   "연결 변경사항": "Connection changes",
   "해제": "Remove",
-  "연결 변경 기준입니다. 다른 경로의 접근 유지 여부는 서버 판정이 필요합니다.": "These are connection changes. Effective access through other paths requires server evaluation."
+  "연결 변경 기준입니다. 다른 경로의 접근 유지 여부는 서버 판정이 필요합니다.": "These are connection changes. Effective access through other paths requires server evaluation.",
+  "진행 단계": "Progress",
+  "대상 선택·수정": "Select and edit",
+  "영향도 검토": "Review impact",
+  "대상을 선택한 뒤 다음 단계에서 영향 범위를 확인하세요.": "Select targets, then review impact in the next step.",
+  "직접 부여할 역할을 선택하세요. 정책과 리소스는 다음 단계에서 검토합니다.": "Select roles to assign directly. Review policies and resources in the next step.",
+  "1 / 2 단계": "Step 1 of 2",
+  "변경 후 정책·리소스 확인": "Inspect policies and resources after changes",
+  "해제되는 연결의 리소스 확인": "Inspect resources of removed connections",
+  "변경 역할에 연결된 사용자": "Users connected to changed roles",
+  "변경 전후 역할 연결 경로입니다. 정책 효과와 만료에 따른 최종 접근 판정은 서버에서 수행합니다.": "Role connection paths before and after changes. The server evaluates effective access using policy effects and expiry.",
+  "변경 전": "Before",
+  "변경 후": "After",
+  "정책 만료 변경": "Policy expiry changes"
 }

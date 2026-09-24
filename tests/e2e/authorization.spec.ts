@@ -9,9 +9,14 @@ async function open(page: Page, path: string, label: string) {
 }
 async function save(page: Page) {
   const dialog = page.getByRole("dialog");
-  await dialog
-    .getByRole("button", { name: "변경사항 검토", exact: true })
-    .click();
+  if (
+    await dialog
+      .getByRole("button", { name: "변경사항 검토", exact: true })
+      .count()
+  )
+    await dialog
+      .getByRole("button", { name: "변경사항 검토", exact: true })
+      .click();
   await expect(
     dialog.getByRole("heading", { name: "변경사항 확인" }),
   ).toBeVisible();
@@ -27,17 +32,20 @@ test("assign roles with policy/resource preview and reflect changes in user and 
   await dialog
     .getByRole("checkbox", { name: "플랫폼 관리자", exact: true })
     .check();
+  await expect(dialog.locator(".assignment-summary")).toHaveCount(0);
   await dialog
-    .locator(".access-card")
-    .filter({ hasText: "플랫폼 관리자" })
-    .getByText("연결 정책과 리소스", { exact: false })
+    .getByRole("button", { name: "변경사항 검토", exact: true })
     .click();
   const summary = dialog.getByRole("complementary", { name: "부여 내용 요약" });
   await expect(summary).toContainText("부여받는 대상 · 1");
-  await expect(summary).toContainText("플랫폼 조회");
+  await summary.getByText("변경 후 정책·리소스 확인", { exact: true }).click();
   await expect(summary).toContainText("Orion");
-  await dialog.getByLabel("이름 또는 식별자로 검색").fill("no-match");
-  await expect(summary).toContainText("플랫폼 관리자");
+  await dialog
+    .getByRole("button", { name: "수정으로 돌아가기", exact: true })
+    .click();
+  await expect(
+    dialog.getByRole("checkbox", { name: "플랫폼 관리자", exact: true }),
+  ).toBeChecked();
   await save(page);
   await dialog.getByRole("button", { name: "닫기", exact: true }).click();
   await page.getByRole("tab", { name: "역할 (1)", exact: true }).click();
@@ -96,6 +104,10 @@ test("one deny policy can link resources of all four types and expose indirect i
   await save(page);
   await dialog.getByRole("button", { name: "닫기", exact: true }).click();
   dialog = await open(page, "/pages/page-users", "리소스 수정과 영향 범위");
+  await dialog.getByLabel("이름", { exact: true }).fill("사용자 관리 수정");
+  await dialog
+    .getByRole("button", { name: "변경사항 검토", exact: true })
+    .click();
   const explorer = dialog.locator(".access-impact");
   await dialog
     .locator(".impact-person")
@@ -109,7 +121,7 @@ test("one deny policy can link resources of all four types and expose indirect i
   await dialog.getByLabel("관계 검색").fill("no-matching-path");
   await expect(explorer).toContainText("연결된 항목이 없습니다");
   await dialog.getByLabel("관계 검색").fill("");
-  await dialog.getByLabel("이름", { exact: true }).fill("사용자 관리 수정");
+
   await save(page);
   await dialog.getByRole("button", { name: "닫기", exact: true }).click();
   await expect(
@@ -154,6 +166,9 @@ test("English impact dialog supports keyboard, mobile and accessible form contro
     "/services/svc-orion",
     "Edit resource and explore impact",
   );
+  await dialog
+    .getByRole("button", { name: "Review changes", exact: true })
+    .click();
   await expect(
     dialog.getByRole("heading", { name: "Explore impact", exact: true }),
   ).toBeVisible();
@@ -179,18 +194,24 @@ test("list explorer exposes removal and supports collapse", async ({
     .getByRole("button", { name: "정책 부여와 만료", exact: true })
     .click();
   const summary = dialog.getByRole("complementary", { name: "부여 내용 요약" });
-  await expect(summary).toContainText("플랫폼 조회");
+  await expect(summary).toHaveCount(0);
   await dialog
     .locator(".access-card")
     .filter({ hasText: "플랫폼 조회" })
     .getByRole("checkbox")
     .first()
     .uncheck();
+  await dialog
+    .getByRole("button", { name: "변경사항 검토", exact: true })
+    .click();
+  await summary.getByText("변경 후 정책·리소스 확인", { exact: true }).click();
   await expect(summary.locator(".delta-remove")).toContainText("플랫폼 조회");
   await summary.getByRole("button", { name: "모두 접기", exact: true }).click();
-  await expect(summary.locator(".explorer-row")).toHaveCount(1);
+  await expect(summary.locator(".explorer-row:visible")).toHaveCount(1);
   await summary
     .getByRole("button", { name: "모두 펼치기", exact: true })
     .click();
-  await expect(summary.locator(".explorer-list")).toContainText("구성원 조회");
+  await expect(summary.locator(".explorer-list:visible")).toContainText(
+    "구성원 조회",
+  );
 });
