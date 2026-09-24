@@ -151,22 +151,43 @@ function ImpactExplorer({
       p.roles.flatMap((r) => r.organizations.map((o) => o.id)),
     ),
   );
-  const filtered = paths.filter((p) =>
-    [
-      p.policy.name,
-      ...p.roles.flatMap((r) => [
-        r.role.name,
-        ...r.users.map((u) => u.name),
-        ...r.organizations.flatMap((o) => [
-          o.name,
-          ...o.members.map((u) => u.name),
+  const people = graph.users
+    .map((user) => ({
+      user,
+      routes: paths.flatMap((p) =>
+        p.roles.flatMap((r) => [
+          ...(r.users.some((u) => u.id === user.id)
+            ? [
+                {
+                  policy: p.policy,
+                  role: r.role,
+                  via: t("직접 부여 사용자"),
+                  expired: r.expired,
+                },
+              ]
+            : []),
+          ...r.organizations
+            .filter((o) => o.members.some((u) => u.id === user.id))
+            .map((o) => ({
+              policy: p.policy,
+              role: r.role,
+              via: o.name,
+              expired: r.expired,
+            })),
         ]),
-      ]),
-    ]
-      .join(" ")
-      .toLowerCase()
-      .includes(query.toLowerCase()),
-  );
+      ),
+    }))
+    .filter(
+      (row) =>
+        row.routes.length &&
+        [
+          row.user.name,
+          ...row.routes.flatMap((r) => [r.policy.name, r.role.name, r.via]),
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(query.toLowerCase()),
+    );
   return (
     <section className="access-impact" aria-label={t("영향 범위 탐색")}>
       <h3>{t("영향 범위 탐색")}</h3>
@@ -207,46 +228,90 @@ function ImpactExplorer({
           "사용자 수는 중복을 제외합니다. 서비스·워크스페이스의 하위 리소스 권한을 자동으로 포함하지 않습니다.",
         )}
       </p>
-      <Explorer
-        nodes={filtered.map((p) => ({
-          id: p.policy.id,
-          name: p.policy.name,
-          href: `/policies/${p.policy.id}`,
-          detail: t(p.policy.effect === "allow" ? "허용" : "거부"),
-          children: p.roles.map((r) => ({
-            id: r.role.id,
-            name: r.role.name,
-            href: `/roles/${r.role.id}`,
-            detail: r.expired ? (
-              t("만료")
-            ) : r.binding.expiresAt ? (
-              <DateValue value={r.binding.expiresAt} time />
-            ) : (
-              t("무기한")
-            ),
-            children: [
-              ...r.users.map((u) => ({
-                id: `user-${u.id}`,
-                name: u.name,
-                href: `/users/${u.id}`,
-                detail: t("직접 부여 사용자"),
-              })),
-              ...r.organizations.map((o) => ({
-                id: `org-${o.id}`,
-                name: o.name,
-                href: `/organizations/${o.id}`,
-                detail: t("조직을 통한 사용자"),
-                children: o.members.map((u) => ({
-                  id: u.id,
-                  name: u.name,
-                  href: `/users/${u.id}`,
-                  detail: t("조직 멤버"),
-                })),
-              })),
-            ],
-          })),
-        }))}
-      />
+      <h4>
+        {t("연결된 사용자")} · {people.length}
+      </h4>
+      <p className="muted">
+        {t(
+          "사용자별 연결 경로입니다. 연결 수는 실제 접근 허용 여부를 의미하지 않습니다.",
+        )}
+      </p>
+      <div className="impact-people">
+        {people.map(({ user, routes }) => (
+          <details className="impact-person" key={user.id}>
+            <summary>
+              <span>{user.name}</span>
+              <span className="impact-route-count">
+                {t("연결 경로")} · {routes.length}
+              </span>
+              <span className="access-effect">
+                {routes.some((r) => r.via === t("직접 부여 사용자"))
+                  ? t("직접 연결")
+                  : t("조직 경유")}
+              </span>
+              {routes.some((r) => r.policy.effect === "deny") && (
+                <span className="access-effect deny">
+                  {t("거부 정책 포함")}
+                </span>
+              )}
+            </summary>
+            <Link href={`/users/${user.id}`}>{t("사용자 상세")}</Link>
+            <table>
+              <thead>
+                <tr>
+                  <th>{t("정책")}</th>
+                  <th>{t("역할")}</th>
+                  <th>{t("연결 경로")}</th>
+                  <th>{t("정책 효과")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {routes.map((r, i) => (
+                  <tr key={i}>
+                    <td>
+                      <Link href={`/policies/${r.policy.id}`}>
+                        {r.policy.name}
+                      </Link>
+                    </td>
+                    <td>
+                      <Link href={`/roles/${r.role.id}`}>{r.role.name}</Link>
+                    </td>
+                    <td>
+                      {r.via}
+                      {r.expired && ` · ${t("만료")}`}
+                    </td>
+                    <td>
+                      <span className={`access-effect ${r.policy.effect}`}>
+                        {t(r.policy.effect === "allow" ? "허용" : "거부")}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </details>
+        ))}
+        {!people.length && <p>{t("연결된 항목이 없습니다")}</p>}
+      </div>
+      <details className="impact-policy-list">
+        <summary>
+          {t("정책·역할 연결 목록")} · {paths.length}
+        </summary>
+        <Explorer
+          nodes={paths.map((p) => ({
+            id: p.policy.id,
+            name: p.policy.name,
+            href: `/policies/${p.policy.id}`,
+            detail: t(p.policy.effect === "allow" ? "허용" : "거부"),
+            children: p.roles.map((r) => ({
+              id: r.role.id,
+              name: r.role.name,
+              href: `/roles/${r.role.id}`,
+              detail: r.expired ? t("만료") : t("역할"),
+            })),
+          }))}
+        />
+      </details>
     </section>
   );
 }
@@ -332,10 +397,82 @@ function Editor({
             .filter((o) => organizationIds.includes(o.id))
             .map((o) => ({ ...o, type: "organizations" })),
         ];
+  const beforeItems =
+    kind === "users" || kind === "organizations"
+      ? graph.roles
+          .filter((r) =>
+            (kind === "users" ? r.userIds : r.organizationIds).includes(id),
+          )
+          .map((r) => ({ id: r.id, name: r.name }))
+      : kind === "roles"
+        ? tab === "bindings"
+          ? graph.policies.filter((p) =>
+              role!.bindings.some((b) => b.policyId === p.id),
+            )
+          : [
+              ...graph.users.filter((u) => role!.userIds.includes(u.id)),
+              ...graph.organizations.filter((o) =>
+                role!.organizationIds.includes(o.id),
+              ),
+            ]
+        : kind === "policies"
+          ? graph.resources
+              .filter((r) =>
+                policy!.resources.some(
+                  (ref) => ref.id === r.id && ref.kind === r.kind,
+                ),
+              )
+              .map((r) => ({ id: `${r.kind}:${r.id}`, name: r.name }))
+          : [];
+  const afterItems =
+    kind === "users" || kind === "organizations"
+      ? selectedRoleItems
+      : kind === "roles"
+        ? tab === "bindings"
+          ? graph.policies.filter((p) =>
+              bindings.some((b) => b.policyId === p.id),
+            )
+          : recipients
+        : kind === "policies"
+          ? graph.resources
+              .filter((r) =>
+                refs.some((ref) => ref.id === r.id && ref.kind === r.kind),
+              )
+              .map((r) => ({ id: `${r.kind}:${r.id}`, name: r.name }))
+          : [];
+  const added = afterItems.filter(
+    (a) => !beforeItems.some((b) => b.id === a.id),
+  );
+  const removed = beforeItems.filter(
+    (b) => !afterItems.some((a) => a.id === b.id),
+  );
+  const delta = (
+    <div className="assignment-delta">
+      <h4>{t("연결 변경사항")}</h4>
+      <div className="delta-add">
+        <strong>
+          {t("추가")} · {added.length}
+        </strong>
+        <p>{added.map((a) => a.name).join(", ") || t("없음")}</p>
+      </div>
+      <div className="delta-remove">
+        <strong>
+          {t("해제")} · {removed.length}
+        </strong>
+        <p>{removed.map((a) => a.name).join(", ") || t("없음")}</p>
+      </div>
+      <p className="muted">
+        {t(
+          "연결 변경 기준입니다. 다른 경로의 접근 유지 여부는 서버 판정이 필요합니다.",
+        )}
+      </p>
+    </div>
+  );
   const assignmentSummary =
     !resourceFocus && kind !== "policies" ? (
       <aside className="assignment-summary" aria-label={t("부여 내용 요약")}>
         <h3>{t("부여 내용 요약")}</h3>
+        {delta}
         <div className="assignment-recipients">
           <strong>
             {t("부여받는 대상")} · {recipients.length}
@@ -357,6 +494,7 @@ function Editor({
     ) : kind === "policies" ? (
       <aside className="assignment-summary" aria-label={t("부여 내용 요약")}>
         <h3>{t("부여 내용 요약")}</h3>
+        {delta}
         <p>
           {t("정책")} · {policy!.name}
         </p>

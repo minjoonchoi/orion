@@ -386,3 +386,98 @@
     flex-basis: 180px;
   }
 }
+.explorer-toolbar strong {
+  margin-right: auto;
+  align-self: center;
+  font-size: 13px;
+}
+.explorer-toolbar button {
+  font-size: 12px;
+}
+.explorer-depth-0 {
+  background: #eef2ec;
+  font-weight: 600;
+}
+.explorer-depth-1 {
+  background: #f7f8f5;
+}
+.explorer-count {
+  border: 1px solid #cbd7cc;
+  border-radius: 12px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+.impact-people {
+  max-height: 370px;
+  overflow: auto;
+  border: 1px solid #d5dcd5;
+  border-radius: 8px;
+}
+.impact-person {
+  border-bottom: 1px solid #d5dcd5;
+  padding: 6px 14px;
+}
+.impact-person summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 42px;
+  flex-wrap: wrap;
+}
+.impact-person summary::before {
+  content: "▸";
+}
+.impact-person[open] summary::before {
+  content: "▾";
+}
+.impact-route-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: #56645c;
+}
+.impact-person table {
+  width: 100%;
+  text-align: left;
+  font-size: 12px;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+.impact-person th,
+.impact-person td {
+  padding: 10px 6px;
+  border-bottom: 1px solid #e0e5df;
+  overflow-wrap: anywhere;
+}
+.impact-person th {
+  background: #f5f7f3;
+}
+.assignment-delta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.assignment-delta h4,
+.assignment-delta > p {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.assignment-delta > div {
+  padding: 10px;
+  border-radius: 6px;
+}
+.assignment-delta p {
+  font-size: 12px;
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+.delta-add {
+  background: #e5efe8;
+}
+.delta-remove {
+  background: #f2e2db;
+}
+.assignment-summary {
+  max-height: 65vh;
+  overflow: auto;
+}
