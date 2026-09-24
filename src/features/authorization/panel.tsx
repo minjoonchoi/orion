@@ -1,4 +1,5 @@
 "use client";
+import { ResourceDeploymentStatus } from "@/features/resource-sync/detail-status";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -1219,16 +1220,7 @@ export function AuthorizationPanel({
             : graph.resources.filter((r) => r.kind === kind)
     ).some((r) => r.id === id);
   if (resourceKinds.includes(kind as ResourceKind))
-    return (
-      <section className="access-entry">
-        <p>
-          {t(
-            "리소스 정의는 Git에서 관리합니다. 수정·삭제는 YAML 변경 후 동기화하세요.",
-          )}
-        </p>
-        <Link href="/resource-sync">{t("리소스 동기화")}</Link>
-      </section>
-    );
+    return <ResourceDeploymentStatus kind={kind} id={id} />;
   return (
     <section className="access-entry">
       <Dialog

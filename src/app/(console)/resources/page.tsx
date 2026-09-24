@@ -1,4 +1,9 @@
-import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { ResourceSyncScreen } from "@/features/resource-sync/screen";
 export default function Page() {
-  redirect("/services");
+  return (
+    <Suspense>
+      <ResourceSyncScreen />
+    </Suspense>
+  );
 }

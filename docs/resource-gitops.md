@@ -48,3 +48,9 @@ Argo Application 템플릿은 `automated.enabled: false`입니다. ApplicationSe
 - https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/
 - https://docs.spring.io/spring-cloud-config/reference/server/serving-plain-text.html
 - https://docs.spring.io/spring-cloud-config/reference/server/environment-repository/git-backend.html
+
+## 통합 리소스 관리
+
+`/resources`에서 현재 DB 리소스와 변경 사항 탭을 제공합니다. type 쿼리로 유형을 필터링하고 resource 쿼리로 특정 diff에 접근합니다. 기존 유형별 목록 주소는 필터로 이동하며 상세 주소는 유지합니다. 필터는 조회 전용으로 Sync는 후보 전체를 적용합니다.
+
+`GET resource-sync/runs` → `{data: Run[]}`는 현재 배포 환경·리전에서 조회 권한이 있는 실행을 최신순으로 반환합니다. Run에는 선택적 ISO `completedAt`을 추가했습니다. API 서버는 scope와 권한을 검증해야 하며 이력은 영속 저장해야 합니다. 예제 이력은 세션 메모리에서만 유지됩니다. 상세 화면의 commit은 개별 리소스 최종 수정 commit이 아닌 배포 기준 버전입니다. API가 완료 시간을 반환하지 않으면 추측하지 않고 생략합니다.

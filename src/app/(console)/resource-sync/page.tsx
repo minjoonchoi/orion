@@ -1,4 +1,4 @@
-import { ResourceSyncScreen } from "@/features/resource-sync/screen";
+import { redirect } from "next/navigation";
 export default function Page() {
-  return <ResourceSyncScreen />;
+  redirect("/resources?tab=changes");
 }

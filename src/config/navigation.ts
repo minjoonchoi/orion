@@ -43,29 +43,14 @@ export const navigationGroups = [
     label: "리소스",
     items: [
       {
-        href: "/resource-sync",
-        label: "리소스 동기화",
-        description: "Git 정의서와 DB 차이를 검토하고 수동 동기화합니다.",
+        href: "/resources",
+        label: "리소스 관리",
+        description: "현재 리소스와 Git 변경사항을 검토하고 동기화합니다.",
       },
       {
-        href: "/services",
-        label: "서비스",
-        description: "서비스 정보와 소속 엔드포인트를 조회합니다.",
-      },
-      {
-        href: "/service-endpoints",
-        label: "서비스 엔드포인트",
-        description: "API 접근 제어 대상 엔드포인트를 조회합니다.",
-      },
-      {
-        href: "/workspaces",
-        label: "워크스페이스",
-        description: "워크스페이스 정보와 소속 페이지를 조회합니다.",
-      },
-      {
-        href: "/pages",
-        label: "페이지",
-        description: "화면 접근 제어 대상 페이지를 조회합니다.",
+        href: "/resource-sync/history",
+        label: "동기화 이력",
+        description: "동기화 실행 결과를 조회합니다.",
       },
     ],
   },
@@ -101,5 +86,12 @@ export const navigationGroups = [
 export const navigation = navigationGroups.flatMap((group) => [...group.items]);
 
 export function isNavigationActive(pathname: string, href: string) {
+  if (
+    href === "/resources" &&
+    ["/workspaces", "/pages", "/services", "/service-endpoints"].some(
+      (p) => pathname === p || pathname.startsWith(p + "/"),
+    )
+  )
+    return true;
   return pathname === href || pathname.startsWith(`${href}/`);
 }

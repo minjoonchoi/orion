@@ -6,9 +6,7 @@ test("GitOps diff, explicit review, apply and catalog projection", async ({
   await page.goto("/resource-sync");
   await expect(page.getByText("revision 0", { exact: true })).toBeVisible();
   await expect(page.locator(".sync-diffs")).toContainText("Orion Identity API");
-  await page
-    .getByRole("button", { name: "Sync · 영향도 검토", exact: true })
-    .click();
+  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
   const dialog = page.getByRole("dialog");
   await expect(
     dialog.getByRole("button", { name: "최종 Sync 적용" }),
@@ -19,7 +17,7 @@ test("GitOps diff, explicit review, apply and catalog projection", async ({
   await expect(page.getByRole("status")).toContainText("succeeded");
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Sync · 영향도 검토", exact: true }),
+    page.getByRole("button", { name: /Sync · 영향도 검토/ }),
   ).toBeDisabled();
   await page.goto("/workspaces");
   await expect(page.locator("a[href='/workspaces/ws-empty']")).toHaveCount(0);
@@ -43,9 +41,7 @@ test("review cancel never writes DB; English mobile controls are accessible", as
     { name: "orion-locale", value: "en", domain: "127.0.0.1", path: "/" },
   ]);
   await page.goto("/resource-sync");
-  await page
-    .getByRole("button", { name: "Sync · Review impact", exact: true })
-    .click();
+  await page.getByRole("button", { name: /Sync · Review impact/ }).click();
   await page
     .getByRole("dialog")
     .getByRole("button", { name: "Back", exact: true })
@@ -65,9 +61,7 @@ test("stale preview cannot apply after another permission change", async ({
   context,
 }) => {
   await page.goto("/resource-sync");
-  await page
-    .getByRole("button", { name: "Sync · 영향도 검토", exact: true })
-    .click();
+  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
   const other = await context.newPage();
   await other.goto("/users/usr-014");
   await other.getByRole("button", { name: "역할 부여", exact: true }).click();
@@ -94,7 +88,49 @@ test("stale preview cannot apply after another permission change", async ({
   await page.getByRole("button", { name: "새로고침", exact: true }).click();
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Sync · 영향도 검토", exact: true }),
+    page.getByRole("button", { name: /Sync · 영향도 검토/ }),
   ).toBeEnabled();
   await other.close();
+});
+
+test("unified catalog filters, detail diff links and persistent session history", async ({
+  page,
+}) => {
+  await page.goto("/resources");
+  await expect(
+    page.getByRole("heading", { name: "리소스 관리", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("combobox", { name: "리소스 유형", exact: true })
+    .selectOption("services");
+  await expect(page.locator(".sync-catalog tbody")).toContainText("svc-orion");
+  await expect(page.locator(".sync-catalog tbody")).not.toContainText(
+    "ws-platform",
+  );
+  await page.locator(".sync-catalog a[href='/services/svc-orion']").click();
+  await page
+    .getByRole("link", { name: "변경 예정 · diff 확인", exact: true })
+    .click();
+  await expect(page.locator(".sync-diffs > details")).toHaveCount(1);
+  await expect(
+    page.getByRole("button", { name: "Sync · 영향도 검토 · 5", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Sync · 영향도 검토 · 5", exact: true })
+    .click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.locator(".sync-review-list > section")).toHaveCount(5);
+  await dialog.getByRole("checkbox").check();
+  await dialog.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
+  await page.goto("/resource-sync/history");
+  await expect(page.locator(".sync-catalog tbody tr")).toHaveCount(1);
+  await expect(page.locator(".sync-catalog tbody")).toContainText("revision 1");
+  await page.reload();
+  await expect(page.locator(".sync-catalog tbody tr")).toHaveCount(1);
+  await page.goto("/resources?type=service-endpoints");
+  await expect(page.locator(".sync-catalog")).toContainText("List users");
+  await expect(page.locator(".sync-catalog")).toContainText(
+    "Orion Identity API",
+  );
 });

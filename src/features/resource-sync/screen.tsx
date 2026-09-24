@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { useI18n } from "@/i18n/provider";
+import { DateValue, useI18n } from "@/i18n/provider";
 import { loadSync, previewSync, executeSync, syncRun } from "./actions";
 import {
   diff,
@@ -23,6 +24,18 @@ const messages: Record<string, string> = {
 };
 export function ResourceSyncScreen() {
   const { t, mode } = useI18n();
+  const params = useSearchParams();
+  const router = useRouter();
+  const tab = params.get("tab") === "changes" ? "changes" : "current";
+  const kind = params.get("type") ?? "all";
+  const selectedId = params.get("resource");
+  function navigate(key: string, value: string) {
+    const next = new URLSearchParams(params.toString());
+    next.set(key, value);
+    if (key !== "page") next.delete("page");
+    next.delete("resource");
+    router.replace("/resources?" + next.toString(), { scroll: false });
+  }
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [run, setRun] = useState<Run | null>(null);
@@ -79,11 +92,32 @@ export function ResourceSyncScreen() {
   const rows =
     result?.rows.filter(
       (r) =>
+        r.operation !== "unchanged" &&
+        (kind === "all" || r.after.kind === kind) &&
+        (!selectedId || r.after.id === selectedId) &&
         (filter === "all" || r.operation === filter) &&
         `${r.after.name} ${r.after.id}`
           .toLowerCase()
           .includes(query.toLowerCase()),
     ) ?? [];
+  const catalog = (snapshot?.graph.resources ?? [])
+    .filter(
+      (r) =>
+        (kind === "all" || kind === r.kind) &&
+        `${r.name} ${r.id} ${r.path}`
+          .toLowerCase()
+          .includes(query.trim().toLowerCase()),
+    )
+    .sort((a, b) =>
+      params.get("sort") === "desc"
+        ? b.name.localeCompare(a.name)
+        : a.name.localeCompare(b.name),
+    );
+  const pages = Math.max(1, Math.ceil(catalog.length / 10));
+  const currentPage = Math.min(
+    pages,
+    Math.max(1, Number(params.get("page")) || 1),
+  );
   const operation = (op: string) =>
     t(
       (
@@ -142,7 +176,7 @@ export function ResourceSyncScreen() {
       <div className="sync-heading">
         <div>
           <p className="muted">GITOPS / CLOUD CONFIG</p>
-          <h1>{t("리소스 동기화")}</h1>
+          <h1>{t("리소스 관리")}</h1>
           <p>
             {t(
               "Git 정의서와 현재 DB를 비교하고 검토한 버전을 수동 적용합니다.",
@@ -232,98 +266,284 @@ export function ResourceSyncScreen() {
               ))}
             </div>
           )}
+          <nav className="sync-tabs" aria-label={t("리소스 보기")}>
+            <Button
+              variant={tab === "current" ? "primary" : "secondary"}
+              aria-pressed={tab === "current"}
+              onClick={() => navigate("tab", "current")}
+            >
+              {t("현재 리소스")} · {snapshot.graph.resources.length}
+            </Button>
+            <Button
+              variant={tab === "changes" ? "primary" : "secondary"}
+              aria-pressed={tab === "changes"}
+              onClick={() => navigate("tab", "changes")}
+            >
+              {t("변경 사항")} · {changes.length}
+            </Button>
+          </nav>
           <div className="sync-toolbar">
             <label>
               {t("리소스 검색")}
-              <input value={query} onChange={(e) => setQuery(e.target.value)} />
+              <input
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  if (params.has("page")) navigate("page", "1");
+                }}
+              />
             </label>
             <label>
-              {t("변경 유형")}
+              {t("리소스 유형")}
               <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
+                value={kind}
+                onChange={(e) => navigate("type", e.target.value)}
               >
-                {["all", "create", "update", "delete", "unchanged"].map((v) => (
-                  <option key={v} value={v}>
-                    {v === "all" ? t("전체") : operation(v)}
+                <option value="all">{t("전체")}</option>
+                {Object.entries(kindLabel).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {t(label)}
                   </option>
                 ))}
               </select>
             </label>
+            {tab === "changes" && (
+              <label>
+                {t("변경 유형")}
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                >
+                  {["all", "create", "update", "delete", "unchanged"].map(
+                    (v) => (
+                      <option key={v} value={v}>
+                        {v === "all" ? t("전체") : operation(v)}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </label>
+            )}
             <span>
               {t("변경 리소스")} · {changes.length}
             </span>
-            <Button
-              disabled={
-                busy ||
-                active ||
-                invalid ||
-                !changes.length ||
-                !!result?.blockers.length
-              }
-              onClick={review}
-            >
-              Sync · {t("영향도 검토")}
-            </Button>
+            {tab === "changes" && (
+              <Button
+                disabled={
+                  busy ||
+                  active ||
+                  invalid ||
+                  !changes.length ||
+                  !!result?.blockers.length
+                }
+                onClick={review}
+              >
+                Sync · {t("영향도 검토")} · {changes.length}
+              </Button>
+            )}
           </div>
-          <div className="sync-diffs">
-            {rows.map((row) => (
-              <details key={row.key} open={row.operation !== "unchanged"}>
-                <summary>
-                  <span className={`sync-badge ${row.operation}`}>
-                    {operation(row.operation)}
-                  </span>
-                  <strong>{row.after.name || row.after.id}</strong>
-                  <span>{t(kindLabel[row.after.kind])}</span>
-                  <code>{row.after.id}</code>
-                  <span>
-                    {t("정책")} {row.paths.length} · {t("사용자")}{" "}
-                    {row.users.length}
-                  </span>
-                </summary>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>{t("필드")}</th>
-                      <th>{t("현재 DB")}</th>
-                      <th>{t("Git 후보")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(
-                      [
-                        "name",
-                        "description",
-                        "path",
-                        "method",
-                        "parentId",
-                        "state",
-                      ] as const
-                    )
-                      .filter(
-                        (f) =>
-                          row.operation === "create" ||
-                          row.operation === "delete" ||
-                          row.before?.[f] !== row.after[f],
-                      )
-                      .map((f) => (
-                        <tr key={f}>
-                          <th>{f}</th>
-                          <td>{row.before?.[f] || "—"}</td>
+          {tab === "current" ? (
+            <div className="sync-catalog">
+              <table aria-label={t("현재 리소스")}>
+                <thead>
+                  <tr>
+                    <th
+                      aria-sort={
+                        params.get("sort") === "desc"
+                          ? "descending"
+                          : "ascending"
+                      }
+                    >
+                      <Button
+                        variant="ghost"
+                        onClick={() =>
+                          navigate(
+                            "sort",
+                            params.get("sort") === "desc" ? "asc" : "desc",
+                          )
+                        }
+                      >
+                        {t("리소스")} ↕
+                      </Button>
+                    </th>
+                    <th>{t("유형")}</th>
+                    <th>{t("상위 리소스")}</th>
+                    <th>{t("하위 리소스")}</th>
+                    <th>{t("변경 사항")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {catalog
+                    .slice((currentPage - 1) * 10, currentPage * 10)
+                    .map((r) => {
+                      const change = changes.find(
+                        (c) => c.after.kind === r.kind && c.after.id === r.id,
+                      );
+                      const parentKind =
+                        r.kind === "pages" ? "workspaces" : "services";
+                      const parent = snapshot.graph.resources.find(
+                        (p) => p.kind === parentKind && p.id === r.parentId,
+                      );
+                      return (
+                        <tr key={`${r.kind}:${r.id}`}>
                           <td>
-                            {row.after.state === "absent"
-                              ? "—"
-                              : row.after[f] || "—"}
+                            <Link href={`/${r.kind}/${r.id}`}>{r.name}</Link>
+                            <small>
+                              {r.id}
+                              {r.path && ` · ${r.method} ${r.path}`}
+                            </small>
+                          </td>
+                          <td>{t(kindLabel[r.kind])}</td>
+                          <td>
+                            {parent ? (
+                              <Link href={`/${parent.kind}/${parent.id}`}>
+                                {parent.name}
+                              </Link>
+                            ) : (
+                              "—"
+                            )}
+                          </td>
+                          <td>
+                            {["services", "workspaces"].includes(r.kind) ? (
+                              <Link
+                                href={`/${r.kind}/${r.id}?tab=${r.kind === "services" ? "endpoints" : "pages"}`}
+                              >
+                                {
+                                  snapshot.graph.resources.filter(
+                                    (child) =>
+                                      child.parentId === r.id &&
+                                      child.kind ===
+                                        (r.kind === "services"
+                                          ? "service-endpoints"
+                                          : "pages"),
+                                  ).length
+                                }
+                                {t("개")}
+                              </Link>
+                            ) : (
+                              "—"
+                            )}
+                          </td>
+                          <td>
+                            {change ? (
+                              <Link
+                                className={`sync-badge ${change.operation}`}
+                                href={`/resources?tab=changes&type=${r.kind}&resource=${r.id}`}
+                              >
+                                {operation(change.operation)} · {t("diff 확인")}
+                              </Link>
+                            ) : (
+                              t("변경 없음")
+                            )}
                           </td>
                         </tr>
-                      ))}
-                  </tbody>
-                </table>
-                {row.operation === "unchanged" && <p>{t("변경 없음")}</p>}
-              </details>
-            ))}
-            {!rows.length && <p>{t("연결된 항목이 없습니다")}</p>}
-          </div>
+                      );
+                    })}
+                </tbody>
+              </table>
+              {!catalog.length && <p>{t("연결된 항목이 없습니다")}</p>}
+              <div className="sync-toolbar sync-pagination">
+                <span>
+                  {catalog.length} · {currentPage} / {pages}
+                </span>
+                <div>
+                  <Button
+                    variant="secondary"
+                    disabled={currentPage <= 1}
+                    onClick={() => navigate("page", String(currentPage - 1))}
+                  >
+                    {t("이전")}
+                  </Button>{" "}
+                  <Button
+                    variant="secondary"
+                    disabled={currentPage >= pages}
+                    onClick={() => navigate("page", String(currentPage + 1))}
+                  >
+                    {t("다음")}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="muted">
+                {t(
+                  "필터는 조회에만 적용됩니다. Sync는 이 환경·리전의 변경 전체를 적용합니다.",
+                )}
+              </p>
+              {selectedId && (
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate("type", kind)}
+                >
+                  {t("전체 변경 보기")}
+                </Button>
+              )}
+              <div className="sync-diffs">
+                {rows.map((row) => (
+                  <details key={row.key} open={Boolean(selectedId)}>
+                    <summary>
+                      <span className={`sync-badge ${row.operation}`}>
+                        {operation(row.operation)}
+                      </span>
+                      <strong>{row.after.name || row.after.id}</strong>
+                      <span>{t(kindLabel[row.after.kind])}</span>
+                      <code>{row.after.id}</code>
+                      {row.after.parentId && (
+                        <span>
+                          {t("상위 리소스")}: {row.after.parentId}
+                        </span>
+                      )}
+                      <span>
+                        {t("정책")} {row.paths.length} · {t("사용자")}{" "}
+                        {row.users.length}
+                      </span>
+                    </summary>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>{t("필드")}</th>
+                          <th>{t("현재 DB")}</th>
+                          <th>{t("Git 후보")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(
+                          [
+                            "name",
+                            "description",
+                            "path",
+                            "method",
+                            "parentId",
+                            "state",
+                          ] as const
+                        )
+                          .filter(
+                            (f) =>
+                              row.operation === "create" ||
+                              row.operation === "delete" ||
+                              row.before?.[f] !== row.after[f],
+                          )
+                          .map((f) => (
+                            <tr key={f}>
+                              <th>{f}</th>
+                              <td>{row.before?.[f] || "—"}</td>
+                              <td>
+                                {row.after.state === "absent"
+                                  ? "—"
+                                  : row.after[f] || "—"}
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                    {row.operation === "unchanged" && <p>{t("변경 없음")}</p>}
+                  </details>
+                ))}
+                {!rows.length && <p>{t("연결된 항목이 없습니다")}</p>}
+              </div>
+            </>
+          )}
           <details className="sync-yaml">
             <summary>{t("YAML 정의서 보기")}</summary>
             <pre>{snapshot.yaml}</pre>
@@ -353,7 +573,7 @@ export function ResourceSyncScreen() {
             </p>
             <p>
               {t("검토 유효 기한")}:{" "}
-              {new Date(preview.expiresAt).toLocaleString()}
+              <DateValue value={preview.expiresAt} time />
             </p>
             <div className="sync-notice">
               {t("변경 리소스")} {previewRows.length} · {t("연결된 사용자")}{" "}

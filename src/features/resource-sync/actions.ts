@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { deployment } from "@/lib/api/server";
 import { requestData, DataApiError } from "@/lib/api/transport";
 import { getLocale } from "@/i18n/server";
-import { object, type Schema } from "@/lib/api/schema";
+import { object, array, type Schema } from "@/lib/api/schema";
 import {
   initialGraph,
   existingGraph,
@@ -213,6 +213,7 @@ export async function executeSync(token: string) {
       message: "DEMO_APPLIED",
       commit: snap.candidateCommit,
       dbRevision: next.revision,
+      completedAt: new Date().toISOString(),
     };
     s.runs.set(token, run);
     s.plans.delete(token);
@@ -234,6 +235,17 @@ export async function syncRun(id: string) {
     const run = (await session()).runs.get(id);
     if (!run) throw Error();
     return { data: run };
+  } catch (e) {
+    return { error: error(e) };
+  }
+}
+
+export async function syncHistory() {
+  try {
+    if (deployment().mode === "api")
+      return { data: await remote("resource-sync/runs", array(runSchema)) };
+    await snapshot();
+    return { data: [...(await session()).runs.values()].reverse() };
   } catch (e) {
     return { error: error(e) };
   }

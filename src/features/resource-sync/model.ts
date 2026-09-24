@@ -11,6 +11,8 @@ import {
   number,
   array,
   enumeration,
+  optional,
+  datetime,
 } from "../../lib/api/schema.ts";
 export const itemSchema = object({
   id: string,
@@ -61,6 +63,7 @@ export const runSchema = object({
   message: string,
   commit: string,
   dbRevision: number,
+  completedAt: optional(datetime),
 });
 export type Run = ReturnType<typeof runSchema.parse>;
 export function parseBundle(

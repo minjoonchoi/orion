@@ -105,12 +105,12 @@ test("one deny policy can link resources of all four types and expose indirect i
   await dialog.getByRole("button", { name: "닫기", exact: true }).click();
   await page.goto("/pages/page-users");
   await expect(
-    page.getByRole("link", { name: "리소스 동기화", exact: true }).last(),
+    page
+      .getByRole("link", { name: "변경 예정 · diff 확인", exact: true })
+      .last(),
   ).toBeVisible();
   await page.goto("/resource-sync");
-  await page
-    .getByRole("button", { name: "Sync · 영향도 검토", exact: true })
-    .click();
+  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
   dialog = page.getByRole("dialog");
   await expect(dialog).toContainText("거부");
 });
