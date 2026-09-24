@@ -5,7 +5,6 @@ export async function projectDemo<T>(method: string, value: T): Promise<T> {
   const graph = await existingGraph();
   if (!graph || value === null) return value;
   const identity = await import("../identity/fixtures");
-  const resources = await import("../resources/fixtures");
   const active = (expiresAt: string | null) =>
     !expiresAt || Date.parse(expiresAt) > Date.now();
   const roles = graph.roles.map((r) => ({
@@ -96,31 +95,23 @@ export async function projectDemo<T>(method: string, value: T): Promise<T> {
     case "getPolicy": {
       const id = (record.policy as { id: string }).id;
       const policy = policies.find((p) => p.id === id)!;
-      result = {
-        policy,
-        services: identity.services
-          .filter((r) => policy.serviceIds.includes(r.id))
-          .map((r) => patchResource("services", r)),
-        endpoints: resources.endpoints
-          .filter((r) => policy.endpointIds.includes(r.id))
-          .map((r) => ({
-            ...patchResource("service-endpoints", r),
-            serviceName:
-              graph.resources.find((s) => s.id === r.serviceId)?.name ??
-              r.serviceId,
-          })),
-        pages: resources.pages
-          .filter((r) => policy.pageIds.includes(r.id))
-          .map((r) => ({
-            ...patchResource("pages", r),
-            workspaceName:
-              graph.resources.find((w) => w.id === r.workspaceId)?.name ??
-              r.workspaceId,
-          })),
-        workspaces: resources.workspaces
-          .filter((r) => policy.workspaceIds.includes(r.id))
-          .map((r) => patchResource("workspaces", r)),
-      };
+      const catalog = await (
+        await import("../resource-sync/demo-catalog")
+      ).demoCatalog();
+      if (catalog)
+        result = {
+          policy,
+          services: catalog.services.filter((r) =>
+            policy.serviceIds.includes(r.id),
+          ),
+          endpoints: catalog.endpoints.filter((r) =>
+            policy.endpointIds.includes(r.id),
+          ),
+          pages: catalog.pages.filter((r) => policy.pageIds.includes(r.id)),
+          workspaces: catalog.workspaces.filter((r) =>
+            policy.workspaceIds.includes(r.id),
+          ),
+        };
       break;
     }
     case "listServices":

@@ -43,6 +43,11 @@ export const navigationGroups = [
     label: "리소스",
     items: [
       {
+        href: "/resource-sync",
+        label: "리소스 동기화",
+        description: "Git 정의서와 DB 차이를 검토하고 수동 동기화합니다.",
+      },
+      {
         href: "/services",
         label: "서비스",
         description: "서비스 정보와 소속 엔드포인트를 조회합니다.",

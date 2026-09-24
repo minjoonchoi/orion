@@ -1,0 +1,148 @@
+.sync-page {
+  max-width: 1250px;
+  margin: 0 auto;
+}
+.sync-heading,
+.sync-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+.sync-heading h1 {
+  margin: 8px 0;
+}
+.sync-versions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.sync-versions section {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #d5dcd5;
+  border-radius: 8px;
+  background: white;
+}
+.sync-versions code,
+.sync-versions strong {
+  overflow-wrap: anywhere;
+}
+.sync-notice {
+  background: #eef2ec;
+  border: 1px solid #d5dcd5;
+  padding: 14px;
+  border-radius: 6px;
+}
+.sync-blockers {
+  background: #f9eeea;
+  padding: 16px;
+}
+.sync-toolbar input,
+.sync-toolbar select {
+  display: block;
+  border: 1px solid #d5dcd5;
+  border-radius: 5px;
+  padding: 9px;
+  margin-top: 6px;
+  font: inherit;
+}
+.sync-diffs > details {
+  border: 1px solid #d5dcd5;
+  border-radius: 8px;
+  background: white;
+  margin: 12px 0;
+  overflow: hidden;
+}
+.sync-diffs summary {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 18px;
+  align-items: center;
+  cursor: pointer;
+}
+.sync-diffs summary code {
+  margin-left: auto;
+}
+.sync-diffs table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+  table-layout: fixed;
+}
+.sync-diffs th,
+.sync-diffs td {
+  border-top: 1px solid #e0e5df;
+  padding: 12px 18px;
+  overflow-wrap: anywhere;
+}
+.sync-diffs th {
+  background: #f5f7f3;
+}
+.sync-diffs td:last-child {
+  background: #f1f6ef;
+}
+.sync-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #e5efe8;
+}
+.sync-badge.update {
+  background: #eee9d9;
+}
+.sync-badge.delete {
+  background: #f2e2db;
+}
+.sync-yaml pre {
+  max-height: 450px;
+  overflow: auto;
+  padding: 20px;
+  background: #f5f7f3;
+}
+.ui-dialog:has(.sync-review) {
+  width: min(1000px, calc(100vw - 32px));
+}
+.sync-review-list {
+  max-height: 45vh;
+  overflow: auto;
+  margin: 16px 0;
+}
+.sync-review-list section {
+  border-bottom: 1px solid #d5dcd5;
+  padding: 10px;
+}
+.sync-review-list details {
+  padding: 10px;
+  background: #f5f7f3;
+  margin: 8px 0;
+}
+.sync-review-list summary {
+  cursor: pointer;
+}
+.sync-confirm {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+}
+@media (max-width: 700px) {
+  .sync-versions {
+    grid-template-columns: 1fr;
+  }
+  .sync-diffs summary code {
+    margin-left: 0;
+  }
+  .sync-diffs th,
+  .sync-diffs td {
+    padding: 8px;
+  }
+  .sync-toolbar {
+    align-items: stretch;
+  }
+}

@@ -35,6 +35,7 @@ const graph: Graph = {
       description: "",
       path: "/page",
       method: "",
+      parentId: "",
     },
   ],
 };

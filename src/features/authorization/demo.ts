@@ -107,21 +107,29 @@ export async function initialGraph(): Promise<Graph> {
       ...services.map((r) => ({
         ...r,
         kind: "services" as const,
+        parentId: "",
         path: "",
         method: "",
       })),
       ...endpoints.map((r) => ({
         ...r,
         kind: "service-endpoints" as const,
+        parentId: r.serviceId,
         description: "",
       })),
       ...workspaces.map((r) => ({
         ...r,
         kind: "workspaces" as const,
+        parentId: "",
         path: "",
         method: "",
       })),
-      ...pages.map((r) => ({ ...r, kind: "pages" as const, method: "" })),
+      ...pages.map((r) => ({
+        ...r,
+        kind: "pages" as const,
+        method: "",
+        parentId: r.workspaceId,
+      })),
     ],
   };
 }

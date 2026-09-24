@@ -66,3 +66,7 @@ LSB는 사용자·조직, 역할·정책, 리소스, API 접근, 결재의 5개 
 ## 권한 편집
 
 사용자·조직의 역할 부여, 역할별 정책 만료, 정책 리소스의 허용/거부, 리소스 편집과 영향 범위 탐색을 상세 화면에서 제공합니다. 공통 접근 거부 화면과 Orion 세션 로그아웃을 지원합니다. [UX와 저장 API 계약](docs/authorization-management.md)을 참고하세요. 실제 권한 판정·영구 저장·Okta 세션 처리는 백엔드와 연동해야 합니다.
+
+## 리소스 GitOps
+
+리소스 정의 수정은 `/resource-sync`에서 Git 후보와 DB diff → Sync 영향도 검토 → 명시적 적용으로 진행합니다. [YAML 예제](config/resources/orion-resources.yaml), [Cloud Config·Argo·Orion API 계약](docs/resource-gitops.md)을 참고하세요. `npm run validate:resources`로 스키마와 Argo payload 일치를 검사합니다. 예제 모드는 세션 DB 적용, 운영 모드는 별도 API/Argo importer 연동이 필요합니다.

@@ -1,4 +1,5 @@
 import {
+  optional,
   array,
   object,
   string,
@@ -51,6 +52,7 @@ export const graphSchema = object({
       description: string,
       path: string,
       method: string,
+      parentId: optional(string),
     }),
   ),
 });

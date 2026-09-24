@@ -1,0 +1,42 @@
+# Integration template. The internal endpoint and credential must exist first.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: orion-resource-import
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 120
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: importer
+          image: curlimages/curl:8.12.1
+          command: [sh, -ec]
+          args:
+            - >-
+              curl --fail --silent --show-error --max-time 110
+              -H "Authorization: Bearer $IMPORT_TOKEN"
+              -H 'Content-Type: application/yaml'
+              --data-binary @/catalog/resources.yaml
+              "$ORION_INTERNAL_URL/internal/resource-sync/import"
+          env:
+            - name: ORION_INTERNAL_URL
+              value: http://orion-api.orion.svc.cluster.local
+            - name: IMPORT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: orion-resource-import
+                  key: token
+          volumeMounts:
+            - name: catalog
+              mountPath: /catalog
+              readOnly: true
+      volumes:
+        - name: catalog
+          configMap:
+            name: orion-resource-candidate

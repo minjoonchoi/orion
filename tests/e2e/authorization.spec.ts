@@ -103,30 +103,16 @@ test("one deny policy can link resources of all four types and expose indirect i
   await dialog.getByRole("checkbox", { name: /조직 관리/ }).check();
   await save(page);
   await dialog.getByRole("button", { name: "닫기", exact: true }).click();
-  dialog = await open(page, "/pages/page-users", "리소스 수정과 영향 범위");
-  await dialog.getByLabel("이름", { exact: true }).fill("사용자 관리 수정");
-  await dialog
-    .getByRole("button", { name: "변경사항 검토", exact: true })
-    .click();
-  const explorer = dialog.locator(".access-impact");
-  await dialog
-    .locator(".impact-person")
-    .filter({ hasText: "김가람" })
-    .locator("summary")
-    .click();
-  await expect(explorer).toContainText("플랫폼 조회");
-  await expect(explorer).toContainText("플랫폼 관리자");
-  await expect(explorer).toContainText("플랫폼개발팀");
-  await expect(explorer).toContainText("거부 정책 포함");
-  await dialog.getByLabel("관계 검색").fill("no-matching-path");
-  await expect(explorer).toContainText("연결된 항목이 없습니다");
-  await dialog.getByLabel("관계 검색").fill("");
-
-  await save(page);
-  await dialog.getByRole("button", { name: "닫기", exact: true }).click();
+  await page.goto("/pages/page-users");
   await expect(
-    page.getByRole("heading", { name: "사용자 관리 수정", exact: true }),
+    page.getByRole("link", { name: "리소스 동기화", exact: true }).last(),
   ).toBeVisible();
+  await page.goto("/resource-sync");
+  await page
+    .getByRole("button", { name: "Sync · 영향도 검토", exact: true })
+    .click();
+  dialog = page.getByRole("dialog");
+  await expect(dialog).toContainText("거부");
 });
 test("logout clears demo session and keeps locale; common denied screen is accessible", async ({
   page,
@@ -154,36 +140,22 @@ test("logout clears demo session and keeps locale; common denied screen is acces
     (await context.cookies()).some((c) => c.name === "orion-demo-access"),
   ).toBe(false);
 });
-test("English impact dialog supports keyboard, mobile and accessible form controls", async ({
+test("English resource editing is routed to GitOps", async ({
   page,
   context,
 }) => {
   await context.addCookies([
     { name: "orion-locale", value: "en", domain: "127.0.0.1", path: "/" },
   ]);
-  const dialog = await open(
-    page,
-    "/services/svc-orion",
-    "Edit resource and explore impact",
-  );
-  await dialog
-    .getByRole("button", { name: "Review changes", exact: true })
-    .click();
+  await page.goto("/services/svc-orion");
   await expect(
-    dialog.getByRole("heading", { name: "Explore impact", exact: true }),
-  ).toBeVisible();
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-  await page.setViewportSize({ width: 390, height: 844 });
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
+    page.getByText(
+      "Resource definitions are managed in Git. Edit YAML and sync to update or delete.",
     ),
-  ).toBe(true);
-  await page.keyboard.press("Escape");
-  await expect(dialog).not.toBeVisible();
+  ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Edit resource and explore impact" }),
-  ).toBeFocused();
+  ).toHaveCount(0);
 });
 
 test("list explorer exposes removal and supports collapse", async ({
