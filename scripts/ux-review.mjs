@@ -236,7 +236,7 @@ try {
     .check();
   await page.getByText("선택 목록 확인", { exact: true }).click();
   await capture("10-resource-selection.png");
-  await page.getByRole("button", { name: "선택 리소스 영향도 보기" }).click();
+  await page.getByRole("button", { name: "선택 리소스 영향도 검토" }).click();
   await page.getByRole("dialog").locator(".impact-scope li").last().waitFor();
   await page.setViewportSize({ width: 1440, height: 1400 });
   await capture("11-selected-resource-impact.png");
@@ -260,15 +260,15 @@ try {
   await page.getByRole("dialog").waitFor();
   await capture("04-resource-diff.png");
   await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
-  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await page.getByRole("dialog").locator(".sync-confirm input").waitFor();
   await capture("05-sync-review.png");
   await page.getByRole("dialog").locator(".sync-confirm input").check();
-  await page.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await page.getByRole("button", { name: "동기화 적용" }).click();
   await page.getByRole("dialog").waitFor({ state: "hidden" });
   report.interactions.push("Resource diff, review and explicit sync");
   await visit("/resources?type=services&history=services:svc-orion");
@@ -299,7 +299,7 @@ try {
   await page
     .getByRole("checkbox", { name: "플랫폼 관리자", exact: true })
     .check();
-  await page.getByRole("button", { name: "변경사항 검토" }).click();
+  await page.getByRole("button", { name: "변경사항 및 영향도 검토" }).click();
   await page.getByText("변경 후 정책·리소스 확인", { exact: true }).click();
   await capture("07-role-review.png");
   await page.getByRole("button", { name: "변경 적용", exact: true }).click();

@@ -19,7 +19,7 @@ import { diff, kindLabel, type Snapshot, type Run } from "./model";
 import "./styles.css";
 const messages: Record<string, string> = {
   CONFLICT: "버전이 변경되었습니다. 새로고침 후 다시 검토하세요.",
-  EXPIRED: "검토가 만료되었습니다. 다시 Sync를 눌러 검토하세요.",
+  EXPIRED: "검토가 만료되었습니다. 다시 동기화를 눌러 검토하세요.",
   BLOCKED: "차단된 변경을 먼저 해결하세요.",
   FORBIDDEN: "접근 권한이 없습니다",
   UNAUTHENTICATED: "로그인이 필요합니다",
@@ -194,7 +194,7 @@ export function ResourceSyncScreen() {
           <h1>{t("리소스 관리")}</h1>
           <p>
             {t(
-              "Synced revision과 Git 정의서의 차이를 확인하고 검토 후 Sync합니다.",
+              "Synced revision과 Git 정의서의 차이를 확인하고 검토 후 동기화합니다.",
             )}
           </p>
         </div>
@@ -266,7 +266,7 @@ export function ResourceSyncScreen() {
               <p>
                 {run.phase} ·{" "}
                 {run.message === "DEMO_APPLIED"
-                  ? t("예제 Sync 완료")
+                  ? t("예제 동기화 완료")
                   : run.message === "DEMO_ROLLED_BACK"
                     ? t("예제 Rollback 완료")
                     : run.message}
@@ -369,7 +369,7 @@ export function ResourceSyncScreen() {
                 }
                 onClick={() => startSync(changes.map((r) => r.after))}
               >
-                {t("전체 변경")} Sync · {t("영향도 검토")} · {changes.length}
+                {t("전체 변경 동기화")} · {changes.length}
               </Button>
             }
           </div>
@@ -387,14 +387,14 @@ export function ResourceSyncScreen() {
                 disabled={!selection.length || busy || active}
                 onClick={() => startSync(selection)}
               >
-                {t("선택 리소스 Sync")}
+                {t("선택 리소스 동기화")}
               </Button>
               <Button
                 variant="secondary"
                 disabled={!selection.length || busy || active}
                 onClick={() => inspectImpact(selection)}
               >
-                {t("선택 리소스 영향도 보기")}
+                {t("선택 리소스 영향도 검토")}
               </Button>
               <Button
                 variant="ghost"
@@ -600,10 +600,10 @@ export function ResourceSyncScreen() {
                             size="sm"
                             variant="ghost"
                             disabled={busy || active}
-                            aria-label={`${r.name} · ${t("영향도 보기")}`}
+                            aria-label={`${r.name} · ${t("영향도 검토")}`}
                             onClick={() => inspectImpact([r])}
                           >
-                            {t("영향도 보기")}
+                            {t("영향도 검토")}
                           </Button>
                         </td>
                       </tr>
@@ -669,7 +669,7 @@ export function ResourceSyncScreen() {
                 )}
               <p className="muted">
                 {t(
-                  "선택 리소스 Sync는 선택 범위에만 적용됩니다. 전체 변경 Sync는 모든 변경을 검토합니다.",
+                  "선택 리소스 동기화는 선택 범위에만 적용됩니다. 전체 변경 동기화는 모든 변경을 검토합니다.",
                 )}
               </p>
               {selectedId && (
@@ -683,7 +683,7 @@ export function ResourceSyncScreen() {
               <Dialog
                 title={t("리소스 변경 내용")}
                 description={t(
-                  "변경 전후를 확인한 뒤 선택 리소스 Sync에서 영향도를 검토하세요.",
+                  "변경 전후를 확인한 뒤 선택 리소스 동기화에서 영향도를 검토하세요.",
                 )}
                 open={Boolean(selectedId)}
                 onOpenChange={(open) => {
@@ -783,9 +783,9 @@ export function ResourceSyncScreen() {
         />
       )}
       <Dialog
-        title={t("리소스 영향도 검토")}
+        title={t("영향도 검토")}
         description={t("조회 대상으로 선택한 리소스의 연결 관계만 표시합니다.")}
-        trigger={<button hidden aria-label={t("리소스 영향도 검토")} />}
+        trigger={<button hidden aria-label={t("영향도 검토")} />}
         open={Boolean(impactReview)}
         onOpenChange={(open) => {
           if (!open) setImpactReview(null);

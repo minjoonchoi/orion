@@ -230,26 +230,28 @@ export function SyncDialog({
   const policyMode = selection.mode === "policies";
   return (
     <Dialog
-      title={t(policyMode ? "정책·리소스 Sync" : "리소스 Sync")}
+      title={t("영향도 검토")}
       description={t(
-        "대상을 확인하고 변경·영향도를 검토한 뒤 함께 적용합니다.",
+        policyMode
+          ? "선택한 정책과 연결된 리소스를 동기화합니다. 변경사항과 영향도를 검토한 뒤 적용하세요."
+          : "선택한 리소스를 동기화합니다. 변경사항과 영향도를 검토한 뒤 적용하세요.",
       )}
       open
       busy={busy || active}
       onOpenChange={(v) => {
         if (!v) onClose();
       }}
-      trigger={<button hidden aria-label={t("Sync 검토")} />}
+      trigger={<button hidden aria-label={t("영향도 검토")} />}
     >
       <div className="sync-workflow" ref={workflow}>
-        <ol className="sync-workflow-steps" aria-label={t("Sync 단계")}>
+        <ol className="sync-workflow-steps" aria-label={t("동기화 단계")}>
           <li tabIndex={-1} aria-current={!preview ? "step" : undefined}>
             <span>1</span>
-            {t("Sync 대상 확인")}
+            {t("대상 확인")}
           </li>
           <li tabIndex={-1} aria-current={preview ? "step" : undefined}>
             <span>2</span>
-            {t("변경·영향도 검토")}
+            {t("변경사항 및 영향도 검토")}
           </li>
         </ol>
         {error && (
@@ -287,11 +289,11 @@ export function SyncDialog({
                   {t(
                     policyMode
                       ? "정책에 연결된 리소스와 필수 상위 리소스를 함께 검토합니다."
-                      : "선택한 리소스와 필요한 상위 리소스만 Sync합니다.",
+                      : "선택한 리소스와 필요한 상위 리소스만 동기화합니다.",
                   )}
                 </p>
                 <div className="sync-workflow-targets">
-                  <table aria-label={t("Sync 대상")}>
+                  <table aria-label={t("동기화 대상")}>
                     <thead>
                       <tr>
                         <th>{t("대상")}</th>
@@ -456,7 +458,7 @@ export function SyncDialog({
                   disabled={!confirmed || busy || active || Boolean(run)}
                   onClick={apply}
                 >
-                  {t("최종 Sync 적용")}
+                  {t("동기화 적용")}
                 </Button>
               ) : (
                 <Button
@@ -469,7 +471,7 @@ export function SyncDialog({
                   }
                   onClick={review}
                 >
-                  {t("변경·영향도 검토")}
+                  {t("변경사항 및 영향도 검토")}
                 </Button>
               )}
               {run?.status === "failed" && (

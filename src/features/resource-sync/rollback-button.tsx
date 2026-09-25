@@ -53,7 +53,7 @@ export function RollbackButton({
       </p>
       <p>
         {t(
-          "이후 Sync로 적용된 정의가 교체되므로 연결된 권한의 동작이 달라질 수 있습니다.",
+          "이후 동기화로 적용된 정의가 교체되므로 연결된 권한의 동작이 달라질 수 있습니다.",
         )}
       </p>
       <label className="sync-confirm">

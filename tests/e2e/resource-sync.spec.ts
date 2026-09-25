@@ -18,25 +18,25 @@ test("GitOps diff, explicit review, apply and catalog projection", async ({
     "Orion Identity API",
   );
   await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
-  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   const dialog = page.getByRole("dialog");
   await expect(
-    dialog.getByRole("button", { name: "최종 Sync 적용" }),
+    dialog.getByRole("button", { name: "동기화 적용" }),
   ).toBeDisabled();
   await expect(
     dialog.getByRole("heading", { name: "변경 전후", exact: true }),
   ).toBeVisible();
   await expect(dialog).toContainText("리소스 5");
   await dialog.locator(".sync-confirm input").check();
-  await dialog.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(page.getByRole("status")).toContainText("succeeded");
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
   await expect(
-    page.getByRole("button", { name: /Sync · 영향도 검토/ }),
+    page.getByRole("button", { name: /전체 변경 동기화/ }),
   ).toBeDisabled();
   await page.goto("/workspaces");
   await expect(page.locator("a[href='/workspaces/ws-empty']")).toHaveCount(0);
@@ -60,7 +60,7 @@ test("review cancel never writes DB; English mobile controls are accessible", as
     { name: "orion-locale", value: "en", domain: "127.0.0.1", path: "/" },
   ]);
   await page.goto("/resource-sync");
-  await page.getByRole("button", { name: /Sync · Review impact/ }).click();
+  await page.getByRole("button", { name: /Sync all changes/ }).click();
   await page
     .getByRole("dialog")
     .getByRole("button", { name: "Cancel", exact: true })
@@ -80,10 +80,10 @@ test("stale preview cannot apply after another permission change", async ({
   context,
 }) => {
   await page.goto("/resource-sync");
-  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   const other = await context.newPage();
   await other.goto("/users/usr-014");
@@ -93,7 +93,7 @@ test("stale preview cannot apply after another permission change", async ({
     .getByRole("checkbox", { name: "플랫폼 관리자", exact: true })
     .check();
   await edit
-    .getByRole("button", { name: "변경사항 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await edit.getByRole("button", { name: "변경 적용", exact: true }).click();
   await expect(edit.getByRole("status")).toContainText(
@@ -102,7 +102,7 @@ test("stale preview cannot apply after another permission change", async ({
   const review = page.getByRole("dialog");
   await review.locator(".sync-confirm input").check();
   await review
-    .getByRole("button", { name: "최종 Sync 적용", exact: true })
+    .getByRole("button", { name: "동기화 적용", exact: true })
     .click();
   await expect(review.getByRole("alert")).toContainText(
     "버전이 변경되었습니다",
@@ -111,7 +111,7 @@ test("stale preview cannot apply after another permission change", async ({
   await page.getByRole("button", { name: "새로고침", exact: true }).click();
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
   await expect(
-    page.getByRole("button", { name: /Sync · 영향도 검토/ }),
+    page.getByRole("button", { name: /전체 변경 동기화/ }),
   ).toBeEnabled();
   await other.close();
 });
@@ -138,23 +138,23 @@ test("unified catalog filters, detail diff links and persistent session history"
   await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
   await expect(
     page.getByRole("button", {
-      name: "전체 변경 Sync · 영향도 검토 · 5",
+      name: "전체 변경 동기화 · 5",
       exact: true,
     }),
   ).toBeVisible();
   await page
     .getByRole("button", {
-      name: "전체 변경 Sync · 영향도 검토 · 5",
+      name: "전체 변경 동기화 · 5",
       exact: true,
     })
     .click();
   const dialog = page.getByRole("dialog");
   await dialog
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await expect(dialog.locator(".sync-review-list > details")).toHaveCount(5);
   await dialog.locator(".sync-confirm input").check();
-  await dialog.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
   await page
     .getByRole("combobox", { name: "동기화 상태", exact: true })
@@ -204,13 +204,13 @@ test("deleted resource history remains reachable from the catalog", async ({
   page,
 }) => {
   await page.goto("/resources?type=workspaces");
-  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await page.getByRole("dialog").locator(".sync-confirm input").check();
-  await page.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await page.getByRole("button", { name: "동기화 적용" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   const row = page.getByRole("row").filter({ hasText: "ws-empty" });
   await expect(row).toContainText("Synced · 삭제됨");

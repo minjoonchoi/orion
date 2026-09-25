@@ -99,7 +99,7 @@ export function ResourceDeploymentStatus({
           })
         }
       >
-        Sync
+        {t("동기화")}
       </Button>
       {syncSelection && (
         <SyncDialog
@@ -132,12 +132,12 @@ export function ResourceDeploymentStatus({
           }
         }}
       >
-        {t("영향도 보기")}
+        {t("영향도 검토")}
       </Button>
       <Dialog
-        title={t("리소스 영향도 검토")}
+        title={t("영향도 검토")}
         description={t("조회 대상으로 선택한 리소스의 연결 관계만 표시합니다.")}
-        trigger={<button hidden aria-label={t("리소스 영향도 검토")} />}
+        trigger={<button hidden aria-label={t("영향도 검토")} />}
         open={impactOpen}
         onOpenChange={setImpactOpen}
       >

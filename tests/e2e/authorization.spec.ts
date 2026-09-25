@@ -11,11 +11,11 @@ async function save(page: Page) {
   const dialog = page.getByRole("dialog");
   if (
     await dialog
-      .getByRole("button", { name: "변경사항 검토", exact: true })
+      .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
       .count()
   )
     await dialog
-      .getByRole("button", { name: "변경사항 검토", exact: true })
+      .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
       .click();
   await expect(
     dialog.getByRole("heading", { name: "변경사항 확인" }),
@@ -34,7 +34,7 @@ test("assign roles with policy/resource preview and reflect changes in user and 
     .check();
   await expect(dialog.locator(".assignment-summary")).toHaveCount(0);
   await dialog
-    .getByRole("button", { name: "변경사항 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   const summary = dialog.getByRole("complementary", { name: "부여 내용 요약" });
   await expect(summary).toContainText("부여받는 대상 · 1");
@@ -80,7 +80,7 @@ test("policy binding expiry validates past dates and persists on the role", asyn
   await card.getByRole("checkbox", { name: /플랫폼 조회/ }).check();
   await card.getByRole("checkbox", { name: "무기한", exact: true }).uncheck();
   await card.getByLabel("만료 시점", { exact: true }).fill("2020-01-01T10:00");
-  await dialog.getByRole("button", { name: "변경사항 검토" }).click();
+  await dialog.getByRole("button", { name: "변경사항 및 영향도 검토" }).click();
   await expect(dialog.getByRole("alert")).toContainText("현재 이후");
   await card.getByLabel("만료 시점", { exact: true }).fill("2030-12-31T10:00");
   await save(page);
@@ -100,14 +100,14 @@ test("policy definitions are reviewed through GitOps", async ({ page }) => {
   ).toHaveCount(0);
   await page.getByRole("link", { name: "정책 변경 검토" }).click();
   await expect(page).toHaveURL(/policies\/sync$/);
-  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await expect(page.getByRole("dialog")).toContainText("정책 3");
   await expect(
-    page.getByRole("button", { name: "최종 Sync 적용", exact: true }),
+    page.getByRole("button", { name: "동기화 적용", exact: true }),
   ).toBeDisabled();
 });
 test("logout clears demo session and keeps locale; common denied screen is accessible", async ({
@@ -170,7 +170,7 @@ test("list explorer exposes removal and supports collapse", async ({
     .first()
     .uncheck();
   await dialog
-    .getByRole("button", { name: "변경사항 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await summary.getByText("변경 후 정책·리소스 확인", { exact: true }).click();
   await expect(summary.locator(".delta-remove")).toContainText("플랫폼 조회");

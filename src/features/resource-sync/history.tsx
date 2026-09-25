@@ -231,7 +231,7 @@ export function ResourceHistoryDialog({
   }
   return (
     <Dialog
-      title={t(selected ? "롤백 검토" : "동기화 이력")}
+      title={t(selected ? "영향도 검토" : "동기화 이력")}
       description={`${t(kindLabel[kind])} · ${name} · ${id}`}
       open
       onOpenChange={(open) => {

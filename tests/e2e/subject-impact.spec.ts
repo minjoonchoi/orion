@@ -5,7 +5,7 @@ test("resource impact starts with subjects and preserves every reason including 
   page,
 }) => {
   await page.goto("/services/svc-orion");
-  await page.getByRole("button", { name: "영향도 보기", exact: true }).click();
+  await page.getByRole("button", { name: "영향도 검토", exact: true }).click();
   const impact = page.getByRole("region", {
     name: "영향받는 대상",
     exact: true,
@@ -97,7 +97,7 @@ test("policy removal review shows affected service accounts and removed role-pol
     .first()
     .uncheck();
   await dialog
-    .getByRole("button", { name: "변경사항 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   const impact = dialog.getByRole("region", {
     name: "영향받는 대상",
@@ -123,7 +123,9 @@ test("English mobile subject paths are accessible and search keeps the policy re
   ]);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/services/svc-orion");
-  await page.getByRole("button", { name: "View impact", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Review impact", exact: true })
+    .click();
   const impact = page.getByRole("region", {
     name: "Affected subjects",
     exact: true,

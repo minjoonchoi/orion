@@ -90,11 +90,11 @@ try {
     });
   }
   await visit("/services/svc-orion");
-  await page.getByRole("button", { name: "Sync", exact: true }).click();
-  await page.getByRole("table", { name: "Sync 대상" }).waitFor();
+  await page.getByRole("button", { name: "동기화", exact: true }).click();
+  await page.getByRole("table", { name: "동기화 대상" }).waitFor();
   await capture("01-detail-sync-target.png");
   await page
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await page.locator(".sync-confirm input").waitFor();
   await capture("02-detail-sync-review.png");
@@ -114,12 +114,12 @@ try {
     .getByRole("checkbox")
     .check();
   await page
-    .getByRole("button", { name: "선택 리소스 Sync", exact: true })
+    .getByRole("button", { name: "선택 리소스 동기화", exact: true })
     .click();
-  await page.getByRole("table", { name: "Sync 대상" }).waitFor();
+  await page.getByRole("table", { name: "동기화 대상" }).waitFor();
   await capture("03-selected-sync-targets.png");
   await page
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await page.locator(".sync-confirm input").waitFor();
   await capture("04-selected-sync-review.png");
@@ -129,11 +129,11 @@ try {
     .locator(".sync-diffs > details")
     .filter({ hasText: "policy-platform" });
   await card.locator("summary").click();
-  await card.getByRole("button", { name: "이 정책 Sync" }).click();
-  await page.getByRole("table", { name: "Sync 대상" }).waitFor();
+  await card.getByRole("button", { name: "이 정책 동기화" }).click();
+  await page.getByRole("table", { name: "동기화 대상" }).waitFor();
   await capture("05-policy-resource-targets.png");
   await page
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await page.locator(".sync-confirm input").waitFor();
   await capture("06-policy-role-impact.png");
@@ -142,7 +142,7 @@ try {
   await diff.scrollIntoViewIfNeeded();
   await capture("07-policy-diff.png");
   await page.getByRole("button", { name: "대상으로 돌아가기" }).click();
-  await page.getByRole("table", { name: "Sync 대상" }).waitFor();
+  await page.getByRole("table", { name: "동기화 대상" }).waitFor();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("dialog").evaluate((el) => (el.scrollTop = 0));
   await capture("08-mobile-targets.png");

@@ -90,7 +90,7 @@ try {
     });
   }
   await visit("/services/svc-orion");
-  await page.getByRole("button", { name: "영향도 보기", exact: true }).click();
+  await page.getByRole("button", { name: "영향도 검토", exact: true }).click();
   let impact = page.getByRole("region", { name: "영향받는 대상", exact: true });
   await impact.locator(".subject-row").first().waitFor({ state: "visible" });
   await page.evaluate(() => document.fonts.ready);
@@ -120,9 +120,9 @@ try {
     .locator(".sync-diffs > details")
     .filter({ hasText: "policy-platform" });
   await card.locator("summary").click();
-  await card.getByRole("button", { name: "이 정책 Sync" }).click();
+  await card.getByRole("button", { name: "이 정책 동기화" }).click();
   await page
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   impact = page.locator(".sync-workflow-impact .subject-impact");
   await impact.scrollIntoViewIfNeeded();
@@ -143,7 +143,7 @@ try {
     .first()
     .uncheck();
   await dialog
-    .getByRole("button", { name: "변경사항 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   impact = dialog.getByRole("region", { name: "영향받는 대상", exact: true });
   await impact
@@ -157,7 +157,9 @@ try {
   ]);
   await page.setViewportSize({ width: 390, height: 844 });
   await visit("/services/svc-orion");
-  await page.getByRole("button", { name: "View impact", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Review impact", exact: true })
+    .click();
   impact = page.getByRole("region", { name: "Affected subjects", exact: true });
   await impact
     .getByRole("combobox", { name: "Affected subject type" })

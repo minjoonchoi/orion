@@ -5,18 +5,18 @@ test("detail and multi-select use the same two steps and only selected resources
   page,
 }) => {
   await page.goto("/services/svc-orion");
-  await page.getByRole("button", { name: "Sync", exact: true }).click();
+  await page.getByRole("button", { name: "동기화", exact: true }).click();
   const dialog = page.getByRole("dialog");
   await expect(
-    dialog.getByRole("table", { name: "Sync 대상" }).locator("tbody tr"),
+    dialog.getByRole("table", { name: "동기화 대상" }).locator("tbody tr"),
   ).toHaveCount(1);
   await expect(dialog).toContainText("svc-orion");
   await expect(dialog).not.toContainText("ws-platform");
   await dialog
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await expect(
-    dialog.getByRole("button", { name: "최종 Sync 적용" }),
+    dialog.getByRole("button", { name: "동기화 적용" }),
   ).toBeDisabled();
   await expect(dialog.locator(".impact-scope li")).toHaveCount(1);
   await dialog.getByRole("button", { name: "닫기", exact: true }).click();
@@ -35,17 +35,17 @@ test("detail and multi-select use the same two steps and only selected resources
     .getByRole("checkbox")
     .check();
   await page
-    .getByRole("button", { name: "선택 리소스 Sync", exact: true })
+    .getByRole("button", { name: "선택 리소스 동기화", exact: true })
     .click();
   await expect(
-    dialog.getByRole("table", { name: "Sync 대상" }).locator("tbody tr"),
+    dialog.getByRole("table", { name: "동기화 대상" }).locator("tbody tr"),
   ).toHaveCount(2);
   await dialog
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await expect(dialog.locator(".impact-scope li")).toHaveCount(2);
   await dialog.getByRole("checkbox").last().check();
-  await dialog.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(dialog).toHaveCount(0);
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
   await page.goto("/resources?status=out-of-sync");
@@ -63,9 +63,9 @@ test("policy Sync includes dependencies, previews role-based users and organizat
     .locator(".sync-diffs > details")
     .filter({ hasText: "policy-platform" });
   await card.locator("summary").click();
-  await card.getByRole("button", { name: "이 정책 Sync" }).click();
+  await card.getByRole("button", { name: "이 정책 동기화" }).click();
   const dialog = page.getByRole("dialog");
-  const targets = dialog.getByRole("table", { name: "Sync 대상" });
+  const targets = dialog.getByRole("table", { name: "동기화 대상" });
   await expect(targets.locator("tbody tr")).toHaveCount(5);
   for (const id of ["svc-orion", "ep-roles", "page-users", "ws-platform"])
     await expect(targets).toContainText(id);
@@ -73,7 +73,7 @@ test("policy Sync includes dependencies, previews role-based users and organizat
   await expect(targets).not.toContainText("ws-empty");
   await expect(targets).toContainText("필수 상위 리소스");
   await dialog
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   const impact = dialog.locator(".sync-workflow-impact");
   await expect(impact.locator(".subject-row")).toHaveCount(3);
@@ -98,7 +98,7 @@ test("policy Sync includes dependencies, previews role-based users and organizat
   );
   await expect(dialog.locator(".sync-review-list > details")).toHaveCount(4);
   await dialog.locator(".sync-confirm input").check();
-  await dialog.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(dialog).toHaveCount(0);
   await expect(
     page.getByText("revision 1", { exact: true }).first(),

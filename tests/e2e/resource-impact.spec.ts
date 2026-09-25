@@ -6,7 +6,7 @@ test("selected impact spans filters, survives reload, and can narrow to one reso
 }) => {
   await page.goto("/resources?type=services");
   await expect(
-    page.getByRole("button", { name: "선택 리소스 영향도 보기" }),
+    page.getByRole("button", { name: "선택 리소스 영향도 검토" }),
   ).toBeDisabled();
   await page
     .getByRole("row")
@@ -28,15 +28,15 @@ test("selected impact spans filters, survives reload, and can narrow to one reso
   await expect(page.getByRole("region", { name: "리소스 선택" })).toContainText(
     "현재 필터 밖 선택 · 1",
   );
-  await page.getByRole("button", { name: "선택 리소스 영향도 보기" }).click();
+  await page.getByRole("button", { name: "선택 리소스 영향도 검토" }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.locator(".impact-scope li")).toHaveCount(2);
   await expect(dialog.locator(".impact-scope")).toContainText("svc-orion");
   await expect(dialog.locator(".impact-scope")).toContainText("ws-platform");
   await expect(dialog.locator(".subject-counts > div")).toHaveCount(3);
-  await expect(
-    dialog.getByRole("button", { name: "최종 Sync 적용" }),
-  ).toHaveCount(0);
+  await expect(dialog.getByRole("button", { name: "동기화 적용" })).toHaveCount(
+    0,
+  );
   await dialog
     .getByRole("combobox", { name: "영향도 조회 범위" })
     .selectOption("services:svc-orion");
@@ -53,7 +53,7 @@ test("selected impact spans filters, survives reload, and can narrow to one reso
   await page
     .getByRole("row")
     .filter({ hasText: "ws-platform" })
-    .getByRole("button", { name: /영향도 보기/ })
+    .getByRole("button", { name: /영향도 검토/ })
     .click();
   await expect(dialog.locator(".impact-scope li")).toHaveCount(1);
   await expect(dialog.locator(".impact-scope")).toContainText("ws-platform");
@@ -68,7 +68,7 @@ test("resource detail opens impact scoped to that resource", async ({
   page,
 }) => {
   await page.goto("/services/svc-orion");
-  await page.getByRole("button", { name: "영향도 보기", exact: true }).click();
+  await page.getByRole("button", { name: "영향도 검토", exact: true }).click();
   await expect(
     page.getByRole("dialog").locator(".impact-scope li"),
   ).toHaveCount(1);

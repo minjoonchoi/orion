@@ -32,13 +32,13 @@ test("rollback requires review and records confirmed restoration", async ({
   page,
 }) => {
   await page.goto("/resources");
-  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await page.getByRole("dialog").locator(".sync-confirm input").check();
-  await page.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await page.getByRole("button", { name: "동기화 적용" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(
     page.locator("nav a[href='/resource-sync/history']"),
@@ -87,13 +87,13 @@ test("subject impact shows direct users without organization-member paths during
   context,
 }) => {
   await page.goto("/resources");
-  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await page.getByRole("dialog").locator(".sync-confirm input").check();
-  await page.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await page.getByRole("button", { name: "동기화 적용" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.goto("/resources?history=services:svc-orion");
   await page.locator(".sync-history-entry").last().locator("summary").click();

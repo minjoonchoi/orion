@@ -413,7 +413,7 @@ function Editor({
       </li>
       <li aria-current={review ? "step" : undefined}>
         <span>2</span>
-        {t("영향도 검토")}
+        {t("변경사항 및 영향도 검토")}
       </li>
     </ol>
   );
@@ -875,7 +875,7 @@ function Editor({
         {invalid && <p role="alert">{t(errorLabels.INVALID_CHANGE)}</p>}
         <div className="access-footer">
           <span>{t("1 / 2 단계")}</span>
-          <Button type="submit">{t("변경사항 검토")}</Button>
+          <Button type="submit">{t("변경사항 및 영향도 검토")}</Button>
         </div>
       </fieldset>
     </form>
@@ -959,7 +959,7 @@ export function AuthorizationPanel({
       <section className="access-entry">
         <p>
           {t(
-            "정책 정의는 Git에서 관리합니다. 리소스와 요청·응답 처리 변경은 Sync에서 검토하세요.",
+            "정책 정의는 Git에서 관리합니다. 리소스와 요청·응답 처리 변경은 동기화에서 검토하세요.",
           )}
         </p>
         <Link className="identity-link" href="/policies/sync">

@@ -17,7 +17,7 @@ import "../resource-sync/styles.css";
 
 const messages: Record<string, string> = {
   CONFLICT: "버전이 변경되었습니다. 새로고침 후 다시 검토하세요.",
-  EXPIRED: "검토가 만료되었습니다. 다시 Sync를 눌러 검토하세요.",
+  EXPIRED: "검토가 만료되었습니다. 다시 동기화를 눌러 검토하세요.",
   BLOCKED: "차단된 변경을 먼저 해결하세요.",
   FORBIDDEN: "접근 권한이 없습니다",
   UNAUTHENTICATED: "로그인이 필요합니다",
@@ -143,7 +143,7 @@ export function PolicySyncScreen() {
           <h1>{t("정책 Git 동기화")}</h1>
           <p>
             {t(
-              "정책의 리소스 접근 범위와 전처리·후처리 구성을 확인하고 검토 후 Sync합니다.",
+              "정책의 리소스 접근 범위와 전처리·후처리 구성을 확인하고 검토 후 동기화합니다.",
             )}
           </p>
         </div>
@@ -256,7 +256,7 @@ export function PolicySyncScreen() {
                 })
               }
             >
-              Sync · {t("영향도 검토")} · {changes.length}
+              {t("전체 변경 동기화")} · {changes.length}
             </Button>
           </div>
           <div className="sync-diffs">
@@ -292,7 +292,7 @@ export function PolicySyncScreen() {
                     })
                   }
                 >
-                  {t("이 정책 Sync")}
+                  {t("이 정책 동기화")}
                 </Button>
                 <table>
                   <thead>
