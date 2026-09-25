@@ -1,3 +1,4 @@
+import "@/features/identity/styles.css";
 import Link from "next/link";
 import { Navigation } from "@/components/layout/navigation";
 export default function ConsoleLayout({
