@@ -47,11 +47,6 @@ export const navigationGroups = [
         label: "리소스 관리",
         description: "현재 리소스와 Git 변경사항을 검토하고 동기화합니다.",
       },
-      {
-        href: "/resource-sync/history",
-        label: "동기화 이력",
-        description: "동기화 실행 결과를 조회합니다.",
-      },
     ],
   },
   {

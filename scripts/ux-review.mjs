@@ -232,10 +232,13 @@ try {
   await page.getByRole("button", { name: "최종 Sync 적용" }).click();
   await page.getByRole("dialog").waitFor({ state: "hidden" });
   report.interactions.push("Resource diff, review and explicit sync");
-  await visit("/resource-sync/history");
+  await visit("/resources?type=services&history=services:svc-orion");
+  await page.locator(".sync-history-entry").first().locator("summary").click();
+  await capture("08-resource-history.png");
+  await page.locator(".sync-history-entry").last().locator("summary").click();
   await page
     .getByRole("button", { name: "이 revision으로 롤백" })
-    .first()
+    .last()
     .click();
   await page.getByRole("dialog").waitFor();
   assert.ok(
@@ -244,7 +247,7 @@ try {
       .isDisabled(),
   );
   await capture("06-rollback-review.png");
-  await page.getByRole("button", { name: "취소", exact: true }).click();
+  await page.getByRole("button", { name: "돌아가기", exact: true }).click();
   report.interactions.push(
     "Rollback requires confirmation and can be cancelled",
   );

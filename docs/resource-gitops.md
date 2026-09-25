@@ -79,7 +79,8 @@ spec:
 - `POST resource-sync/previews`: `{commit,digest,expectedDbRevision}` → `{token,expiresAt,snapshot}`. 서버는 클라이언트 diff/영향도를 신뢰하지 않고 다시 검증합니다. token은 사용자·환경·리전·원본 SHA·digest·synced/인가 revision·만료·삭제 계획을 바인딩합니다. 기본 5분. Out of sync commit/인가/synced revision 변경 시 409.
 - `POST resource-sync/runs`: `{previewToken,idempotencyKey}` → `{id,status,phase,message,commit,dbRevision}`. status: queued/running/succeeded/failed. 동일 key와 요청은 기존 run 반환. 미리보기 유효성/권한/수동 정책을 최종 재검사합니다.
 - `GET resource-sync/runs/{id}`: 동일 run DTO. 소유 사용자/권한 및 scope 검사. UI polling은 2초, 실패는 재시도 안내, 새로고침으로 status 확인 가능.
-- `POST resource-sync/rollbacks`: `{runId,idempotencyKey}` → run DTO. 성공한 이력만 대상으로 하며, 선택한 이력의 snapshot을 새 synced revision으로 적용합니다. 응답 run에는 `rollbackOf`, `targetRevision`을 포함할 수 있습니다.
+- `GET resource-sync/runs?kind={kind}&resourceId={id}`: 해당 리소스의 이력을 최신순으로 반환합니다. 각 Run의 `resources`는 `{kind,id,before: Item|null,after: Item|null}[]`입니다. 생성 이전/삭제 이후는 null입니다. 조회한 리소스의 기록이 없는 응답은 UI가 거부하며 전체 실행을 그 리소스의 이력으로 추측하지 않습니다. 환경·리전 및 리소스 조회 권한은 서버가 검사합니다.
+- `POST resource-sync/resources/{kind}/{id}/rollbacks`: `{runId,kind,resourceId,expectedDbRevision,idempotencyKey}` → run DTO. 성공한 이력에서 **해당 리소스만** 복원합니다. 기존 전체 롤백 API로 대체 호출하지 않습니다. 현재 인가/동기화 revision 불일치는 409, 부모/정책 참조가 끊기는 복원은 차단합니다. 사용자·조직·역할 부여·정책·다른 리소스는 유지합니다. 동일 키 요청은 동일 결과를 반환해야 하며, 서버는 대상 run과 리소스의 관계 및 수정 권한을 재검증합니다. 응답 run에 `resources`, `rollbackOf`, `targetRevision`을 포함합니다. queued/running은 완료가 아니며 실행 상태 조회 후 성공을 표시합니다.
 
 정책 동기화는 같은 응답 구조와 revision/token 규칙을 사용하되 API 경로만 `policy-sync/*`입니다.
 
@@ -104,8 +105,12 @@ spec:
 
 ## 통합 리소스 관리
 
-`/resources`에서 synced 리소스와 Out of sync 변경 사항 탭을 제공합니다. type 쿼리로 유형을 필터링하고 resource 쿼리로 특정 diff에 접근합니다. 기존 유형별 목록 주소는 필터로 이동하며 상세 주소는 유지합니다. 필터는 조회 전용으로 Sync는 Out of sync 변경 전체를 적용합니다.
+`/resources`에서 synced 리소스와 Out of sync 변경 사항을 한 목록으로 제공합니다. type 쿼리로 유형을 필터링하고 resource 쿼리로 특정 diff에 접근합니다. 기존 유형별 목록 주소는 필터로 이동하며 상세 주소는 유지합니다. 필터는 조회 전용으로 Sync는 Out of sync 변경 전체를 적용합니다.
 
-`GET resource-sync/runs` → `{data: Run[]}`는 현재 배포 환경·리전에서 조회 권한이 있는 실행을 최신순으로 반환합니다. Run에는 선택적 ISO `completedAt`, `rollbackOf`, `targetRevision`을 추가했습니다. API 서버는 scope와 권한을 검증해야 하며 이력과 rollback 대상 snapshot은 영속 저장해야 합니다. 예제 이력은 세션 메모리에서만 유지됩니다. 상세 화면의 commit은 개별 리소스 최종 수정 commit이 아닌 synced 기준 버전입니다. API가 완료 시간을 반환하지 않으면 추측하지 않고 생략합니다.
+동기화 이력은 별도 메뉴 없이 목록의 각 리소스 `이력 보기`와 상세 화면 `동기화 이력`에서 엽니다. 목록의 `history=kind:id` 쿼리를 새로고침해도 동일 이력을 열고 다른 필터를 유지합니다. 기존 `/resource-sync/history`는 `/resources`로 이동합니다. YAML에 명시된 삭제 완료 항목도 목록에 남아 삭제 기록을 조회할 수 있습니다.
+
+이력에는 실제 변경된 리소스만 기록합니다. 각 revision을 펼쳐 변경 전후를 확인하고, 과거 revision을 선택하면 현재 정의와 복원할 정의의 diff 및 현재 정책·역할·사용자 영향도를 검토한 뒤 확인하고 롤백합니다. 현재와 동일한 정의는 롤백할 수 없습니다. 최초 Sync 직전 상태는 `phase: baseline`인 기준 기록으로 보존하며 실행/완료 시간을 만들어 내지 않습니다. baseline은 해당 리소스가 존재하지 않았던 상태도 보존합니다.
+
+Run에는 선택적 ISO `completedAt`, `rollbackOf`, `targetRevision`, `resources`를 포함합니다. 개별 이력 응답에서는 `resources`가 필수입니다. API 서버는 이력과 rollback 대상 snapshot을 영속 저장해야 합니다. 예제 이력은 세션 메모리에서만 유지됩니다. 상세 화면에는 해당 리소스의 최근 적용 commit/revision을 표시하며 이력이 없을 때는 환경 기준 revision임을 명시합니다. 리소스 단위 롤백은 마지막 전체 Sync commit을 덮어쓰지 않습니다. API가 완료 시간을 반환하지 않으면 추측하지 않고 생략합니다.
 
 Snapshot에서 외부 자동 동기화 상태 필드(autoSync)를 제거했습니다. Orion의 리소스 반영은 수동 Sync만 지원하며 Cloud Config 준비 상태만 실행 전 검사합니다.

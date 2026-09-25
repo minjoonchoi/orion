@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { DateValue, useI18n } from "@/i18n/provider";
 import { loadSync, previewSync, executeSync, syncRun } from "./actions";
+import { ResourceHistoryDialog } from "./history";
+import { resourceKinds, type ResourceKind } from "../authorization/model";
 import {
   diff,
   kindLabel,
@@ -39,6 +41,13 @@ export function ResourceSyncScreen() {
     (params.get("tab") === "changes" ? "out-of-sync" : "all");
   const kind = params.get("type") ?? "all";
   const selectedId = params.get("resource");
+  const [historyKind, historyId] = (params.get("history") ?? "").split(":");
+  function historyUrl(kind: string, id: string) {
+    const next = new URLSearchParams(params.toString());
+    next.delete("resource");
+    next.set("history", `${kind}:${id}`);
+    return `/resources?${next}`;
+  }
   function navigate(key: string, value: string) {
     const next = new URLSearchParams(params.toString());
     next.set(key, value);
@@ -110,6 +119,9 @@ export function ResourceSyncScreen() {
   const catalog = [
     ...(snapshot?.graph.resources ?? []),
     ...changes.filter((r) => r.operation === "create").map((r) => r.after),
+    ...(result?.rows
+      .filter((r) => r.after.state === "absent" && !r.before)
+      .map((r) => r.after) ?? []),
   ]
     .filter((r) => {
       const change = changes.find(
@@ -202,9 +214,6 @@ export function ResourceSyncScreen() {
           </p>
         </div>
         <div className="ui-actions">
-          <Link className="identity-link" href="/resource-sync/history">
-            {t("동기화 이력")}
-          </Link>
           <Button
             variant="secondary"
             disabled={busy || active}
@@ -403,6 +412,7 @@ export function ResourceSyncScreen() {
                     <th>{t("상위 리소스")}</th>
                     <th>{t("하위 리소스")}</th>
                     <th>{t("동기화 상태")}</th>
+                    <th>{t("동기화 이력")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -414,13 +424,18 @@ export function ResourceSyncScreen() {
                       );
                       const parentKind =
                         r.kind === "pages" ? "workspaces" : "services";
+                      const deleted =
+                        !snapshot.graph.resources.some(
+                          (current) =>
+                            current.kind === r.kind && current.id === r.id,
+                        ) && change?.operation !== "create";
                       const parent = snapshot.graph.resources.find(
                         (p) => p.kind === parentKind && p.id === r.parentId,
                       );
                       return (
                         <tr key={`${r.kind}:${r.id}`}>
                           <td>
-                            {change?.operation === "create" ? (
+                            {change?.operation === "create" || deleted ? (
                               <strong>{r.name}</strong>
                             ) : (
                               <Link href={`/${r.kind}/${r.id}`}>{r.name}</Link>
@@ -441,7 +456,8 @@ export function ResourceSyncScreen() {
                             )}
                           </td>
                           <td>
-                            {change?.operation !== "create" &&
+                            {!deleted &&
+                            change?.operation !== "create" &&
                             ["services", "workspaces"].includes(r.kind) ? (
                               <Link
                                 href={`/${r.kind}/${r.id}?tab=${r.kind === "services" ? "endpoints" : "pages"}`}
@@ -473,9 +489,20 @@ export function ResourceSyncScreen() {
                                 Out of sync · {operation(change.operation)} ·{" "}
                                 {t("diff 확인")}
                               </Button>
+                            ) : deleted ? (
+                              `Synced · ${t("삭제됨")}`
                             ) : (
                               "Synced"
                             )}
+                          </td>
+                          <td>
+                            <Link
+                              href={historyUrl(r.kind, r.id)}
+                              scroll={false}
+                              aria-label={`${r.name} · ${t("동기화 이력")}`}
+                            >
+                              {t("이력 보기")}
+                            </Link>
                           </td>
                         </tr>
                       );
@@ -513,6 +540,31 @@ export function ResourceSyncScreen() {
           }
           {
             <>
+              {historyId &&
+                resourceKinds.includes(historyKind as ResourceKind) && (
+                  <ResourceHistoryDialog
+                    key={`${historyKind}:${historyId}`}
+                    kind={historyKind as ResourceKind}
+                    id={historyId}
+                    name={
+                      catalog.find(
+                        (r) => r.kind === historyKind && r.id === historyId,
+                      )?.name ?? historyId
+                    }
+                    onUpdated={() => {
+                      void refresh();
+                    }}
+                    onClose={() => {
+                      const next = new URLSearchParams(params.toString());
+                      next.delete("history");
+                      window.history.replaceState(
+                        null,
+                        "",
+                        `/resources?${next}`,
+                      );
+                    }}
+                  />
+                )}
               <p className="muted">
                 {t(
                   "필터는 조회에만 적용됩니다. Sync는 이 환경·리전의 변경 전체를 적용합니다.",

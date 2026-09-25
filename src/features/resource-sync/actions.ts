@@ -1,5 +1,6 @@
 "use server";
-import { restoreDefinitions } from "../authorization/rollback";
+import { restoreResource } from "./restore";
+import { resourceKinds, type ResourceKind } from "../authorization/model";
 import { randomUUID, createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { stringify } from "yaml";
@@ -21,6 +22,8 @@ import {
   diff,
   applySnapshot,
   parseBundle,
+  resourceChanges,
+  historyForResource,
   type Snapshot,
   type Preview,
   type Run,
@@ -121,17 +124,7 @@ async function snapshot(): Promise<Snapshot> {
     region: c.region,
     cloudConfig: "ready",
     yaml,
-    graph: snapshotSchema.parse({
-      dbRevision: graph.revision,
-      appliedCommit: s.applied,
-      candidateCommit: "demo",
-      digest,
-      environment: c.environment,
-      region: c.region,
-      cloudConfig: "ready",
-      yaml,
-      graph,
-    }).graph,
+    graph,
   };
 }
 export async function loadSync() {
@@ -211,7 +204,29 @@ export async function executeSync(token: string) {
     )
       throw Error("CONFLICT");
     const next = applySnapshot(snap);
+    const resources = resourceChanges(snap.graph, next);
     await saveDemoGraph(next, snap.dbRevision);
+    // Preserve the first known version, including absence before creation.
+    const initial = resources.filter(
+      (ref) =>
+        !historyForResource([...s.runs.values()], ref.kind, ref.id).length,
+    );
+    if (initial.length) {
+      const baseline: Run = {
+        id: randomUUID(),
+        status: "succeeded",
+        phase: "baseline",
+        message: "INITIAL_VERSION",
+        commit: snap.appliedCommit,
+        dbRevision: snap.dbRevision,
+        completedAt: undefined,
+        rollbackOf: undefined,
+        targetRevision: undefined,
+        resources: initial.map((ref) => ({ ...ref, after: ref.before })),
+      };
+      s.runs.set(baseline.id, baseline);
+      s.snapshots.set(baseline.id, snap.graph);
+    }
     s.applied = snap.candidateCommit;
     const run: Run = {
       id: token,
@@ -223,6 +238,7 @@ export async function executeSync(token: string) {
       rollbackOf: undefined,
       targetRevision: undefined,
       completedAt: new Date().toISOString(),
+      resources,
     };
     s.runs.set(token, run);
     s.snapshots.set(run.id, next);
@@ -250,35 +266,81 @@ export async function syncRun(id: string) {
   }
 }
 
-export async function syncHistory() {
+export async function syncHistory(kind: string, id: string) {
   try {
-    if (deployment().mode === "api")
-      return { data: await remote("resource-sync/runs", array(runSchema)) };
+    if (!resourceKinds.includes(kind as ResourceKind) || !id)
+      throw Error("BLOCKED");
+    if (deployment().mode === "api") {
+      const runs = await remote(
+        `resource-sync/runs?kind=${encodeURIComponent(kind)}&resourceId=${encodeURIComponent(id)}`,
+        array(runSchema),
+      );
+      // Do not fall back to unscoped records from an older API server.
+      if (
+        runs.some(
+          (run) =>
+            !run.resources?.some((ref) => ref.kind === kind && ref.id === id),
+        )
+      )
+        throw Error("CONFLICT");
+      return { data: historyForResource(runs, kind, id) };
+    }
     await snapshot();
-    return { data: [...(await session()).runs.values()].reverse() };
+    return {
+      data: historyForResource(
+        [...(await session()).runs.values()].reverse(),
+        kind,
+        id,
+      ),
+    };
   } catch (e) {
     return { error: error(e) };
   }
 }
 
-export async function rollbackSync(runId: string) {
+export async function rollbackSync(
+  runId: string,
+  kind: ResourceKind,
+  id: string,
+  expectedDbRevision: number,
+) {
   try {
+    if (
+      !resourceKinds.includes(kind) ||
+      !id ||
+      !Number.isSafeInteger(expectedDbRevision)
+    )
+      throw Error("BLOCKED");
     if (deployment().mode === "api")
       return {
-        data: await remote("resource-sync/rollbacks", runSchema, {
-          runId,
-          idempotencyKey: `rollback:${runId}`,
-        }),
+        data: await remote(
+          `resource-sync/resources/${encodeURIComponent(kind)}/${encodeURIComponent(id)}/rollbacks`,
+          runSchema,
+          {
+            runId,
+            kind,
+            resourceId: id,
+            expectedDbRevision,
+            idempotencyKey: `rollback:${runId}:${kind}:${id}:${expectedDbRevision}`,
+          },
+        ),
       };
     const s = await session();
     const target = s.snapshots.get(runId);
     const targetRun = s.runs.get(runId);
-    if (!target || !targetRun || targetRun.status !== "succeeded")
+    if (
+      !target ||
+      !targetRun ||
+      targetRun.status !== "succeeded" ||
+      !historyForResource([targetRun], kind, id).length
+    )
       throw Error("CONFLICT");
     const snap = await snapshot();
-    const next = restoreDefinitions(snap.graph, target, "resources");
+    if (snap.dbRevision !== expectedDbRevision) throw Error("CONFLICT");
+    const next = restoreResource(snap.graph, target, kind, id);
+    const resources = resourceChanges(snap.graph, next);
+    if (!resources.length) throw Error("BLOCKED");
     await saveDemoGraph(next, snap.graph.revision);
-    s.applied = targetRun.commit;
     const run: Run = {
       id: randomUUID(),
       status: "succeeded",
@@ -289,6 +351,7 @@ export async function rollbackSync(runId: string) {
       rollbackOf: runId,
       targetRevision: target.revision,
       completedAt: new Date().toISOString(),
+      resources,
     };
     s.runs.set(run.id, run);
     s.snapshots.set(run.id, next);

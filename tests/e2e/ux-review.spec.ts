@@ -35,19 +35,44 @@ test("rollback requires review and records confirmed restoration", async ({
   await page.getByRole("dialog").getByRole("checkbox").check();
   await page.getByRole("button", { name: "최종 Sync 적용" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  await page.goto("/resource-sync/history");
+  await expect(
+    page.locator("nav a[href='/resource-sync/history']"),
+  ).toHaveCount(0);
+  await page.goto("/resources?type=services&history=services:svc-orion");
+  await page
+    .locator(".sync-history-entry")
+    .filter({ hasText: "revision 0" })
+    .locator("summary")
+    .click();
   await page.getByRole("button", { name: "이 revision으로 롤백" }).click();
   await expect(
     page.getByRole("button", { name: "롤백 적용", exact: true }),
   ).toBeDisabled();
-  await page.getByRole("button", { name: "취소", exact: true }).click();
-  await expect(page.locator(".sync-catalog tbody tr")).toHaveCount(1);
+  await page.getByRole("button", { name: "돌아가기", exact: true }).click();
+  await expect(page.locator(".sync-history-entry")).toHaveCount(2);
+  await page
+    .locator(".sync-history-entry")
+    .filter({ hasText: "revision 0" })
+    .locator("summary")
+    .click();
   await page.getByRole("button", { name: "이 revision으로 롤백" }).click();
-  await page.getByRole("dialog").getByRole("checkbox").check();
+  await page
+    .getByRole("checkbox", {
+      name: "복원할 revision과 적용 범위를 확인했습니다.",
+    })
+    .check();
   await page.getByRole("button", { name: "롤백 적용", exact: true }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-  await expect(page.locator(".sync-catalog tbody tr")).toHaveCount(2);
-  await expect(page.locator(".sync-catalog tbody tr").first()).toContainText(
+  await expect(page.locator(".sync-history-entry")).toHaveCount(3);
+  await expect(page.locator(".sync-history-entry").first()).toContainText(
     "revision 2",
   );
+  await page.getByRole("button", { name: "닫기", exact: true }).click();
+  await expect(page).toHaveURL(/type=services/);
+  await page.goto("/workspaces/ws-platform");
+  await expect(
+    page.getByRole("heading", { name: "Platform Operations", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "동기화 이력", exact: true }).click();
+  await expect(page.locator(".sync-history-entry")).toHaveCount(2);
+  await expect(page.getByRole("dialog")).not.toContainText("revision 2");
 });

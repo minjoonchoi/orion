@@ -107,7 +107,7 @@ function roleNodes(
     }),
   }));
 }
-function ImpactExplorer({
+export function ImpactExplorer({
   graph,
   kind,
   id,

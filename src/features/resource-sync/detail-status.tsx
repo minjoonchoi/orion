@@ -4,6 +4,9 @@ import Link from "next/link";
 import { loadSync, syncHistory } from "./actions";
 import { diff, type Snapshot, type Run } from "./model";
 import { DateValue, useI18n } from "@/i18n/provider";
+import { ResourceHistoryDialog } from "./history";
+import { resourceKinds, type ResourceKind } from "../authorization/model";
+import { Button } from "@/components/ui/button";
 export function ResourceDeploymentStatus({
   kind,
   id,
@@ -15,20 +18,23 @@ export function ResourceDeploymentStatus({
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [runs, setRuns] = useState<Run[]>([]);
   const [error, setError] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [version, setVersion] = useState(0);
   useEffect(() => {
     let cancelled = false;
-    void Promise.all([loadSync(), syncHistory()])
+    void Promise.all([loadSync(), syncHistory(kind, id)])
       .then(([s, h]) => {
         if (cancelled) return;
         if (s.data) setSnapshot(s.data);
         else setError(true);
         if (h.data) setRuns(h.data);
+        else setError(true);
       })
       .catch(() => !cancelled && setError(true));
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [kind, id, version]);
   const changed =
     snapshot &&
     diff(snapshot).rows.some(
@@ -38,7 +44,7 @@ export function ResourceDeploymentStatus({
         r.operation !== "unchanged",
     );
   const applied = runs.find(
-    (r) => r.status === "succeeded" && r.commit === snapshot?.appliedCommit,
+    (r) => r.status === "succeeded" && r.phase !== "baseline",
   );
   return (
     <section className="access-entry">
@@ -49,8 +55,9 @@ export function ResourceDeploymentStatus({
       </p>
       {snapshot && (
         <p>
-          Synced: <code>{snapshot.appliedCommit}</code> · revision{" "}
-          {snapshot.dbRevision}
+          {t(applied ? "이 리소스의 최근 적용" : "환경 기준 revision")}:{" "}
+          {applied && <code>{applied.commit} · </code>}revision{" "}
+          {applied?.dbRevision ?? snapshot.dbRevision}
           {applied?.completedAt && (
             <>
               {" "}
@@ -72,6 +79,26 @@ export function ResourceDeploymentStatus({
       >
         {t(changed ? "변경 예정 · diff 확인" : "리소스 관리")}
       </Link>
+      <Button
+        size="sm"
+        variant="secondary"
+        onClick={() => setHistoryOpen(true)}
+      >
+        {t("동기화 이력")}
+      </Button>
+      {historyOpen && resourceKinds.includes(kind as ResourceKind) && (
+        <ResourceHistoryDialog
+          kind={kind as ResourceKind}
+          id={id}
+          name={
+            snapshot?.graph.resources.find(
+              (r) => r.kind === kind && r.id === id,
+            )?.name ?? id
+          }
+          onClose={() => setHistoryOpen(false)}
+          onUpdated={() => setVersion((v) => v + 1)}
+        />
+      )}
     </section>
   );
 }

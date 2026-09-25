@@ -13,6 +13,7 @@
   padding: 0;
   min-width: 0;
 }
+.access-impact input:not([type="checkbox"]):not([type="radio"]),
 .authorization-editor input:not([type="checkbox"]):not([type="radio"]),
 .authorization-editor select,
 .authorization-editor textarea {
@@ -27,6 +28,7 @@
   font: inherit;
   margin-top: 0.4rem;
 }
+.access-impact input[type="checkbox"],
 .authorization-editor input[type="checkbox"],
 .authorization-editor input[type="radio"] {
   accent-color: var(--accent);

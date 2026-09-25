@@ -139,14 +139,66 @@ test("unified catalog filters, detail diff links and persistent session history"
   await dialog.getByRole("checkbox").check();
   await dialog.getByRole("button", { name: "최종 Sync 적용" }).click();
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
-  await page.goto("/resource-sync/history");
-  await expect(page.locator(".sync-catalog tbody tr")).toHaveCount(1);
-  await expect(page.locator(".sync-catalog tbody")).toContainText("revision 1");
+  await page
+    .getByRole("combobox", { name: "동기화 상태", exact: true })
+    .selectOption("all");
+  await page
+    .getByRole("link", {
+      name: "Orion Identity API · 동기화 이력",
+      exact: true,
+    })
+    .click();
+  await expect(page.locator(".sync-history-entry")).toHaveCount(2);
+  await expect(page.getByRole("dialog")).toContainText("revision 1");
   await page.reload();
-  await expect(page.locator(".sync-catalog tbody tr")).toHaveCount(1);
+  await expect(page.locator(".sync-history-entry")).toHaveCount(2);
   await page.goto("/resources?type=service-endpoints");
   await expect(page.locator(".sync-catalog")).toContainText("List users");
   await expect(page.locator(".sync-catalog")).toContainText(
+    "Orion Identity API",
+  );
+});
+test("resource history empty state, legacy redirect and English mobile access", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/resource-sync/history");
+  await expect(page).toHaveURL(/\/resources$/);
+  await page.goto("/resources?history=services:svc-orion");
+  await expect(page.getByRole("dialog")).toContainText(
+    "이 리소스의 동기화 이력이 없습니다.",
+  );
+  await context.addCookies([
+    { name: "orion-locale", value: "en", domain: "127.0.0.1", path: "/" },
+  ]);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.reload();
+  await expect(page.getByRole("dialog")).toContainText(
+    "This resource has no sync history.",
+  );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+});
+test("deleted resource history remains reachable from the catalog", async ({
+  page,
+}) => {
+  await page.goto("/resources?type=workspaces");
+  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page.getByRole("dialog").getByRole("checkbox").check();
+  await page.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  const row = page.getByRole("row").filter({ hasText: "ws-empty" });
+  await expect(row).toContainText("Synced · 삭제됨");
+  await row.getByRole("link", { name: /동기화 이력/ }).click();
+  await expect(page.locator(".sync-history-entry")).toHaveCount(2);
+  await expect(page.locator(".sync-history-entry").first()).toContainText(
+    "삭제",
+  );
+  await expect(page.getByRole("dialog")).not.toContainText(
     "Orion Identity API",
   );
 });

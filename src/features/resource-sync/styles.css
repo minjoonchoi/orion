@@ -2,6 +2,62 @@
   max-width: 1250px;
   margin: 0 auto;
 }
+.ui-dialog:has(.resource-history) {
+  width: min(900px, calc(100vw - 32px));
+}
+.sync-history-entry {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 12px 0;
+}
+.sync-history-entry summary {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface-subtle);
+}
+.sync-history-entry small {
+  display: block;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.sync-history-entry summary::after {
+  content: "⌄";
+  align-self: center;
+}
+.sync-history-entry[open] summary::after {
+  content: "⌃";
+}
+.sync-history-content {
+  padding: 0 16px 16px;
+}
+.resource-history code {
+  overflow-wrap: anywhere;
+}
+.sync-history-diff table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 16px 0;
+}
+.sync-history-diff th,
+.sync-history-diff td {
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--line);
+}
+.sync-history-diff th {
+  background: var(--surface-subtle);
+}
+.resource-history > .sync-toolbar {
+  justify-content: space-between;
+  margin-top: 0;
+}
 .sync-heading,
 .sync-toolbar {
   display: flex;

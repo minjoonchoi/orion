@@ -1,4 +1,4 @@
-import { SyncHistoryScreen } from "@/features/resource-sync/history";
+import { redirect } from "next/navigation";
 export default function Page() {
-  return <SyncHistoryScreen />;
+  redirect("/resources");
 }
