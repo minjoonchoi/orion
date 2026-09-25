@@ -1,4 +1,8 @@
 "use server";
+import { policySession as session } from "./demo-store";
+import { resourceSession } from "../resource-sync/demo-store";
+import { resourceChanges } from "../resource-sync/model";
+import { restorePlan } from "../sync-workflow/model";
 import { restoreDefinitions } from "../authorization/rollback";
 import { randomUUID, createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
@@ -21,42 +25,11 @@ import {
   applySnapshot,
   policyYamlForScope,
   type Snapshot,
-  type Preview,
   type Run,
 } from "./model";
 
 function digestOf(yaml: string) {
   return createHash("sha256").update(yaml).digest("hex");
-}
-
-const state = globalThis as typeof globalThis & {
-  orionPolicySync?: Map<
-    string,
-    {
-      applied: string;
-      plans: Map<string, Preview>;
-      runs: Map<string, Run>;
-      snapshots: Map<string, Snapshot["graph"]>;
-    }
-  >;
-};
-const sessions = (state.orionPolicySync ??= new Map());
-
-async function session() {
-  const id = (await cookies()).get("orion-demo-access")?.value;
-  if (!id) throw Error("CONFLICT");
-  if (!sessions.has(id)) {
-    if (sessions.size >= 100) sessions.delete(sessions.keys().next().value!);
-    sessions.set(id, {
-      applied: "demo-policy-baseline",
-      plans: new Map(),
-      runs: new Map(),
-      snapshots: new Map(),
-    });
-  }
-  const entry = sessions.get(id)!;
-  entry.snapshots ??= new Map();
-  return entry;
 }
 
 async function remote<T>(path: string, schema: Schema<T>, body?: unknown) {
@@ -219,6 +192,8 @@ export async function executePolicySync(token: string) {
       dbRevision: next.revision,
       rollbackOf: undefined,
       targetRevision: undefined,
+      policyIds: undefined,
+      resourceRefs: undefined,
       completedAt: new Date().toISOString(),
     };
     s.runs.set(token, run);
@@ -274,9 +249,17 @@ export async function rollbackPolicySync(runId: string) {
     if (!target || !targetRun || targetRun.status !== "succeeded")
       throw Error("CONFLICT");
     const snap = await snapshot();
-    const next = restoreDefinitions(snap.graph, target, "policies");
+    const next = targetRun.policyIds
+      ? restorePlan(
+          snap.graph,
+          target,
+          targetRun.policyIds,
+          targetRun.resourceRefs ?? [],
+        )
+      : restoreDefinitions(snap.graph, target, "policies");
+    const rs = await resourceSession();
     await saveDemoGraph(next, snap.graph.revision);
-    s.applied = targetRun.commit;
+    if (!targetRun.policyIds) s.applied = targetRun.commit;
     const run: Run = {
       id: randomUUID(),
       status: "succeeded",
@@ -286,10 +269,17 @@ export async function rollbackPolicySync(runId: string) {
       dbRevision: next.revision,
       rollbackOf: runId,
       targetRevision: target.revision,
+      policyIds: targetRun.policyIds,
+      resourceRefs: targetRun.resourceRefs,
       completedAt: new Date().toISOString(),
     };
     s.runs.set(run.id, run);
     s.snapshots.set(run.id, next);
+    const resources = resourceChanges(snap.graph, next);
+    if (resources.length) {
+      rs.runs.set(run.id, { ...run, resources });
+      rs.snapshots.set(run.id, next);
+    }
     revalidatePath("/", "layout");
     return { data: run };
   } catch (e) {

@@ -128,10 +128,12 @@ export function PolicyImpactTree({
   name,
   id,
   roles,
+  initialDepth = 1,
 }: {
   name: string;
   id: string;
   roles: ImpactRole[];
+  initialDepth?: number;
 }) {
   const { t } = useI18n();
   return (
@@ -139,7 +141,7 @@ export function PolicyImpactTree({
       nodes={[
         { id, name, kind: "정책", children: roles.map((r) => roleNode(r, t)) },
       ]}
-      initialDepth={1}
+      initialDepth={initialDepth}
     />
   );
 }

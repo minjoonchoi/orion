@@ -1,26 +1,18 @@
 "use client";
-import { PolicyImpactTree } from "../authorization/impact-tree";
+import { SyncDialog } from "../sync-workflow/dialog";
+import type { Selection } from "../sync-workflow/model";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
 import { RollbackButton } from "../resource-sync/rollback-button";
 import { DateValue, useI18n } from "@/i18n/provider";
 import {
   loadPolicySync,
-  previewPolicySync,
-  executePolicySync,
   policySyncRun,
   policySyncHistory,
   rollbackPolicySync,
 } from "./actions";
-import {
-  diff,
-  resourceLabel,
-  type Snapshot,
-  type Preview,
-  type Run,
-} from "./model";
+import { diff, resourceLabel, type Snapshot, type Run } from "./model";
 import "../resource-sync/styles.css";
 
 const messages: Record<string, string> = {
@@ -35,13 +27,12 @@ const messages: Record<string, string> = {
 export function PolicySyncScreen() {
   const { t, mode } = useI18n();
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
-  const [preview, setPreview] = useState<Preview | null>(null);
+  const [syncSelection, setSyncSelection] = useState<Selection | null>(null);
   const [run, setRun] = useState<Run | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
-  const [confirmed, setConfirmed] = useState(false);
   const [history, setHistory] = useState<Run[] | null>(null);
   const [rollbackId, setRollbackId] = useState("");
 
@@ -99,23 +90,12 @@ export function PolicySyncScreen() {
     invalid = true;
   }
   const changes = result?.rows.filter((r) => r.operation !== "unchanged") ?? [];
-  const rows = changes.filter(
+  const rows = (result?.rows ?? []).filter(
     (r) =>
       (filter === "all" || r.operation === filter) &&
       `${r.after.name} ${r.after.id} ${r.after.version}`
         .toLowerCase()
         .includes(query.trim().toLowerCase()),
-  );
-  const previewRows = preview
-    ? diff(preview.snapshot).rows.filter((r) => r.operation !== "unchanged")
-    : [];
-  const users = new Set(
-    previewRows.flatMap((row) =>
-      row.impact.roles.flatMap((role) => [
-        ...role.users.map((u) => u.id),
-        ...role.organizations.flatMap((o) => o.members.map((u) => u.id)),
-      ]),
-    ),
   );
   const active = Boolean(run && ["queued", "running"].includes(run.status));
   const syncState = changes.length ? "Out of sync" : "Synced";
@@ -131,44 +111,6 @@ export function PolicySyncScreen() {
       )[op],
     );
 
-  async function review() {
-    if (!snapshot) return;
-    setBusy(true);
-    setError("");
-    try {
-      const r = await previewPolicySync(
-        snapshot.candidateCommit,
-        snapshot.digest,
-        snapshot.dbRevision,
-      );
-      if (r.data) {
-        setPreview(r.data);
-        setConfirmed(false);
-      } else setError(r.error!);
-    } catch {
-      setError("REQUEST_FAILED");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function apply() {
-    if (!preview) return;
-    setBusy(true);
-    setError("");
-    try {
-      const r = await executePolicySync(preview.token);
-      if (r.data) {
-        setRun(r.data);
-        setPreview(null);
-        if (r.data.status === "succeeded") await refresh();
-      } else setError(r.error!);
-    } catch {
-      setError("REQUEST_FAILED");
-    } finally {
-      setBusy(false);
-    }
-  }
   async function rollback(runId: string) {
     setRollbackId(runId);
     setError("");
@@ -305,14 +247,14 @@ export function PolicySyncScreen() {
               {t("변경 정책")} · {changes.length}
             </span>
             <Button
-              disabled={
-                busy ||
-                active ||
-                invalid ||
-                !changes.length ||
-                !!result?.blockers.length
+              disabled={busy || active || invalid || !result?.rows.length}
+              onClick={() =>
+                setSyncSelection({
+                  mode: "policies",
+                  resources: [],
+                  policyIds: (result?.rows ?? []).map((r) => r.after.id),
+                })
               }
-              onClick={review}
             >
               Sync · {t("영향도 검토")} · {changes.length}
             </Button>
@@ -340,6 +282,19 @@ export function PolicySyncScreen() {
                     {row.impact.userCount}
                   </span>
                 </summary>
+                <Button
+                  variant="secondary"
+                  disabled={busy || active}
+                  onClick={() =>
+                    setSyncSelection({
+                      mode: "policies",
+                      resources: [],
+                      policyIds: [row.after.id],
+                    })
+                  }
+                >
+                  {t("이 정책 Sync")}
+                </Button>
                 <table>
                   <thead>
                     <tr>
@@ -499,6 +454,11 @@ export function PolicySyncScreen() {
                     <td>
                       {r.status === "succeeded" ? (
                         <RollbackButton
+                          scope={
+                            r.policyIds
+                              ? `${t("정책")} ${r.policyIds.join(", ")} · ${t("리소스")} ${(r.resourceRefs ?? []).map((ref) => ref.id).join(", ") || "—"}`
+                              : undefined
+                          }
                           revision={r.dbRevision}
                           commit={r.commit}
                           disabled={Boolean(rollbackId)}
@@ -518,89 +478,16 @@ export function PolicySyncScreen() {
           </div>
         </>
       )}
-      <Dialog
-        title={t("정책 영향도 검토")}
-        description={t("검토한 Out of sync 변경에 대해서만 적용합니다.")}
-        trigger={
-          <button type="button" hidden aria-label={t("정책 영향도 검토")} />
-        }
-        open={Boolean(preview)}
-        busy={busy}
-        onOpenChange={(v) => {
-          if (!v) setPreview(null);
-        }}
-      >
-        {preview && (
-          <div className="sync-review">
-            {error && (
-              <p role="alert">
-                {t(messages[error] ?? messages.REQUEST_FAILED)}
-              </p>
-            )}
-            <p>
-              <strong>
-                {preview.snapshot.environment} / {preview.snapshot.region}
-              </strong>{" "}
-              · {t("Synced")} revision {preview.snapshot.dbRevision} →{" "}
-              {preview.snapshot.candidateCommit}
-            </p>
-            <p>
-              {t("검토 유효 기한")}:{" "}
-              <DateValue value={preview.expiresAt} time />
-            </p>
-            <div className="sync-notice">
-              {t("변경 정책")} {previewRows.length} · {t("영향 사용자")}{" "}
-              {users.size}
-              <p>
-                {t(
-                  "연결된 엔드포인트에만 적용됩니다. 다른 리소스는 접근 권한만 평가합니다.",
-                )}
-              </p>
-            </div>
-            <div className="sync-review-list">
-              {previewRows.map((row) => (
-                <section key={row.key}>
-                  <h3>
-                    {operation(row.operation)} ·{" "}
-                    {row.after.name || row.after.id}
-                  </h3>
-                  <p>
-                    {t("리소스")} {row.after.resources.length} · pre{" "}
-                    {row.after.processors.pre.length} · post{" "}
-                    {row.after.processors.post.length}
-                  </p>
-                  {!row.impact.roles.length ? (
-                    <p>
-                      {t(
-                        "연결된 역할이 없습니다. 정책 추가는 권한을 자동 부여하지 않습니다.",
-                      )}
-                    </p>
-                  ) : (
-                    <PolicyImpactTree
-                      name={row.after.name || row.after.id}
-                      id={row.after.id}
-                      roles={row.impact.roles}
-                    />
-                  )}
-                </section>
-              ))}
-            </div>
-            <label className="sync-confirm">
-              <input
-                type="checkbox"
-                checked={confirmed}
-                onChange={(e) => setConfirmed(e.target.checked)}
-              />
-              {t(
-                "정책 리소스와 processor 변경, 연결 역할·사용자 영향을 확인했습니다.",
-              )}
-            </label>
-            <Button disabled={!confirmed || busy} onClick={apply}>
-              {t("최종 적용")}
-            </Button>
-          </div>
-        )}
-      </Dialog>
+      {syncSelection && (
+        <SyncDialog
+          selection={syncSelection}
+          onClose={() => setSyncSelection(null)}
+          onApplied={(r) => {
+            setRun({ ...r, policyIds: undefined, resourceRefs: undefined });
+            void refresh();
+          }}
+        />
+      )}
     </div>
   );
 }

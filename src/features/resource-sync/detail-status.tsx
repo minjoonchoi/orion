@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { SyncDialog } from "../sync-workflow/dialog";
+import type { Selection } from "../sync-workflow/model";
 import { loadSync, syncHistory } from "./actions";
 import { diff, type Snapshot, type Run } from "./model";
 import { DateValue, useI18n } from "@/i18n/provider";
@@ -17,6 +20,8 @@ export function ResourceDeploymentStatus({
   id: string;
 }) {
   const { t } = useI18n();
+  const router = useRouter();
+  const [syncSelection, setSyncSelection] = useState<Selection | null>(null);
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [runs, setRuns] = useState<Run[]>([]);
   const [error, setError] = useState(false);
@@ -83,6 +88,29 @@ export function ResourceDeploymentStatus({
       >
         {t(changed ? "변경 예정 · diff 확인" : "리소스 관리")}
       </Link>
+      <Button
+        size="sm"
+        disabled={!snapshot}
+        onClick={() =>
+          setSyncSelection({
+            mode: "resources",
+            resources: [{ kind: kind as ResourceKind, id }],
+            policyIds: [],
+          })
+        }
+      >
+        Sync
+      </Button>
+      {syncSelection && (
+        <SyncDialog
+          selection={syncSelection}
+          onClose={() => setSyncSelection(null)}
+          onApplied={() => {
+            setVersion((v) => v + 1);
+            router.refresh();
+          }}
+        />
+      )}
       <Button
         size="sm"
         variant="secondary"

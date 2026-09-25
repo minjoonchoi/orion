@@ -19,15 +19,19 @@ test("GitOps diff, explicit review, apply and catalog projection", async ({
   );
   await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
   await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .click();
   const dialog = page.getByRole("dialog");
   await expect(
     dialog.getByRole("button", { name: "최종 Sync 적용" }),
   ).toBeDisabled();
   await expect(
-    dialog.getByRole("columnheader", { name: "Synced", exact: true }).first(),
+    dialog.getByRole("heading", { name: "변경 전후", exact: true }),
   ).toBeVisible();
-  await expect(dialog).toContainText("변경 리소스");
-  await dialog.getByRole("checkbox").check();
+  await expect(dialog).toContainText("리소스 5");
+  await dialog.locator(".sync-confirm input").check();
   await dialog.getByRole("button", { name: "최종 Sync 적용" }).click();
   await expect(page.getByRole("status")).toContainText("succeeded");
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
@@ -59,7 +63,7 @@ test("review cancel never writes DB; English mobile controls are accessible", as
   await page.getByRole("button", { name: /Sync · Review impact/ }).click();
   await page
     .getByRole("dialog")
-    .getByRole("button", { name: "Back", exact: true })
+    .getByRole("button", { name: "Cancel", exact: true })
     .click();
   await expect(page.getByText("revision 0", { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
@@ -77,6 +81,10 @@ test("stale preview cannot apply after another permission change", async ({
 }) => {
   await page.goto("/resource-sync");
   await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .click();
   const other = await context.newPage();
   await other.goto("/users/usr-014");
   await other.getByRole("button", { name: "역할 부여", exact: true }).click();
@@ -92,14 +100,14 @@ test("stale preview cannot apply after another permission change", async ({
     "변경사항을 적용했습니다",
   );
   const review = page.getByRole("dialog");
-  await review.getByRole("checkbox").check();
+  await review.locator(".sync-confirm input").check();
   await review
     .getByRole("button", { name: "최종 Sync 적용", exact: true })
     .click();
   await expect(review.getByRole("alert")).toContainText(
     "버전이 변경되었습니다",
   );
-  await review.getByRole("button", { name: "돌아가기", exact: true }).click();
+  await review.getByRole("button", { name: "닫기", exact: true }).click();
   await page.getByRole("button", { name: "새로고침", exact: true }).click();
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
   await expect(
@@ -141,8 +149,11 @@ test("unified catalog filters, detail diff links and persistent session history"
     })
     .click();
   const dialog = page.getByRole("dialog");
-  await expect(dialog.locator(".sync-review-list > section")).toHaveCount(5);
-  await dialog.getByRole("checkbox").check();
+  await dialog
+    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .click();
+  await expect(dialog.locator(".sync-review-list > details")).toHaveCount(5);
+  await dialog.locator(".sync-confirm input").check();
   await dialog.getByRole("button", { name: "최종 Sync 적용" }).click();
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
   await page
@@ -194,7 +205,11 @@ test("deleted resource history remains reachable from the catalog", async ({
 }) => {
   await page.goto("/resources?type=workspaces");
   await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
-  await page.getByRole("dialog").getByRole("checkbox").check();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .click();
+  await page.getByRole("dialog").locator(".sync-confirm input").check();
   await page.getByRole("button", { name: "최종 Sync 적용" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   const row = page.getByRole("row").filter({ hasText: "ws-empty" });

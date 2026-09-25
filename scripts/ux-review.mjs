@@ -261,9 +261,13 @@ try {
   await capture("04-resource-diff.png");
   await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
   await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
-  await page.getByRole("dialog").getByRole("checkbox").waitFor();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .click();
+  await page.getByRole("dialog").locator(".sync-confirm input").waitFor();
   await capture("05-sync-review.png");
-  await page.getByRole("dialog").getByRole("checkbox").check();
+  await page.getByRole("dialog").locator(".sync-confirm input").check();
   await page.getByRole("button", { name: "최종 Sync 적용" }).click();
   await page.getByRole("dialog").waitFor({ state: "hidden" });
   report.interactions.push("Resource diff, review and explicit sync");

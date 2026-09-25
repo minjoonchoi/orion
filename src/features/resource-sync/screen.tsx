@@ -1,26 +1,21 @@
 "use client";
-import { ResourceImpactTree } from "../authorization/impact-tree";
+import { SyncDialog } from "../sync-workflow/dialog";
+import type { Selection } from "../sync-workflow/model";
 import { ResourceImpact } from "../authorization/resource-impact";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { DateValue, useI18n } from "@/i18n/provider";
-import { loadSync, previewSync, executeSync, syncRun } from "./actions";
+import { useI18n } from "@/i18n/provider";
+import { loadSync } from "./actions";
 import { ResourceHistoryDialog } from "./history";
 import {
   resourceKinds,
   type ResourceKind,
   type ResourceRef,
 } from "../authorization/model";
-import {
-  diff,
-  kindLabel,
-  type Snapshot,
-  type Preview,
-  type Run,
-} from "./model";
+import { diff, kindLabel, type Snapshot, type Run } from "./model";
 import "./styles.css";
 const messages: Record<string, string> = {
   CONFLICT: "버전이 변경되었습니다. 새로고침 후 다시 검토하세요.",
@@ -63,13 +58,12 @@ export function ResourceSyncScreen() {
     window.history.replaceState(null, "", "/resources?" + next.toString());
   }
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
-  const [preview, setPreview] = useState<Preview | null>(null);
+  const [syncSelection, setSyncSelection] = useState<Selection | null>(null);
   const [run, setRun] = useState<Run | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const query = params.get("q") ?? "";
   const filter = params.get("change") ?? "all";
-  const [confirmed, setConfirmed] = useState(false);
   const [impactReview, setImpactReview] = useState<{
     snapshot: Snapshot;
     resources: ResourceRef[];
@@ -114,25 +108,6 @@ export function ResourceSyncScreen() {
       .then((r) => (r.data ? setSnapshot(r.data) : setError(r.error!)))
       .catch(() => setError("REQUEST_FAILED"));
   }, []);
-  useEffect(() => {
-    if (!run || !["queued", "running"].includes(run.status)) return;
-    let stopped = false;
-    const timer = setInterval(() => {
-      void syncRun(run.id)
-        .then((r) => {
-          if (stopped) return;
-          if (r.data) {
-            setRun(r.data);
-            if (r.data.status === "succeeded") void refresh();
-          } else setError(r.error!);
-        })
-        .catch(() => !stopped && setError("REQUEST_FAILED"));
-    }, 2000);
-    return () => {
-      stopped = true;
-      clearInterval(timer);
-    };
-  }, [run]);
   let result: ReturnType<typeof diff> | null = null;
   let invalid = false;
   try {
@@ -203,47 +178,13 @@ export function ResourceSyncScreen() {
       )[op],
     );
   const active = Boolean(run && ["queued", "running"].includes(run.status));
-  const previewRows = preview
-    ? diff(preview.snapshot).rows.filter((r) => r.operation !== "unchanged")
-    : [];
-  const users = new Set(previewRows.flatMap((r) => r.users));
   const syncState = changes.length ? "Out of sync" : "Synced";
-  async function review() {
-    if (!snapshot) return;
-    setBusy(true);
-    setError("");
-    try {
-      const r = await previewSync(
-        snapshot.candidateCommit,
-        snapshot.digest,
-        snapshot.dbRevision,
-      );
-      if (r.data) {
-        setPreview(r.data);
-        setConfirmed(false);
-      } else setError(r.error!);
-    } catch {
-      setError("REQUEST_FAILED");
-    } finally {
-      setBusy(false);
-    }
-  }
-  async function apply() {
-    if (!preview) return;
-    setBusy(true);
-    setError("");
-    try {
-      const r = await executeSync(preview.token);
-      if (r.data) {
-        setRun(r.data);
-        setPreview(null);
-        if (r.data.status === "succeeded") await refresh();
-      } else setError(r.error!);
-    } catch {
-      setError("REQUEST_FAILED");
-    } finally {
-      setBusy(false);
-    }
+  function startSync(resources: ResourceRef[]) {
+    setSyncSelection({
+      mode: "resources",
+      resources: resources.map(({ kind, id }) => ({ kind, id })),
+      policyIds: [],
+    });
   }
   return (
     <div className="sync-page">
@@ -426,7 +367,7 @@ export function ResourceSyncScreen() {
                   !changes.length ||
                   !!result?.blockers.length
                 }
-                onClick={review}
+                onClick={() => startSync(changes.map((r) => r.after))}
               >
                 {t("전체 변경")} Sync · {t("영향도 검토")} · {changes.length}
               </Button>
@@ -442,6 +383,12 @@ export function ResourceSyncScreen() {
                   {t("현재 필터 밖 선택")} · {hiddenSelected}
                 </span>
               )}
+              <Button
+                disabled={!selection.length || busy || active}
+                onClick={() => startSync(selection)}
+              >
+                {t("선택 리소스 Sync")}
+              </Button>
               <Button
                 variant="secondary"
                 disabled={!selection.length || busy || active}
@@ -485,7 +432,7 @@ export function ResourceSyncScreen() {
             )}
             <p className="muted">
               {t(
-                "선택은 영향도 조회에 사용됩니다. Sync는 전체 변경을 별도로 검토한 후 적용합니다.",
+                "선택한 리소스를 기준으로 변경과 영향도를 검토합니다. 필수 상위 리소스는 포함 사유와 함께 표시됩니다.",
               )}
             </p>
           </section>
@@ -722,7 +669,7 @@ export function ResourceSyncScreen() {
                 )}
               <p className="muted">
                 {t(
-                  "필터는 조회에만 적용됩니다. Sync는 이 환경·리전의 변경 전체를 적용합니다.",
+                  "선택 리소스 Sync는 선택 범위에만 적용됩니다. 전체 변경 Sync는 모든 변경을 검토합니다.",
                 )}
               </p>
               {selectedId && (
@@ -736,7 +683,7 @@ export function ResourceSyncScreen() {
               <Dialog
                 title={t("리소스 변경 내용")}
                 description={t(
-                  "변경 전후를 확인한 뒤 목록의 Sync에서 전체 영향도를 검토하세요.",
+                  "변경 전후를 확인한 뒤 선택 리소스 Sync에서 영향도를 검토하세요.",
                 )}
                 open={Boolean(selectedId)}
                 onOpenChange={(open) => {
@@ -825,134 +772,17 @@ export function ResourceSyncScreen() {
           </details>
         </>
       )}
-      <Dialog
-        title={t("동기화 영향도 검토")}
-        description={t("검토한 Out of sync 변경에 대해서만 적용합니다.")}
-        trigger={
-          <button type="button" hidden aria-label={t("동기화 영향도 검토")} />
-        }
-        open={Boolean(preview)}
-        busy={busy}
-        onOpenChange={(v) => {
-          if (!v) setPreview(null);
-        }}
-      >
-        {preview && (
-          <div className="sync-review">
-            <p>
-              <strong>
-                {preview.snapshot.environment} / {preview.snapshot.region}
-              </strong>{" "}
-              · {t("Synced")} revision {preview.snapshot.dbRevision} →{" "}
-              {preview.snapshot.candidateCommit}
-            </p>
-            <p>
-              {t("검토 유효 기한")}:{" "}
-              <DateValue value={preview.expiresAt} time />
-            </p>
-            <div className="sync-notice">
-              {t("변경 리소스")} {previewRows.length} · {t("연결된 사용자")}{" "}
-              {users.size}
-              <p>
-                {t(
-                  "연결 관계 기준이며 최종 접근 허용 여부는 서버에서 판정합니다.",
-                )}
-              </p>
-            </div>
-            <div className="sync-review-list">
-              {previewRows.map((row) => (
-                <section key={row.key}>
-                  <h3>
-                    {operation(row.operation)} ·{" "}
-                    {row.after.name || row.after.id}
-                  </h3>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th scope="col">{t("필드")}</th>
-                        <th scope="col">Synced</th>
-                        <th scope="col">Out of sync</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(
-                        [
-                          "name",
-                          "description",
-                          "path",
-                          "method",
-                          "parentId",
-                          "state",
-                        ] as const
-                      )
-                        .filter(
-                          (field) =>
-                            row.operation === "create" ||
-                            row.operation === "delete" ||
-                            row.before?.[field] !== row.after[field],
-                        )
-                        .map((field) => (
-                          <tr key={field}>
-                            <th scope="row">{t(fieldLabels[field])}</th>
-                            <td>{row.before?.[field] || "—"}</td>
-                            <td>
-                              {row.operation === "delete"
-                                ? "—"
-                                : row.after[field] || "—"}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                  {!row.paths.length ? (
-                    <p>
-                      {t(
-                        "연결된 정책이 없습니다. 리소스 추가는 권한을 자동 부여하지 않습니다.",
-                      )}
-                    </p>
-                  ) : (
-                    <ResourceImpactTree
-                      graph={preview.snapshot.graph}
-                      kind={row.after.kind}
-                      id={row.after.id}
-                      includeExpired
-                    />
-                  )}
-                </section>
-              ))}
-            </div>
-            {error && (
-              <p role="alert">
-                {t(messages[error] ?? messages.REQUEST_FAILED)}
-              </p>
-            )}
-            <label className="sync-confirm">
-              <input
-                type="checkbox"
-                checked={confirmed}
-                onChange={(e) => setConfirmed(e.target.checked)}
-              />
-              {t("변경사항과 영향 범위를 확인했습니다.")}
-            </label>
-            <div className="sync-toolbar">
-              <Button
-                variant="secondary"
-                disabled={busy}
-                onClick={() => setPreview(null)}
-              >
-                {t("돌아가기")}
-              </Button>
-              <Button
-                disabled={!confirmed || busy}
-                loading={busy}
-                onClick={apply}
-              >
-                {t("최종 Sync 적용")}
-              </Button>
-            </div>
-          </div>
-        )}
-      </Dialog>
+      {syncSelection && (
+        <SyncDialog
+          selection={syncSelection}
+          onClose={() => setSyncSelection(null)}
+          onApplied={(r) => {
+            setRun(r);
+            void refresh();
+            router.refresh();
+          }}
+        />
+      )}
       <Dialog
         title={t("리소스 영향도 검토")}
         description={t("조회 대상으로 선택한 리소스의 연결 관계만 표시합니다.")}

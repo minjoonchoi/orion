@@ -1,4 +1,5 @@
 "use server";
+import { resourceSession as session } from "./demo-store";
 import { restoreResource } from "./restore";
 import { resourceKinds, type ResourceKind } from "../authorization/model";
 import { randomUUID, createHash } from "node:crypto";
@@ -25,37 +26,8 @@ import {
   resourceChanges,
   historyForResource,
   type Snapshot,
-  type Preview,
   type Run,
 } from "./model";
-const state = globalThis as typeof globalThis & {
-  orionSync?: Map<
-    string,
-    {
-      applied: string;
-      plans: Map<string, Preview>;
-      runs: Map<string, Run>;
-      snapshots: Map<string, Snapshot["graph"]>;
-    }
-  >;
-};
-const sessions = (state.orionSync ??= new Map());
-async function session() {
-  const id = (await cookies()).get("orion-demo-access")?.value;
-  if (!id) throw Error("CONFLICT");
-  if (!sessions.has(id)) {
-    if (sessions.size >= 100) sessions.delete(sessions.keys().next().value!);
-    sessions.set(id, {
-      applied: "demo-db-baseline",
-      plans: new Map(),
-      runs: new Map(),
-      snapshots: new Map(),
-    });
-  }
-  const entry = sessions.get(id)!;
-  entry.snapshots ??= new Map();
-  return entry;
-}
 async function remote<T>(path: string, schema: Schema<T>, body?: unknown) {
   const c = deployment();
   return (

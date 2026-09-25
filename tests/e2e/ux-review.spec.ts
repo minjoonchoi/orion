@@ -33,7 +33,11 @@ test("rollback requires review and records confirmed restoration", async ({
 }) => {
   await page.goto("/resources");
   await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
-  await page.getByRole("dialog").getByRole("checkbox").check();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .click();
+  await page.getByRole("dialog").locator(".sync-confirm input").check();
   await page.getByRole("button", { name: "최종 Sync 적용" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(
@@ -84,7 +88,11 @@ test("impact lists preserve ancestry and distinguish direct and inherited depth"
 }) => {
   await page.goto("/resources");
   await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
-  await page.getByRole("dialog").getByRole("checkbox").check();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .click();
+  await page.getByRole("dialog").locator(".sync-confirm input").check();
   await page.getByRole("button", { name: "최종 Sync 적용" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.goto("/resources?history=services:svc-orion");

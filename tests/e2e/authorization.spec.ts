@@ -101,9 +101,13 @@ test("policy definitions are reviewed through GitOps", async ({ page }) => {
   await page.getByRole("link", { name: "정책 변경 검토" }).click();
   await expect(page).toHaveURL(/policies\/sync$/);
   await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
-  await expect(page.getByRole("dialog")).toContainText("변경 정책");
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "변경·영향도 검토", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toContainText("정책 3");
   await expect(
-    page.getByRole("button", { name: "최종 적용", exact: true }),
+    page.getByRole("button", { name: "최종 Sync 적용", exact: true }),
   ).toBeDisabled();
 });
 test("logout clears demo session and keeps locale; common denied screen is accessible", async ({

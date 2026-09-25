@@ -9,11 +9,13 @@ export function RollbackButton({
   commit,
   disabled,
   onConfirm,
+  scope,
 }: {
   revision: number;
   commit: string;
   disabled: boolean;
   onConfirm: () => Promise<boolean>;
+  scope?: string;
 }) {
   const { t, environment, region } = useI18n();
   const [open, setOpen] = useState(false);
@@ -24,7 +26,9 @@ export function RollbackButton({
     <Dialog
       title={t("롤백 검토")}
       description={t(
-        "선택한 revision의 정의 전체를 복원합니다. 사용자·조직·역할 부여는 유지됩니다.",
+        scope
+          ? "이 실행에 포함된 정책과 변경된 리소스를 복원합니다. 사용자·조직·역할 부여는 유지됩니다."
+          : "선택한 revision의 정의 전체를 복원합니다. 사용자·조직·역할 부여는 유지됩니다.",
       )}
       trigger={
         <Button variant="secondary" size="sm" disabled={disabled}>
@@ -43,6 +47,7 @@ export function RollbackButton({
         {environment} / {region}
       </p>
       <h3>revision {revision}</h3>
+      {scope && <p>{scope}</p>}
       <p>
         <code>{commit}</code>
       </p>

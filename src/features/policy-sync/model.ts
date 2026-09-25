@@ -136,6 +136,10 @@ export const runSchema = object({
   completedAt: optional(datetime),
   rollbackOf: optional(string),
   targetRevision: optional(number),
+  policyIds: optional(array(string)),
+  resourceRefs: optional(
+    array(object({ kind: enumeration(resourceKinds), id: string })),
+  ),
 });
 export type Run = ReturnType<typeof runSchema.parse>;
 
