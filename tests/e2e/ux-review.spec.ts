@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 test("list query survives detail navigation and reload; mobile menu reveals content", async ({
   page,
@@ -75,4 +76,57 @@ test("rollback requires review and records confirmed restoration", async ({
   await page.getByRole("button", { name: "동기화 이력", exact: true }).click();
   await expect(page.locator(".sync-history-entry")).toHaveCount(2);
   await expect(page.getByRole("dialog")).not.toContainText("revision 2");
+});
+
+test("impact lists preserve ancestry and distinguish direct and inherited depth", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/resources");
+  await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
+  await page.getByRole("dialog").getByRole("checkbox").check();
+  await page.getByRole("button", { name: "최종 Sync 적용" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.goto("/resources?history=services:svc-orion");
+  await page.locator(".sync-history-entry").last().locator("summary").click();
+  await page.getByRole("button", { name: "이 revision으로 롤백" }).click();
+  const impact = page.getByRole("region", { name: "영향 범위 탐색" });
+  await expect(impact.locator('.explorer-row[data-depth="0"]')).toContainText(
+    "Orion Identity API",
+  );
+  await expect(
+    impact.locator('.explorer-row[data-depth="1"]').first(),
+  ).toContainText("정책");
+  await expect(
+    impact.locator('.explorer-row[data-depth="2"]').first(),
+  ).toContainText("역할");
+  await impact.getByLabel("관계 검색", { exact: true }).fill("김가람");
+  await expect(
+    impact
+      .locator('.explorer-row[data-depth="3"]')
+      .filter({ hasText: "직접 연결" })
+      .first(),
+  ).toContainText("김가람");
+  await expect(
+    impact.locator('.explorer-row[data-depth="4"]').first(),
+  ).toContainText("조직 경유");
+  await impact.getByLabel("관계 검색", { exact: true }).fill("no-such-member");
+  await expect(impact).toContainText("연결된 항목이 없습니다");
+  await impact.getByLabel("관계 검색", { exact: true }).fill("김가람");
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await context.addCookies([
+    { name: "orion-locale", value: "en", domain: "127.0.0.1", path: "/" },
+  ]);
+  await page.reload();
+  await page.locator(".sync-history-entry").last().locator("summary").click();
+  await page.getByRole("button", { name: "Rollback to this revision" }).click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "Indentation and connecting lines show relationship depth.",
+  );
 });

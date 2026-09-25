@@ -7,21 +7,29 @@ export type ExplorerNode = {
   name: string;
   detail?: ReactNode;
   href?: string;
+  kind?: string;
+  relation?: string;
   children?: ExplorerNode[];
 };
-export function Explorer({ nodes }: { nodes: ExplorerNode[] }) {
+export function Explorer({
+  nodes,
+  initialDepth = 3,
+}: {
+  nodes: ExplorerNode[];
+  initialDepth?: number;
+}) {
   const { t } = useI18n();
   const [collapsed, setCollapsed] = useState<string[]>([]);
-  const [all, setAll] = useState(true);
+  const [openDepth, setOpenDepth] = useState(initialDepth);
   function rows(items: ExplorerNode[], parent = "", depth = 0): ReactNode {
     return items.map((node) => {
       const key = `${parent}/${node.id}`;
-      const open = all !== collapsed.includes(key);
+      const open = depth < openDepth !== collapsed.includes(key);
       return (
-        <div key={key}>
+        <li key={key} className="explorer-branch">
           <div
             className={`explorer-row explorer-depth-${Math.min(depth, 2)}`}
-            style={{ paddingLeft: `${depth * 14 + 8}px` }}
+            data-depth={depth}
           >
             {node.children?.length ? (
               <button
@@ -41,18 +49,38 @@ export function Explorer({ nodes }: { nodes: ExplorerNode[] }) {
             ) : (
               <span className="explorer-spacer" />
             )}
-            {node.href ? (
-              <Link href={node.href}>{node.name}</Link>
-            ) : (
-              <span>{node.name}</span>
-            )}
-            {!!node.children?.length && (
-              <span className="explorer-count">{node.children.length}</span>
-            )}
-            <small>{node.detail}</small>
+            <div className="explorer-node-content">
+              <div className="explorer-node-title">
+                {node.kind && (
+                  <span className="explorer-kind">{t(node.kind)}</span>
+                )}
+                {node.href ? (
+                  <Link href={node.href}>{node.name}</Link>
+                ) : (
+                  <span>{node.name}</span>
+                )}
+                {!!node.children?.length && (
+                  <span className="explorer-count">{node.children.length}</span>
+                )}
+              </div>
+              {(node.relation || node.detail) && (
+                <small>
+                  {node.relation && (
+                    <span className="explorer-relation">
+                      {t(node.relation)}
+                    </span>
+                  )}
+                  {node.detail}
+                </small>
+              )}
+            </div>
           </div>
-          {open && rows(node.children ?? [], key, depth + 1)}
-        </div>
+          {open && !!node.children?.length && (
+            <ul className="explorer-children">
+              {rows(node.children, key, depth + 1)}
+            </ul>
+          )}
+        </li>
       );
     });
   }
@@ -63,7 +91,7 @@ export function Explorer({ nodes }: { nodes: ExplorerNode[] }) {
         <button
           type="button"
           onClick={() => {
-            setAll(true);
+            setOpenDepth(Infinity);
             setCollapsed([]);
           }}
         >
@@ -72,7 +100,7 @@ export function Explorer({ nodes }: { nodes: ExplorerNode[] }) {
         <button
           type="button"
           onClick={() => {
-            setAll(false);
+            setOpenDepth(0);
             setCollapsed([]);
           }}
         >
@@ -80,7 +108,9 @@ export function Explorer({ nodes }: { nodes: ExplorerNode[] }) {
         </button>
       </div>
       <div className="explorer-list">
-        {rows(nodes)}
+        <ul className="explorer-roots" aria-label={t("연결 목록")}>
+          {rows(nodes)}
+        </ul>
         {!nodes.length && <p>{t("연결된 항목이 없습니다")}</p>}
       </div>
     </div>

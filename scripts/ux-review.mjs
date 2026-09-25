@@ -247,6 +247,10 @@ try {
       .isDisabled(),
   );
   await capture("06-rollback-review.png");
+  await page.setViewportSize({ width: 1440, height: 1320 });
+  await page.getByLabel("관계 검색", { exact: true }).fill("김다온");
+  await capture("09-impact-depth.png");
+  await page.setViewportSize({ width: 1440, height: 1050 });
   await page.getByRole("button", { name: "돌아가기", exact: true }).click();
   report.interactions.push(
     "Rollback requires confirmation and can be cancelled",
@@ -257,6 +261,7 @@ try {
     .getByRole("checkbox", { name: "플랫폼 관리자", exact: true })
     .check();
   await page.getByRole("button", { name: "변경사항 검토" }).click();
+  await page.getByText("변경 후 정책·리소스 확인", { exact: true }).click();
   await capture("07-role-review.png");
   await page.getByRole("button", { name: "변경 적용", exact: true }).click();
   await page.getByRole("button", { name: "완료", exact: true }).waitFor();

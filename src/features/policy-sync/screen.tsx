@@ -1,4 +1,5 @@
 "use client";
+import { PolicyImpactTree } from "../authorization/impact-tree";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -575,28 +576,11 @@ export function PolicySyncScreen() {
                       )}
                     </p>
                   ) : (
-                    row.impact.roles.map((r) => (
-                      <details key={r.role.id}>
-                        <summary>
-                          <Link href={`/roles/${r.role.id}`}>
-                            {r.role.name}
-                          </Link>{" "}
-                          · {t("사용자")} {r.users.length} · {t("조직")}{" "}
-                          {r.organizations.length}
-                        </summary>
-                        <p>
-                          {t("직접 부여 사용자")}:{" "}
-                          {r.users.map((u) => u.name).join(", ") || t("없음")}
-                        </p>
-                        {r.organizations.map((o) => (
-                          <p key={o.id}>
-                            {o.name} →{" "}
-                            {o.members.map((u) => u.name).join(", ") ||
-                              t("없음")}
-                          </p>
-                        ))}
-                      </details>
-                    ))
+                    <PolicyImpactTree
+                      name={row.after.name || row.after.id}
+                      id={row.after.id}
+                      roles={row.impact.roles}
+                    />
                   )}
                 </section>
               ))}

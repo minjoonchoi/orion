@@ -1,4 +1,6 @@
 {
+  "정책·역할·조직·사용자 검색": "Search policies, roles, organizations or users",
+  "들여쓰기와 연결선은 연결 깊이를 나타냅니다. 조직 경유 사용자는 조직 아래에 표시됩니다.": "Indentation and connecting lines show relationship depth. Inherited users appear under their organization.",
   "이력 보기": "View history",
   "삭제됨": "Deleted",
   "존재": "Present",

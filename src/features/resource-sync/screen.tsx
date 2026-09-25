@@ -1,4 +1,5 @@
 "use client";
+import { ResourceImpactTree } from "../authorization/impact-tree";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -756,35 +757,12 @@ export function ResourceSyncScreen() {
                       )}
                     </p>
                   ) : (
-                    row.paths.map((p) => (
-                      <details key={p.policy.id}>
-                        <summary>
-                          {p.policy.name} ·{" "}
-                          {t(p.policy.effect === "allow" ? "허용" : "거부")} ·{" "}
-                          {t("역할")} {p.roles.length}
-                        </summary>
-                        {p.roles.map((r) => (
-                          <div key={r.role.id}>
-                            <Link href={`/roles/${r.role.id}`}>
-                              {r.role.name}
-                            </Link>
-                            {r.expired && <span> · {t("만료")}</span>}
-                            <p>
-                              {t("직접 부여 사용자")}:{" "}
-                              {r.users.map((u) => u.name).join(", ") ||
-                                t("없음")}
-                            </p>
-                            {r.organizations.map((o) => (
-                              <p key={o.id}>
-                                {o.name} →{" "}
-                                {o.members.map((u) => u.name).join(", ") ||
-                                  t("없음")}
-                              </p>
-                            ))}
-                          </div>
-                        ))}
-                      </details>
-                    ))
+                    <ResourceImpactTree
+                      graph={preview.snapshot.graph}
+                      kind={row.after.kind}
+                      id={row.after.id}
+                      includeExpired
+                    />
                   )}
                 </section>
               ))}
