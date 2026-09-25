@@ -17,36 +17,6 @@ test("inverse relationships open the correct detail pages", async ({
       "/service-accounts/sa-directory-sync",
     ],
     [
-      "/policies/policy-platform",
-      "정책이 연결된 역할",
-      "플랫폼 관리자",
-      "/roles/role-platform",
-    ],
-    [
-      "/services/svc-orion",
-      "연결 정책",
-      "플랫폼 조회",
-      "/policies/policy-platform",
-    ],
-    [
-      "/services/svc-orion",
-      "관리 조직",
-      "플랫폼개발팀",
-      "/organizations/org-platform",
-    ],
-    [
-      "/service-endpoints/ep-roles",
-      "연결 정책",
-      "플랫폼 조회",
-      "/policies/policy-platform",
-    ],
-    [
-      "/workspaces/ws-platform",
-      "연결 정책",
-      "보안 검토",
-      "/policies/policy-security",
-    ],
-    [
       "/organizations/org-platform",
       "조직 API 키",
       "디렉터리 동기화",
@@ -99,14 +69,6 @@ test("relationship counts open the corresponding tab", async ({ page }) => {
       "/organizations/org-platform?tab=members",
     ],
     ["/roles", "플랫폼 관리자", "1명", "/roles/role-platform?tab=users"],
-    [
-      "/policies",
-      "플랫폼 조회",
-      "2개",
-      "/policies/policy-platform?tab=endpoints",
-    ],
-    ["/services", "Orion", "2개", "/services/svc-orion?tab=endpoints"],
-    ["/workspaces", "플랫폼 운영", "6개", "/workspaces/ws-platform?tab=pages"],
   ];
   for (const [source, name, count, target] of cases) {
     await page.goto(source);
@@ -146,7 +108,6 @@ test("related lists support keyboard navigation, empty state and narrow screens"
   await expect(page).toHaveURL(/roles\/role-platform$/);
   for (const route of [
     "/users/usr-001",
-    "/services/svc-orion",
     "/approval-templates/template-key-issue-v1",
   ]) {
     await page.goto(route);

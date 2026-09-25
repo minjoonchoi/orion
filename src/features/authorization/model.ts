@@ -14,6 +14,8 @@ export const resourceKinds = [
   "pages",
   "services",
   "service-endpoints",
+  "domains",
+  "actions",
 ] as const;
 export type ResourceKind = (typeof resourceKinds)[number];
 export type FocusKind =

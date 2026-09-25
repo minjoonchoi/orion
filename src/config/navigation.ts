@@ -42,19 +42,14 @@ export const navigationGroups = [
         description: "워크스페이스와 소속 페이지를 탐색합니다.",
       },
       {
-        href: "/pages",
-        label: "페이지",
-        description: "페이지 경로와 소속 워크스페이스를 탐색합니다.",
-      },
-      {
         href: "/services",
         label: "서비스",
         description: "서비스와 소속 엔드포인트를 탐색합니다.",
       },
       {
-        href: "/service-endpoints",
-        label: "엔드포인트",
-        description: "HTTP 메서드와 경로로 엔드포인트를 탐색합니다.",
+        href: "/domains",
+        label: "업무 도메인",
+        description: "도메인별 Action과 연결 엔드포인트를 탐색합니다.",
       },
       {
         href: "/policies",
@@ -101,5 +96,17 @@ export const navigationGroups = [
 export const navigation = navigationGroups.flatMap((group) => [...group.items]);
 
 export function isNavigationActive(pathname: string, href: string) {
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const child: Record<string, string> = {
+    "/workspaces": "/pages",
+    "/services": "/service-endpoints",
+    "/domains": "/actions",
+  };
+  return (
+    pathname === href ||
+    pathname.startsWith(`${href}/`) ||
+    Boolean(
+      child[href] &&
+      (pathname === child[href] || pathname.startsWith(child[href] + "/")),
+    )
+  );
 }

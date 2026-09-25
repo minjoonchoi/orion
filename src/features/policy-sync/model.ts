@@ -381,4 +381,6 @@ export const resourceLabel: Record<ResourceKind, string> = {
   pages: "페이지",
   services: "서비스",
   "service-endpoints": "서비스 엔드포인트",
+  domains: "업무 도메인",
+  actions: "Action",
 };

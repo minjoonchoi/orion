@@ -1,4 +1,3 @@
-import { reviewDemoItems } from "./sync-helpers";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 async function open(page: Page, path: string, label: string) {
@@ -40,7 +39,7 @@ test("assign roles with policy/resource preview and reflect changes in user and 
   const summary = dialog.getByRole("complementary", { name: "부여 내용 요약" });
   await expect(summary).toContainText("부여받는 대상 · 1");
   await summary.getByText("변경 후 정책·리소스 확인", { exact: true }).click();
-  await expect(summary).toContainText("Orion");
+  await expect(summary).toContainText("인사 업무 조회");
   await dialog
     .getByRole("button", { name: "수정으로 돌아가기", exact: true })
     .click();
@@ -77,8 +76,8 @@ test("policy binding expiry validates past dates and persists on the role", asyn
     .click();
   const card = dialog
     .locator(".access-card")
-    .filter({ hasText: "플랫폼 조회" });
-  await card.getByRole("checkbox", { name: /플랫폼 조회/ }).check();
+    .filter({ hasText: "인사 사용자 상세 조회" });
+  await card.getByRole("checkbox", { name: /인사 사용자 상세 조회/ }).check();
   await card.getByRole("checkbox", { name: "무기한", exact: true }).uncheck();
   await card.getByLabel("만료 시점", { exact: true }).fill("2020-01-01T10:00");
   await dialog.getByRole("button", { name: "변경사항 및 영향도 검토" }).click();
@@ -94,24 +93,17 @@ test("policy binding expiry validates past dates and persists on the role", asyn
     "2030-12-31T10:00",
   );
 });
-test("policy definitions are reviewed through GitOps", async ({ page }) => {
+test("policy definitions are read-only and use common sync review", async ({
+  page,
+}) => {
   await page.goto("/policies/policy-platform");
   await expect(
     page.getByRole("button", { name: "리소스 연결과 정책 효과" }),
   ).toHaveCount(0);
-  await page.getByRole("link", { name: "정책 변경 검토" }).click();
-  await expect(page).toHaveURL(
-    /resources\?type=policies&resource=policy-platform/,
-  );
+  await page.getByRole("button", { name: "동기화", exact: true }).click();
   await page
-    .getByRole("button", { name: "목록으로 돌아가기", exact: true })
-    .click();
-  await reviewDemoItems(page);
-  await page
-    .getByRole("dialog")
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
-  await expect(page.getByRole("dialog")).toContainText("정책 3");
   await expect(
     page.getByRole("button", { name: "동기화 적용", exact: true }),
   ).toBeDisabled();
@@ -142,24 +134,24 @@ test("logout clears demo session and keeps locale; common denied screen is acces
     (await context.cookies()).some((c) => c.name === "orion-demo-access"),
   ).toBe(false);
 });
-test("English resource editing is routed to GitOps", async ({
+test("English resource editing is read-only with YAML and sync", async ({
   page,
   context,
 }) => {
   await context.addCookies([
     { name: "orion-locale", value: "en", domain: "127.0.0.1", path: "/" },
   ]);
-  await page.goto("/services/svc-orion");
+  await page.goto("/service-endpoints/identity-api~detail");
   await expect(
-    page.getByText(
-      "Resource definitions are managed in Git. Edit YAML and sync to update or delete.",
-    ),
+    page.getByRole("tab", { name: "YAML", exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Sync", exact: true }),
+  ).toBeEnabled();
   await expect(
     page.getByRole("button", { name: "Edit resource and explore impact" }),
   ).toHaveCount(0);
 });
-
 test("list explorer exposes removal and supports collapse", async ({
   page,
 }) => {
@@ -171,7 +163,7 @@ test("list explorer exposes removal and supports collapse", async ({
   await expect(summary).toHaveCount(0);
   await dialog
     .locator(".access-card")
-    .filter({ hasText: "플랫폼 조회" })
+    .filter({ hasText: "인사 사용자 상세 조회" })
     .getByRole("checkbox")
     .first()
     .uncheck();
@@ -179,13 +171,15 @@ test("list explorer exposes removal and supports collapse", async ({
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   await summary.getByText("변경 후 정책·리소스 확인", { exact: true }).click();
-  await expect(summary.locator(".delta-remove")).toContainText("플랫폼 조회");
+  await expect(summary.locator(".delta-remove")).toContainText(
+    "인사 사용자 상세 조회",
+  );
   await summary.getByRole("button", { name: "모두 접기", exact: true }).click();
   await expect(summary.locator(".explorer-row:visible")).toHaveCount(1);
   await summary
     .getByRole("button", { name: "모두 펼치기", exact: true })
     .click();
   await expect(summary.locator(".explorer-list:visible")).toContainText(
-    "구성원 조회",
+    "직원 기본 조회",
   );
 });

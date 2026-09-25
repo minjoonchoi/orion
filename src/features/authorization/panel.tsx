@@ -29,6 +29,8 @@ const labels: Record<FocusKind, string> = {
   pages: "페이지",
   services: "서비스",
   "service-endpoints": "서비스 엔드포인트",
+  domains: "업무 도메인",
+  actions: "Action",
 };
 const toggle = (ids: string[], id: string) =>
   ids.includes(id) ? ids.filter((v) => v !== id) : [...ids, id];

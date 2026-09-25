@@ -1,5 +1,7 @@
 # 리소스 GitOps 동기화
 
+> 이전 Bundle 계약의 기록입니다. 현재 UI와 YAML 계약은 [도메인 기반 정의 관리](definition-management.md)를 사용합니다.
+
 ## 구현 범위
 
 `/resources`는 synced revision과 Git 정의서의 Out of sync 변경을 비교하고, Sync 대상 확인 → 변경·영향도 검토 → 최종 적용 → 실행 상태 확인을 제공합니다. `/policies/sync`는 같은 수동 동기화 흐름으로 정책의 리소스 접근 범위와 전처리·후처리 handler 변경을 관리합니다. 각 Sync는 이력으로 남고, 이전 revision으로 rollback할 수 있습니다. 리소스 상세의 직접 수정과 기존 resource 변경 액션은 비활성화했습니다. 역할·정책 부여는 기존 관리 UI를 유지합니다.

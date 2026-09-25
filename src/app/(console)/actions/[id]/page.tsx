@@ -8,7 +8,7 @@ export default async function Page({
   const { id } = await params;
   return (
     <Suspense>
-      <DefinitionsScreen kind="workspaces" id={id} />
+      <DefinitionsScreen kind="actions" id={id} />
     </Suspense>
   );
 }

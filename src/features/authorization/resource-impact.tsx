@@ -6,6 +6,8 @@ import { SubjectImpact } from "./subject-impact-view";
 const kindLabels = {
   services: "서비스",
   "service-endpoints": "서비스 엔드포인트",
+  domains: "업무 도메인",
+  actions: "Action",
   workspaces: "워크스페이스",
   pages: "페이지",
 };

@@ -23,6 +23,8 @@ export const itemSchema = object({
     "pages",
     "services",
     "service-endpoints",
+    "domains",
+    "actions",
   ] as const),
   state: enumeration(["present", "absent"] as const),
   name: string,
@@ -282,4 +284,6 @@ export const kindLabel: Record<ResourceKind, string> = {
   pages: "페이지",
   services: "서비스",
   "service-endpoints": "서비스 엔드포인트",
+  domains: "업무 도메인",
+  actions: "Action",
 };

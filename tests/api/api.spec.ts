@@ -93,7 +93,7 @@ test("authorization changes use real POST responses and handle conflicts and for
     .getByRole("checkbox", { name: "Remote role", exact: true })
     .check();
   await dialog
-    .getByRole("button", { name: "Review changes", exact: true })
+    .getByRole("button", { name: "Review changes & impact", exact: true })
     .click();
   await dialog
     .getByRole("button", { name: "Apply changes", exact: true })
@@ -116,7 +116,7 @@ test("authorization changes use real POST responses and handle conflicts and for
     .getByRole("checkbox", { name: "Remote role", exact: true })
     .uncheck();
   await dialog
-    .getByRole("button", { name: "Review changes", exact: true })
+    .getByRole("button", { name: "Review changes & impact", exact: true })
     .click();
   await dialog
     .getByRole("button", { name: "Apply changes", exact: true })
@@ -178,4 +178,41 @@ test("logout failure keeps session; confirmed backend logout clears the cookie a
   expect(
     (await context.cookies()).some((c) => c.name === "orion_session"),
   ).toBe(false);
+});
+
+test("definition status, scoped preview and apply use API responses; denied and malformed data never become demo", async ({
+  page,
+  context,
+}) => {
+  await context.addCookies([
+    {
+      name: "orion_session",
+      value: "definitions",
+      domain: "127.0.0.1",
+      path: "/",
+    },
+  ]);
+  await page.goto("/service-endpoints/identity-api~detail");
+  await expect(
+    page.getByRole("heading", { name: "Remote endpoint", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Sync", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toContainText("service-endpoints:identity-api/detail");
+  await dialog
+    .getByRole("button", { name: "Review changes & impact", exact: true })
+    .click();
+  await dialog.getByRole("checkbox").check();
+  await dialog.getByRole("button", { name: "Apply sync", exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.locator(".sync-status")).toHaveText("Synced");
+  for (const value of ["forbidden", "malformed"]) {
+    await context.addCookies([
+      { name: "orion_session", value, domain: "127.0.0.1", path: "/" },
+    ]);
+    await page.goto("/resources");
+    await expect(page.locator("main [role=alert]")).toBeVisible();
+    await expect(page.locator(".def-demo")).toHaveCount(0);
+    await expect(page.locator("tbody tr")).toHaveCount(0);
+  }
 });

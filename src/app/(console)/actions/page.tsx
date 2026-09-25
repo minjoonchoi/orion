@@ -3,7 +3,7 @@ import { DefinitionsScreen } from "@/features/definitions/screen";
 export default function Page() {
   return (
     <Suspense>
-      <DefinitionsScreen kind="services" />
+      <DefinitionsScreen kind="actions" />
     </Suspense>
   );
 }
