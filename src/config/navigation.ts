@@ -70,6 +70,22 @@ export const navigationGroups = [
       },
     ],
   },
+  {
+    id: "approvals",
+    label: "결재",
+    items: [
+      {
+        href: "/approval-templates",
+        label: "결재 템플릿",
+        description: "결재 템플릿의 기본 정보와 요청 안내를 조회합니다.",
+      },
+      {
+        href: "/approvals",
+        label: "결재",
+        description: "결재 요청 정보와 처리 결과를 조회합니다.",
+      },
+    ],
+  },
 ] as const;
 
 export const navigation = navigationGroups.flatMap((group) => [...group.items]);

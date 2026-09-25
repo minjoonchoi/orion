@@ -206,7 +206,11 @@ function Approvals({ rows }: { rows: ApprovalRow[] }) {
             render: (r) => (
               <>
                 {timestamp(r.requestedAt)}
-                <div className="identity-meta">{r.id}</div>
+                <div className="identity-meta">
+                  <Link className="identity-link" href={`/approvals/${r.id}`}>
+                    {r.id}
+                  </Link>
+                </div>
               </>
             ),
           },

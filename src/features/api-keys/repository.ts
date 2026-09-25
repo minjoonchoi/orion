@@ -1,5 +1,6 @@
 import { users, organizations } from "../identity/fixtures";
-import { apiKeys, approvals } from "./fixtures";
+import { apiKeys } from "./fixtures";
+import { approvals } from "../approvals/fixtures";
 import type { KeyRow, KeyDetail, Person } from "./types";
 const person = (id: string): Person => {
   const user = users.find((u) => u.id === id)!;
