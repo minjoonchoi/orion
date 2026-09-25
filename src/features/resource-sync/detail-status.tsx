@@ -63,18 +63,23 @@ export function ResourceDeploymentStatus({
         )}
       </p>
       {snapshot && (
+        <p className="resource-item-status">
+          {changed ? "Out of sync" : "Synced"}
+        </p>
+      )}
+      {applied ? (
         <p>
-          {t(applied ? "이 리소스의 최근 적용" : "환경 기준 revision")}:{" "}
-          {applied && <code>{applied.commit} · </code>}revision{" "}
-          {applied?.dbRevision ?? snapshot.dbRevision}
-          {applied?.completedAt && (
+          {t("이 리소스의 최근 적용")}: <code>{applied.commit}</code> · revision{" "}
+          {applied.dbRevision}
+          {applied.completedAt && (
             <>
               {" "}
-              · {t("적용 완료 시간")}:{" "}
-              <DateValue value={applied.completedAt} time />
+              · <DateValue value={applied.completedAt} time />
             </>
           )}
         </p>
+      ) : (
+        snapshot && <p className="muted">{t("동기화 이력이 없습니다.")}</p>
       )}
       {error && (
         <p role="alert">{t("요청하지 못했습니다. 다시 시도해 주세요.")}</p>
@@ -90,7 +95,7 @@ export function ResourceDeploymentStatus({
       </Link>
       <Button
         size="sm"
-        disabled={!snapshot}
+        disabled={!snapshot || !changed}
         onClick={() =>
           setSyncSelection({
             mode: "resources",

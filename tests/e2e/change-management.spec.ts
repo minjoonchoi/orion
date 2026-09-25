@@ -42,9 +42,9 @@ test("resource group separates applied exploration from mixed policy/resource ch
   await page.reload();
   await expect(
     page.getByRole("region", { name: "리소스 선택", exact: true }),
-  ).toContainText("선택한 리소스 · 2");
+  ).toContainText("선택한 항목 · 2");
   await page
-    .getByRole("button", { name: "선택 리소스 동기화", exact: true })
+    .getByRole("button", { name: "선택 항목 동기화", exact: true })
     .click();
   const dialog = page.getByRole("dialog");
   const targets = dialog.getByRole("table", { name: "동기화 대상" });
@@ -73,4 +73,55 @@ test("resource group separates applied exploration from mixed policy/resource ch
   await expect(
     page.getByRole("link", { name: "Orion Identity API", exact: true }),
   ).toBeVisible();
+});
+
+test("row sync scopes one resource or policy and leaves other items pending", async ({
+  page,
+}) => {
+  await page.goto("/resources?type=services&status=out-of-sync");
+  await expect(
+    page.getByRole("button", { name: /전체 변경 동기화/ }),
+  ).toHaveCount(0);
+  await expect(page.locator(".sync-versions")).not.toContainText("revision");
+  const table = page.getByRole("table", { name: "변경 관리", exact: true });
+  await table
+    .getByRole("row")
+    .filter({ hasText: "svc-orion" })
+    .getByRole("button", { name: "Orion · 동기화", exact: true })
+    .click();
+  const dialog = page.getByRole("dialog");
+  await expect(
+    dialog.getByRole("table", { name: "동기화 대상" }).locator("tbody tr"),
+  ).toHaveCount(1);
+  await expect(dialog).not.toContainText("policy-platform");
+  await dialog
+    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
+    .click();
+  await dialog.locator(".sync-confirm input").check();
+  await dialog
+    .getByRole("button", { name: "동기화 적용", exact: true })
+    .click();
+  await expect(dialog).toHaveCount(0);
+  await page.goto("/resources?type=services");
+  await expect(
+    table
+      .getByRole("row")
+      .filter({ hasText: "svc-orion" })
+      .getByRole("button", {
+        name: "Orion Identity API · 동기화",
+        exact: true,
+      }),
+  ).toBeDisabled();
+  await page.goto("/resources?type=policies&status=out-of-sync");
+  await expect(table).toContainText("policy-directory");
+  await table
+    .getByRole("row")
+    .filter({ hasText: "policy-platform" })
+    .getByRole("button", { name: "플랫폼 조회 · 동기화", exact: true })
+    .click();
+  const targets = dialog.getByRole("table", { name: "동기화 대상" });
+  await expect(targets).toContainText("policy-platform");
+  await expect(targets).toContainText("svc-orion");
+  await expect(targets).not.toContainText("policy-directory");
+  await dialog.getByRole("button", { name: "취소", exact: true }).click();
 });

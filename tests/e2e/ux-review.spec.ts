@@ -1,3 +1,4 @@
+import { reviewDemoItems } from "./sync-helpers";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -32,7 +33,7 @@ test("rollback requires review and records confirmed restoration", async ({
   page,
 }) => {
   await page.goto("/resources");
-  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
+  await reviewDemoItems(page);
   await page
     .getByRole("dialog")
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
@@ -87,7 +88,7 @@ test("subject impact shows direct users without organization-member paths during
   context,
 }) => {
   await page.goto("/resources");
-  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
+  await reviewDemoItems(page);
   await page
     .getByRole("dialog")
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })

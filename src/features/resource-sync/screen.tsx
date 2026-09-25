@@ -243,7 +243,6 @@ export function ResourceSyncScreen() {
       )[op],
     );
   const active = Boolean(run && ["queued", "running"].includes(run.status));
-  const syncState = changes.length ? "Out of sync" : "Synced";
   function startSync(resources: CatalogItem[]) {
     setSyncSelection({
       mode: resources.some((r) => r.kind === "policies")
@@ -298,37 +297,26 @@ export function ResourceSyncScreen() {
       )}
       {snapshot && (
         <>
-          <div className="sync-versions">
+          <p className="muted">
+            {t("동기화 상태와 변경사항은 각 리소스·정책 단위로 확인합니다.")}
+          </p>
+          <div
+            className="sync-versions"
+            aria-label={t("항목별 동기화 상태 요약")}
+          >
             <section>
-              <span>{t("상태")}</span>
-              <strong>{t(syncState)}</strong>
-              <span>
-                {changes.length
-                  ? `${changes.length} ${t("변경 사항")}`
-                  : t("변경 없음")}
-              </span>
+              <span>{t("전체 항목")}</span>
+              <strong>{resourceCatalog.length}</strong>
             </section>
             <section>
-              <span>{t("리소스")} · Synced</span>
-              <strong>revision {snapshot.dbRevision}</strong>
-              <code>{snapshot.appliedCommit}</code>
+              <span>Out of sync</span>
+              <strong>{changes.length}</strong>
             </section>
             <section>
-              <span>{t(syncState)}</span>
-              <strong>{snapshot.candidateCommit}</strong>
-              <code>SHA-256 {snapshot.digest.slice(0, 16)}…</code>
-              <span>
-                {snapshot.environment} / {snapshot.region} · {t("수동 적용")}
-              </span>
+              <span>Synced</span>
+              <strong>{resourceCatalog.length - changes.length}</strong>
             </section>
           </div>
-          {policySnapshot && (
-            <p className="muted">
-              {t("정책")} · Synced: <code>{policySnapshot.appliedCommit}</code>{" "}
-              · {t("Git revision")}:{" "}
-              <code>{policySnapshot.candidateCommit}</code>
-            </p>
-          )}
           {run && (
             <div className="sync-notice" role="status">
               <strong>
@@ -415,25 +403,11 @@ export function ResourceSyncScreen() {
                 {t("초기화")}
               </Button>
             )}
-            {
-              <Button
-                disabled={
-                  busy ||
-                  active ||
-                  invalid ||
-                  !changes.length ||
-                  !policySnapshot
-                }
-                onClick={() => startSync(changes.map((r) => r.after))}
-              >
-                {t("전체 변경 동기화")} · {changes.length}
-              </Button>
-            }
           </div>
           <section className="sync-selection" aria-label={t("리소스 선택")}>
             <div className="ui-actions">
               <strong>
-                {t("선택한 리소스")} · {selection.length}
+                {t("선택한 항목")} · {selection.length}
               </strong>
               {hiddenSelected > 0 && (
                 <span className="muted">
@@ -450,7 +424,7 @@ export function ResourceSyncScreen() {
                 }
                 onClick={() => startSync(selection)}
               >
-                {t("선택 리소스 동기화")}
+                {t("선택 항목 동기화")}
               </Button>
               <Button
                 variant="secondary"
@@ -501,7 +475,7 @@ export function ResourceSyncScreen() {
             )}
             <p className="muted">
               {t(
-                "선택한 리소스를 기준으로 변경과 영향도를 검토합니다. 필수 상위 리소스는 포함 사유와 함께 표시됩니다.",
+                "선택한 항목의 변경사항과 영향도를 검토합니다. 정책 연결 리소스와 필수 상위 리소스는 포함 사유와 함께 표시됩니다.",
               )}
             </p>
           </section>
@@ -560,7 +534,7 @@ export function ResourceSyncScreen() {
                     <th>{t("하위 리소스")}</th>
                     <th>{t("동기화 상태")}</th>
                     <th>{t("동기화 이력")}</th>
-                    <th>{t("영향도")}</th>
+                    <th>{t("작업")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -679,15 +653,32 @@ export function ResourceSyncScreen() {
                           </Link>
                         </td>
                         <td>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            disabled={busy || active}
-                            aria-label={`${r.name} · ${t("영향도 검토")}`}
-                            onClick={() => inspectImpact([r])}
-                          >
-                            {t("영향도 검토")}
-                          </Button>
+                          <div className="sync-row-actions">
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              disabled={
+                                !change ||
+                                busy ||
+                                active ||
+                                invalid ||
+                                !policySnapshot
+                              }
+                              aria-label={`${r.name} · ${t("동기화")}`}
+                              onClick={() => startSync([r])}
+                            >
+                              {t("동기화")}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              disabled={busy || active}
+                              aria-label={`${r.name} · ${t("영향도 검토")}`}
+                              onClick={() => inspectImpact([r])}
+                            >
+                              {t("영향도 검토")}
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -763,7 +754,7 @@ export function ResourceSyncScreen() {
               )}
               <p className="muted">
                 {t(
-                  "선택 리소스 동기화는 선택 범위에만 적용됩니다. 전체 변경 동기화는 모든 변경을 검토합니다.",
+                  "각 행에서 동기화하거나 여러 항목을 선택해 함께 검토할 수 있습니다.",
                 )}
               </p>
               {selectedId && (
@@ -877,6 +868,14 @@ export function ResourceSyncScreen() {
                               ))}
                           </tbody>
                         </table>
+                        <Button
+                          onClick={() => {
+                            navigate("resource", "");
+                            startSync([row.after]);
+                          }}
+                        >
+                          {t("동기화")}
+                        </Button>
                         {row.operation === "unchanged" && (
                           <p>{t("변경 없음")}</p>
                         )}
@@ -933,7 +932,7 @@ export function ResourceSyncScreen() {
             {impactReview.resources.some((r) => r.kind === "policies") ? (
               <>
                 <p>
-                  {t("선택한 리소스")} ·{" "}
+                  {t("선택한 항목")} ·{" "}
                   {impactReview.resources
                     .map((r) => `${t(catalogLabels[r.kind])}: ${r.name}`)
                     .join(", ")}

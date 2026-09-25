@@ -1,3 +1,4 @@
+import { reviewDemoItems } from "./sync-helpers";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 async function open(page: Page, path: string, label: string) {
@@ -105,7 +106,7 @@ test("policy definitions are reviewed through GitOps", async ({ page }) => {
   await page
     .getByRole("button", { name: "목록으로 돌아가기", exact: true })
     .click();
-  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
+  await reviewDemoItems(page);
   await page
     .getByRole("dialog")
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })

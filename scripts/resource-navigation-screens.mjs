@@ -121,7 +121,7 @@ try {
     .getByRole("checkbox")
     .check();
   await page
-    .getByRole("button", { name: "선택 리소스 동기화", exact: true })
+    .getByRole("button", { name: "선택 항목 동기화", exact: true })
     .click();
   await page.getByRole("table", { name: "동기화 대상", exact: true }).waitFor();
   await capture("05-mixed-sync-targets.png");
@@ -134,6 +134,16 @@ try {
     route: "change-review",
     violations: (await new AxeBuilder({ page }).analyze()).violations,
   });
+  await page.getByRole("button", { name: "닫기", exact: true }).click();
+  await visit("/resources?type=services&status=out-of-sync");
+  await page
+    .getByRole("table", { name: "변경 관리", exact: true })
+    .getByRole("row")
+    .filter({ hasText: "svc-orion" })
+    .getByRole("button", { name: "Orion · 동기화", exact: true })
+    .click();
+  await page.getByRole("table", { name: "동기화 대상", exact: true }).waitFor();
+  await capture("08-single-resource-sync.png");
   await page.getByRole("button", { name: "닫기", exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await visit("/service-endpoints");

@@ -114,7 +114,7 @@ try {
     .getByRole("checkbox")
     .check();
   await page
-    .getByRole("button", { name: "선택 리소스 동기화", exact: true })
+    .getByRole("button", { name: "선택 항목 동기화", exact: true })
     .click();
   await page.getByRole("table", { name: "동기화 대상" }).waitFor();
   await capture("03-selected-sync-targets.png");

@@ -35,7 +35,7 @@ test("detail and multi-select use the same two steps and only selected resources
     .getByRole("checkbox")
     .check();
   await page
-    .getByRole("button", { name: "선택 리소스 동기화", exact: true })
+    .getByRole("button", { name: "선택 항목 동기화", exact: true })
     .click();
   await expect(
     dialog.getByRole("table", { name: "동기화 대상" }).locator("tbody tr"),
@@ -47,7 +47,7 @@ test("detail and multi-select use the same two steps and only selected resources
   await dialog.getByRole("checkbox").last().check();
   await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(dialog).toHaveCount(0);
-  await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
+  await expect(page.getByRole("status")).toContainText("succeeded");
   await page.goto("/resources?status=out-of-sync");
   const catalog = page.getByRole("table", { name: "변경 관리" });
   await expect(catalog).not.toContainText("svc-orion");
@@ -99,9 +99,7 @@ test("policy Sync includes dependencies, previews role-based users and organizat
   await dialog.locator(".sync-confirm input").check();
   await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(dialog).toHaveCount(0);
-  await expect(
-    page.getByText("revision 1", { exact: true }).first(),
-  ).toBeVisible();
+  await expect(page.getByRole("status")).toContainText("succeeded");
   await page.goto("/resources?status=out-of-sync");
   const catalog = page.getByRole("table", { name: "변경 관리" });
   await expect(catalog.locator("tbody tr")).toHaveCount(4);
@@ -138,5 +136,5 @@ test("English mobile Sync stages stay accessible and cancellation does not apply
   ).toBe(true);
   await dialog.getByRole("button", { name: "Back to targets" }).click();
   await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
-  await expect(page.locator(".access-entry")).toContainText("revision 0");
+  await expect(page.locator(".access-entry")).toContainText("Out of sync");
 });

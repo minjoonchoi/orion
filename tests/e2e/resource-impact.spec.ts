@@ -23,7 +23,7 @@ test("selected impact spans filters, survives reload, and can narrow to one reso
     .check();
   await page.reload();
   await expect(page.getByRole("region", { name: "리소스 선택" })).toContainText(
-    "선택한 리소스 · 2",
+    "선택한 항목 · 2",
   );
   await expect(page.getByRole("region", { name: "리소스 선택" })).toContainText(
     "현재 필터 밖 선택 · 1",
@@ -60,7 +60,7 @@ test("selected impact spans filters, survives reload, and can narrow to one reso
   await expect(dialog.locator(".impact-scope")).not.toContainText("svc-orion");
   await dialog.getByRole("button", { name: "목록으로 돌아가기" }).click();
   await expect(page.getByRole("region", { name: "리소스 선택" })).toContainText(
-    "선택한 리소스 · 2",
+    "선택한 항목 · 2",
   );
 });
 
@@ -95,7 +95,7 @@ test("page selection, clearing, and English mobile impact remain scoped and acce
     .check();
   await expect(
     page.getByRole("region", { name: "Select resources" }),
-  ).toContainText(`Selected resources · ${count}`);
+  ).toContainText(`Selected items · ${count}`);
   await page
     .getByRole("button", { name: "Review selected resource impact" })
     .click();

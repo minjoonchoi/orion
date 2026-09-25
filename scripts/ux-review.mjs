@@ -260,7 +260,13 @@ try {
   await page.getByRole("dialog").waitFor();
   await capture("04-resource-diff.png");
   await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
-  await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
+  await page.goto(origin + "/resources?status=out-of-sync");
+  await page
+    .getByRole("checkbox", { name: "현재 페이지 리소스 선택", exact: true })
+    .check();
+  await page
+    .getByRole("button", { name: "선택 항목 동기화", exact: true })
+    .click();
   await page
     .getByRole("dialog")
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
