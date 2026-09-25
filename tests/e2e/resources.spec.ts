@@ -1,53 +1,23 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-test("resource menu, list filters, sort and pagination", async ({ page }) => {
-  await page.goto("/services");
-  await expect(
-    page.locator("aside").getByRole("heading", { name: "리소스", exact: true }),
-  ).toBeVisible();
-  await expect(page.getByText("서비스·화면", { exact: true })).toHaveCount(0);
-  await page.getByLabel("상태 필터").selectOption("inactive");
-  await expect(
-    page.getByRole("table", { name: "서비스 목록", exact: true }),
-  ).toContainText("정산 관리");
-  await page.goto("/service-endpoints");
-  const table = page.getByRole("table", {
-    name: "서비스 엔드포인트 목록",
-    exact: true,
-  });
-  await expect(table.locator("tbody tr")).toHaveCount(5);
+test("unified resource catalog and legacy type filters", async ({ page }) => {
+  for (const kind of ["services", "service-endpoints", "workspaces", "pages"]) {
+    await page.goto("/" + kind);
+    await expect(page).toHaveURL(new RegExp("resources\\?type=" + kind));
+    await expect(
+      page.getByRole("combobox", { name: "리소스 유형", exact: true }),
+    ).toHaveValue(kind);
+    await expect(page.locator(".sync-catalog tbody tr").first()).toBeVisible();
+  }
+  await page.goto("/resources");
   await page.getByRole("button", { name: "다음", exact: true }).click();
-  await expect(page.getByText("2 / 2 페이지")).toBeVisible();
-  await page.getByLabel("서비스 필터").selectOption("svc-approval");
-  await page.getByLabel("HTTP 메서드 필터").selectOption("POST");
-  await expect(table.locator("tbody tr")).toHaveCount(1);
-  await expect(table).toContainText("결재 요청");
-  await page.getByLabel("서비스 엔드포인트 목록 검색").fill(" /API/APPROVALS ");
-  await expect(table.locator("tbody tr")).toHaveCount(1);
-  await page.getByRole("button", { name: "초기화", exact: true }).click();
-  const header = page.getByRole("columnheader", { name: "경로", exact: true });
-  await header.getByRole("button").click();
-  await expect(header).toHaveAttribute("aria-sort", "ascending");
-  await page.goto("/pages");
-  await page.getByRole("button", { name: "다음", exact: true }).click();
-  await expect(page.getByText("2 / 2 페이지")).toBeVisible();
-  await page.getByLabel("워크스페이스 필터").selectOption("ws-directory");
-  await expect(
-    page
-      .getByRole("table", { name: "페이지 목록", exact: true })
-      .locator("tbody tr"),
-  ).toHaveCount(1);
-  await page.getByLabel("페이지 목록 검색").fill("없는페이지");
-  await expect(
-    page.getByRole("heading", { name: "검색 결과가 없습니다" }),
-  ).toBeVisible();
-  await page.goto("/workspaces");
-  await page.getByLabel("페이지 연결 필터").selectOption("empty");
-  await expect(
-    page
-      .getByRole("table", { name: "워크스페이스 목록", exact: true })
-      .locator("tbody tr"),
-  ).toHaveCount(1);
+  await expect(page).toHaveURL(/page=2/);
+  await page
+    .getByLabel("리소스 검색", { exact: true })
+    .fill("no-resource-found");
+  await expect(page.locator(".sync-catalog")).toContainText(
+    "연결된 항목이 없습니다",
+  );
 });
 test("organization and policy links lead to service and endpoint details", async ({
   page,
@@ -126,7 +96,7 @@ test("empty resources, invalid tabs, missing IDs and legacy route", async ({
     ).toBeVisible();
   }
   await page.goto("/resources");
-  await expect(page).toHaveURL(/\/services$/);
+  await expect(page).toHaveURL(/\/resources$/);
 });
 test("resource screens are accessible and contain mobile overflow", async ({
   page,

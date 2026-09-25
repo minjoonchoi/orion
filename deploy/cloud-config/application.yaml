@@ -1,0 +1,18 @@
+# Spring Cloud Config Server template; placeholders resolved by deployment.
+server:
+  port: 8888
+spring:
+  application:
+    name: orion-config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${ORION_CONFIG_REPO_URI}
+          default-label: master
+          search-paths:
+            - config/resources
+          clone-on-start: true
+          force-pull: true
+# Serve orion-resources.yaml as plain text at a pinned commit label.
+# Do not enable any DB import listener on refresh/bus-refresh/webhooks.

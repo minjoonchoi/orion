@@ -1,3 +1,4 @@
+import { LogoutButton } from "@/features/auth/logout-button";
 import { getT } from "@/i18n/server";
 import { LanguageSelect, DeploymentLabel } from "@/i18n/provider";
 import "@/features/identity/styles.css";
@@ -25,6 +26,7 @@ export default async function ConsoleLayout({
           {t("접근 권한 관리")}
           <DeploymentLabel />
           <LanguageSelect />
+          <LogoutButton />
         </header>
         <main id="main" tabIndex={-1}>
           {children}

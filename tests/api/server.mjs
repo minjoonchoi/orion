@@ -10,6 +10,28 @@ const user = (region, locale, id = "remote-user") => ({
   createdAt: "2026-09-23T00:00:00Z",
   lastSignedInAt: null,
 });
+const authorizationGraphs = new Map();
+function authGraph(region) {
+  if (!authorizationGraphs.has(region))
+    authorizationGraphs.set(region, {
+      revision: 0,
+      users: [{ id: "remote-user", name: "Remote user" }],
+      organizations: [],
+      roles: [
+        {
+          id: "remote-role",
+          name: "Remote role",
+          description: "API role",
+          userIds: [],
+          organizationIds: [],
+          bindings: [],
+        },
+      ],
+      policies: [],
+      resources: [],
+    });
+  return authorizationGraphs.get(region);
+}
 const handler = (expectedRegion) => (request, response) => {
   const url = new URL(request.url, "http://localhost");
   const parts = url.pathname.split("/").filter(Boolean);
@@ -22,6 +44,44 @@ const handler = (expectedRegion) => (request, response) => {
   };
   if (region !== expectedRegion) return send({}, 500);
   if (parts[0] !== "v1") return send({}, 404);
+  if (parts[1] === "auth" && parts[2] === "logout") {
+    if (request.method !== "POST") return send({}, 405);
+    if (request.headers.cookie === "orion_session=logout-fail")
+      return send({}, 500);
+    response.statusCode = 204;
+    response.end();
+    return;
+  }
+  if (parts[1] === "authorization") {
+    if (request.headers.cookie === "orion_session=forbidden")
+      return send({}, 403);
+    if (parts[2] === "graph") return send({ data: authGraph(region) });
+    if (parts[2] === "changes" && request.method === "POST") {
+      let body = "";
+      request.on("data", (chunk) => (body += chunk));
+      request.on("end", () => {
+        const payload = JSON.parse(body);
+        const graph = authGraph(region);
+        if (
+          payload.revision !== graph.revision ||
+          request.headers.cookie === "orion_session=conflict"
+        )
+          return send({}, 409);
+        if (
+          payload.change.type !== "subjectRoles" ||
+          payload.change.id !== "remote-user"
+        )
+          return send({}, 400);
+        graph.roles[0].userIds = payload.change.roleIds.includes("remote-role")
+          ? ["remote-user"]
+          : [];
+        graph.revision++;
+        return send({ data: graph });
+      });
+      return;
+    }
+  }
+
   if (parts[1] === "users" && parts.length === 2) {
     if (url.searchParams.get("cursor") === "second")
       return send({

@@ -1,3 +1,4 @@
+import { AuthorizationPanel } from "@/features/authorization/panel";
 import type { Metadata } from "next";
 import { getT } from "@/i18n/server";
 import { getRelatedGroups } from "@/features/relationships/repository";
@@ -23,6 +24,7 @@ export default async function Page({
   return (
     <Suspense fallback={<p role="status">{t("불러오는 중…")}</p>}>
       <WorkspaceScreen data={data} />
+      <AuthorizationPanel kind="workspaces" id={id} />
       <RelatedRecords groups={groups} />
     </Suspense>
   );

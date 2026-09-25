@@ -62,3 +62,11 @@ LSB는 사용자·조직, 역할·정책, 리소스, API 접근, 결재의 5개 
 ## 로그인 화면
 
 `/login`에서 독립된 로그인 UI를 확인합니다. 서버 환경변수 `ORION_AUTH_LOGIN_URL`에 Okta로 리다이렉트하는 실제 Orion API의 절대 URL을 설정하세요. [로그인 API 계약과 설정](docs/login.md)을 참고하세요.
+
+## 권한 편집
+
+사용자·조직의 역할 부여, 역할별 정책 만료, 정책 리소스의 허용/거부, 리소스 편집과 영향 범위 탐색을 상세 화면에서 제공합니다. 공통 접근 거부 화면과 Orion 세션 로그아웃을 지원합니다. [UX와 저장 API 계약](docs/authorization-management.md)을 참고하세요. 실제 권한 판정·영구 저장·Okta 세션 처리는 백엔드와 연동해야 합니다.
+
+## 리소스 GitOps
+
+리소스 정의 수정은 `/resources`에서 Git/Cloud Config 후보와 DB diff → Sync 영향도 검토 → 명시적 적용으로 진행합니다. [YAML 예제](config/resources/orion-resources.yaml), [Cloud Config·Orion API 계약](docs/resource-gitops.md)을 참고하세요. `npm run validate:resources`로 원본 YAML 스키마를 검사합니다. 예제 모드는 세션 DB 적용이며, 운영 모드는 Orion 백엔드의 Cloud Config 조회·검증·DB 트랜잭션 구현이 필요합니다. 외부 배포 도구는 사용하지 않습니다.
