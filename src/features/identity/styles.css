@@ -108,3 +108,10 @@
     font-size: 21px;
   }
 }
+
+.relationship-section {
+  margin-top: 32px;
+}
+.relationship-section > h2 {
+  margin-bottom: 12px;
+}

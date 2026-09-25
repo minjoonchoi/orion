@@ -107,7 +107,12 @@ export function ServicesList({ rows }: { rows: ServiceRow[] }) {
             key: "endpointCount",
             header: "엔드포인트",
             sortable: true,
-            render: (r) => `${r.endpointCount}개`,
+            render: (r) =>
+              link(
+                "/services",
+                `${r.id}?tab=endpoints`,
+                `${r.endpointCount}개`,
+              ),
           },
         ]}
       />
@@ -225,7 +230,8 @@ export function WorkspacesList({ rows }: { rows: WorkspaceRow[] }) {
             key: "pageCount",
             header: "페이지",
             sortable: true,
-            render: (r) => `${r.pageCount}개`,
+            render: (r) =>
+              link("/workspaces", `${r.id}?tab=pages`, `${r.pageCount}개`),
           },
         ]}
       />

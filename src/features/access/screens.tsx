@@ -84,19 +84,22 @@ function Policies({ rows }: { rows: PolicyRow[] }) {
           key: "serviceCount",
           header: "서비스",
           sortable: true,
-          render: (r) => `${r.serviceCount}개`,
+          render: (r) =>
+            link(`/policies/${r.id}?tab=services`, `${r.serviceCount}개`),
         },
         {
           key: "endpointCount",
           header: "엔드포인트",
           sortable: true,
-          render: (r) => `${r.endpointCount}개`,
+          render: (r) =>
+            link(`/policies/${r.id}?tab=endpoints`, `${r.endpointCount}개`),
         },
         {
           key: "workspaceCount",
           header: "워크스페이스",
           sortable: true,
-          render: (r) => `${r.workspaceCount}개`,
+          render: (r) =>
+            link(`/policies/${r.id}?tab=workspaces`, `${r.workspaceCount}개`),
         },
       ]}
     />
@@ -143,19 +146,24 @@ export function RolesList({ rows }: { rows: RoleRow[] }) {
             key: "userCount",
             header: "사용자",
             sortable: true,
-            render: (r) => `${r.userCount}명`,
+            render: (r) => link(`/roles/${r.id}?tab=users`, `${r.userCount}명`),
           },
           {
             key: "organizationCount",
             header: "조직",
             sortable: true,
-            render: (r) => `${r.organizationCount}개`,
+            render: (r) =>
+              link(
+                `/roles/${r.id}?tab=organizations`,
+                `${r.organizationCount}개`,
+              ),
           },
           {
             key: "policyCount",
             header: "정책",
             sortable: true,
-            render: (r) => `${r.policyCount}개`,
+            render: (r) =>
+              link(`/roles/${r.id}?tab=policies`, `${r.policyCount}개`),
           },
         ]}
       />

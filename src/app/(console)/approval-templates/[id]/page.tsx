@@ -1,3 +1,5 @@
+import { getRelatedGroups } from "@/features/relationships/repository";
+import { RelatedRecords } from "@/features/relationships/related-records";
 import { notFound } from "next/navigation";
 import { TemplateScreen } from "@/features/approvals/screens";
 import { approvalRepository } from "@/features/approvals/repository";
@@ -10,5 +12,11 @@ export default async function Page({
   const { id } = await params;
   const data = await approvalRepository.getTemplate(id);
   if (!data) notFound();
-  return <TemplateScreen data={data} />;
+  const groups = await getRelatedGroups("approval-templates", id);
+  return (
+    <>
+      <TemplateScreen data={data} />
+      <RelatedRecords groups={groups} />
+    </>
+  );
 }

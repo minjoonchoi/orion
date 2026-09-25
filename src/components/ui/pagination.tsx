@@ -9,6 +9,7 @@ export function Pagination({
   onPageChange,
   onPageSizeChange,
   disabled = false,
+  label = "목록 페이지",
 }: {
   page: number;
   pageSize: number;
@@ -16,11 +17,12 @@ export function Pagination({
   onPageChange: (page: number) => void;
   onPageSizeChange: (size: number) => void;
   disabled?: boolean;
+  label?: string;
 }) {
   const id = useId();
   const pages = Math.max(1, Math.ceil(total / pageSize));
   return (
-    <nav className="ui-pagination" aria-label="목록 페이지">
+    <nav className="ui-pagination" aria-label={label}>
       <div className="ui-actions">
         <label htmlFor={id}>페이지당</label>
         <Select
