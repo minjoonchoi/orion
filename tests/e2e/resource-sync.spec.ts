@@ -12,7 +12,7 @@ test("GitOps diff, explicit review, apply and catalog projection", async ({
     .selectOption("services");
   await expect(page.locator(".sync-catalog")).toContainText("Out of sync");
   await page
-    .getByRole("button", { name: /diff 확인/ })
+    .getByRole("button", { name: /변경 검토/ })
     .first()
     .click();
   await expect(page.locator("#resource-diff")).toContainText(
@@ -200,7 +200,7 @@ test("deleted resource history remains reachable from the catalog", async ({
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.goto("/resources?type=workspaces&q=ws-empty");
   const row = page.getByRole("row").filter({ hasText: "ws-empty" });
-  await expect(row).toContainText("Synced · 삭제됨");
+  await expect(row.locator(".sync-status")).toHaveText("Synced");
   await row.getByRole("link", { name: /동기화 이력/ }).click();
   await expect(page.locator(".sync-history-entry")).toHaveCount(2);
   await expect(page.locator(".sync-history-entry").first()).toContainText(

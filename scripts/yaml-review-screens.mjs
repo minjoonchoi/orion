@@ -90,76 +90,34 @@ try {
       fullPage: !(await page.getByRole("dialog").isVisible()),
     });
   }
-  await visit("/workspaces");
-  await capture("01-workspaces.png");
-  await visit("/service-endpoints");
-  await page
-    .getByLabel("서비스 필터", { exact: true })
-    .selectOption("svc-orion");
-  await capture("02-endpoint-exploration.png");
-  await visit("/policies");
-  await capture("03-policy-exploration.png");
   await visit("/resources?status=out-of-sync");
   await page.getByRole("table", { name: "변경 관리", exact: true }).waitFor();
-  await capture("04-change-management.png");
+  await capture("01-status.png");
+  const row = page.getByRole("row").filter({ hasText: "svc-orion" });
+  await row.getByRole("button", { name: /변경 검토/ }).click();
+  await page.getByRole("tab", { name: "YAML diff", exact: true }).waitFor();
+  await capture("02-resource-yaml.png");
+  await page.getByRole("tab", { name: "영향도", exact: true }).click();
+  await capture("03-resource-impact.png");
+  await visit("/resources?type=policies&resource=policy-platform");
+  await page.getByRole("tab", { name: "YAML diff", exact: true }).waitFor();
+  await capture("04-policy-yaml.png");
+  await page.getByRole("tab", { name: "영향도", exact: true }).click();
+  await capture("05-policy-impact.png");
   await page
-    .getByRole("combobox", { name: "리소스 유형", exact: true })
-    .selectOption("policies");
-  await page
-    .getByRole("table", { name: "변경 관리", exact: true })
-    .getByRole("row")
-    .filter({ hasText: "policy-platform" })
-    .getByRole("checkbox")
-    .check();
-  await page
-    .getByRole("combobox", { name: "리소스 유형", exact: true })
-    .selectOption("service-endpoints");
-  await page
-    .getByRole("table", { name: "변경 관리", exact: true })
-    .getByRole("row")
-    .filter({ hasText: "ep-users-list" })
-    .getByRole("checkbox")
-    .check();
-  await page
-    .getByRole("button", { name: "선택 항목 동기화", exact: true })
+    .getByRole("button", { name: "이 정책 동기화", exact: true })
     .click();
-  await page.getByRole("table", { name: "동기화 대상", exact: true }).waitFor();
-  await capture("05-mixed-sync-targets.png");
   await page
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
+  await page.getByRole("tab", { name: "YAML diff", exact: true }).waitFor();
+  await capture("06-sync-yaml.png");
   await page.getByRole("tab", { name: "영향도", exact: true }).click();
-  await page.locator(".sync-workflow-impact .subject-impact").waitFor();
-  await capture("06-mixed-impact-review.png");
-  report.pages.push({
-    route: "change-review",
-    violations: (await new AxeBuilder({ page }).analyze()).violations,
-  });
-  await page.getByRole("button", { name: "닫기", exact: true }).click();
-  await visit("/resources?type=services&status=out-of-sync");
-  await page
-    .getByRole("table", { name: "변경 관리", exact: true })
-    .getByRole("row")
-    .filter({ hasText: "svc-orion" })
-    .getByRole("button", { name: "Orion · 동기화", exact: true })
-    .click();
-  await page.getByRole("table", { name: "동기화 대상", exact: true }).waitFor();
-  await capture("08-single-resource-sync.png");
-  await page.getByRole("button", { name: "닫기", exact: true }).click();
-  await page.setViewportSize({ width: 390, height: 844 });
-  await visit("/service-endpoints");
-  report.pages.push({
-    route: "endpoints-mobile",
-    mobileOverflow: await page.evaluate(
-      () => document.documentElement.scrollWidth > innerWidth,
-    ),
-    violations: (await new AxeBuilder({ page }).analyze()).violations,
-  });
-  await page.getByRole("button", { name: "메뉴 열기", exact: true }).click();
-  await capture("07-mobile-navigation.png");
-  report.interactions.push(
-    "Applied resource catalogs; policies in resource navigation; combined change catalog; mixed policy and resource Sync",
-  );
+  await capture("07-sync-impact.png");
+  const audit = await new AxeBuilder({ page }).analyze();
+  report.pages.push({ name: "sync-impact", violations: audit.violations });
+  if (report.errors.length || audit.violations.length)
+    throw Error("UI audit failed");
 } catch (error) {
   report.errors.push(error.stack);
   process.exitCode = 1;

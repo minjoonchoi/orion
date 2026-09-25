@@ -74,6 +74,7 @@ test("policy Sync includes dependencies, previews role-based users and organizat
   await dialog
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
+  await dialog.getByRole("tab", { name: "영향도", exact: true }).click();
   const impact = dialog.locator(".sync-workflow-impact");
   await expect(impact.locator(".subject-row")).toHaveCount(3);
   for (const label of ["사용자", "조직", "서비스 어카운트"]) {

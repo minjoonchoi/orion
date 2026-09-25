@@ -721,5 +721,9 @@
   "선택한 항목": "Selected items",
   "선택 항목 동기화": "Sync selected items",
   "각 행에서 동기화하거나 여러 항목을 선택해 함께 검토할 수 있습니다.": "Sync an individual row or select multiple items to review together.",
-  "선택한 항목의 변경사항과 영향도를 검토합니다. 정책 연결 리소스와 필수 상위 리소스는 포함 사유와 함께 표시됩니다.": "Review changes and impact for selected items. Linked policy resources and required parents show their inclusion reason."
+  "선택한 항목의 변경사항과 영향도를 검토합니다. 정책 연결 리소스와 필수 상위 리소스는 포함 사유와 함께 표시됩니다.": "Review changes and impact for selected items. Linked policy resources and required parents show their inclusion reason.",
+  "변경 검토": "Review changes",
+  "변경 검토 보기": "Change review views",
+  "같은 변경 대상의 YAML diff와 영향도를 확인하세요.": "Review the YAML diff and impact for the same changes.",
+  "적용된 정의와 동기화할 정의를 YAML로 비교합니다. 원본 파일의 주석과 서식은 제외됩니다.": "Compare applied and pending definitions as YAML. Original file comments and formatting are excluded."
 }

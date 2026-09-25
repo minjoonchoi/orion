@@ -6,7 +6,7 @@ import {
 } from "../policy-sync/model";
 import { PolicyHistoryDialog } from "../policy-sync/history";
 import { SubjectImpact } from "../authorization/subject-impact-view";
-import { Changes } from "../sync-workflow/dialog";
+import { ChangeViews, YamlDiff } from "../sync-workflow/change-views";
 import { SyncDialog } from "../sync-workflow/dialog";
 import type { Selection } from "../sync-workflow/model";
 import { ResourceImpact } from "../authorization/resource-impact";
@@ -32,14 +32,6 @@ const messages: Record<string, string> = {
   FORBIDDEN: "접근 권한이 없습니다",
   UNAUTHENTICATED: "로그인이 필요합니다",
   REQUEST_FAILED: "요청하지 못했습니다. 다시 시도해 주세요.",
-};
-const fieldLabels = {
-  name: "이름",
-  description: "설명",
-  path: "경로",
-  method: "HTTP 메서드",
-  parentId: "상위 리소스",
-  state: "정의 상태",
 };
 type CatalogItem = {
   kind: ResourceKind | "policies";
@@ -616,32 +608,11 @@ export function ResourceSyncScreen() {
                           )}
                         </td>
                         <td>
-                          {change ? (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className={`sync-badge ${change.operation}`}
-                              onClick={() => {
-                                const next = new URLSearchParams(
-                                  params.toString(),
-                                );
-                                next.set("resource", r.id);
-                                next.set("diffType", r.kind);
-                                window.history.replaceState(
-                                  null,
-                                  "",
-                                  `/resources?${next}`,
-                                );
-                              }}
-                            >
-                              Out of sync · {operation(change.operation)} ·{" "}
-                              {t("diff 확인")}
-                            </Button>
-                          ) : deleted ? (
-                            `Synced · ${t("삭제됨")}`
-                          ) : (
-                            "Synced"
-                          )}
+                          <span
+                            className={`sync-status ${change ? "pending" : ""}`}
+                          >
+                            {change ? "Out of sync" : "Synced"}
+                          </span>
                         </td>
                         <td>
                           <Link
@@ -654,6 +625,27 @@ export function ResourceSyncScreen() {
                         </td>
                         <td>
                           <div className="sync-row-actions">
+                            {change && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-label={`${r.name} · ${t("변경 검토")}`}
+                                onClick={() => {
+                                  const next = new URLSearchParams(
+                                    params.toString(),
+                                  );
+                                  next.set("resource", r.id);
+                                  next.set("diffType", r.kind);
+                                  window.history.replaceState(
+                                    null,
+                                    "",
+                                    `/resources?${next}`,
+                                  );
+                                }}
+                              >
+                                {t("변경 검토")}
+                              </Button>
+                            )}
                             <Button
                               size="sm"
                               variant="secondary"
@@ -766,9 +758,9 @@ export function ResourceSyncScreen() {
                 </Button>
               )}
               <Dialog
-                title={t("변경사항")}
+                title={t("영향도 검토")}
                 description={t(
-                  "변경 전후를 확인한 뒤 선택 리소스 동기화에서 영향도를 검토하세요.",
+                  "같은 변경 대상의 YAML diff와 영향도를 확인하세요.",
                 )}
                 open={Boolean(selectedId)}
                 onOpenChange={(open) => {
@@ -786,10 +778,15 @@ export function ResourceSyncScreen() {
                             <strong>{row.after.name}</strong> · {t("정책")} ·{" "}
                             {row.after.id}
                           </summary>
-                          <Changes
-                            before={row.before}
-                            after={
-                              row.operation === "delete" ? null : row.after
+                          <ChangeViews
+                            yaml={
+                              <YamlDiff before={row.before} after={row.after} />
+                            }
+                            impact={
+                              <SubjectImpact
+                                graph={policySnapshot!.graph}
+                                scope={{ policyIds: [row.after.id] }}
+                              />
                             }
                           />
                           <Button
@@ -830,44 +827,17 @@ export function ResourceSyncScreen() {
                             {t("정책")} {row.paths.length}
                           </span>
                         </summary>
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>{t("필드")}</th>
-                              <th>{t("Synced")}</th>
-                              <th>{t("Out of sync")}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {(
-                              [
-                                "name",
-                                "description",
-                                "path",
-                                "method",
-                                "parentId",
-                                "state",
-                              ] as const
-                            )
-                              .filter(
-                                (f) =>
-                                  row.operation === "create" ||
-                                  row.operation === "delete" ||
-                                  row.before?.[f] !== row.after[f],
-                              )
-                              .map((f) => (
-                                <tr key={f}>
-                                  <th>{t(fieldLabels[f])}</th>
-                                  <td>{row.before?.[f] || "—"}</td>
-                                  <td>
-                                    {row.after.state === "absent"
-                                      ? "—"
-                                      : row.after[f] || "—"}
-                                  </td>
-                                </tr>
-                              ))}
-                          </tbody>
-                        </table>
+                        <ChangeViews
+                          yaml={
+                            <YamlDiff before={row.before} after={row.after} />
+                          }
+                          impact={
+                            <ResourceImpact
+                              graph={snapshot.graph}
+                              resources={[row.after]}
+                            />
+                          }
+                        />
                         <Button
                           onClick={() => {
                             navigate("resource", "");

@@ -16,6 +16,7 @@ import {
 } from "./model";
 import "../resource-sync/styles.css";
 import "./styles.css";
+import { ChangeViews, YamlDiff } from "./change-views";
 
 const errors: Record<string, string> = {
   CONFLICT: "버전이 변경되었습니다. 대상을 새로 불러와 다시 검토하세요.",
@@ -365,62 +366,67 @@ export function SyncDialog({
                   {t("검토 유효 기한")}:{" "}
                   <DateValue value={preview.expiresAt} time />
                 </p>
-                <section className="sync-workflow-impact">
-                  {policyMode ? (
-                    <SubjectImpact
-                      graph={current.policy!.graph}
-                      scope={{
-                        policyIds: plan.policies.map((p) => p.after.id),
-                      }}
-                    />
-                  ) : (
-                    <ResourceImpact
-                      graph={current.resource.graph}
-                      resources={plan.resources}
-                    />
-                  )}
-                </section>
-                {policyMode && !!plan.changedResources.length && (
-                  <details className="sync-workflow-extra">
-                    <summary>{t("리소스 변경의 추가 영향")}</summary>
-                    <p>
-                      {t(
-                        "함께 변경되는 리소스를 사용하는 다른 정책의 연결 관계도 확인하세요.",
+                <ChangeViews
+                  yaml={
+                    <>
+                      <section className="sync-review-list">
+                        <h3>{t("변경 전후")}</h3>
+                        {plan.changedPolicies.map((p) => (
+                          <details open key={p.key}>
+                            <summary>
+                              <strong>{p.after.name || p.after.id}</strong> ·{" "}
+                              {t("정책")} · {t(operations[p.operation])}
+                            </summary>
+                            <YamlDiff before={p.before} after={p.after} />
+                          </details>
+                        ))}
+                        {plan.changedResources.map((r) => (
+                          <details open key={keyOf(r)}>
+                            <summary>
+                              <strong>{r.after?.name || r.id}</strong> ·{" "}
+                              {t(kindLabel[r.kind])} ·{" "}
+                              {t(operations[r.operation])}
+                            </summary>
+                            <YamlDiff before={r.before} after={r.after} />
+                          </details>
+                        ))}
+                      </section>
+                    </>
+                  }
+                  impact={
+                    <>
+                      <section className="sync-workflow-impact">
+                        {policyMode ? (
+                          <SubjectImpact
+                            graph={current.policy!.graph}
+                            scope={{
+                              policyIds: plan.policies.map((p) => p.after.id),
+                            }}
+                          />
+                        ) : (
+                          <ResourceImpact
+                            graph={current.resource.graph}
+                            resources={plan.resources}
+                          />
+                        )}
+                      </section>
+                      {policyMode && !!plan.changedResources.length && (
+                        <details className="sync-workflow-extra">
+                          <summary>{t("리소스 변경의 추가 영향")}</summary>
+                          <p>
+                            {t(
+                              "함께 변경되는 리소스를 사용하는 다른 정책의 연결 관계도 확인하세요.",
+                            )}
+                          </p>
+                          <ResourceImpact
+                            graph={current.resource.graph}
+                            resources={plan.changedResources}
+                          />
+                        </details>
                       )}
-                    </p>
-                    <ResourceImpact
-                      graph={current.resource.graph}
-                      resources={plan.changedResources}
-                    />
-                  </details>
-                )}
-                <section className="sync-review-list">
-                  <h3>{t("변경 전후")}</h3>
-                  {plan.changedPolicies.map((p) => (
-                    <details key={p.key}>
-                      <summary>
-                        <strong>{p.after.name || p.after.id}</strong> ·{" "}
-                        {t("정책")} · {t(operations[p.operation])}
-                      </summary>
-                      <Changes
-                        before={p.before}
-                        after={p.operation === "delete" ? null : p.after}
-                      />
-                    </details>
-                  ))}
-                  {plan.changedResources.map((r) => (
-                    <details key={keyOf(r)}>
-                      <summary>
-                        <strong>{r.after?.name || r.id}</strong> ·{" "}
-                        {t(kindLabel[r.kind])} · {t(operations[r.operation])}
-                      </summary>
-                      <Changes
-                        before={r.before}
-                        after={r.operation === "delete" ? null : r.after}
-                      />
-                    </details>
-                  ))}
-                </section>
+                    </>
+                  }
+                />
                 <label className="sync-confirm">
                   <input
                     type="checkbox"

@@ -123,6 +123,7 @@ try {
   await page
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
+  await page.getByRole("tab", { name: "영향도", exact: true }).click();
   impact = page.locator(".sync-workflow-impact .subject-impact");
   await impact.scrollIntoViewIfNeeded();
   await capture("04-policy-sync-subjects.png");
