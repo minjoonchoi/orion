@@ -31,6 +31,7 @@ Okta 전역 SSO 세션 종료가 필요하면 백엔드에 별도 RP-initiated l
 
 - `revision`: 현재 그래프의 정수 버전
 - `users`: `{id,name}[]`
+- `serviceAccounts`: `{id,name,organizationId,roleIds:string[]}[]`. 직접 부여 역할만 포함합니다. 소속 조직은 권한 상속을 의미하지 않습니다.
 - `organizations`: `{id,name,memberIds[]}[]`
 - `roles`: `{id,name,description,userIds[],organizationIds[],bindings:[{policyId,expiresAt}]}[]`
 - `policies`: `{id,name,description,effect:"allow"|"deny",resources:[{kind,id}]}[]`
@@ -67,3 +68,13 @@ Okta 전역 SSO 세션 종료가 필요하면 백엔드에 별도 RP-initiated l
 `npm run check`, `npm run build`, `npm run test:e2e -- --workers=2`, `npm run test:api`.
 
 단위 테스트는 참조 검증, 중복, 만료 범위, 직접/간접 영향 경로를 확인합니다. 브라우저 테스트는 부여·만료·deny 정책·페이지 연결·편집 결과 반영·접근성·영문·모바일·로그아웃을 확인합니다. 모의 HTTP API 테스트는 실제 POST 요청·revision 충돌·403·로그아웃 실패 및 성공을 검증합니다. 실제 Orion/Okta 서비스와의 통합은 별도 백엔드 환경에서 검증해야 합니다.
+
+## 대상 중심 영향도
+
+리소스 단일/선택 조회, Sync·롤백 및 역할·정책 연결 변경의 검토는 사용자·조직·서비스 어카운트 목록을 먼저 표시합니다. 대상 유형+ID로 중복을 제거하고 같은 대상의 직접 부여·조직 경유 등 서로 다른 경로는 유지합니다. 역할·정책·리소스 이름과 ID로 검색할 수 있고 대상은 8개씩, 펼친 영향 경로는 5개씩 추가 조회합니다. 이는 수신한 전체 그래프의 클라이언트 페이지 구분입니다.
+
+대상을 펼치면 조직 경유 여부 → 역할 → 정책(허용/거부, 만료) → 선택 범위 리소스의 경로와 상세 링크를 표시합니다. 조직은 영향받는 멤버 목록도 제공합니다. 만료된 역할·정책 연결은 기본 집계에서 제외하고 명시적으로 포함할 수 있습니다. 정책 Sync는 선택 정책에 부여된 역할만, 리소스 검토는 선택 리소스를 참조하는 정책만 포함합니다. 변경 검토는 전후 그래프의 경로를 비교해 실제 추가·해제되는 경로와 그 대상만 표시합니다. 경로가 해제되더라도 다른 권한 경로가 남을 수 있으므로 최종 허용/거부 판정을 뜻하지 않습니다.
+
+`authorization/graph`, resource/policy Sync status 및 공통 Sync preview의 graph에 동일한 `serviceAccounts` 필드를 반환해야 합니다. 계정 역할 변경도 인가 revision을 증가시켜 기존 검토 token을 무효화해야 합니다. 필드가 없는 이전 응답은 호환하되 서비스 어카운트 영향도는 0이 아니라 ‘확인할 수 없음’과 `—`로 표시합니다. 빈 배열은 전체 범위를 조회한 결과 대상이 없다는 의미입니다. 잘못된 필드 타입은 응답 검증에서 거부합니다. 계정 목록을 누락/부분 제공하며 완전한 영향도처럼 표시해서는 안 됩니다.
+
+데모 계정 역할 연결은 기존 서비스 어카운트 상세와 동일한 fixture에서 읽습니다. 이번 변경은 영향도 조회를 확장하며 서비스 어카운트 역할 편집 UI는 추가하지 않습니다. 실제 운영은 Orion API가 위 데이터를 반환해야 합니다.

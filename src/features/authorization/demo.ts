@@ -2,6 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { randomUUID } from "node:crypto";
 import type { Graph } from "./model";
+import { serviceAccountRoles } from "../service-accounts/fixtures";
 const globalStore = globalThis as typeof globalThis & {
   orionAuthorization?: Map<string, { graph: Graph; updated: number }>;
 };
@@ -75,6 +76,14 @@ export async function initialGraph(): Promise<Graph> {
   return {
     revision: 0,
     users: users.map(({ id, name }) => ({ id, name })),
+    serviceAccounts: data.serviceAccounts.map(
+      ({ id, name, organizationId }) => ({
+        id,
+        name,
+        organizationId,
+        roleIds: serviceAccountRoles[id] ?? [],
+      }),
+    ),
     organizations: organizations.map(({ id, name }) => ({
       id,
       name,

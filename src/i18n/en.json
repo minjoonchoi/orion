@@ -683,5 +683,21 @@
   "선택 리소스 Sync는 선택 범위에만 적용됩니다. 전체 변경 Sync는 모든 변경을 검토합니다.": "Selected resource Sync applies within the selected scope. Sync all changes reviews every change.",
   "변경 전후를 확인한 뒤 선택 리소스 Sync에서 영향도를 검토하세요.": "Check before and after values, then review impact with selected resource Sync.",
   "이 정책 Sync": "Sync this policy",
-  "이 실행에 포함된 정책과 변경된 리소스를 복원합니다. 사용자·조직·역할 부여는 유지됩니다.": "Restore policies and changed resources included in this run. Current user, organization and role assignments are retained."
+  "이 실행에 포함된 정책과 변경된 리소스를 복원합니다. 사용자·조직·역할 부여는 유지됩니다.": "Restore policies and changed resources included in this run. Current user, organization and role assignments are retained.",
+  "영향받는 대상": "Affected subjects",
+  "변경으로 영향받는 대상": "Subjects affected by this change",
+  "영향 대상 유형": "Affected subject type",
+  "대상 수는 중복을 제외합니다. 각 대상을 펼치면 영향을 받는 역할·정책 경로를 확인할 수 있습니다.": "Subjects are counted once. Expand a subject to see the roles and policies behind its impact.",
+  "서비스 어카운트 연결 정보가 제공되지 않아 해당 영향도는 확인할 수 없습니다.": "Service account assignments were not provided; their impact is unavailable.",
+  "영향 대상·경로 검색": "Search subjects and paths",
+  "이름·역할·정책·리소스 검색": "Search names, roles, policies or resources",
+  "이 범위에 연결된 대상이 없습니다.": "No subjects are connected within this scope.",
+  "사용자는 직접 부여와 조직 경유를 구분합니다. 서비스 어카운트는 명시적으로 부여된 역할만 포함합니다.": "User paths distinguish direct and organization assignments. Service accounts include explicit role assignments only.",
+  "영향 경로": "Impact paths",
+  "대상 상세 보기": "View subject details",
+  "해제되는 경로": "Removed path",
+  "추가되는 경로": "Added path",
+  "대상에서 리소스까지의 경로": "Path from subject to resource",
+  "영향 경로 더 보기": "Show more impact paths",
+  "영향받는 조직 멤버": "Affected organization members"
 }

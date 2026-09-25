@@ -19,6 +19,7 @@ import {
 import "./styles.css";
 import { Explorer, type ExplorerNode } from "./explorer";
 import { ResourceImpact } from "./resource-impact";
+import { SubjectImpact } from "./subject-impact-view";
 const labels: Record<FocusKind, string> = {
   users: "사용자",
   organizations: "조직",
@@ -130,7 +131,6 @@ function ReviewConnections({
   graph: Graph;
   change: Change;
 }) {
-  const { t } = useI18n();
   if (change.type === "resource") return null;
   const next = applyChange(graph, change);
   const changedRoles = graph.roles.filter((r) => {
@@ -141,119 +141,17 @@ function ReviewConnections({
         r.bindings.some((b) => b.policyId === change.policyId))
     );
   });
-  const roleIds = new Set(changedRoles.map((r) => r.id));
-  const paths = (g: Graph, userId: string) =>
-    g.roles
-      .filter((r) => roleIds.has(r.id))
-      .flatMap((r) => [
-        ...(r.userIds.includes(userId)
-          ? [{ key: `${r.id}:direct`, name: r.name, via: t("직접 연결") }]
-          : []),
-        ...g.organizations
-          .filter(
-            (o) =>
-              r.organizationIds.includes(o.id) && o.memberIds.includes(userId),
-          )
-          .map((o) => ({ key: `${r.id}:${o.id}`, name: r.name, via: o.name })),
-      ]);
-  const people = graph.users
-    .map((u) => ({
-      ...u,
-      before: paths(graph, u.id),
-      after: paths(next, u.id),
-    }))
-    .filter(
-      (u) =>
-        (u.before.length || u.after.length) &&
-        (change.type === "bindings" ||
-          change.type === "policy" ||
-          JSON.stringify(u.before) !== JSON.stringify(u.after)),
-    );
   return (
     <section className="review-connections">
-      <h3>
-        {t("변경 역할에 연결된 사용자")} · {people.length}
-      </h3>
-      <p className="muted">
-        {t(
-          "변경 전후 역할 연결 경로입니다. 정책 효과와 만료에 따른 최종 접근 판정은 서버에서 수행합니다.",
-        )}
-      </p>
-      {change.type === "bindings" && (
-        <div className="review-binding-diff">
-          <strong>{t("정책")}</strong>
-          <p>
-            {graph.roles
-              .find((r) => r.id === change.roleId)!
-              .bindings.map(
-                (b) => graph.policies.find((p) => p.id === b.policyId)?.name,
-              )
-              .join(", ") || t("없음")}{" "}
-            →{" "}
-            {change.bindings
-              .map((b) => graph.policies.find((p) => p.id === b.policyId)?.name)
-              .join(", ") || t("없음")}
-          </p>
-        </div>
-      )}
-      <div className="review-table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>{t("사용자")}</th>
-              <th>{t("변경 전")}</th>
-              <th>{t("변경 후")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {people.map((u) => (
-              <tr key={u.id}>
-                <td>
-                  <Link href={`/users/${u.id}`}>{u.name}</Link>
-                </td>
-                <td>
-                  {u.before.map((p) => (
-                    <div
-                      key={p.key}
-                      className={
-                        u.after.some((a) => a.key === p.key)
-                          ? ""
-                          : "review-removed"
-                      }
-                    >
-                      {p.name} · {p.via}
-                      {!u.after.some((a) => a.key === p.key) &&
-                        ` (${t("해제")})`}
-                    </div>
-                  ))}
-                  {!u.before.length && t("없음")}
-                </td>
-                <td>
-                  {u.after.map((p) => (
-                    <div
-                      key={p.key}
-                      className={
-                        u.before.some((a) => a.key === p.key)
-                          ? ""
-                          : "review-added"
-                      }
-                    >
-                      {p.name} · {p.via}
-                      {!u.before.some((a) => a.key === p.key) &&
-                        ` (${t("추가")})`}
-                    </div>
-                  ))}
-                  {!u.after.length && t("없음")}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {!people.length && <p>{t("연결된 항목이 없습니다")}</p>}
-      </div>
+      <SubjectImpact
+        graph={graph}
+        afterGraph={next}
+        scope={{ roleIds: changedRoles.map((r) => r.id) }}
+      />
     </section>
   );
 }
+
 function Editor({
   graph,
   kind,
@@ -349,6 +247,11 @@ function Editor({
               ).includes(o.id),
             )
             .map((o) => ({ ...o, type: "organizations" })),
+          ...(kind === "roles" && tab === "bindings"
+            ? (graph.serviceAccounts ?? [])
+                .filter((a) => a.roleIds.includes(id))
+                .map((a) => ({ ...a, type: "service-accounts" }))
+            : []),
         ];
   const beforeItems =
     kind === "users" || kind === "organizations"
@@ -464,7 +367,12 @@ function Editor({
           <div>
             {recipients.map((item) => (
               <span className="assignment-chip" key={`${item.type}-${item.id}`}>
-                {t(labels[item.type as FocusKind])} · {item.name}
+                {t(
+                  item.type === "service-accounts"
+                    ? "서비스 어카운트"
+                    : labels[item.type as FocusKind],
+                )}{" "}
+                · {item.name}
               </span>
             ))}
             {!recipients.length && t("없음")}

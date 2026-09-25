@@ -7,6 +7,7 @@ import {
   nullable,
   enumeration,
   datetime,
+  type Schema,
 } from "../../lib/api/schema.ts";
 export const resourceKinds = [
   "workspaces",
@@ -19,9 +20,19 @@ export type FocusKind =
   ResourceKind | "users" | "organizations" | "roles" | "policies";
 const reference = object({ kind: enumeration(resourceKinds), id: string });
 const binding = object({ policyId: string, expiresAt: nullable(datetime) });
-export const graphSchema = object({
+const baseGraphSchema = object({
   revision: number,
   users: array(object({ id: string, name: string })),
+  serviceAccounts: optional(
+    array(
+      object({
+        id: string,
+        name: string,
+        organizationId: string,
+        roleIds: array(string),
+      }),
+    ),
+  ),
   organizations: array(
     object({ id: string, name: string, memberIds: array(string) }),
   ),
@@ -56,7 +67,11 @@ export const graphSchema = object({
     }),
   ),
 });
-export type Graph = ReturnType<typeof graphSchema.parse>;
+type ParsedGraph = ReturnType<typeof baseGraphSchema.parse>;
+export type Graph = Omit<ParsedGraph, "serviceAccounts"> & {
+  serviceAccounts?: ParsedGraph["serviceAccounts"];
+};
+export const graphSchema: Schema<Graph> = baseGraphSchema;
 export type ResourceRef = { kind: ResourceKind; id: string; name?: string };
 export function impactForResources(
   graph: Graph,

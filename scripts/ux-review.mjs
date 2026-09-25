@@ -287,7 +287,7 @@ try {
   );
   await capture("06-rollback-review.png");
   await page.setViewportSize({ width: 1440, height: 1320 });
-  await page.getByLabel("관계 검색", { exact: true }).fill("김다온");
+  await page.getByLabel("영향 대상·경로 검색", { exact: true }).fill("김다온");
   await capture("09-impact-depth.png");
   await page.setViewportSize({ width: 1440, height: 1050 });
   await page.getByRole("button", { name: "돌아가기", exact: true }).click();

@@ -75,26 +75,25 @@ test("policy Sync includes dependencies, previews role-based users and organizat
   await dialog
     .getByRole("button", { name: "변경·영향도 검토", exact: true })
     .click();
+  const impact = dialog.locator(".sync-workflow-impact");
   await expect(
-    dialog.locator('.sync-workflow-impact .explorer-row[data-depth="0"]'),
-  ).toContainText("정책");
-  await expect(
-    dialog
-      .locator('.sync-workflow-impact .explorer-row[data-depth="1"]')
-      .first(),
-  ).toContainText("역할");
-  await expect(
-    dialog
-      .locator('.sync-workflow-impact .explorer-row[data-depth="2"]')
-      .filter({ hasText: "조직" })
-      .first(),
+    impact.getByRole("button", { name: "사용자 7", exact: true }),
   ).toBeVisible();
   await expect(
-    dialog
-      .locator('.sync-workflow-impact .explorer-row[data-depth="2"]')
-      .filter({ hasText: "직접 연결" })
-      .first(),
+    impact.getByRole("button", { name: "조직 1", exact: true }),
   ).toBeVisible();
+  await impact
+    .getByRole("button", { name: "서비스 어카운트 1", exact: true })
+    .click();
+  const account = impact.locator(".subject-row");
+  await expect(account).toContainText("platform-ci");
+  await account.locator("summary").first().click();
+  await expect(account.locator(".subject-path-chain")).toContainText(
+    "플랫폼 관리자",
+  );
+  await expect(account.locator(".subject-path-chain")).toContainText(
+    "플랫폼 조회",
+  );
   await expect(dialog.locator(".sync-review-list > details")).toHaveCount(4);
   await dialog.locator(".sync-confirm input").check();
   await dialog.getByRole("button", { name: "최종 Sync 적용" }).click();

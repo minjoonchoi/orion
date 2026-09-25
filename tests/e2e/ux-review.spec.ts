@@ -82,7 +82,7 @@ test("rollback requires review and records confirmed restoration", async ({
   await expect(page.getByRole("dialog")).not.toContainText("revision 2");
 });
 
-test("impact lists preserve ancestry and distinguish direct and inherited depth", async ({
+test("subject impact preserves direct and organization paths during rollback", async ({
   page,
   context,
 }) => {
@@ -99,28 +99,28 @@ test("impact lists preserve ancestry and distinguish direct and inherited depth"
   await page.locator(".sync-history-entry").last().locator("summary").click();
   await page.getByRole("button", { name: "이 revision으로 롤백" }).click();
   const impact = page.getByRole("region", { name: "영향 범위 탐색" });
-  await expect(impact.locator('.explorer-row[data-depth="0"]')).toContainText(
+  await expect(impact.locator(".impact-scope")).toContainText(
     "Orion Identity API",
   );
-  await expect(
-    impact.locator('.explorer-row[data-depth="1"]').first(),
-  ).toContainText("정책");
-  await expect(
-    impact.locator('.explorer-row[data-depth="2"]').first(),
-  ).toContainText("역할");
-  await impact.getByLabel("관계 검색", { exact: true }).fill("김가람");
-  await expect(
-    impact
-      .locator('.explorer-row[data-depth="3"]')
-      .filter({ hasText: "직접 연결" })
-      .first(),
-  ).toContainText("김가람");
-  await expect(
-    impact.locator('.explorer-row[data-depth="4"]').first(),
-  ).toContainText("조직 경유");
-  await impact.getByLabel("관계 검색", { exact: true }).fill("no-such-member");
-  await expect(impact).toContainText("연결된 항목이 없습니다");
-  await impact.getByLabel("관계 검색", { exact: true }).fill("김가람");
+  await impact
+    .getByLabel("영향 대상·경로 검색", { exact: true })
+    .fill("김가람");
+  const subject = impact.locator(".subject-row");
+  await expect(subject).toHaveCount(1);
+  await subject.locator("summary").first().click();
+  await expect(subject.locator(".subject-paths")).toContainText("직접 연결");
+  await expect(subject.locator(".subject-paths")).toContainText("조직 경유");
+  await expect(subject.locator(".subject-path-chain").first()).toContainText(
+    "플랫폼 관리자",
+  );
+  await impact
+    .getByLabel("영향 대상·경로 검색", { exact: true })
+    .fill("no-such-member");
+  await expect(impact).toContainText("검색 결과가 없습니다.");
+  await impact
+    .getByLabel("영향 대상·경로 검색", { exact: true })
+    .fill("김가람");
+  await subject.locator("summary").first().click();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page.evaluate(
@@ -135,6 +135,6 @@ test("impact lists preserve ancestry and distinguish direct and inherited depth"
   await page.locator(".sync-history-entry").last().locator("summary").click();
   await page.getByRole("button", { name: "Rollback to this revision" }).click();
   await expect(page.getByRole("dialog")).toContainText(
-    "Indentation and connecting lines show relationship depth.",
+    "Subjects are counted once.",
   );
 });

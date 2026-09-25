@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { DateValue, useI18n } from "@/i18n/provider";
 import { ResourceImpact } from "../authorization/resource-impact";
-import { PolicyImpactTree } from "../authorization/impact-tree";
+import { SubjectImpact } from "../authorization/subject-impact-view";
 import { kindLabel, type Run } from "../resource-sync/model";
 import { prepareSync, reviewSync, applySync, syncPlanRun } from "./actions";
 import {
@@ -364,40 +364,19 @@ export function SyncDialog({
                   <DateValue value={preview.expiresAt} time />
                 </p>
                 <section className="sync-workflow-impact">
-                  <h3>{t("영향 범위")}</h3>
                   {policyMode ? (
-                    <>
-                      <p className="sync-impact-totals">
-                        {t("역할")} {plan.policyImpact.roles} · {t("조직")}{" "}
-                        {plan.policyImpact.organizations} · {t("사용자")}{" "}
-                        {plan.policyImpact.users}
-                      </p>
-                      <p className="muted">
-                        {t(
-                          "선택한 정책이 부여된 역할의 직접 사용자와 조직 멤버를 집계합니다. 중복 사용자는 한 번만 계산합니다.",
-                        )}
-                      </p>
-                      {plan.policies.map((p) => (
-                        <PolicyImpactTree
-                          initialDepth={2}
-                          key={p.key}
-                          id={p.after.id}
-                          name={p.after.name || p.after.id}
-                          roles={p.impact.roles}
-                        />
-                      ))}
-                    </>
+                    <SubjectImpact
+                      graph={current.policy!.graph}
+                      scope={{
+                        policyIds: plan.policies.map((p) => p.after.id),
+                      }}
+                    />
                   ) : (
                     <ResourceImpact
                       graph={current.resource.graph}
                       resources={plan.resources}
                     />
                   )}
-                  <p className="muted">
-                    {t(
-                      "연결 관계 기준이며 최종 접근 허용 여부는 서버에서 판정합니다.",
-                    )}
-                  </p>
                 </section>
                 {policyMode && !!plan.changedResources.length && (
                   <details className="sync-workflow-extra">
