@@ -38,7 +38,7 @@ Next.js App Router, React, TypeScript strict, CSS, ESLint, Prettier를 사용합
 
 ## 초기 범위
 
-개요, 사용자, 역할, 서버 리소스, 접근 권한, 감사 로그 경로와 공통 레이아웃을 제공합니다. 실제 관리 화면은 준비 중 상태이며 서버 CRUD, 실제 권한 판정은 포함하지 않습니다. `/login`에서 Orion API를 통한 Okta 로그인 시작 화면을 제공합니다. `/components`에는 메모리 예제로 동작하는 공통 컴포넌트 확인 화면이 있습니다.
+LSB는 사용자·조직, 역할·정책, 서비스·화면, API 접근의 4개 그룹과 9개 목록 메뉴로 구성합니다. [메뉴 경로와 구현 범위](docs/navigation.md)를 참고하세요. 실제 관리 화면은 준비 중 상태이며 서버 CRUD, 실제 권한 판정은 포함하지 않습니다. `/login`에서 Orion API를 통한 Okta 로그인 시작 화면을 제공합니다. `/components`에는 메모리 예제로 동작하는 공통 컴포넌트 확인 화면이 있습니다.
 
 ## API 연결
 

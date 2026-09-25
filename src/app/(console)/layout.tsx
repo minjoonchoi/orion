@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Navigation } from "@/components/layout/navigation";
 export default function ConsoleLayout({
   children,
@@ -10,9 +11,9 @@ export default function ConsoleLayout({
         본문으로 이동
       </a>
       <aside className="sidebar">
-        <div className="brand">
-          ORION<span>ACCESS MANAGEMENT</span>
-        </div>
+        <Link href="/" className="brand" aria-label="Orion 개요">
+          ORION<span>IDENTITY & ACCESS</span>
+        </Link>
         <Navigation />
       </aside>
       <div className="workspace">
