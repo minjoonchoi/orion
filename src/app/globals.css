@@ -1,18 +1,18 @@
 :root {
   color-scheme: light;
-  --background: #f6f5f1;
+  --background: #f7f7f7;
   --surface: #ffffff;
-  --surface-subtle: #f2f2ed;
-  --sidebar: #eeeee7;
-  --text: #292e28;
-  --muted: #646b60;
-  --line: #dedfd7;
-  --accent: #3f5948;
-  --accent-hover: #304737;
-  --accent-subtle: #e9eee7;
-  --selected: #edf1e9;
+  --surface-subtle: #f4f4f4;
+  --sidebar: #f0f0f0;
+  --text: #262626;
+  --muted: #666666;
+  --line: #dedede;
+  --accent: #333333;
+  --accent-hover: #1f1f1f;
+  --accent-subtle: #ededed;
+  --selected: #e8e8e8;
   --radius: 6px;
-  --shadow: 0 8px 28px rgb(37 43 34 / 10%);
+  --shadow: 0 8px 28px rgb(0 0 0 / 10%);
 }
 * {
   box-sizing: border-box;
@@ -152,7 +152,7 @@ p {
 }
 .card:hover {
   border-color: var(--accent);
-  background: #fbfcf9;
+  background: #fafafa;
 }
 .card p {
   font-size: 14px;
@@ -294,7 +294,7 @@ p {
   font-size: 0.8rem;
   color: inherit;
   background: var(--surface, #fff);
-  border: 1px solid #d8dcd7;
+  border: 1px solid #dedede;
   border-radius: 6px;
   padding: 0.4rem 0.6rem;
 }
@@ -304,4 +304,63 @@ p {
 .login-entry > .language-select {
   align-self: flex-end;
   margin-bottom: 1.5rem;
+}
+
+/* Keep navigation available without consuming the mobile viewport. */
+.mobile-navigation-toggle {
+  display: none;
+}
+@media (min-width: 761px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+}
+.topbar {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.page-heading {
+  margin-bottom: 20px;
+}
+.browse-result-count {
+  font-size: 12px;
+  margin: 0 0 12px;
+}
+@media (max-width: 760px) {
+  .sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .sidebar .brand {
+    padding: 0;
+  }
+  .mobile-navigation-toggle {
+    display: block;
+    font-size: 13px;
+    padding: 9px 12px;
+  }
+  .sidebar nav {
+    width: 100%;
+  }
+  .sidebar nav[data-expanded="false"] {
+    display: none;
+  }
+  main {
+    padding: 20px 16px;
+  }
+  .topbar {
+    padding: 12px 16px;
+  }
+}
+
+.navigation-items > .navigation-divider {
+  border-top: 1px solid var(--line);
+  margin-top: 6px;
+  padding-top: 6px;
 }

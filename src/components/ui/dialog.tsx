@@ -1,7 +1,7 @@
 "use client";
 import { useI18n } from "@/i18n/provider";
 import * as Primitive from "@radix-ui/react-dialog";
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { Button } from "./button";
 export function Dialog({
   trigger,
@@ -23,6 +23,7 @@ export function Dialog({
   busy?: boolean;
 }) {
   const { t } = useI18n();
+  const returnFocus = useRef<HTMLElement | null>(null);
   return (
     <Primitive.Root
       open={open}
@@ -36,6 +37,21 @@ export function Dialog({
         <Primitive.Content
           className={`ui-dialog ui-dialog--${variant}`}
           aria-busy={busy || undefined}
+          onOpenAutoFocus={() => {
+            returnFocus.current =
+              document.activeElement instanceof HTMLElement
+                ? document.activeElement
+                : null;
+          }}
+          onCloseAutoFocus={(event) => {
+            if (
+              returnFocus.current?.isConnected &&
+              returnFocus.current !== document.body
+            ) {
+              event.preventDefault();
+              returnFocus.current.focus();
+            }
+          }}
           onInteractOutside={(event) => event.preventDefault()}
           onEscapeKeyDown={(event) => {
             if (busy) event.preventDefault();

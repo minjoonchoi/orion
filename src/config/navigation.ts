@@ -23,18 +23,12 @@ export const navigationGroups = [
   },
   {
     id: "authorization",
-    label: "역할·정책",
+    label: "권한 관리",
     items: [
       {
         href: "/roles",
         label: "역할",
         description: "역할에 연결된 사용자, 조직과 정책을 조회합니다.",
-      },
-      {
-        href: "/policies",
-        label: "정책",
-        description:
-          "정책에 연결된 서비스, 엔드포인트와 워크스페이스를 조회합니다.",
       },
     ],
   },
@@ -43,14 +37,30 @@ export const navigationGroups = [
     label: "리소스",
     items: [
       {
-        href: "/resources",
-        label: "리소스 관리",
-        description: "현재 리소스와 Git 변경사항을 검토하고 동기화합니다.",
+        href: "/workspaces",
+        label: "워크스페이스",
+        description: "워크스페이스와 소속 페이지를 탐색합니다.",
       },
       {
-        href: "/resource-sync/history",
-        label: "동기화 이력",
-        description: "동기화 실행 결과를 조회합니다.",
+        href: "/services",
+        label: "서비스",
+        description: "서비스와 소속 엔드포인트를 탐색합니다.",
+      },
+      {
+        href: "/domains",
+        label: "업무 도메인",
+        description: "도메인별 Action과 연결 엔드포인트를 탐색합니다.",
+      },
+      {
+        href: "/policies",
+        label: "정책",
+        description:
+          "정책에 연결된 서비스, 엔드포인트와 워크스페이스를 조회합니다.",
+      },
+      {
+        href: "/resources",
+        label: "변경 관리",
+        description: "정책과 리소스의 변경사항을 검토하고 적용합니다.",
       },
     ],
   },
@@ -86,12 +96,17 @@ export const navigationGroups = [
 export const navigation = navigationGroups.flatMap((group) => [...group.items]);
 
 export function isNavigationActive(pathname: string, href: string) {
-  if (
-    href === "/resources" &&
-    ["/workspaces", "/pages", "/services", "/service-endpoints"].some(
-      (p) => pathname === p || pathname.startsWith(p + "/"),
+  const child: Record<string, string> = {
+    "/workspaces": "/pages",
+    "/services": "/service-endpoints",
+    "/domains": "/actions",
+  };
+  return (
+    pathname === href ||
+    pathname.startsWith(`${href}/`) ||
+    Boolean(
+      child[href] &&
+      (pathname === child[href] || pathname.startsWith(child[href] + "/")),
     )
-  )
-    return true;
-  return pathname === href || pathname.startsWith(`${href}/`);
+  );
 }

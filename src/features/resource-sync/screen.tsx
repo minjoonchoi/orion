@@ -1,113 +1,207 @@
 "use client";
+import { loadPolicySync } from "../policy-sync/actions";
+import {
+  diff as policyDiff,
+  type Snapshot as PolicySnapshot,
+} from "../policy-sync/model";
+import { PolicyHistoryDialog } from "../policy-sync/history";
+import { SubjectImpact } from "../authorization/subject-impact-view";
+import { ChangeViews, YamlDiff } from "../sync-workflow/change-views";
+import { SyncDialog } from "../sync-workflow/dialog";
+import type { Selection } from "../sync-workflow/model";
+import { ResourceImpact } from "../authorization/resource-impact";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { DateValue, useI18n } from "@/i18n/provider";
-import { loadSync, previewSync, executeSync, syncRun } from "./actions";
+import { useI18n } from "@/i18n/provider";
+import { loadSync } from "./actions";
+import { ResourceHistoryDialog } from "./history";
 import {
-  diff,
-  kindLabel,
-  type Snapshot,
-  type Preview,
-  type Run,
-} from "./model";
+  resourceKinds,
+  type ResourceKind,
+  type ResourceRef,
+} from "../authorization/model";
+import { diff, kindLabel, type Snapshot, type Run } from "./model";
 import "./styles.css";
 const messages: Record<string, string> = {
   CONFLICT: "버전이 변경되었습니다. 새로고침 후 다시 검토하세요.",
-  EXPIRED: "검토가 만료되었습니다. 다시 Sync를 눌러 검토하세요.",
+  EXPIRED: "검토가 만료되었습니다. 다시 동기화를 눌러 검토하세요.",
   BLOCKED: "차단된 변경을 먼저 해결하세요.",
   FORBIDDEN: "접근 권한이 없습니다",
   UNAUTHENTICATED: "로그인이 필요합니다",
   REQUEST_FAILED: "요청하지 못했습니다. 다시 시도해 주세요.",
 };
+type CatalogItem = {
+  kind: ResourceKind | "policies";
+  id: string;
+  name: string;
+  path: string;
+  method: string;
+  parentId?: string;
+};
+const catalogLabels = { ...kindLabel, policies: "정책" };
+const isAccessResource = (r: CatalogItem): r is CatalogItem & ResourceRef =>
+  r.kind !== "policies";
 export function ResourceSyncScreen() {
   const { t, mode } = useI18n();
   const params = useSearchParams();
   const router = useRouter();
-  const tab = params.get("tab") === "changes" ? "changes" : "current";
+  const status =
+    params.get("status") ??
+    (params.get("tab") === "changes" ? "out-of-sync" : "all");
   const kind = params.get("type") ?? "all";
   const selectedId = params.get("resource");
+  const diffKind = params.get("diffType") ?? kind;
+  const [historyKind, historyId] = (params.get("history") ?? "").split(":");
+  function historyUrl(kind: string, id: string) {
+    const next = new URLSearchParams(params.toString());
+    next.delete("resource");
+    next.set("history", `${kind}:${id}`);
+    return `/resources?${next}`;
+  }
   function navigate(key: string, value: string) {
     const next = new URLSearchParams(params.toString());
     next.set(key, value);
     if (key !== "page") next.delete("page");
-    next.delete("resource");
-    router.replace("/resources?" + next.toString(), { scroll: false });
+    if (key !== "resource") next.delete("resource");
+    if (!value) next.delete(key);
+    window.history.replaceState(null, "", "/resources?" + next.toString());
   }
+  const [policySnapshot, setPolicySnapshot] = useState<PolicySnapshot | null>(
+    null,
+  );
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
-  const [preview, setPreview] = useState<Preview | null>(null);
+  const [syncSelection, setSyncSelection] = useState<Selection | null>(null);
   const [run, setRun] = useState<Run | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("all");
-  const [confirmed, setConfirmed] = useState(false);
-  async function refresh() {
+  const query = params.get("q") ?? "";
+  const filter = params.get("change") ?? "all";
+  const [impactReview, setImpactReview] = useState<{
+    snapshot: Snapshot;
+    resources: CatalogItem[];
+  } | null>(null);
+  async function inspectImpact(resources: CatalogItem[]) {
+    if (!resources.length) return;
     setBusy(true);
     setError("");
     try {
-      const r = await loadSync();
-      if (r.data) setSnapshot(r.data);
-      else setError(r.error!);
+      const result = await loadSnapshots();
+      setImpactReview({
+        snapshot: { ...result.resource, graph: result.policy.graph },
+        resources,
+      });
     } catch {
       setError("REQUEST_FAILED");
     } finally {
       setBusy(false);
     }
   }
+  function selectResources(keys: Set<string>) {
+    const next = new URLSearchParams(params.toString());
+    next.delete("selected");
+    keys.forEach((key) => next.append("selected", key));
+    window.history.replaceState(null, "", `/resources?${next}`);
+  }
+  async function loadSnapshots() {
+    const r = await loadSync();
+    if (!r.data) throw Error(r.error);
+    const p = await loadPolicySync();
+    if (!p.data) throw Error(p.error);
+    if (
+      r.data.dbRevision !== p.data.dbRevision ||
+      r.data.environment !== p.data.environment ||
+      r.data.region !== p.data.region
+    )
+      throw Error("CONFLICT");
+    setSnapshot(r.data);
+    setPolicySnapshot(p.data);
+    return { resource: r.data, policy: p.data };
+  }
+  async function refresh() {
+    setBusy(true);
+    setError("");
+    try {
+      await loadSnapshots();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "REQUEST_FAILED");
+    } finally {
+      setBusy(false);
+    }
+  }
   useEffect(() => {
-    void loadSync()
-      .then((r) => (r.data ? setSnapshot(r.data) : setError(r.error!)))
-      .catch(() => setError("REQUEST_FAILED"));
+    void loadSnapshots().catch((e) =>
+      setError(e instanceof Error ? e.message : "REQUEST_FAILED"),
+    );
+    // The catalog is reloaded explicitly after an apply, rollback or refresh.
   }, []);
-  useEffect(() => {
-    if (!run || !["queued", "running"].includes(run.status)) return;
-    let stopped = false;
-    const timer = setInterval(() => {
-      void syncRun(run.id)
-        .then((r) => {
-          if (stopped) return;
-          if (r.data) {
-            setRun(r.data);
-            if (r.data.status === "succeeded") void refresh();
-          } else setError(r.error!);
-        })
-        .catch(() => !stopped && setError("REQUEST_FAILED"));
-    }, 2000);
-    return () => {
-      stopped = true;
-      clearInterval(timer);
-    };
-  }, [run]);
   let result: ReturnType<typeof diff> | null = null;
+  let policies: ReturnType<typeof policyDiff> | null = null;
   let invalid = false;
   try {
     if (snapshot) result = diff(snapshot);
+    if (policySnapshot) policies = policyDiff(policySnapshot);
   } catch {
     invalid = true;
   }
-  const changes = result?.rows.filter((r) => r.operation !== "unchanged") ?? [];
+  const resourceChanges =
+    result?.rows.filter((r) => r.operation !== "unchanged") ?? [];
+  const policyChanges =
+    policies?.rows.filter((r) => r.operation !== "unchanged") ?? [];
+  const changes = [
+    ...resourceChanges.map((r) => ({ ...r, after: r.after as CatalogItem })),
+    ...policyChanges.map((r) => ({
+      ...r,
+      after: { ...r.after, kind: "policies" as const, path: "", method: "" },
+    })),
+  ];
   const rows =
     result?.rows.filter(
       (r) =>
         r.operation !== "unchanged" &&
-        (kind === "all" || r.after.kind === kind) &&
-        (!selectedId || r.after.id === selectedId) &&
-        (filter === "all" || r.operation === filter) &&
-        `${r.after.name} ${r.after.id}`
-          .toLowerCase()
-          .includes(query.toLowerCase()),
+        (diffKind === "all" || r.after.kind === diffKind) &&
+        (!selectedId || r.after.id === selectedId),
     ) ?? [];
-  const catalog = (snapshot?.graph.resources ?? [])
-    .filter(
-      (r) =>
+  const resourceCatalog: CatalogItem[] = [
+    ...(snapshot?.graph.resources ?? []),
+    ...resourceChanges
+      .filter((r) => r.operation === "create")
+      .map((r) => r.after),
+    ...(result?.rows
+      .filter((r) => r.after.state === "absent" && !r.before)
+      .map((r) => r.after) ?? []),
+    ...(policySnapshot?.graph.policies ?? []).map((p) => ({
+      ...p,
+      kind: "policies" as const,
+      path: "",
+      method: "",
+    })),
+    ...(policies?.rows
+      .filter((p) => !p.before)
+      .map((p) => ({
+        ...p.after,
+        kind: "policies" as const,
+        path: "",
+        method: "",
+      })) ?? []),
+  ];
+  const catalog = resourceCatalog
+    .filter((r) => {
+      const change = changes.find(
+        (c) => c.after.kind === r.kind && c.after.id === r.id,
+      );
+      return (
+        (status === "all" ||
+          (status === "out-of-sync" ? Boolean(change) : !change)) &&
+        (filter === "all" || change?.operation === filter) &&
         (kind === "all" || kind === r.kind) &&
         `${r.name} ${r.id} ${r.path}`
           .toLowerCase()
-          .includes(query.trim().toLowerCase()),
-    )
+          .includes(query.trim().toLowerCase())
+      );
+    })
     .sort((a, b) =>
       params.get("sort") === "desc"
         ? b.name.localeCompare(a.name)
@@ -118,6 +212,17 @@ export function ResourceSyncScreen() {
     pages,
     Math.max(1, Number(params.get("page")) || 1),
   );
+  const pageResources = catalog.slice((currentPage - 1) * 10, currentPage * 10);
+  const selection = resourceCatalog.filter((r) =>
+    params.getAll("selected").includes(`${r.kind}:${r.id}`),
+  );
+  const selectedKeys = new Set(selection.map((r) => `${r.kind}:${r.id}`));
+  const pageSelected = pageResources.filter((r) =>
+    selectedKeys.has(`${r.kind}:${r.id}`),
+  ).length;
+  const hiddenSelected = selection.filter(
+    (r) => !catalog.some((item) => item.kind === r.kind && item.id === r.id),
+  ).length;
   const operation = (op: string) =>
     t(
       (
@@ -130,67 +235,41 @@ export function ResourceSyncScreen() {
       )[op],
     );
   const active = Boolean(run && ["queued", "running"].includes(run.status));
-  const previewRows = preview
-    ? diff(preview.snapshot).rows.filter((r) => r.operation !== "unchanged")
-    : [];
-  const users = new Set(previewRows.flatMap((r) => r.users));
-  async function review() {
-    if (!snapshot) return;
-    setBusy(true);
-    setError("");
-    try {
-      const r = await previewSync(
-        snapshot.candidateCommit,
-        snapshot.digest,
-        snapshot.dbRevision,
-      );
-      if (r.data) {
-        setPreview(r.data);
-        setConfirmed(false);
-      } else setError(r.error!);
-    } catch {
-      setError("REQUEST_FAILED");
-    } finally {
-      setBusy(false);
-    }
-  }
-  async function apply() {
-    if (!preview) return;
-    setBusy(true);
-    setError("");
-    try {
-      const r = await executeSync(preview.token);
-      if (r.data) {
-        setRun(r.data);
-        setPreview(null);
-        if (r.data.status === "succeeded") await refresh();
-      } else setError(r.error!);
-    } catch {
-      setError("REQUEST_FAILED");
-    } finally {
-      setBusy(false);
-    }
+  function startSync(resources: CatalogItem[]) {
+    setSyncSelection({
+      mode: resources.some((r) => r.kind === "policies")
+        ? "policies"
+        : "resources",
+      resources: resources
+        .filter(isAccessResource)
+        .map(({ kind, id }) => ({ kind, id })),
+      policyIds: resources
+        .filter((r) => r.kind === "policies")
+        .map((r) => r.id),
+    });
   }
   return (
     <div className="sync-page">
       <div className="sync-heading">
         <div>
-          <p className="muted">GITOPS / CLOUD CONFIG</p>
-          <h1>{t("리소스 관리")}</h1>
-          <p>
-            {t(
-              "Git 정의서와 현재 DB를 비교하고 검토한 버전을 수동 적용합니다.",
-            )}
-          </p>
+          <p className="muted">{t("리소스")}</p>
+          <h1>{t("변경 관리")}</h1>
+          <p>{t("정책과 리소스의 변경사항을 검토하고 적용합니다.")}</p>
         </div>
-        <Button variant="secondary" disabled={busy || active} onClick={refresh}>
-          {t("새로고침")}
-        </Button>
+        <div className="ui-actions">
+          <Button
+            variant="secondary"
+            disabled={busy || active}
+            onClick={refresh}
+          >
+            {t("새로고침")}
+          </Button>
+        </div>
       </div>
       {mode === "demo" && (
         <p className="sync-notice">
           {t(
-            "예제 모드: Cloud Config를 호출하지 않고 세션 데이터에 적용합니다.",
+            "예제 모드: 외부 config 서버를 호출하지 않고 세션 데이터에 적용합니다.",
           )}
         </p>
       )}
@@ -210,26 +289,24 @@ export function ResourceSyncScreen() {
       )}
       {snapshot && (
         <>
-          <div className="sync-versions">
+          <p className="muted">
+            {t("동기화 상태와 변경사항은 각 리소스·정책 단위로 확인합니다.")}
+          </p>
+          <div
+            className="sync-versions"
+            aria-label={t("항목별 동기화 상태 요약")}
+          >
             <section>
-              <span>{t("현재 DB")}</span>
-              <strong>revision {snapshot.dbRevision}</strong>
-              <code>{snapshot.appliedCommit}</code>
+              <span>{t("전체 항목")}</span>
+              <strong>{resourceCatalog.length}</strong>
             </section>
             <section>
-              <span>{t("Cloud Config 후보")}</span>
-              <strong>{snapshot.candidateCommit}</strong>
-              <code>SHA-256 {snapshot.digest.slice(0, 16)}…</code>
+              <span>Out of sync</span>
+              <strong>{changes.length}</strong>
             </section>
             <section>
-              <span>{t("배포 범위")}</span>
-              <strong>
-                {snapshot.environment} / {snapshot.region}
-              </strong>
-              <span>
-                {t("동기화 방식")}: {t("수동 적용")} · Config:{" "}
-                {snapshot.cloudConfig}
-              </span>
+              <span>Synced</span>
+              <strong>{resourceCatalog.length - changes.length}</strong>
             </section>
           </div>
           {run && (
@@ -238,57 +315,25 @@ export function ResourceSyncScreen() {
                 {t("동기화 실행")}: {run.status}
               </strong>
               <p>
-                {t("적용 commit")}: {run.commit} · DB {run.dbRevision}
+                {t("적용 revision")}: {run.dbRevision} · {run.commit}
               </p>
               <p>
                 {run.phase} ·{" "}
                 {run.message === "DEMO_APPLIED"
-                  ? t("예제 DB 적용 완료")
-                  : run.message}
+                  ? t("예제 동기화 완료")
+                  : run.message === "DEMO_ROLLED_BACK"
+                    ? t("예제 Rollback 완료")
+                    : run.message}
               </p>
             </div>
           )}
-          {!!result?.blockers.length && (
-            <div role="alert" className="sync-blockers">
-              <strong>{t("동기화 차단")}</strong>
-              {result.blockers.map((b) => (
-                <p key={b}>
-                  {t(
-                    b.startsWith("POLICY_REFERENCE")
-                      ? "정책이 연결된 리소스는 삭제할 수 없습니다."
-                      : b.startsWith("PARENT_REFERENCE")
-                        ? "하위 리소스의 상위 참조를 먼저 해결하세요."
-                        : "설정 준비 상태와 DB revision을 확인하세요.",
-                  )}{" "}
-                  <code>{b}</code>
-                </p>
-              ))}
-            </div>
-          )}
-          <nav className="sync-tabs" aria-label={t("리소스 보기")}>
-            <Button
-              variant={tab === "current" ? "primary" : "secondary"}
-              aria-pressed={tab === "current"}
-              onClick={() => navigate("tab", "current")}
-            >
-              {t("현재 리소스")} · {snapshot.graph.resources.length}
-            </Button>
-            <Button
-              variant={tab === "changes" ? "primary" : "secondary"}
-              aria-pressed={tab === "changes"}
-              onClick={() => navigate("tab", "changes")}
-            >
-              {t("변경 사항")} · {changes.length}
-            </Button>
-          </nav>
           <div className="sync-toolbar">
             <label>
               {t("리소스 검색")}
               <input
                 value={query}
                 onChange={(e) => {
-                  setQuery(e.target.value);
-                  if (params.has("page")) navigate("page", "1");
+                  navigate("q", e.target.value);
                 }}
               />
             </label>
@@ -299,53 +344,164 @@ export function ResourceSyncScreen() {
                 onChange={(e) => navigate("type", e.target.value)}
               >
                 <option value="all">{t("전체")}</option>
-                {Object.entries(kindLabel).map(([key, label]) => (
+                {Object.entries(catalogLabels).map(([key, label]) => (
                   <option key={key} value={key}>
                     {t(label)}
                   </option>
                 ))}
               </select>
             </label>
-            {tab === "changes" && (
+            <label>
+              {t("동기화 상태")}
+              <select
+                value={status}
+                onChange={(e) => navigate("status", e.target.value)}
+              >
+                <option value="all">{t("전체")}</option>
+                <option value="out-of-sync">Out of sync</option>
+                <option value="synced">Synced</option>
+              </select>
+            </label>
+            {
               <label>
                 {t("변경 유형")}
                 <select
                   value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
+                  onChange={(e) => navigate("change", e.target.value)}
                 >
-                  {["all", "create", "update", "delete", "unchanged"].map(
-                    (v) => (
-                      <option key={v} value={v}>
-                        {v === "all" ? t("전체") : operation(v)}
-                      </option>
-                    ),
-                  )}
+                  {["all", "create", "update", "delete"].map((v) => (
+                    <option key={v} value={v}>
+                      {v === "all" ? t("전체") : operation(v)}
+                    </option>
+                  ))}
                 </select>
               </label>
-            )}
+            }
             <span>
               {t("변경 리소스")} · {changes.length}
             </span>
-            {tab === "changes" && (
+            {(query ||
+              filter !== "all" ||
+              kind !== "all" ||
+              status !== "all") && (
               <Button
-                disabled={
-                  busy ||
-                  active ||
-                  invalid ||
-                  !changes.length ||
-                  !!result?.blockers.length
-                }
-                onClick={review}
+                variant="ghost"
+                onClick={() => {
+                  const next = new URLSearchParams();
+                  selectedKeys.forEach((key) => next.append("selected", key));
+                  router.replace(`/resources?${next}`, { scroll: false });
+                }}
               >
-                Sync · {t("영향도 검토")} · {changes.length}
+                {t("초기화")}
               </Button>
             )}
           </div>
-          {tab === "current" ? (
+          <section className="sync-selection" aria-label={t("리소스 선택")}>
+            <div className="ui-actions">
+              <strong>
+                {t("선택한 항목")} · {selection.length}
+              </strong>
+              {hiddenSelected > 0 && (
+                <span className="muted">
+                  {t("현재 필터 밖 선택")} · {hiddenSelected}
+                </span>
+              )}
+              <Button
+                disabled={
+                  !selection.length ||
+                  busy ||
+                  active ||
+                  invalid ||
+                  !policySnapshot
+                }
+                onClick={() => startSync(selection)}
+              >
+                {t("선택 항목 동기화")}
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={
+                  !selection.length ||
+                  busy ||
+                  active ||
+                  invalid ||
+                  !policySnapshot
+                }
+                onClick={() => inspectImpact(selection)}
+              >
+                {t("선택 리소스 영향도 검토")}
+              </Button>
+              <Button
+                variant="ghost"
+                disabled={!selection.length}
+                onClick={() => selectResources(new Set())}
+              >
+                {t("선택 해제")}
+              </Button>
+            </div>
+            {!!selection.length && (
+              <details>
+                <summary>{t("선택 목록 확인")}</summary>
+                <ul>
+                  {selection.map((r) => (
+                    <li key={`${r.kind}:${r.id}`}>
+                      <span>
+                        {t(catalogLabels[r.kind])} · {r.name}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        aria-label={`${r.name} · ${t("선택 해제")}`}
+                        onClick={() => {
+                          const next = new Set(selectedKeys);
+                          next.delete(`${r.kind}:${r.id}`);
+                          selectResources(next);
+                        }}
+                      >
+                        ×
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+            <p className="muted">
+              {t(
+                "선택한 항목의 변경사항과 영향도를 검토합니다. 정책 연결 리소스와 필수 상위 리소스는 포함 사유와 함께 표시됩니다.",
+              )}
+            </p>
+          </section>
+          {
             <div className="sync-catalog">
-              <table aria-label={t("현재 리소스")}>
+              <table aria-label={t("변경 관리")}>
                 <thead>
                   <tr>
+                    <th>
+                      <input
+                        type="checkbox"
+                        aria-label={t("현재 페이지 리소스 선택")}
+                        disabled={!pageResources.length}
+                        checked={
+                          !!pageResources.length &&
+                          pageSelected === pageResources.length
+                        }
+                        ref={(element) => {
+                          if (element)
+                            element.indeterminate =
+                              pageSelected > 0 &&
+                              pageSelected < pageResources.length;
+                        }}
+                        onChange={(e) => {
+                          const next = new Set(selectedKeys);
+                          pageResources.forEach((r) => {
+                            const key = `${r.kind}:${r.id}`;
+                            if (e.target.checked) next.add(key);
+                            else next.delete(key);
+                          });
+                          selectResources(next);
+                        }}
+                      />
+                    </th>
                     <th
                       aria-sort={
                         params.get("sort") === "desc"
@@ -368,79 +524,165 @@ export function ResourceSyncScreen() {
                     <th>{t("유형")}</th>
                     <th>{t("상위 리소스")}</th>
                     <th>{t("하위 리소스")}</th>
-                    <th>{t("변경 사항")}</th>
+                    <th>{t("동기화 상태")}</th>
+                    <th>{t("동기화 이력")}</th>
+                    <th>{t("작업")}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {catalog
-                    .slice((currentPage - 1) * 10, currentPage * 10)
-                    .map((r) => {
-                      const change = changes.find(
-                        (c) => c.after.kind === r.kind && c.after.id === r.id,
-                      );
-                      const parentKind =
-                        r.kind === "pages" ? "workspaces" : "services";
-                      const parent = snapshot.graph.resources.find(
-                        (p) => p.kind === parentKind && p.id === r.parentId,
-                      );
-                      return (
-                        <tr key={`${r.kind}:${r.id}`}>
-                          <td>
+                  {pageResources.map((r) => {
+                    const change = changes.find(
+                      (c) => c.after.kind === r.kind && c.after.id === r.id,
+                    );
+                    const parentKind =
+                      r.kind === "pages" ? "workspaces" : "services";
+                    const deleted =
+                      !(r.kind === "policies"
+                        ? policySnapshot?.graph.policies.some(
+                            (p) => p.id === r.id,
+                          )
+                        : snapshot.graph.resources.some(
+                            (p) => p.kind === r.kind && p.id === r.id,
+                          )) && change?.operation !== "create";
+                    const parent = snapshot.graph.resources.find(
+                      (p) => p.kind === parentKind && p.id === r.parentId,
+                    );
+                    return (
+                      <tr key={`${r.kind}:${r.id}`}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            aria-label={`${r.name} · ${t("리소스 선택")}`}
+                            checked={selectedKeys.has(`${r.kind}:${r.id}`)}
+                            onChange={(e) => {
+                              const next = new Set(selectedKeys);
+                              if (e.target.checked)
+                                next.add(`${r.kind}:${r.id}`);
+                              else next.delete(`${r.kind}:${r.id}`);
+                              selectResources(next);
+                            }}
+                          />
+                        </td>
+                        <td>
+                          {change?.operation === "create" || deleted ? (
+                            <strong>{r.name}</strong>
+                          ) : (
                             <Link href={`/${r.kind}/${r.id}`}>{r.name}</Link>
-                            <small>
-                              {r.id}
-                              {r.path && ` · ${r.method} ${r.path}`}
-                            </small>
-                          </td>
-                          <td>{t(kindLabel[r.kind])}</td>
-                          <td>
-                            {parent ? (
-                              <Link href={`/${parent.kind}/${parent.id}`}>
-                                {parent.name}
-                              </Link>
-                            ) : (
-                              "—"
-                            )}
-                          </td>
-                          <td>
-                            {["services", "workspaces"].includes(r.kind) ? (
-                              <Link
-                                href={`/${r.kind}/${r.id}?tab=${r.kind === "services" ? "endpoints" : "pages"}`}
+                          )}
+                          <small>
+                            {r.id}
+                            {r.path && ` · ${r.method} ${r.path}`}
+                          </small>
+                        </td>
+                        <td>{t(catalogLabels[r.kind])}</td>
+                        <td>
+                          {parent ? (
+                            <Link href={`/${parent.kind}/${parent.id}`}>
+                              {parent.name}
+                            </Link>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td>
+                          {!deleted &&
+                          change?.operation !== "create" &&
+                          ["services", "workspaces"].includes(r.kind) ? (
+                            <Link
+                              href={`/${r.kind}/${r.id}?tab=${r.kind === "services" ? "endpoints" : "pages"}`}
+                            >
+                              {
+                                snapshot.graph.resources.filter(
+                                  (child) =>
+                                    child.parentId === r.id &&
+                                    child.kind ===
+                                      (r.kind === "services"
+                                        ? "service-endpoints"
+                                        : "pages"),
+                                ).length
+                              }
+                              {t("개")}
+                            </Link>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td>
+                          <span
+                            className={`sync-status ${change ? "pending" : ""}`}
+                          >
+                            {change ? "Out of sync" : "Synced"}
+                          </span>
+                        </td>
+                        <td>
+                          <Link
+                            href={historyUrl(r.kind, r.id)}
+                            scroll={false}
+                            aria-label={`${r.name} · ${t("동기화 이력")}`}
+                          >
+                            {t("이력 보기")}
+                          </Link>
+                        </td>
+                        <td>
+                          <div className="sync-row-actions">
+                            {change && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-label={`${r.name} · ${t("변경 검토")}`}
+                                onClick={() => {
+                                  const next = new URLSearchParams(
+                                    params.toString(),
+                                  );
+                                  next.set("resource", r.id);
+                                  next.set("diffType", r.kind);
+                                  window.history.replaceState(
+                                    null,
+                                    "",
+                                    `/resources?${next}`,
+                                  );
+                                }}
                               >
-                                {
-                                  snapshot.graph.resources.filter(
-                                    (child) =>
-                                      child.parentId === r.id &&
-                                      child.kind ===
-                                        (r.kind === "services"
-                                          ? "service-endpoints"
-                                          : "pages"),
-                                  ).length
-                                }
-                                {t("개")}
-                              </Link>
-                            ) : (
-                              "—"
+                                {t("변경 검토")}
+                              </Button>
                             )}
-                          </td>
-                          <td>
-                            {change ? (
-                              <Link
-                                className={`sync-badge ${change.operation}`}
-                                href={`/resources?tab=changes&type=${r.kind}&resource=${r.id}`}
-                              >
-                                {operation(change.operation)} · {t("diff 확인")}
-                              </Link>
-                            ) : (
-                              t("변경 없음")
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              disabled={
+                                !change ||
+                                busy ||
+                                active ||
+                                invalid ||
+                                !policySnapshot
+                              }
+                              aria-label={`${r.name} · ${t("동기화")}`}
+                              onClick={() => startSync([r])}
+                            >
+                              {t("동기화")}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              disabled={busy || active}
+                              aria-label={`${r.name} · ${t("영향도 검토")}`}
+                              onClick={() => inspectImpact([r])}
+                            >
+                              {t("영향도 검토")}
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
-              {!catalog.length && <p>{t("연결된 항목이 없습니다")}</p>}
+              {!catalog.length && (
+                <p>
+                  {t("검색 결과가 없습니다")} ·{" "}
+                  {t("검색어나 필터를 변경해 주세요.")}
+                </p>
+              )}
               <div className="sync-toolbar sync-pagination">
                 <span>
                   {catalog.length} · {currentPage} / {pages}
@@ -463,11 +705,48 @@ export function ResourceSyncScreen() {
                 </div>
               </div>
             </div>
-          ) : (
+          }
+          {
             <>
+              {historyId &&
+                resourceKinds.includes(historyKind as ResourceKind) && (
+                  <ResourceHistoryDialog
+                    key={`${historyKind}:${historyId}`}
+                    kind={historyKind as ResourceKind}
+                    id={historyId}
+                    name={
+                      catalog.find(
+                        (r) => r.kind === historyKind && r.id === historyId,
+                      )?.name ?? historyId
+                    }
+                    onUpdated={() => {
+                      void refresh();
+                    }}
+                    onClose={() => {
+                      const next = new URLSearchParams(params.toString());
+                      next.delete("history");
+                      window.history.replaceState(
+                        null,
+                        "",
+                        `/resources?${next}`,
+                      );
+                    }}
+                  />
+                )}
+              {historyKind === "policies" && historyId && (
+                <PolicyHistoryDialog
+                  key={historyId}
+                  id={historyId}
+                  onClose={() => navigate("history", "")}
+                  onUpdated={() => {
+                    void refresh();
+                    router.refresh();
+                  }}
+                />
+              )}
               <p className="muted">
                 {t(
-                  "필터는 조회에만 적용됩니다. Sync는 이 환경·리전의 변경 전체를 적용합니다.",
+                  "각 행에서 동기화하거나 여러 항목을 선택해 함께 검토할 수 있습니다.",
                 )}
               </p>
               {selectedId && (
@@ -478,185 +757,195 @@ export function ResourceSyncScreen() {
                   {t("전체 변경 보기")}
                 </Button>
               )}
-              <div className="sync-diffs">
-                {rows.map((row) => (
-                  <details key={row.key} open={Boolean(selectedId)}>
-                    <summary>
-                      <span className={`sync-badge ${row.operation}`}>
-                        {operation(row.operation)}
-                      </span>
-                      <strong>{row.after.name || row.after.id}</strong>
-                      <span>{t(kindLabel[row.after.kind])}</span>
-                      <code>{row.after.id}</code>
-                      {row.after.parentId && (
-                        <span>
-                          {t("상위 리소스")}: {row.after.parentId}
-                        </span>
-                      )}
-                      <span>
-                        {t("정책")} {row.paths.length} · {t("사용자")}{" "}
-                        {row.users.length}
-                      </span>
-                    </summary>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>{t("필드")}</th>
-                          <th>{t("현재 DB")}</th>
-                          <th>{t("Git 후보")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(
-                          [
-                            "name",
-                            "description",
-                            "path",
-                            "method",
-                            "parentId",
-                            "state",
-                          ] as const
-                        )
-                          .filter(
-                            (f) =>
-                              row.operation === "create" ||
-                              row.operation === "delete" ||
-                              row.before?.[f] !== row.after[f],
-                          )
-                          .map((f) => (
-                            <tr key={f}>
-                              <th>{f}</th>
-                              <td>{row.before?.[f] || "—"}</td>
-                              <td>
-                                {row.after.state === "absent"
-                                  ? "—"
-                                  : row.after[f] || "—"}
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                    {row.operation === "unchanged" && <p>{t("변경 없음")}</p>}
-                  </details>
-                ))}
-                {!rows.length && <p>{t("연결된 항목이 없습니다")}</p>}
-              </div>
+              <Dialog
+                title={t("영향도 검토")}
+                description={t(
+                  "같은 변경 대상의 YAML diff와 영향도를 확인하세요.",
+                )}
+                open={Boolean(selectedId)}
+                onOpenChange={(open) => {
+                  if (!open) navigate("resource", "");
+                }}
+                trigger={<button hidden aria-label={t("변경사항")} />}
+              >
+                <div className="sync-diffs" id="resource-diff">
+                  {(diffKind === "policies" || diffKind === "all") &&
+                    policies?.rows
+                      .filter((row) => row.after.id === selectedId)
+                      .map((row) => (
+                        <details key={`policies:${row.key}`} open>
+                          <summary>
+                            <strong>{row.after.name}</strong> · {t("정책")} ·{" "}
+                            {row.after.id}
+                          </summary>
+                          <ChangeViews
+                            yaml={
+                              <YamlDiff before={row.before} after={row.after} />
+                            }
+                            impact={
+                              <SubjectImpact
+                                graph={policySnapshot!.graph}
+                                scope={{ policyIds: [row.after.id] }}
+                              />
+                            }
+                          />
+                          <Button
+                            onClick={() => {
+                              navigate("resource", "");
+                              startSync([
+                                {
+                                  kind: "policies",
+                                  id: row.after.id,
+                                  name: row.after.name,
+                                  path: "",
+                                  method: "",
+                                },
+                              ]);
+                            }}
+                          >
+                            {t("이 정책 동기화")}
+                          </Button>
+                        </details>
+                      ))}
+                  {rows
+                    .filter((row) => row.after.id === selectedId)
+                    .map((row) => (
+                      <details key={row.key} open={Boolean(selectedId)}>
+                        <summary>
+                          <span className={`sync-badge ${row.operation}`}>
+                            {operation(row.operation)}
+                          </span>
+                          <strong>{row.after.name || row.after.id}</strong>
+                          <span>{t(kindLabel[row.after.kind])}</span>
+                          <code>{row.after.id}</code>
+                          {row.after.parentId && (
+                            <span>
+                              {t("상위 리소스")}: {row.after.parentId}
+                            </span>
+                          )}
+                          <span>
+                            {t("정책")} {row.paths.length}
+                          </span>
+                        </summary>
+                        <ChangeViews
+                          yaml={
+                            <YamlDiff before={row.before} after={row.after} />
+                          }
+                          impact={
+                            <ResourceImpact
+                              graph={snapshot.graph}
+                              resources={[row.after]}
+                            />
+                          }
+                        />
+                        <Button
+                          onClick={() => {
+                            navigate("resource", "");
+                            startSync([row.after]);
+                          }}
+                        >
+                          {t("동기화")}
+                        </Button>
+                        {row.operation === "unchanged" && (
+                          <p>{t("변경 없음")}</p>
+                        )}
+                      </details>
+                    ))}
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate("resource", "")}
+                >
+                  {t("목록으로 돌아가기")}
+                </Button>
+              </Dialog>
             </>
-          )}
+          }
           <details className="sync-yaml">
             <summary>{t("YAML 정의서 보기")}</summary>
+            <h3>{t("리소스")}</h3>
             <pre>{snapshot.yaml}</pre>
+            <h3>{t("정책")}</h3>
+            <pre>{policySnapshot?.yaml}</pre>
           </details>
         </>
       )}
+      {syncSelection && (
+        <SyncDialog
+          selection={syncSelection}
+          onClose={() => setSyncSelection(null)}
+          onApplied={(r) => {
+            setRun(r);
+            void refresh();
+            router.refresh();
+          }}
+        />
+      )}
       <Dialog
-        title={t("동기화 영향도 검토")}
-        description={t("검토한 commit과 DB revision에 대해서만 적용합니다.")}
-        trigger={
-          <button type="button" hidden aria-label={t("동기화 영향도 검토")} />
-        }
-        open={Boolean(preview)}
-        busy={busy}
-        onOpenChange={(v) => {
-          if (!v) setPreview(null);
+        title={t("영향도 검토")}
+        description={t(
+          "조회 대상으로 선택한 정책과 리소스의 연결 관계만 표시합니다.",
+        )}
+        trigger={<button hidden aria-label={t("영향도 검토")} />}
+        open={Boolean(impactReview)}
+        onOpenChange={(open) => {
+          if (!open) setImpactReview(null);
         }}
       >
-        {preview && (
-          <div className="sync-review">
-            <p>
-              <strong>
-                {preview.snapshot.environment} / {preview.snapshot.region}
-              </strong>{" "}
-              · DB {preview.snapshot.dbRevision} →{" "}
-              {preview.snapshot.candidateCommit}
+        {impactReview && (
+          <div className="resource-impact-review">
+            <p className="muted">
+              {impactReview.snapshot.environment} /{" "}
+              {impactReview.snapshot.region} · {t("조회 기준")} revision{" "}
+              {impactReview.snapshot.dbRevision}
             </p>
-            <p>
-              {t("검토 유효 기한")}:{" "}
-              <DateValue value={preview.expiresAt} time />
-            </p>
-            <div className="sync-notice">
-              {t("변경 리소스")} {previewRows.length} · {t("연결된 사용자")}{" "}
-              {users.size}
-              <p>
-                {t(
-                  "연결 관계 기준이며 최종 접근 허용 여부는 서버에서 판정합니다.",
-                )}
-              </p>
-            </div>
-            <div className="sync-review-list">
-              {previewRows.map((row) => (
-                <section key={row.key}>
-                  <h3>
-                    {operation(row.operation)} ·{" "}
-                    {row.after.name || row.after.id}
-                  </h3>
-                  {!row.paths.length ? (
-                    <p>
-                      {t(
-                        "연결된 정책이 없습니다. 리소스 추가는 권한을 자동 부여하지 않습니다.",
-                      )}
-                    </p>
-                  ) : (
-                    row.paths.map((p) => (
-                      <details key={p.policy.id}>
-                        <summary>
-                          {p.policy.name} ·{" "}
-                          {t(p.policy.effect === "allow" ? "허용" : "거부")} ·{" "}
-                          {t("역할")} {p.roles.length}
-                        </summary>
-                        {p.roles.map((r) => (
-                          <div key={r.role.id}>
-                            <Link href={`/roles/${r.role.id}`}>
-                              {r.role.name}
-                            </Link>
-                            {r.expired && <span> · {t("만료")}</span>}
-                            <p>
-                              {t("직접 부여 사용자")}:{" "}
-                              {r.users.map((u) => u.name).join(", ") ||
-                                t("없음")}
-                            </p>
-                            {r.organizations.map((o) => (
-                              <p key={o.id}>
-                                {o.name} →{" "}
-                                {o.members.map((u) => u.name).join(", ") ||
-                                  t("없음")}
-                              </p>
-                            ))}
-                          </div>
-                        ))}
-                      </details>
-                    ))
-                  )}
-                </section>
-              ))}
-            </div>
-            {error && (
-              <p role="alert">
-                {t(messages[error] ?? messages.REQUEST_FAILED)}
-              </p>
-            )}
-            <label className="sync-confirm">
-              <input
-                type="checkbox"
-                checked={confirmed}
-                onChange={(e) => setConfirmed(e.target.checked)}
+            {impactReview.resources.some((r) => r.kind === "policies") ? (
+              <>
+                <p>
+                  {t("선택한 항목")} ·{" "}
+                  {impactReview.resources
+                    .map((r) => `${t(catalogLabels[r.kind])}: ${r.name}`)
+                    .join(", ")}
+                </p>
+                <SubjectImpact
+                  graph={{
+                    ...impactReview.snapshot.graph,
+                    policies: impactReview.snapshot.graph.policies
+                      .map((p) => ({
+                        ...p,
+                        resources: impactReview.resources.some(
+                          (r) => r.kind === "policies" && r.id === p.id,
+                        )
+                          ? p.resources
+                          : p.resources.filter((ref) =>
+                              impactReview.resources.some(
+                                (r) => r.kind === ref.kind && r.id === ref.id,
+                              ),
+                            ),
+                      }))
+                      .filter(
+                        (p) =>
+                          p.resources.length ||
+                          impactReview.resources.some(
+                            (r) => r.kind === "policies" && r.id === p.id,
+                          ),
+                      ),
+                  }}
+                  scope={{}}
+                />
+              </>
+            ) : (
+              <ResourceImpact
+                key={impactReview.resources
+                  .map((r) => `${r.kind}:${r.id}`)
+                  .join(",")}
+                graph={impactReview.snapshot.graph}
+                resources={impactReview.resources.filter(isAccessResource)}
               />
-              {t("변경사항과 영향 범위를 확인했습니다.")}
-            </label>
-            <div className="sync-toolbar">
-              <Button
-                variant="secondary"
-                disabled={busy}
-                onClick={() => setPreview(null)}
-              >
-                {t("돌아가기")}
-              </Button>
-              <Button
-                disabled={!confirmed || busy}
-                loading={busy}
-                onClick={apply}
-              >
-                {t("최종 Sync 적용")}
+            )}
+            <div className="ui-dialog-footer">
+              <Button variant="secondary" onClick={() => setImpactReview(null)}>
+                {t("목록으로 돌아가기")}
               </Button>
             </div>
           </div>

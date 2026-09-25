@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 test("role and policy lists search, filter, sort and paginate", async ({
   page,
 }) => {
-  for (const route of ["roles", "policies"]) {
+  for (const route of ["roles"]) {
     const title = route === "roles" ? "역할 목록" : "정책 목록";
     await page.goto(`/${route}`);
     const table = page.getByRole("table", { name: title, exact: true });
@@ -50,39 +50,18 @@ test("role associations match user and organization links and open policy detail
   await page.getByRole("tab", { name: "정책 (2)", exact: true }).click();
   await page.getByRole("link", { name: "플랫폼 조회", exact: true }).click();
   await expect(page).toHaveURL(/policies\/policy-platform$/);
-  await page.getByRole("tab", { name: "서비스 (1)", exact: true }).click();
   await expect(
-    page.getByRole("table", { name: "서비스 목록", exact: true }),
-  ).toContainText("Orion");
-  await page.getByRole("tab", { name: "엔드포인트 (2)", exact: true }).click();
-  await expect(
-    page.getByRole("table", { name: "서비스 엔드포인트 목록", exact: true }),
-  ).toContainText("/api/roles");
-  await page.getByLabel("HTTP 메서드 필터").selectOption("POST");
-  await expect(
-    page.getByRole("heading", { name: "검색 결과가 없습니다" }),
+    page.getByRole("heading", { name: "인사 사용자 상세 조회", exact: true }),
   ).toBeVisible();
-  await page
-    .getByRole("tab", { name: "워크스페이스 (1)", exact: true })
-    .click();
   await expect(
-    page.getByRole("table", { name: "워크스페이스 목록", exact: true }),
-  ).toContainText("플랫폼 운영");
-  await page.reload();
-  await expect(
-    page.getByRole("tab", { name: "워크스페이스 (1)", exact: true }),
-  ).toHaveAttribute("aria-selected", "true");
-  await page.goBack();
-  await expect(
-    page.getByRole("tab", { name: "엔드포인트 (2)", exact: true }),
-  ).toHaveAttribute("aria-selected", "true");
+    page.getByRole("row").filter({ hasText: "/email" }),
+  ).toContainText("마스킹");
 });
 test("empty associations, invalid tabs and absent records", async ({
   page,
 }) => {
   for (const [route, tabs] of [
     ["roles/role-unassigned", ["users", "organizations", "policies"]],
-    ["policies/policy-unassigned", ["services", "endpoints", "workspaces"]],
   ] as const) {
     for (const tab of tabs) {
       await page.goto(`/${route}?tab=${tab}`);
@@ -109,7 +88,7 @@ test("access pages are accessible and contained on mobile", async ({
     "/roles",
     "/policies",
     "/roles/role-viewer?tab=users",
-    "/policies/policy-security?tab=endpoints",
+    "/policies/policy-platform",
   ]) {
     await page.goto(route);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

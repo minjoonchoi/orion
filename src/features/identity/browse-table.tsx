@@ -1,6 +1,6 @@
 "use client";
 import { useI18n } from "@/i18n/provider";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { DataTable, type Column, type Sort } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
 import { TableToolbar } from "@/components/ui/table-toolbar";
@@ -31,11 +31,42 @@ export function BrowseTable<T extends { id: string }>({
   emptyTitle?: string;
 }) {
   const { t, locale } = useI18n();
-  const [query, setQuery] = useState("");
-  const [values, setValues] = useState<Record<string, string>>({});
-  const [sort, setSort] = useState<Sort>(null);
-  const [page, setPage] = useState(1);
-  const [size, setSize] = useState(5);
+  const params = useSearchParams();
+  const prefix = `list.${title}.`;
+  const query = params.get(prefix + "q") ?? "";
+  const values = Object.fromEntries(
+    filters.map((f) => [f.key, params.get(prefix + f.key) ?? ""]),
+  );
+  const sortKey = params.get(prefix + "sort");
+  const sort: Sort =
+    sortKey && columns.some((c) => c.key === sortKey && c.sortable)
+      ? {
+          key: sortKey,
+          direction:
+            params.get(prefix + "direction") === "desc" ? "desc" : "asc",
+        }
+      : null;
+  const page = Math.max(
+    1,
+    Math.floor(Number(params.get(prefix + "page")) || 1),
+  );
+  const requestedSize = Number(params.get(prefix + "size"));
+  const size = [5, 10, 20, 50].includes(requestedSize) ? requestedSize : 5;
+  function update(changes: Record<string, string | null>) {
+    const next = new URLSearchParams(window.location.search);
+    for (const [key, value] of Object.entries(changes)) {
+      if (value) next.set(prefix + key, value);
+      else next.delete(prefix + key);
+    }
+    const search = next.toString();
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname +
+        (search ? `?${search}` : "") +
+        window.location.hash,
+    );
+  }
   const normalized = query.trim().toLocaleLowerCase();
   const filtered = rows.filter(
     (row) =>
@@ -70,10 +101,17 @@ export function BrowseTable<T extends { id: string }>({
           <Button
             variant="ghost"
             onClick={() => {
-              setQuery("");
-              setValues({});
-              setSort(null);
-              setPage(1);
+              update(
+                Object.fromEntries(
+                  [
+                    "q",
+                    "sort",
+                    "direction",
+                    "page",
+                    ...filters.map((f) => f.key),
+                  ].map((key) => [key, null]),
+                ),
+              );
             }}
           >
             {t("초기화")}
@@ -88,8 +126,7 @@ export function BrowseTable<T extends { id: string }>({
               placeholder={t("이름 또는 식별자로 검색")}
               value={query}
               onChange={(event) => {
-                setQuery(event.target.value);
-                setPage(1);
+                update({ q: event.target.value, page: null });
               }}
             />
           )}
@@ -101,8 +138,7 @@ export function BrowseTable<T extends { id: string }>({
                 {...props}
                 value={values[filter.key] ?? ""}
                 onChange={(event) => {
-                  setValues({ ...values, [filter.key]: event.target.value });
-                  setPage(1);
+                  update({ [filter.key]: event.target.value, page: null });
                 }}
               >
                 <option value="">{t("전체")}</option>
@@ -116,6 +152,9 @@ export function BrowseTable<T extends { id: string }>({
           </Field>
         ))}
       </TableToolbar>
+      <p className="browse-result-count" role="status">
+        {t("검색 결과")} {filtered.length} / {rows.length}
+      </p>
       <DataTable
         caption={t(title)}
         rows={ordered.slice((current - 1) * size, current * size)}
@@ -123,8 +162,11 @@ export function BrowseTable<T extends { id: string }>({
         getRowId={(row) => row.id}
         sort={sort}
         onSortChange={(next) => {
-          setSort(next);
-          setPage(1);
+          update({
+            sort: next?.key ?? null,
+            direction: next?.direction ?? null,
+            page: null,
+          });
         }}
         emptyTitle={searching ? t("검색 결과가 없습니다") : emptyTitle}
         emptyDescription={
@@ -138,10 +180,9 @@ export function BrowseTable<T extends { id: string }>({
         page={current}
         pageSize={size}
         total={ordered.length}
-        onPageChange={setPage}
+        onPageChange={(next) => update({ page: String(next) })}
         onPageSizeChange={(next) => {
-          setSize(next);
-          setPage(1);
+          update({ size: String(next), page: null });
         }}
       />
     </section>

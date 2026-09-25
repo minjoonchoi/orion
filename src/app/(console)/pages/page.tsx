@@ -1,4 +1,9 @@
-import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { DefinitionsScreen } from "@/features/definitions/screen";
 export default function Page() {
-  redirect("/resources?type=pages");
+  return (
+    <Suspense>
+      <DefinitionsScreen kind="pages" />
+    </Suspense>
+  );
 }

@@ -1,0 +1,85 @@
+apiVersion: orion.io/v1alpha1
+kind: PolicyBundle
+metadata:
+  name: orion-backoffice-policies
+  environment: development
+  region: ap-northeast-2
+spec:
+  # Policies describe resource access plus approved request processors.
+  # Omitted policy IDs are retained. Use state: absent for explicit deletion.
+  policies:
+    - id: policy-platform
+      state: present
+      version: 2026.09.24
+      name: Platform operator access
+      description: Allow platform operators to manage Orion roles, policies, users and organizations.
+      effect: allow
+      resources:
+        - kind: services
+          id: svc-orion
+        - kind: service-endpoints
+          id: ep-roles
+        - kind: pages
+          id: page-users
+      processors:
+        pre:
+          - endpointId: ep-roles
+            target: request.query
+            handler: request.set-fields
+            mode: required
+            config:
+              fields:
+                tenantId: { source: identity.claims.tenant_id }
+          - endpointId: ep-roles
+            target: request.body
+            handler: request.set-fields
+            mode: required
+            config:
+              fields:
+                updatedBy: { source: identity.subject }
+        post:
+          - endpointId: ep-roles
+            target: response.body
+            handler: response.remove-fields
+            mode: required
+            config:
+              fields: ["/internalNotes"]
+    - id: policy-directory
+      state: present
+      version: 2026.09.24
+      name: Directory read access
+      description: Allow directory readers to inspect user directory pages and APIs.
+      effect: allow
+      resources:
+        - kind: pages
+          id: page-users
+        - kind: service-endpoints
+          id: ep-users
+      processors:
+        pre:
+          - endpointId: ep-users
+            target: request.query
+            handler: request.set-fields
+            mode: required
+            config:
+              fields:
+                department: { source: identity.claims.department }
+        post:
+          - endpointId: ep-users
+            target: response.body
+            handler: response.remove-fields
+            mode: required
+            config:
+              fields:
+                - /items/*/employeeNumber
+                - /items/*/personalEmail
+    - id: policy-unassigned
+      state: absent
+      version: 2026.09.24
+      name: Retired sample policy
+      description: Explicit deletion of an unused sample policy.
+      effect: deny
+      resources: []
+      processors:
+        pre: []
+        post: []

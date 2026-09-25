@@ -9,7 +9,6 @@ import { useI18n, DateValue } from "@/i18n/provider";
 import { AccessDenied } from "@/features/auth/access-denied";
 import { loadAuthorization, changeAuthorization } from "./actions";
 import {
-  impact,
   applyChange,
   resourceKinds,
   type Graph,
@@ -19,6 +18,8 @@ import {
 } from "./model";
 import "./styles.css";
 import { Explorer, type ExplorerNode } from "./explorer";
+import { ResourceImpact } from "./resource-impact";
+import { SubjectImpact } from "./subject-impact-view";
 const labels: Record<FocusKind, string> = {
   users: "사용자",
   organizations: "조직",
@@ -28,6 +29,8 @@ const labels: Record<FocusKind, string> = {
   pages: "페이지",
   services: "서비스",
   "service-endpoints": "서비스 엔드포인트",
+  domains: "업무 도메인",
+  actions: "Action",
 };
 const toggle = (ids: string[], id: string) =>
   ids.includes(id) ? ids.filter((v) => v !== id) : [...ids, id];
@@ -58,6 +61,7 @@ function resourceNodes(
     .map((kind) => ({
       id: kind,
       name: t(labels[kind]),
+      kind: "리소스 유형",
       children: policy.resources
         .filter((r) => r.kind === kind)
         .map((ref) => {
@@ -67,6 +71,7 @@ function resourceNodes(
           return {
             id: ref.id,
             name: resource?.name ?? ref.id,
+            kind: "리소스",
             detail: resource?.path,
             href: `/${kind}/${encodeURIComponent(ref.id)}`,
           };
@@ -81,6 +86,7 @@ function roleNodes(
   return roles.map((role) => ({
     id: role.id,
     name: role.name,
+    kind: "역할",
     href: `/roles/${role.id}`,
     children: role.bindings.flatMap((binding) => {
       const policy = graph.policies.find((p) => p.id === binding.policyId);
@@ -89,6 +95,8 @@ function roleNodes(
             {
               id: policy.id,
               name: policy.name,
+              kind: "정책",
+              relation: "정책 연결",
               href: `/policies/${policy.id}`,
               detail: (
                 <>
@@ -107,7 +115,7 @@ function roleNodes(
     }),
   }));
 }
-function ImpactExplorer({
+export function ImpactExplorer({
   graph,
   kind,
   id,
@@ -116,187 +124,7 @@ function ImpactExplorer({
   kind: ResourceKind;
   id: string;
 }) {
-  const { t } = useI18n();
-  const [expired, setExpired] = useState(false);
-  const [query, setQuery] = useState("");
-  const paths = impact(graph, kind, id, expired);
-  const users = new Set(
-    paths.flatMap((p) =>
-      p.roles.flatMap((r) => [
-        ...r.users.map((u) => u.id),
-        ...r.organizations.flatMap((o) => o.members.map((u) => u.id)),
-      ]),
-    ),
-  );
-  const roles = new Set(paths.flatMap((p) => p.roles.map((r) => r.role.id)));
-  const organizations = new Set(
-    paths.flatMap((p) =>
-      p.roles.flatMap((r) => r.organizations.map((o) => o.id)),
-    ),
-  );
-  const people = graph.users
-    .map((user) => ({
-      user,
-      routes: paths.flatMap((p) =>
-        p.roles.flatMap((r) => [
-          ...(r.users.some((u) => u.id === user.id)
-            ? [
-                {
-                  policy: p.policy,
-                  role: r.role,
-                  via: t("직접 부여 사용자"),
-                  expired: r.expired,
-                },
-              ]
-            : []),
-          ...r.organizations
-            .filter((o) => o.members.some((u) => u.id === user.id))
-            .map((o) => ({
-              policy: p.policy,
-              role: r.role,
-              via: o.name,
-              expired: r.expired,
-            })),
-        ]),
-      ),
-    }))
-    .filter(
-      (row) =>
-        row.routes.length &&
-        [
-          row.user.name,
-          ...row.routes.flatMap((r) => [r.policy.name, r.role.name, r.via]),
-        ]
-          .join(" ")
-          .toLowerCase()
-          .includes(query.toLowerCase()),
-    );
-  return (
-    <section className="access-impact" aria-label={t("영향 범위 탐색")}>
-      <h3>{t("영향 범위 탐색")}</h3>
-      <p>
-        {t(
-          "리소스 → 정책 → 역할 → 조직·사용자 경로입니다. 조직 멤버는 간접 연결로 구분하며, 실제 접근 판정은 서버가 수행합니다.",
-        )}
-      </p>
-      <div className="access-metrics">
-        {[
-          [t("정책"), paths.length],
-          [t("역할"), roles.size],
-          [t("조직"), organizations.size],
-          [t("사용자"), users.size],
-        ].map(([label, count]) => (
-          <div key={label}>
-            <strong>{count}</strong>
-            <span>{label}</span>
-          </div>
-        ))}
-      </div>
-      <div className="access-tools">
-        <label>
-          {t("관계 검색")}
-          <input value={query} onChange={(e) => setQuery(e.target.value)} />
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={expired}
-            onChange={(e) => setExpired(e.target.checked)}
-          />
-          {t("만료된 연결 포함")}
-        </label>
-      </div>
-      <p className="muted">
-        {t(
-          "사용자 수는 중복을 제외합니다. 서비스·워크스페이스의 하위 리소스 권한을 자동으로 포함하지 않습니다.",
-        )}
-      </p>
-      <h4>
-        {t("연결된 사용자")} · {people.length}
-      </h4>
-      <p className="muted">
-        {t(
-          "사용자별 연결 경로입니다. 연결 수는 실제 접근 허용 여부를 의미하지 않습니다.",
-        )}
-      </p>
-      <div className="impact-people">
-        {people.map(({ user, routes }) => (
-          <details className="impact-person" key={user.id}>
-            <summary>
-              <span>{user.name}</span>
-              <span className="impact-route-count">
-                {t("연결 경로")} · {routes.length}
-              </span>
-              <span className="access-effect">
-                {routes.some((r) => r.via === t("직접 부여 사용자"))
-                  ? t("직접 연결")
-                  : t("조직 경유")}
-              </span>
-              {routes.some((r) => r.policy.effect === "deny") && (
-                <span className="access-effect deny">
-                  {t("거부 정책 포함")}
-                </span>
-              )}
-            </summary>
-            <Link href={`/users/${user.id}`}>{t("사용자 상세")}</Link>
-            <table>
-              <thead>
-                <tr>
-                  <th>{t("정책")}</th>
-                  <th>{t("역할")}</th>
-                  <th>{t("연결 경로")}</th>
-                  <th>{t("정책 효과")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {routes.map((r, i) => (
-                  <tr key={i}>
-                    <td>
-                      <Link href={`/policies/${r.policy.id}`}>
-                        {r.policy.name}
-                      </Link>
-                    </td>
-                    <td>
-                      <Link href={`/roles/${r.role.id}`}>{r.role.name}</Link>
-                    </td>
-                    <td>
-                      {r.via}
-                      {r.expired && ` · ${t("만료")}`}
-                    </td>
-                    <td>
-                      <span className={`access-effect ${r.policy.effect}`}>
-                        {t(r.policy.effect === "allow" ? "허용" : "거부")}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </details>
-        ))}
-        {!people.length && <p>{t("연결된 항목이 없습니다")}</p>}
-      </div>
-      <details className="impact-policy-list">
-        <summary>
-          {t("정책·역할 연결 목록")} · {paths.length}
-        </summary>
-        <Explorer
-          nodes={paths.map((p) => ({
-            id: p.policy.id,
-            name: p.policy.name,
-            href: `/policies/${p.policy.id}`,
-            detail: t(p.policy.effect === "allow" ? "허용" : "거부"),
-            children: p.roles.map((r) => ({
-              id: r.role.id,
-              name: r.role.name,
-              href: `/roles/${r.role.id}`,
-              detail: r.expired ? t("만료") : t("역할"),
-            })),
-          }))}
-        />
-      </details>
-    </section>
-  );
+  return <ResourceImpact graph={graph} resources={[{ kind, id }]} />;
 }
 function ReviewConnections({
   graph,
@@ -305,7 +133,6 @@ function ReviewConnections({
   graph: Graph;
   change: Change;
 }) {
-  const { t } = useI18n();
   if (change.type === "resource") return null;
   const next = applyChange(graph, change);
   const changedRoles = graph.roles.filter((r) => {
@@ -316,119 +143,17 @@ function ReviewConnections({
         r.bindings.some((b) => b.policyId === change.policyId))
     );
   });
-  const roleIds = new Set(changedRoles.map((r) => r.id));
-  const paths = (g: Graph, userId: string) =>
-    g.roles
-      .filter((r) => roleIds.has(r.id))
-      .flatMap((r) => [
-        ...(r.userIds.includes(userId)
-          ? [{ key: `${r.id}:direct`, name: r.name, via: t("직접 연결") }]
-          : []),
-        ...g.organizations
-          .filter(
-            (o) =>
-              r.organizationIds.includes(o.id) && o.memberIds.includes(userId),
-          )
-          .map((o) => ({ key: `${r.id}:${o.id}`, name: r.name, via: o.name })),
-      ]);
-  const people = graph.users
-    .map((u) => ({
-      ...u,
-      before: paths(graph, u.id),
-      after: paths(next, u.id),
-    }))
-    .filter(
-      (u) =>
-        (u.before.length || u.after.length) &&
-        (change.type === "bindings" ||
-          change.type === "policy" ||
-          JSON.stringify(u.before) !== JSON.stringify(u.after)),
-    );
   return (
     <section className="review-connections">
-      <h3>
-        {t("변경 역할에 연결된 사용자")} · {people.length}
-      </h3>
-      <p className="muted">
-        {t(
-          "변경 전후 역할 연결 경로입니다. 정책 효과와 만료에 따른 최종 접근 판정은 서버에서 수행합니다.",
-        )}
-      </p>
-      {change.type === "bindings" && (
-        <div className="review-binding-diff">
-          <strong>{t("정책")}</strong>
-          <p>
-            {graph.roles
-              .find((r) => r.id === change.roleId)!
-              .bindings.map(
-                (b) => graph.policies.find((p) => p.id === b.policyId)?.name,
-              )
-              .join(", ") || t("없음")}{" "}
-            →{" "}
-            {change.bindings
-              .map((b) => graph.policies.find((p) => p.id === b.policyId)?.name)
-              .join(", ") || t("없음")}
-          </p>
-        </div>
-      )}
-      <div className="review-table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>{t("사용자")}</th>
-              <th>{t("변경 전")}</th>
-              <th>{t("변경 후")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {people.map((u) => (
-              <tr key={u.id}>
-                <td>
-                  <Link href={`/users/${u.id}`}>{u.name}</Link>
-                </td>
-                <td>
-                  {u.before.map((p) => (
-                    <div
-                      key={p.key}
-                      className={
-                        u.after.some((a) => a.key === p.key)
-                          ? ""
-                          : "review-removed"
-                      }
-                    >
-                      {p.name} · {p.via}
-                      {!u.after.some((a) => a.key === p.key) &&
-                        ` (${t("해제")})`}
-                    </div>
-                  ))}
-                  {!u.before.length && t("없음")}
-                </td>
-                <td>
-                  {u.after.map((p) => (
-                    <div
-                      key={p.key}
-                      className={
-                        u.before.some((a) => a.key === p.key)
-                          ? ""
-                          : "review-added"
-                      }
-                    >
-                      {p.name} · {p.via}
-                      {!u.before.some((a) => a.key === p.key) &&
-                        ` (${t("추가")})`}
-                    </div>
-                  ))}
-                  {!u.after.length && t("없음")}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {!people.length && <p>{t("연결된 항목이 없습니다")}</p>}
-      </div>
+      <SubjectImpact
+        graph={graph}
+        afterGraph={next}
+        scope={{ roleIds: changedRoles.map((r) => r.id) }}
+      />
     </section>
   );
 }
+
 function Editor({
   graph,
   kind,
@@ -524,6 +249,11 @@ function Editor({
               ).includes(o.id),
             )
             .map((o) => ({ ...o, type: "organizations" })),
+          ...(kind === "roles" && tab === "bindings"
+            ? (graph.serviceAccounts ?? [])
+                .filter((a) => a.roleIds.includes(id))
+                .map((a) => ({ ...a, type: "service-accounts" }))
+            : []),
         ];
   const beforeItems =
     kind === "users" || kind === "organizations"
@@ -639,7 +369,12 @@ function Editor({
           <div>
             {recipients.map((item) => (
               <span className="assignment-chip" key={`${item.type}-${item.id}`}>
-                {t(labels[item.type as FocusKind])} · {item.name}
+                {t(
+                  item.type === "service-accounts"
+                    ? "서비스 어카운트"
+                    : labels[item.type as FocusKind],
+                )}{" "}
+                · {item.name}
               </span>
             ))}
             {!recipients.length && t("없음")}
@@ -680,7 +415,7 @@ function Editor({
       </li>
       <li aria-current={review ? "step" : undefined}>
         <span>2</span>
-        {t("영향도 검토")}
+        {t("변경사항 및 영향도 검토")}
       </li>
     </ol>
   );
@@ -1142,7 +877,7 @@ function Editor({
         {invalid && <p role="alert">{t(errorLabels.INVALID_CHANGE)}</p>}
         <div className="access-footer">
           <span>{t("1 / 2 단계")}</span>
-          <Button type="submit">{t("변경사항 검토")}</Button>
+          <Button type="submit">{t("변경사항 및 영향도 검토")}</Button>
         </div>
       </fieldset>
     </form>
@@ -1221,6 +956,22 @@ export function AuthorizationPanel({
     ).some((r) => r.id === id);
   if (resourceKinds.includes(kind as ResourceKind))
     return <ResourceDeploymentStatus kind={kind} id={id} />;
+  if (kind === "policies")
+    return (
+      <section className="access-entry">
+        <p>
+          {t(
+            "정책 정의는 Git에서 관리합니다. 리소스와 요청·응답 처리 변경은 동기화에서 검토하세요.",
+          )}
+        </p>
+        <Link
+          className="identity-link"
+          href={`/resources?type=policies&resource=${encodeURIComponent(id)}`}
+        >
+          {t("정책 변경 검토")}
+        </Link>
+      </section>
+    );
   return (
     <section className="access-entry">
       <Dialog
@@ -1264,8 +1015,14 @@ export function AuthorizationPanel({
                   </Button>
                 </div>
               )}
-              {saved && <p role="status">{t("변경사항을 적용했습니다")}</p>}
-              {graph && exists && (
+              {saved && (
+                <div className="access-success" role="status">
+                  <h3>{t("변경사항을 적용했습니다")}</h3>
+                  <p>{t("상세 화면에서 적용된 연결을 확인할 수 있습니다.")}</p>
+                  <Button onClick={() => setOpen(false)}>{t("완료")}</Button>
+                </div>
+              )}
+              {graph && exists && !saved && (
                 <Editor
                   key={`${graph.revision}-${kind}-${id}`}
                   graph={graph}

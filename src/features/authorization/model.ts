@@ -7,21 +7,34 @@ import {
   nullable,
   enumeration,
   datetime,
+  type Schema,
 } from "../../lib/api/schema.ts";
 export const resourceKinds = [
   "workspaces",
   "pages",
   "services",
   "service-endpoints",
+  "domains",
+  "actions",
 ] as const;
 export type ResourceKind = (typeof resourceKinds)[number];
 export type FocusKind =
   ResourceKind | "users" | "organizations" | "roles" | "policies";
 const reference = object({ kind: enumeration(resourceKinds), id: string });
 const binding = object({ policyId: string, expiresAt: nullable(datetime) });
-export const graphSchema = object({
+const baseGraphSchema = object({
   revision: number,
   users: array(object({ id: string, name: string })),
+  serviceAccounts: optional(
+    array(
+      object({
+        id: string,
+        name: string,
+        organizationId: string,
+        roleIds: array(string),
+      }),
+    ),
+  ),
   organizations: array(
     object({ id: string, name: string, memberIds: array(string) }),
   ),
@@ -56,7 +69,47 @@ export const graphSchema = object({
     }),
   ),
 });
-export type Graph = ReturnType<typeof graphSchema.parse>;
+type ParsedGraph = ReturnType<typeof baseGraphSchema.parse>;
+export type Graph = Omit<ParsedGraph, "serviceAccounts"> & {
+  serviceAccounts?: ParsedGraph["serviceAccounts"];
+};
+export const graphSchema: Schema<Graph> = baseGraphSchema;
+export type ResourceRef = { kind: ResourceKind; id: string; name?: string };
+export function impactForResources(
+  graph: Graph,
+  refs: ResourceRef[],
+  includeExpired = false,
+  now = Date.now(),
+) {
+  const resources = [
+    ...new Map(refs.map((ref) => [`${ref.kind}:${ref.id}`, ref])).values(),
+  ];
+  const entries = resources.map((resource) => ({
+    resource,
+    paths: impact(graph, resource.kind, resource.id, includeExpired, now),
+  }));
+  const paths = entries.flatMap((entry) => entry.paths);
+  const roles = paths.flatMap((path) => path.roles);
+  return {
+    entries,
+    counts: {
+      resources: resources.length,
+      policies: new Set(paths.map((path) => path.policy.id)).size,
+      roles: new Set(roles.map((role) => role.role.id)).size,
+      organizations: new Set(
+        roles.flatMap((role) => role.organizations.map((org) => org.id)),
+      ).size,
+      users: new Set(
+        roles.flatMap((role) => [
+          ...role.users.map((user) => user.id),
+          ...role.organizations.flatMap((org) =>
+            org.members.map((user) => user.id),
+          ),
+        ]),
+      ).size,
+    },
+  };
+}
 export type Change =
   | {
       type: "subjectRoles";

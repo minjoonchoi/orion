@@ -69,4 +69,4 @@ LSB는 사용자·조직, 역할·정책, 리소스, API 접근, 결재의 5개 
 
 ## 리소스 GitOps
 
-리소스 정의 수정은 `/resources`에서 Git/Cloud Config 후보와 DB diff → Sync 영향도 검토 → 명시적 적용으로 진행합니다. [YAML 예제](config/resources/orion-resources.yaml), [Cloud Config·Orion API 계약](docs/resource-gitops.md)을 참고하세요. `npm run validate:resources`로 원본 YAML 스키마를 검사합니다. 예제 모드는 세션 DB 적용이며, 운영 모드는 Orion 백엔드의 Cloud Config 조회·검증·DB 트랜잭션 구현이 필요합니다. 외부 배포 도구는 사용하지 않습니다.
+리소스 정의는 `config/definitions/*.yaml`의 workspace/service/domain/policy 문서로 관리합니다. 부모 범위의 로컬 ID와 복합 ref를 사용하며, 서비스의 엔드포인트 필드를 도메인 Action을 통해 정책에서 참조합니다. 정책은 단일 페이지(선택)·복수 Action과 응답 필드·마스킹·unmask를 정의합니다. `/resources`에서 개별 변경의 YAML diff·영향도를 검토하고 동기화하거나 항목 이력에서 복원합니다. [새 YAML·API 계약](docs/definition-management.md), [전체 예시](config/definitions/platform.yaml)를 참고하세요. `npm run validate:definitions`로 스키마와 연결 참조를 검사합니다. 이전 Bundle 예시는 레거시 회귀 참고용이며 새 관리 화면에서 읽지 않습니다. 운영 API의 영구 저장·최종 인가·응답 가공 구현은 별도로 필요합니다.

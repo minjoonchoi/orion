@@ -11,8 +11,8 @@ spring:
           uri: ${ORION_CONFIG_REPO_URI}
           default-label: master
           search-paths:
-            - config/resources
+            - config/definitions
           clone-on-start: true
           force-pull: true
-# Serve orion-resources.yaml as plain text at a pinned commit label.
+# Serve definition YAML files as plain text at a pinned commit label.
 # Do not enable any DB import listener on refresh/bus-refresh/webhooks.

@@ -2,6 +2,7 @@ import { parseDocument } from "yaml";
 import {
   graphSchema,
   impact,
+  resourceKinds,
   type Graph,
   type ResourceKind,
 } from "../authorization/model.ts";
@@ -12,6 +13,7 @@ import {
   array,
   enumeration,
   optional,
+  nullable,
   datetime,
 } from "../../lib/api/schema.ts";
 export const itemSchema = object({
@@ -21,6 +23,8 @@ export const itemSchema = object({
     "pages",
     "services",
     "service-endpoints",
+    "domains",
+    "actions",
   ] as const),
   state: enumeration(["present", "absent"] as const),
   name: string,
@@ -55,6 +59,13 @@ export const previewSchema = object({
   snapshot: snapshotSchema,
 });
 export type Preview = ReturnType<typeof previewSchema.parse>;
+export const resourceChangeSchema = object({
+  kind: enumeration(resourceKinds),
+  id: string,
+  before: nullable(itemSchema),
+  after: nullable(itemSchema),
+});
+export type ResourceChange = ReturnType<typeof resourceChangeSchema.parse>;
 export const runSchema = object({
   id: string,
   status: enumeration(["queued", "running", "succeeded", "failed"] as const),
@@ -63,8 +74,48 @@ export const runSchema = object({
   commit: string,
   dbRevision: number,
   completedAt: optional(datetime),
+  rollbackOf: optional(string),
+  targetRevision: optional(number),
+  resources: optional(array(resourceChangeSchema)),
 });
 export type Run = ReturnType<typeof runSchema.parse>;
+export function resourceChanges(before: Graph, after: Graph): ResourceChange[] {
+  const refs = new Map(
+    [...before.resources, ...after.resources].map((r) => [
+      `${r.kind}:${r.id}`,
+      r,
+    ]),
+  );
+  return [...refs.values()].flatMap((ref) => {
+    const old = before.resources.find(
+      (r) => r.kind === ref.kind && r.id === ref.id,
+    );
+    const next = after.resources.find(
+      (r) => r.kind === ref.kind && r.id === ref.id,
+    );
+    const change = {
+      kind: ref.kind,
+      id: ref.id,
+      before: old ? currentItem(old) : null,
+      after: next ? currentItem(next) : null,
+    };
+    return JSON.stringify(change.before) === JSON.stringify(change.after)
+      ? []
+      : [change];
+  });
+}
+export function historyForResource(
+  runs: Run[],
+  kind: string,
+  id: string,
+): Run[] {
+  return runs.flatMap((run) => {
+    const resources = run.resources?.filter(
+      (r) => r.kind === kind && r.id === id,
+    );
+    return resources?.length ? [{ ...run, resources }] : [];
+  });
+}
 export function parseBundle(
   yaml: string,
   environment: string,
@@ -233,4 +284,6 @@ export const kindLabel: Record<ResourceKind, string> = {
   pages: "페이지",
   services: "서비스",
   "service-endpoints": "서비스 엔드포인트",
+  domains: "업무 도메인",
+  actions: "Action",
 };

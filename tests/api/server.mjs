@@ -1,3 +1,9 @@
+import { readFileSync } from "node:fs";
+import {
+  parseSources,
+  makePlan,
+} from "../../src/features/definitions/model.ts";
+const definitionSessions = new Map();
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
 const user = (region, locale, id = "remote-user") => ({
@@ -50,6 +56,63 @@ const handler = (expectedRegion) => (request, response) => {
       return send({}, 500);
     response.statusCode = 204;
     response.end();
+    return;
+  }
+  if (parts[1] === "definitions") {
+    if (request.headers.cookie === "orion_session=forbidden")
+      return send({}, 403);
+    if (request.headers.cookie === "orion_session=malformed")
+      return send({ data: { applied: [{ key: "actions:unsafe" }] } });
+    const graph = authGraph(region);
+    const base = {
+      revision: graph.revision,
+      sourceRevision: "remote-source",
+      environment: "staging",
+      region,
+      applied: [],
+      desired: [],
+      history: [],
+      graph,
+    };
+    if (request.headers.cookie !== "orion_session=definitions")
+      return send({ data: base });
+    if (!definitionSessions.has(region)) {
+      const desired = parseSources([
+        readFileSync("config/definitions/platform.yaml", "utf8"),
+      ]);
+      const applied = structuredClone(desired);
+      const item = applied.find(
+        (e) => e.key === "service-endpoints:identity-api/detail",
+      );
+      item.name = "Remote endpoint";
+      item.definition.name = item.name;
+      definitionSessions.set(region, { ...base, applied, desired });
+    }
+    const state = definitionSessions.get(region);
+    if (parts[2] === "status") return send({ data: state });
+    let body = "";
+    request.on("data", (chunk) => (body += chunk));
+    request.on("end", () => {
+      const payload = JSON.parse(body);
+      if (parts[2] === "previews")
+        return send({
+          data: {
+            token: "remote-preview",
+            expiresAt: new Date(Date.now() + 60000).toISOString(),
+            revision: state.revision,
+            sourceRevision: state.sourceRevision,
+            plan: makePlan(state, payload.selected),
+          },
+        });
+      if (parts[2] === "applications") {
+        if (payload.token !== "remote-preview") return send({}, 409);
+        state.applied = structuredClone(state.desired);
+        state.revision++;
+        state.graph = { ...state.graph, revision: state.revision };
+        return send({ data: state });
+      }
+      return send({}, 404);
+    });
     return;
   }
   if (parts[1] === "authorization") {

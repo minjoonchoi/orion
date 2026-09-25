@@ -1,0 +1,239 @@
+{
+  "pages": [
+    {
+      "route": "/",
+      "heading": ["통합 인증·인가 관리"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/users",
+      "heading": ["사용자"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/organizations",
+      "heading": ["조직"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/service-accounts",
+      "heading": ["서비스 어카운트"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/roles",
+      "heading": ["역할"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/policies",
+      "heading": ["정책"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/resources",
+      "heading": ["리소스 관리"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/policies/sync",
+      "heading": ["정책 Git 동기화"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/resource-sync/history",
+      "heading": ["동기화 이력"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/api-keys",
+      "heading": ["API 키"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/approval-templates",
+      "heading": ["결재 템플릿"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/approvals",
+      "heading": ["결재"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/login",
+      "heading": ["Orion에 로그인"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/forbidden",
+      "heading": ["접근 권한이 없습니다"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/audit-logs",
+      "heading": ["감사 로그"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/access-grants",
+      "heading": ["접근 권한"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/components",
+      "heading": ["백오피스 컴포넌트"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/services",
+      "heading": ["리소스 관리"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/service-endpoints",
+      "heading": ["리소스 관리"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/workspaces",
+      "heading": ["리소스 관리"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/pages",
+      "heading": ["리소스 관리"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/resource-sync",
+      "heading": ["리소스 관리"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/policy-sync",
+      "heading": ["정책 Git 동기화"],
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "route": "/services/svc-orion",
+      "heading": ["Orion"],
+      "tabs": ["기본 정보", "엔드포인트 (2)"]
+    },
+    {
+      "route": "/service-endpoints/ep-users",
+      "heading": ["사용자 목록 조회"],
+      "tabs": []
+    },
+    {
+      "route": "/workspaces/ws-platform",
+      "heading": ["플랫폼 운영"],
+      "tabs": ["기본 정보", "페이지 (6)"]
+    },
+    {
+      "route": "/pages/page-users",
+      "heading": ["사용자 관리"],
+      "tabs": []
+    },
+    {
+      "route": "/users/usr-001",
+      "heading": ["김가람"],
+      "tabs": ["기본 정보", "소속 조직 (2)", "역할 (2)"]
+    },
+    {
+      "route": "/organizations/org-platform",
+      "heading": ["플랫폼개발팀"],
+      "tabs": [
+        "기본 정보",
+        "멤버 (7)",
+        "서비스 어카운트 (2)",
+        "관리 서비스 (2)",
+        "역할 (2)"
+      ]
+    },
+    {
+      "route": "/service-accounts/sa-platform-ci",
+      "heading": ["platform-ci"],
+      "tabs": ["기본 정보", "역할 (2)", "API 키 (2)"]
+    },
+    {
+      "route": "/roles/role-platform",
+      "heading": ["플랫폼 관리자"],
+      "tabs": ["기본 정보", "사용자 (1)", "조직 (1)", "정책 (2)"]
+    },
+    {
+      "route": "/policies/policy-platform",
+      "heading": ["플랫폼 조회"],
+      "tabs": [
+        "기본 정보",
+        "서비스 (1)",
+        "엔드포인트 (2)",
+        "페이지 (0)",
+        "워크스페이스 (1)"
+      ]
+    },
+    {
+      "route": "/api-keys/key-directory",
+      "heading": ["디렉터리 동기화"],
+      "tabs": ["기본 정보", "결재 이력 (6)"]
+    },
+    {
+      "route": "/approval-templates/template-key-issue-v1",
+      "heading": ["API 키 발급"],
+      "tabs": []
+    },
+    {
+      "route": "/approvals/approval-006",
+      "heading": ["디렉터리 동기화 · API 키 폐기"],
+      "tabs": []
+    },
+    {
+      "route": "/service-endpoints/ep-approvals",
+      "heading": ["결재 목록 조회"],
+      "tabs": []
+    },
+    {
+      "route": "/workspaces/ws-approval",
+      "heading": ["결재 업무"],
+      "tabs": ["기본 정보", "페이지 (1)"]
+    },
+    {
+      "route": "/pages/page-approvals",
+      "heading": ["결재 목록"],
+      "tabs": []
+    }
+  ],
+  "interactions": [
+    "List search survives detail/back and reload",
+    "Mobile menu opens and collapses after navigation",
+    "Resource diff, review and explicit sync",
+    "Rollback requires confirmation and can be cancelled",
+    "Role grant selection, impact review and completion",
+    "Policy edit has one GitOps entry point",
+    "English resource filters render"
+  ],
+  "errors": []
+}
