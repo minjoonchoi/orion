@@ -21,6 +21,12 @@ export function Navigation() {
           </Link>
         );
       })}
+      <Link
+        href="/components"
+        aria-current={pathname === "/components" ? "page" : undefined}
+      >
+        컴포넌트
+      </Link>
     </nav>
   );
 }
