@@ -2,12 +2,12 @@
   --ui-danger: #98473e;
   --ui-success: #3e624a;
   --ui-radius: var(--radius);
-  --ui-border: #8b9086;
+  --ui-border: #8a8a8a;
   --ui-focus: var(--accent);
-  --tone-neutral-fg: #5b6257;
-  --tone-neutral-bg: #efefea;
-  --tone-info-fg: #4c5e54;
-  --tone-info-bg: #f0f2ed;
+  --tone-neutral-fg: #595959;
+  --tone-neutral-bg: #efefef;
+  --tone-info-fg: #525252;
+  --tone-info-bg: #f2f2f2;
   --tone-success-fg: #365e43;
   --tone-success-bg: #eaf0e7;
   --tone-warning-fg: #795b28;
@@ -209,7 +209,7 @@ select.ui-input {
   width: 38px;
   height: 22px;
   border-radius: 22px;
-  background: #777f70;
+  background: #777777;
   flex-shrink: 0;
 }
 .ui-switch-track::before {
@@ -257,7 +257,7 @@ select.ui-input {
 .ui-skeleton {
   height: 22px;
   border-radius: 5px;
-  background: #e5e6df;
+  background: #e5e5e5;
   animation: ui-pulse 1.5s ease-in-out infinite;
 }
 @keyframes ui-pulse {
@@ -523,11 +523,11 @@ select.ui-input {
 .ui-table thead th {
   color: var(--muted);
   font-size: 13px;
-  background: #f8f8f5;
+  background: #f8f8f8;
   font-weight: 600;
 }
 .ui-table tbody tr:hover {
-  background: #f8f9f5;
+  background: #f8f8f8;
 }
 .ui-table tbody tr[data-selected] {
   background: var(--selected);

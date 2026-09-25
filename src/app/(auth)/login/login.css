@@ -18,14 +18,14 @@
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 12px 40px rgb(37 43 34 / 4%);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 4%);
 }
 .login-identity {
   position: relative;
   min-height: 636px;
   padding: 44px 48px 32px;
-  background: #354e40;
-  color: #f5f5ec;
+  background: #292929;
+  color: #fafafa;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -41,7 +41,7 @@
 .login-brand svg {
   width: 30px;
   height: 30px;
-  color: #d2ddcb;
+  color: #dedede;
 }
 .login-story {
   margin-top: 77px;
@@ -52,7 +52,7 @@
   font-size: 10px;
   letter-spacing: 1.6px;
   font-weight: 500;
-  color: #c9d5c5;
+  color: #cccccc;
   margin-bottom: 22px;
 }
 .login-story h2 {
@@ -63,7 +63,7 @@
   margin-bottom: 20px;
 }
 .login-story-description {
-  color: #d2dccd;
+  color: #d4d4d4;
   font-size: 14px;
   line-height: 1.85;
 }
@@ -78,18 +78,18 @@
   width: 100%;
 }
 .login-constellation ellipse {
-  stroke: #718776;
+  stroke: #777777;
   stroke-width: 0.65;
 }
 .login-constellation path {
-  stroke: #a1b39d;
+  stroke: #aaaaaa;
   stroke-width: 0.85;
 }
 .login-constellation circle {
-  fill: #c6d1b4;
+  fill: #d4d4d4;
 }
 .login-identity-caption {
-  color: #c9d5c5;
+  color: #cccccc;
   font-size: 9px;
   letter-spacing: 2px;
   margin-top: auto;
