@@ -1,14 +1,6 @@
-import type { Metadata } from "next";
-import { PageHeading } from "@/components/ui/page-heading";
-import { EmptyState } from "@/components/ui/empty-state";
-import { navigation } from "@/config/navigation";
-export const metadata: Metadata = { title: "서비스" };
-export default function Page() {
-  const item = navigation.find((item) => item.href === "/services")!;
-  return (
-    <>
-      <PageHeading title={item.label} description={item.description} />
-      <EmptyState />
-    </>
-  );
+import { ServicesList } from "@/features/resources/screens";
+import { resourceRepository } from "@/features/resources/repository";
+export const metadata = { title: "서비스" };
+export default async function Page() {
+  return <ServicesList rows={await resourceRepository.listServices()} />;
 }

@@ -28,6 +28,10 @@ export default function OverviewPage() {
                       "/organizations",
                       "/roles",
                       "/policies",
+                      "/services",
+                      "/service-endpoints",
+                      "/workspaces",
+                      "/pages",
                     ].includes(item.href)
                       ? "조회 화면 · 예제 데이터"
                       : "준비 중"}

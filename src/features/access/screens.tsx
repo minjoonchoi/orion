@@ -315,6 +315,7 @@ export function PolicyScreen({ data }: { data: PolicyDetail }) {
             content: (
               <ResourceTable
                 title="서비스 목록"
+                route="/services"
                 rows={services}
                 columns={[
                   {
@@ -355,7 +356,7 @@ export function PolicyScreen({ data }: { data: PolicyDetail }) {
                     sortable: true,
                     render: (r) => (
                       <>
-                        {r.name}
+                        {link(`/service-endpoints/${r.id}`, r.name)}
                         <div className="identity-meta">{r.id}</div>
                       </>
                     ),
@@ -363,7 +364,8 @@ export function PolicyScreen({ data }: { data: PolicyDetail }) {
                   {
                     key: "service",
                     header: "서비스",
-                    render: (r) => r.serviceName,
+                    render: (r) =>
+                      link(`/services/${r.serviceId}`, r.serviceName),
                   },
                   { key: "method", header: "메서드", render: (r) => r.method },
                   {
@@ -380,7 +382,11 @@ export function PolicyScreen({ data }: { data: PolicyDetail }) {
             value: "workspaces",
             label: `워크스페이스 (${workspaces.length})`,
             content: (
-              <ResourceTable title="워크스페이스 목록" rows={workspaces} />
+              <ResourceTable
+                title="워크스페이스 목록"
+                rows={workspaces}
+                route="/workspaces"
+              />
             ),
           },
         ]}

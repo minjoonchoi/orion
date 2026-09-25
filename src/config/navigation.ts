@@ -35,7 +35,7 @@ export const navigationGroups = [
   },
   {
     id: "resources",
-    label: "서비스·화면",
+    label: "리소스",
     items: [
       {
         href: "/services",

@@ -1,3 +1,5 @@
+import { endpoints, workspaces } from "../resources/fixtures";
+import type { Endpoint, Workspace } from "../resources/types";
 import * as identity from "../identity/fixtures";
 import type {
   ManagedService,
@@ -13,14 +15,6 @@ export type Policy = {
   endpointIds: string[];
   workspaceIds: string[];
 };
-export type Endpoint = {
-  id: string;
-  name: string;
-  serviceId: string;
-  method: "GET" | "POST";
-  path: string;
-};
-export type Workspace = { id: string; name: string; description: string };
 export type RoleRow = Role & {
   userCount: number;
   organizationCount: number;
@@ -44,67 +38,6 @@ export type PolicyDetail = {
   workspaces: Workspace[];
 };
 // Synthetic relationships describe linked resources only, not effective permissions.
-const endpoints: Endpoint[] = [
-  {
-    id: "ep-users",
-    name: "사용자 목록 조회",
-    serviceId: "svc-directory",
-    method: "GET",
-    path: "/api/users",
-  },
-  {
-    id: "ep-orgs",
-    name: "조직 목록 조회",
-    serviceId: "svc-directory",
-    method: "GET",
-    path: "/api/organizations",
-  },
-  {
-    id: "ep-roles",
-    name: "역할 목록 조회",
-    serviceId: "svc-orion",
-    method: "GET",
-    path: "/api/roles",
-  },
-  {
-    id: "ep-policies",
-    name: "정책 목록 조회",
-    serviceId: "svc-orion",
-    method: "GET",
-    path: "/api/policies",
-  },
-  {
-    id: "ep-approvals",
-    name: "결재 목록 조회",
-    serviceId: "svc-approval",
-    method: "GET",
-    path: "/api/approvals",
-  },
-  {
-    id: "ep-approval-submit",
-    name: "결재 요청",
-    serviceId: "svc-approval",
-    method: "POST",
-    path: "/api/approvals",
-  },
-];
-const workspaces: Workspace[] = [
-  {
-    id: "ws-platform",
-    name: "플랫폼 운영",
-    description: "플랫폼 관리 화면 모음",
-  },
-  {
-    id: "ws-directory",
-    name: "구성원 디렉터리",
-    description: "구성원과 조직 조회 화면",
-  },
-  {
-    id: "ws-approval",
-    name: "결재 업무",
-    description: "결재 요청과 이력 화면",
-  },
-];
 const policies: Policy[] = [
   {
     id: "policy-platform",
