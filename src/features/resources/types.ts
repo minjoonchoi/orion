@@ -3,7 +3,7 @@ export type Endpoint = {
   id: string;
   name: string;
   serviceId: string;
-  method: "GET" | "POST";
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
   path: string;
 };
 export type Workspace = { id: string; name: string; description: string };

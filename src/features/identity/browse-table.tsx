@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import { useState } from "react";
 import { DataTable, type Column, type Sort } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
@@ -29,6 +30,7 @@ export function BrowseTable<T extends { id: string }>({
   filters?: BrowseFilter<T>[];
   emptyTitle?: string;
 }) {
+  const { t, locale } = useI18n();
   const [query, setQuery] = useState("");
   const [values, setValues] = useState<Record<string, string>>({});
   const [sort, setSort] = useState<Sort>(null);
@@ -50,7 +52,7 @@ export function BrowseTable<T extends { id: string }>({
         return (
           (typeof left === "number" && typeof right === "number"
             ? left - right
-            : String(left).localeCompare(String(right), "ko")) *
+            : String(left).localeCompare(String(right), locale)) *
           (sort.direction === "asc" ? 1 : -1)
         );
       })
@@ -58,8 +60,11 @@ export function BrowseTable<T extends { id: string }>({
   const current = Math.min(page, Math.max(1, Math.ceil(ordered.length / size)));
   const searching = Boolean(normalized || Object.values(values).some(Boolean));
   return (
-    <section className="ui-panel identity-table" aria-label={`${title} 조회`}>
-      <h2>{title}</h2>
+    <section
+      className="ui-panel identity-table"
+      aria-label={t(`${title} 조회`)}
+    >
+      <h2>{t(title)}</h2>
       <TableToolbar
         actions={
           <Button
@@ -71,16 +76,16 @@ export function BrowseTable<T extends { id: string }>({
               setPage(1);
             }}
           >
-            초기화
+            {t("초기화")}
           </Button>
         }
       >
-        <Field label={`${title} 검색`}>
+        <Field label={t(`${title} 검색`)}>
           {(props) => (
             <Input
               {...props}
               type="search"
-              placeholder="이름 또는 식별자로 검색"
+              placeholder={t("이름 또는 식별자로 검색")}
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
@@ -100,10 +105,10 @@ export function BrowseTable<T extends { id: string }>({
                   setPage(1);
                 }}
               >
-                <option value="">전체</option>
+                <option value="">{t("전체")}</option>
                 {filter.options.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </Select>
@@ -112,7 +117,7 @@ export function BrowseTable<T extends { id: string }>({
         ))}
       </TableToolbar>
       <DataTable
-        caption={title}
+        caption={t(title)}
         rows={ordered.slice((current - 1) * size, current * size)}
         columns={columns}
         getRowId={(row) => row.id}
@@ -121,15 +126,15 @@ export function BrowseTable<T extends { id: string }>({
           setSort(next);
           setPage(1);
         }}
-        emptyTitle={searching ? "검색 결과가 없습니다" : emptyTitle}
+        emptyTitle={searching ? t("검색 결과가 없습니다") : emptyTitle}
         emptyDescription={
           searching
-            ? "검색어나 필터를 변경해 주세요."
-            : "연결된 항목이 있으면 이곳에 표시됩니다."
+            ? t("검색어나 필터를 변경해 주세요.")
+            : t("연결된 항목이 있으면 이곳에 표시됩니다.")
         }
       />
       <Pagination
-        label={`${title} 페이지 이동`}
+        label={t(`${title} 페이지 이동`)}
         page={current}
         pageSize={size}
         total={ordered.length}

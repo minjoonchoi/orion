@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import * as Primitive from "@radix-ui/react-dialog";
 import type { ReactNode } from "react";
 import { Button } from "./button";
@@ -21,6 +22,7 @@ export function Dialog({
   variant?: "modal" | "drawer";
   busy?: boolean;
 }) {
+  const { t } = useI18n();
   return (
     <Primitive.Root
       open={open}
@@ -41,15 +43,15 @@ export function Dialog({
         >
           <div className="ui-dialog-header">
             <div>
-              <Primitive.Title>{title}</Primitive.Title>
-              <Primitive.Description>{description}</Primitive.Description>
+              <Primitive.Title>{t(title)}</Primitive.Title>
+              <Primitive.Description>{t(description)}</Primitive.Description>
             </div>
             <Primitive.Close asChild>
               <Button
                 variant="ghost"
                 size="sm"
                 disabled={busy}
-                aria-label="닫기"
+                aria-label={t("닫기")}
               >
                 ×
               </Button>

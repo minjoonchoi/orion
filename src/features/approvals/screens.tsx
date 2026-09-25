@@ -1,4 +1,5 @@
 "use client";
+import { DateValue, useI18n } from "@/i18n/provider";
 import Link from "next/link";
 import { PageHeading } from "@/components/ui/page-heading";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -31,22 +32,13 @@ const link = (route: string, id: string, label: string) => (
   </Link>
 );
 function timestamp(value: string | null) {
-  return value
-    ? new Intl.DateTimeFormat("ko-KR", {
-        timeZone: "Asia/Seoul",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hourCycle: "h23",
-      }).format(new Date(value))
-    : "미처리";
+  return <DateValue value={value} time empty="미처리" />;
 }
 function TemplateStatus({ status }: { status: ApprovalTemplate["status"] }) {
+  const { t } = useI18n();
   return (
     <Badge tone={status === "active" ? "success" : "neutral"}>
-      {status === "active" ? "사용 중" : "사용 중지"}
+      {status === "active" ? t("사용 중") : t("사용 중지")}
     </Badge>
   );
 }
@@ -54,24 +46,27 @@ function ApprovalBadge({ status }: { status: ApprovalStatus }) {
   return <Badge tone={states[status].tone}>{states[status].label}</Badge>;
 }
 export function TemplatesList({ rows }: { rows: ApprovalTemplate[] }) {
+  const { t } = useI18n();
   return (
     <>
       <PageHeading
-        title="결재 템플릿"
-        description="요청 유형별 결재 템플릿의 기본 정보와 작성 안내를 조회합니다."
+        title={t("결재 템플릿")}
+        description={t(
+          "요청 유형별 결재 템플릿의 기본 정보와 작성 안내를 조회합니다.",
+        )}
       />
       <DemoNotice />
       <Summary
         items={[
-          { label: "전체 템플릿", value: rows.length },
+          { label: t("전체 템플릿"), value: rows.length },
           {
-            label: "사용 중",
+            label: t("사용 중"),
             value: rows.filter((t) => t.status === "active").length,
           },
         ]}
       />
       <BrowseTable
-        title="결재 템플릿 목록"
+        title={t("결재 템플릿 목록")}
         rows={rows}
         searchText={(r) =>
           `${r.id} ${r.name} ${r.description} ${r.instructions}`
@@ -80,16 +75,16 @@ export function TemplatesList({ rows }: { rows: ApprovalTemplate[] }) {
         filters={[
           {
             key: "status",
-            label: "템플릿 상태 필터",
+            label: t("템플릿 상태 필터"),
             options: [
-              { value: "active", label: "사용 중" },
-              { value: "inactive", label: "사용 중지" },
+              { value: "active", label: t("사용 중") },
+              { value: "inactive", label: t("사용 중지") },
             ],
             matches: (r, v) => r.status === v,
           },
           {
             key: "type",
-            label: "요청 유형 필터",
+            label: t("요청 유형 필터"),
             options: typeOptions,
             matches: (r, v) => r.type === v,
           },
@@ -97,7 +92,7 @@ export function TemplatesList({ rows }: { rows: ApprovalTemplate[] }) {
         columns={[
           {
             key: "name",
-            header: "이름",
+            header: t("이름"),
             sortable: true,
             render: (r) => (
               <>
@@ -106,17 +101,25 @@ export function TemplatesList({ rows }: { rows: ApprovalTemplate[] }) {
               </>
             ),
           },
-          { key: "description", header: "설명", render: (r) => r.description },
-          { key: "type", header: "요청 유형", render: (r) => types[r.type] },
-          { key: "version", header: "버전", render: (r) => `v${r.version}` },
+          {
+            key: "description",
+            header: t("설명"),
+            render: (r) => r.description,
+          },
+          {
+            key: "type",
+            header: t("요청 유형"),
+            render: (r) => t(types[r.type]),
+          },
+          { key: "version", header: t("버전"), render: (r) => `v${r.version}` },
           {
             key: "status",
-            header: "상태",
+            header: t("상태"),
             render: (r) => <TemplateStatus status={r.status} />,
           },
           {
             key: "updatedAt",
-            header: "수정일 (한국 시간)",
+            header: t("수정일"),
             sortable: true,
             render: (r) => timestamp(r.updatedAt),
           },
@@ -125,30 +128,34 @@ export function TemplatesList({ rows }: { rows: ApprovalTemplate[] }) {
     </>
   );
 }
-export function TemplateScreen({ data: t }: { data: ApprovalTemplate }) {
+export function TemplateScreen({ data: template }: { data: ApprovalTemplate }) {
+  const { t } = useI18n();
   return (
     <>
       <Breadcrumbs
         items={[
-          { label: "결재 템플릿", href: "/approval-templates" },
-          { label: t.name },
+          { label: t("결재 템플릿"), href: "/approval-templates" },
+          { label: template.name },
         ]}
       />
-      <PageHeading title={t.name} description={t.description} />
+      <PageHeading title={template.name} description={template.description} />
       <DemoNotice />
       <section className="ui-panel">
-        <h2>결재 템플릿 정보</h2>
+        <h2>{t("결재 템플릿 정보")}</h2>
         <Details
           items={[
-            { label: "템플릿 ID", value: t.id },
-            { label: "이름", value: t.name },
-            { label: "설명", value: t.description },
-            { label: "요청 유형", value: types[t.type] },
-            { label: "버전", value: `v${t.version}` },
-            { label: "상태", value: <TemplateStatus status={t.status} /> },
-            { label: "작성 안내", value: t.instructions },
-            { label: "등록일 (한국 시간)", value: timestamp(t.createdAt) },
-            { label: "수정일 (한국 시간)", value: timestamp(t.updatedAt) },
+            { label: t("템플릿 ID"), value: template.id },
+            { label: t("이름"), value: template.name },
+            { label: t("설명"), value: template.description },
+            { label: t("요청 유형"), value: t(types[template.type]) },
+            { label: t("버전"), value: `v${template.version}` },
+            {
+              label: t("상태"),
+              value: <TemplateStatus status={template.status} />,
+            },
+            { label: t("작성 안내"), value: template.instructions },
+            { label: t("등록일"), value: timestamp(template.createdAt) },
+            { label: t("수정일"), value: timestamp(template.updatedAt) },
           ]}
         />
       </section>
@@ -156,6 +163,7 @@ export function TemplateScreen({ data: t }: { data: ApprovalTemplate }) {
   );
 }
 export function ApprovalsList({ rows }: { rows: ApprovalRecord[] }) {
+  const { t } = useI18n();
   const templates = Array.from(
     new Map(
       rows.map((r) => [
@@ -167,29 +175,29 @@ export function ApprovalsList({ rows }: { rows: ApprovalRecord[] }) {
   return (
     <>
       <PageHeading
-        title="결재"
-        description="결재 요청의 상세 정보와 처리 결과를 조회합니다."
+        title={t("결재")}
+        description={t("결재 요청의 상세 정보와 처리 결과를 조회합니다.")}
       />
       <DemoNotice />
       <Summary
         items={[
-          { label: "전체 결재", value: rows.length },
+          { label: t("전체 결재"), value: rows.length },
           {
-            label: "결재 대기",
+            label: t("결재 대기"),
             value: rows.filter((r) => r.status === "pending").length,
           },
           {
-            label: "승인",
+            label: t("승인"),
             value: rows.filter((r) => r.status === "approved").length,
           },
           {
-            label: "반려",
+            label: t("반려"),
             value: rows.filter((r) => r.status === "rejected").length,
           },
         ]}
       />
       <BrowseTable
-        title="결재 목록"
+        title={t("결재 목록")}
         rows={rows}
         searchText={(r) =>
           `${r.id} ${r.title} ${r.reason} ${r.comment ?? ""} ${r.requester.name} ${r.reviewer?.name ?? ""}`
@@ -198,7 +206,7 @@ export function ApprovalsList({ rows }: { rows: ApprovalRecord[] }) {
         filters={[
           {
             key: "status",
-            label: "결재 상태 필터",
+            label: t("결재 상태 필터"),
             options: Object.entries(states).map(([value, s]) => ({
               value,
               label: s.label,
@@ -207,13 +215,13 @@ export function ApprovalsList({ rows }: { rows: ApprovalRecord[] }) {
           },
           {
             key: "type",
-            label: "요청 유형 필터",
+            label: t("요청 유형 필터"),
             options: typeOptions,
             matches: (r, v) => r.type === v,
           },
           {
             key: "template",
-            label: "결재 템플릿 필터",
+            label: t("결재 템플릿 필터"),
             options: templates.map((t) => ({ value: t.id, label: t.name })),
             matches: (r, v) => r.templateId === v,
           },
@@ -221,7 +229,7 @@ export function ApprovalsList({ rows }: { rows: ApprovalRecord[] }) {
         columns={[
           {
             key: "title",
-            header: "결재 요청",
+            header: t("결재 요청"),
             sortable: true,
             render: (r) => (
               <>
@@ -232,26 +240,30 @@ export function ApprovalsList({ rows }: { rows: ApprovalRecord[] }) {
           },
           {
             key: "status",
-            header: "결재 상태",
+            header: t("결재 상태"),
             render: (r) => <ApprovalBadge status={r.status} />,
           },
-          { key: "type", header: "요청 유형", render: (r) => types[r.type] },
+          {
+            key: "type",
+            header: t("요청 유형"),
+            render: (r) => t(types[r.type]),
+          },
           {
             key: "requester",
-            header: "요청자",
+            header: t("요청자"),
             render: (r) => link("/users", r.requester.id, r.requester.name),
           },
           {
             key: "reviewer",
-            header: "결재자",
+            header: t("결재자"),
             render: (r) =>
               r.reviewer
                 ? link("/users", r.reviewer.id, r.reviewer.name)
-                : "미지정",
+                : t("미지정"),
           },
           {
             key: "requestedAt",
-            header: "요청일 (한국 시간)",
+            header: t("요청일"),
             sortable: true,
             render: (r) => timestamp(r.requestedAt),
           },
@@ -261,25 +273,29 @@ export function ApprovalsList({ rows }: { rows: ApprovalRecord[] }) {
   );
 }
 export function ApprovalScreen({ data: a }: { data: ApprovalRecord }) {
+  const { t } = useI18n();
   return (
     <>
       <Breadcrumbs
-        items={[{ label: "결재", href: "/approvals" }, { label: a.id }]}
+        items={[{ label: t("결재"), href: "/approvals" }, { label: a.id }]}
       />
       <PageHeading
         title={a.title}
-        description="결재 요청 정보와 처리 결과를 확인합니다."
+        description={t("결재 요청 정보와 처리 결과를 확인합니다.")}
       />
       <DemoNotice />
       <section className="ui-panel">
-        <h2>결재 정보</h2>
+        <h2>{t("결재 정보")}</h2>
         <Details
           items={[
-            { label: "결재 ID", value: a.id },
-            { label: "요청 유형", value: types[a.type] },
-            { label: "결재 상태", value: <ApprovalBadge status={a.status} /> },
+            { label: t("결재 ID"), value: a.id },
+            { label: t("요청 유형"), value: t(types[a.type]) },
             {
-              label: "결재 템플릿",
+              label: t("결재 상태"),
+              value: <ApprovalBadge status={a.status} />,
+            },
+            {
+              label: t("결재 템플릿"),
               value: link(
                 "/approval-templates",
                 a.templateId,
@@ -287,23 +303,26 @@ export function ApprovalScreen({ data: a }: { data: ApprovalRecord }) {
               ),
             },
             {
-              label: "대상 API 키",
+              label: t("대상 API 키"),
               value: link("/api-keys", a.keyId, a.keyName),
             },
             {
-              label: "요청자",
+              label: t("요청자"),
               value: link("/users", a.requester.id, a.requester.name),
             },
             {
-              label: "결재자",
+              label: t("결재자"),
               value: a.reviewer
                 ? link("/users", a.reviewer.id, a.reviewer.name)
-                : "미지정",
+                : t("미지정"),
             },
-            { label: "요청일 (한국 시간)", value: timestamp(a.requestedAt) },
-            { label: "처리일 (한국 시간)", value: timestamp(a.decidedAt) },
-            { label: "요청 사유", value: a.reason },
-            { label: "결재 의견", value: a.comment ?? "등록된 의견 없음" },
+            { label: t("요청일"), value: timestamp(a.requestedAt) },
+            { label: t("처리일"), value: timestamp(a.decidedAt) },
+            { label: t("요청 사유"), value: a.reason },
+            {
+              label: t("결재 의견"),
+              value: a.comment ?? t("등록된 의견 없음"),
+            },
           ]}
         />
       </section>

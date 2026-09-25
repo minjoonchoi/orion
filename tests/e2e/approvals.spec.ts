@@ -59,7 +59,7 @@ test("approval list pagination, filters, sorting and search", async ({
   await expect(table.locator("tbody tr")).toHaveCount(1);
   await page.getByRole("button", { name: "초기화", exact: true }).click();
   const header = page.getByRole("columnheader", {
-    name: "요청일 (한국 시간)",
+    name: "요청일",
     exact: true,
   });
   await header.getByRole("button").click();

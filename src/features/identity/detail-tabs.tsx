@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ReactNode } from "react";
 import { Tabs } from "@/components/ui/tabs";
@@ -7,6 +8,7 @@ export function DetailTabs({
 }: {
   items: { value: string; label: string; content: ReactNode }[];
 }) {
+  const { t } = useI18n();
   const params = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -14,7 +16,7 @@ export function DetailTabs({
   const value = items.some((i) => i.value === requested) ? requested! : "info";
   return (
     <Tabs
-      label="상세 정보"
+      label={t("상세 정보")}
       items={items}
       value={value}
       onValueChange={(next) => {

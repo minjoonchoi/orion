@@ -1,28 +1,27 @@
+"use client";
+import { DateValue, useI18n } from "@/i18n/provider";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import type { Status } from "./types";
 export function StatusBadge({ status }: { status: Status }) {
+  const { t } = useI18n();
   return (
     <Badge tone={status === "active" ? "success" : "neutral"}>
-      {status === "active" ? "활성" : "비활성"}
+      {status === "active" ? t("활성") : t("비활성")}
     </Badge>
   );
 }
 export function date(value: string | null) {
-  return value
-    ? new Intl.DateTimeFormat("ko-KR", {
-        timeZone: "Asia/Seoul",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }).format(new Date(value))
-    : "기록 없음";
+  return <DateValue value={value} />;
 }
+
 export function DemoNotice() {
+  const { t, mode } = useI18n();
+  if (mode !== "demo") return null;
   return (
     <p className="identity-demo">
-      <Badge>예제 데이터</Badge>조회 화면 미리보기입니다. 실제 사내 계정과
-      연결되지 않았습니다.
+      <Badge>{t("예제 데이터")}</Badge>
+      {t("조회 화면 미리보기입니다. 실제 사내 계정과 연결되지 않았습니다.")}
     </p>
   );
 }
@@ -31,11 +30,12 @@ export function Summary({
 }: {
   items: { label: string; value: number }[];
 }) {
+  const { t } = useI18n();
   return (
     <div className="identity-summary">
       {items.map((item) => (
-        <div key={item.label}>
-          <span>{item.label}</span>
+        <div key={t(item.label)}>
+          <span>{t(item.label)}</span>
           <strong>{item.value}</strong>
         </div>
       ))}
@@ -47,11 +47,12 @@ export function Details({
 }: {
   items: { label: string; value: ReactNode }[];
 }) {
+  const { t } = useI18n();
   return (
     <dl className="identity-details">
       {items.map((item) => (
-        <div key={item.label}>
-          <dt>{item.label}</dt>
+        <div key={t(item.label)}>
+          <dt>{t(item.label)}</dt>
           <dd>{item.value}</dd>
         </div>
       ))}

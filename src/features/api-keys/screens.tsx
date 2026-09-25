@@ -1,4 +1,5 @@
 "use client";
+import { DateValue, useI18n } from "@/i18n/provider";
 import Link from "next/link";
 import { PageHeading } from "@/components/ui/page-heading";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -36,17 +37,7 @@ function State({ state }: { state: { label: string; tone: Tone } }) {
   return <Badge tone={state.tone}>{state.label}</Badge>;
 }
 function timestamp(value: string | null, empty = "기록 없음") {
-  return value
-    ? new Intl.DateTimeFormat("ko-KR", {
-        timeZone: "Asia/Seoul",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hourCycle: "h23",
-      }).format(new Date(value))
-    : empty;
+  return <DateValue value={value} time empty={empty} />;
 }
 const personLink = (person: Person) => (
   <Link className="identity-link" href={`/users/${person.id}`}>
@@ -59,38 +50,39 @@ const orgLink = (org: Person) => (
   </Link>
 );
 export function ApiKeysList({ rows }: { rows: KeyRow[] }) {
+  const { t } = useI18n();
   const organizations = Array.from(
     new Map(rows.map((r) => [r.organization.id, r.organization])).values(),
   );
   return (
     <>
       <PageHeading
-        title="API 키"
-        description="API 키의 상태와 소유 정보, 결재 이력을 조회합니다."
+        title={t("API 키")}
+        description={t("API 키의 상태와 소유 정보, 결재 이력을 조회합니다.")}
       />
       <DemoNotice />
       <p className="identity-role-note">
-        2026년 9월 23일 기준 예제입니다. 키 원문은 저장하거나 표시하지 않습니다.
+        {t("키 원문은 저장하거나 표시하지 않습니다.")}
       </p>
       <Summary
         items={[
-          { label: "전체 API 키", value: rows.length },
+          { label: t("전체 API 키"), value: rows.length },
           {
-            label: "활성",
+            label: t("활성"),
             value: rows.filter((r) => r.status === "active").length,
           },
           {
-            label: "만료",
+            label: t("만료"),
             value: rows.filter((r) => r.status === "expired").length,
           },
           {
-            label: "폐기",
+            label: t("폐기"),
             value: rows.filter((r) => r.status === "revoked").length,
           },
         ]}
       />
       <BrowseTable
-        title="API 키 목록"
+        title={t("API 키 목록")}
         rows={rows}
         searchText={(r) =>
           `${r.name} ${r.id} ${r.displayHint} ${r.description} ${r.owner.name} ${r.organization.name}`
@@ -105,13 +97,13 @@ export function ApiKeysList({ rows }: { rows: KeyRow[] }) {
         filters={[
           {
             key: "status",
-            label: "키 상태 필터",
+            label: t("키 상태 필터"),
             options: options(keyStates),
             matches: (r, v) => r.status === v,
           },
           {
             key: "organization",
-            label: "소속 조직 필터",
+            label: t("소속 조직 필터"),
             options: organizations.map((o) => ({ value: o.id, label: o.name })),
             matches: (r, v) => r.organizationId === v,
           },
@@ -119,7 +111,7 @@ export function ApiKeysList({ rows }: { rows: KeyRow[] }) {
         columns={[
           {
             key: "name",
-            header: "이름",
+            header: t("이름"),
             sortable: true,
             render: (r) => (
               <>
@@ -134,30 +126,30 @@ export function ApiKeysList({ rows }: { rows: KeyRow[] }) {
           },
           {
             key: "status",
-            header: "키 상태",
+            header: t("키 상태"),
             render: (r) => <State state={keyStates[r.status]} />,
           },
           {
             key: "organization",
-            header: "소속 조직",
+            header: t("소속 조직"),
             render: (r) => orgLink(r.organization),
           },
           {
             key: "owner",
-            header: "소유자",
+            header: t("소유자"),
             render: (r) => personLink(r.owner),
           },
           {
             key: "createdAt",
-            header: "발급일 (한국 시간)",
+            header: t("발급일"),
             sortable: true,
             render: (r) => timestamp(r.createdAt),
           },
           {
             key: "expiresAt",
-            header: "만료일 (한국 시간)",
+            header: t("만료일"),
             sortable: true,
-            render: (r) => timestamp(r.expiresAt, "만료일 없음"),
+            render: (r) => timestamp(r.expiresAt, t("만료일 없음")),
           },
         ]}
       />
@@ -165,14 +157,16 @@ export function ApiKeysList({ rows }: { rows: KeyRow[] }) {
   );
 }
 function Approvals({ rows }: { rows: ApprovalRow[] }) {
+  const { t } = useI18n();
   return (
     <>
       <p className="identity-role-note">
-        요청일 최신순으로 표시합니다. 결재 결과와 키의 현재 상태는 별도
-        정보입니다. 모든 시각은 한국 시간입니다.
+        {t(
+          "요청일 최신순으로 표시합니다. 결재 결과와 키의 현재 상태는 별도 정보입니다. 시각은 배포 설정의 시간대로 표시합니다.",
+        )}
       </p>
       <BrowseTable
-        title="결재 이력 목록"
+        title={t("결재 이력 목록")}
         rows={rows}
         searchText={(r) =>
           `${r.id} ${r.requester.name} ${r.reviewer?.name ?? ""} ${r.reason} ${r.comment ?? ""}`
@@ -183,13 +177,13 @@ function Approvals({ rows }: { rows: ApprovalRow[] }) {
         filters={[
           {
             key: "status",
-            label: "결재 상태 필터",
+            label: t("결재 상태 필터"),
             options: options(approvalStates),
             matches: (r, v) => r.status === v,
           },
           {
             key: "type",
-            label: "요청 유형 필터",
+            label: t("요청 유형 필터"),
             options: Object.entries(requestTypes).map(([value, label]) => ({
               value,
               label,
@@ -197,11 +191,11 @@ function Approvals({ rows }: { rows: ApprovalRow[] }) {
             matches: (r, v) => r.type === v,
           },
         ]}
-        emptyTitle="결재 이력이 없습니다"
+        emptyTitle={t("결재 이력이 없습니다")}
         columns={[
           {
             key: "requestedAt",
-            header: "요청일",
+            header: t("요청일"),
             sortable: true,
             render: (r) => (
               <>
@@ -216,35 +210,35 @@ function Approvals({ rows }: { rows: ApprovalRow[] }) {
           },
           {
             key: "type",
-            header: "요청 유형",
-            render: (r) => requestTypes[r.type],
+            header: t("요청 유형"),
+            render: (r) => t(requestTypes[r.type]),
           },
           {
             key: "status",
-            header: "결재 상태",
+            header: t("결재 상태"),
             render: (r) => <State state={approvalStates[r.status]} />,
           },
           {
             key: "requester",
-            header: "요청자",
+            header: t("요청자"),
             render: (r) => personLink(r.requester),
           },
-          { key: "reason", header: "요청 사유", render: (r) => r.reason },
+          { key: "reason", header: t("요청 사유"), render: (r) => r.reason },
           {
             key: "reviewer",
-            header: "결재자",
-            render: (r) => (r.reviewer ? personLink(r.reviewer) : "미지정"),
+            header: t("결재자"),
+            render: (r) => (r.reviewer ? personLink(r.reviewer) : t("미지정")),
           },
           {
             key: "decidedAt",
-            header: "처리일",
+            header: t("처리일"),
             sortable: true,
-            render: (r) => timestamp(r.decidedAt, "미처리"),
+            render: (r) => timestamp(r.decidedAt, t("미처리")),
           },
           {
             key: "comment",
-            header: "결재 의견",
-            render: (r) => r.comment ?? "등록된 의견 없음",
+            header: t("결재 의견"),
+            render: (r) => r.comment ?? t("등록된 의견 없음"),
           },
         ]}
       />
@@ -252,56 +246,56 @@ function Approvals({ rows }: { rows: ApprovalRow[] }) {
   );
 }
 export function ApiKeyScreen({ data }: { data: KeyDetail }) {
+  const { t } = useI18n();
   const { key: k, approvals } = data;
   return (
     <>
       <Breadcrumbs
-        items={[{ label: "API 키", href: "/api-keys" }, { label: k.name }]}
+        items={[{ label: t("API 키"), href: "/api-keys" }, { label: k.name }]}
       />
       <PageHeading title={k.name} description={k.description} />
       <DemoNotice />
       <p className="identity-role-note">
-        2026년 9월 23일 기준 예제입니다. 키 식별 표시는 원문이 아닌 구분용
-        정보입니다.
+        {t("키 식별 표시는 원문이 아닌 구분용 정보입니다.")}
       </p>
       <DetailTabs
         items={[
           {
             value: "info",
-            label: "기본 정보",
+            label: t("기본 정보"),
             content: (
               <section className="ui-panel">
-                <h2>API 키 정보</h2>
+                <h2>{t("API 키 정보")}</h2>
                 <Details
                   items={[
-                    { label: "API 키 ID", value: k.id },
-                    { label: "이름", value: k.name },
-                    { label: "설명", value: k.description },
+                    { label: t("API 키 ID"), value: k.id },
+                    { label: t("이름"), value: k.name },
+                    { label: t("설명"), value: k.description },
                     {
-                      label: "키 식별 표시",
+                      label: t("키 식별 표시"),
                       value: <code>{k.displayHint}</code>,
                     },
                     {
-                      label: "키 상태",
+                      label: t("키 상태"),
                       value: <State state={keyStates[k.status]} />,
                     },
-                    { label: "소속 조직", value: orgLink(k.organization) },
-                    { label: "소유자", value: personLink(k.owner) },
+                    { label: t("소속 조직"), value: orgLink(k.organization) },
+                    { label: t("소유자"), value: personLink(k.owner) },
                     {
-                      label: "발급일 (한국 시간)",
+                      label: t("발급일"),
                       value: timestamp(k.createdAt),
                     },
                     {
-                      label: "만료일 (한국 시간)",
-                      value: timestamp(k.expiresAt, "만료일 없음"),
+                      label: t("만료일"),
+                      value: timestamp(k.expiresAt, t("만료일 없음")),
                     },
                     {
-                      label: "최근 사용일 (한국 시간)",
+                      label: t("최근 사용일"),
                       value: timestamp(k.lastUsedAt),
                     },
                     {
-                      label: "폐기일 (한국 시간)",
-                      value: timestamp(k.revokedAt, "해당 없음"),
+                      label: t("폐기일"),
+                      value: timestamp(k.revokedAt, t("해당 없음")),
                     },
                   ]}
                 />
@@ -310,7 +304,7 @@ export function ApiKeyScreen({ data }: { data: KeyDetail }) {
           },
           {
             value: "approvals",
-            label: `결재 이력 (${approvals.length})`,
+            label: t(`결재 이력 (${approvals.length})`),
             content: <Approvals rows={approvals} />,
           },
         ]}

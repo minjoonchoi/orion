@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import { useId } from "react";
 import { Button } from "./button";
 import { Select } from "./input";
@@ -19,12 +20,13 @@ export function Pagination({
   disabled?: boolean;
   label?: string;
 }) {
+  const { t, locale } = useI18n();
   const id = useId();
   const pages = Math.max(1, Math.ceil(total / pageSize));
   return (
-    <nav className="ui-pagination" aria-label={label}>
+    <nav className="ui-pagination" aria-label={t(label)}>
       <div className="ui-actions">
-        <label htmlFor={id}>페이지당</label>
+        <label htmlFor={id}>{t("페이지당")}</label>
         <Select
           id={id}
           value={pageSize}
@@ -33,11 +35,13 @@ export function Pagination({
         >
           {[5, 10, 20, 50].map((size) => (
             <option key={size} value={size}>
-              {size}개
+              {locale === "ko" ? `${size}개` : `${size} items`}
             </option>
           ))}
         </Select>
-        <span aria-live="polite">총 {total}개</span>
+        <span aria-live="polite">
+          {locale === "ko" ? `총 ${total}개` : `${total} total`}
+        </span>
       </div>
       <div className="ui-actions">
         <Button
@@ -46,10 +50,12 @@ export function Pagination({
           disabled={disabled || page <= 1}
           onClick={() => onPageChange(page - 1)}
         >
-          이전
+          {t("이전")}
         </Button>
         <span>
-          {page} / {pages} 페이지
+          {locale === "ko"
+            ? `${page} / ${pages} 페이지`
+            : `Page ${page} of ${pages}`}
         </span>
         <Button
           size="sm"
@@ -57,7 +63,7 @@ export function Pagination({
           disabled={disabled || page >= pages}
           onClick={() => onPageChange(page + 1)}
         >
-          다음
+          {t("다음")}
         </Button>
       </div>
     </nav>

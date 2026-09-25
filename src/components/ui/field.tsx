@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import { useId, type ReactNode } from "react";
 export type FieldControlProps = {
   id: string;
@@ -20,6 +21,7 @@ export function Field({
   required?: boolean;
   children: (props: FieldControlProps) => ReactNode;
 }) {
+  const { t } = useI18n();
   const id = useId();
   const description =
     [hint ? `${id}-hint` : "", error ? `${id}-error` : ""]
@@ -28,7 +30,7 @@ export function Field({
   return (
     <div className="ui-field">
       <label htmlFor={id}>
-        {label}
+        {t(label)}
         {required && <span aria-hidden="true"> *</span>}
       </label>
       {children({
@@ -39,12 +41,12 @@ export function Field({
       })}
       {hint && (
         <p id={`${id}-hint`} className="ui-hint">
-          {hint}
+          {t(hint)}
         </p>
       )}
       {error && (
         <p id={`${id}-error`} className="ui-field-error" role="alert">
-          {error}
+          {t(error)}
         </p>
       )}
     </div>

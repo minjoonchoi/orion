@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/i18n/provider";
 import * as Primitive from "@radix-ui/react-dropdown-menu";
 import type { ReactNode } from "react";
 export function ActionMenu({
@@ -16,6 +17,7 @@ export function ActionMenu({
     danger?: boolean;
   }[];
 }) {
+  const { t } = useI18n();
   return (
     <Primitive.Root>
       <Primitive.Trigger asChild>{trigger}</Primitive.Trigger>
@@ -24,7 +26,7 @@ export function ActionMenu({
           className="ui-menu"
           sideOffset={6}
           align="end"
-          aria-label={label}
+          aria-label={t(label)}
         >
           {items.map((item) => (
             <Primitive.Item
@@ -34,7 +36,7 @@ export function ActionMenu({
               disabled={item.disabled}
               onSelect={item.onSelect}
             >
-              {item.label}
+              {t(item.label)}
             </Primitive.Item>
           ))}
         </Primitive.Content>

@@ -1,63 +1,57 @@
-import { services } from "../identity/fixtures";
-import { endpoints, workspaces, pages } from "./fixtures";
-import type {
-  ServiceRow,
-  EndpointRow,
-  WorkspaceRow,
-  PageRow,
-  ServiceDetail,
-  WorkspaceDetail,
-} from "./types";
-const serviceRows = (): ServiceRow[] =>
-  services.map((s) => ({
-    ...s,
-    endpointCount: endpoints.filter((e) => e.serviceId === s.id).length,
-  }));
-const endpointRows = (): EndpointRow[] =>
-  endpoints.map((e) => ({
-    ...e,
-    serviceName: services.find((s) => s.id === e.serviceId)!.name,
-  }));
-const workspaceRows = (): WorkspaceRow[] =>
-  workspaces.map((w) => ({
-    ...w,
-    pageCount: pages.filter((p) => p.workspaceId === w.id).length,
-  }));
-const pageRows = (): PageRow[] =>
-  pages.map((p) => ({
-    ...p,
-    workspaceName: workspaces.find((w) => w.id === p.workspaceId)!.name,
-  }));
-// Replace this read-only adapter with validated API responses when contracts are available.
-export const resourceRepository = {
+import "server-only";
+import { deployment, listData, detailData } from "@/lib/api/server";
+type Repository = typeof import("./repository.mock").resourceRepository;
+export const resourceRepository: Repository = {
   async listServices() {
-    return serviceRows();
+    if (deployment().mode === "demo")
+      return (
+        await import("./repository.mock")
+      ).resourceRepository.listServices();
+    return listData("services");
   },
   async listEndpoints() {
-    return endpointRows();
+    if (deployment().mode === "demo")
+      return (
+        await import("./repository.mock")
+      ).resourceRepository.listEndpoints();
+    return listData("service-endpoints");
   },
   async listWorkspaces() {
-    return workspaceRows();
+    if (deployment().mode === "demo")
+      return (
+        await import("./repository.mock")
+      ).resourceRepository.listWorkspaces();
+    return listData("workspaces");
   },
   async listPages() {
-    return pageRows();
+    if (deployment().mode === "demo")
+      return (await import("./repository.mock")).resourceRepository.listPages();
+    return listData("pages");
   },
-  async getService(id: string): Promise<ServiceDetail | null> {
-    const service = serviceRows().find((s) => s.id === id);
-    return service
-      ? { service, endpoints: endpointRows().filter((e) => e.serviceId === id) }
-      : null;
+  async getService(id: string) {
+    if (deployment().mode === "demo")
+      return (await import("./repository.mock")).resourceRepository.getService(
+        id,
+      );
+    return detailData("services", id);
   },
-  async getEndpoint(id: string): Promise<EndpointRow | null> {
-    return endpointRows().find((e) => e.id === id) ?? null;
+  async getEndpoint(id: string) {
+    if (deployment().mode === "demo")
+      return (await import("./repository.mock")).resourceRepository.getEndpoint(
+        id,
+      );
+    return detailData("service-endpoints", id);
   },
-  async getWorkspace(id: string): Promise<WorkspaceDetail | null> {
-    const workspace = workspaceRows().find((w) => w.id === id);
-    return workspace
-      ? { workspace, pages: pageRows().filter((p) => p.workspaceId === id) }
-      : null;
+  async getWorkspace(id: string) {
+    if (deployment().mode === "demo")
+      return (
+        await import("./repository.mock")
+      ).resourceRepository.getWorkspace(id);
+    return detailData("workspaces", id);
   },
-  async getPage(id: string): Promise<PageRow | null> {
-    return pageRows().find((p) => p.id === id) ?? null;
+  async getPage(id: string) {
+    if (deployment().mode === "demo")
+      return (await import("./repository.mock")).resourceRepository.getPage(id);
+    return detailData("pages", id);
   },
 };
