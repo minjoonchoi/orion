@@ -187,6 +187,14 @@ export function PoliciesList({ rows }: { rows: PolicyRow[] }) {
         description={t(
           "정책에 연결된 서비스·엔드포인트·워크스페이스를 조회합니다.",
         )}
+        actions={
+          <Link
+            className="ui-button ui-button--secondary ui-button--md"
+            href="/policies/sync"
+          >
+            {t("Out of sync 확인")}
+          </Link>
+        }
       />
       <DemoNotice />
       <Summary

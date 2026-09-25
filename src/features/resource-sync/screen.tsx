@@ -26,7 +26,9 @@ export function ResourceSyncScreen() {
   const { t, mode } = useI18n();
   const params = useSearchParams();
   const router = useRouter();
-  const tab = params.get("tab") === "changes" ? "changes" : "current";
+  const status =
+    params.get("status") ??
+    (params.get("tab") === "changes" ? "out-of-sync" : "all");
   const kind = params.get("type") ?? "all";
   const selectedId = params.get("resource");
   function navigate(key: string, value: string) {
@@ -100,14 +102,24 @@ export function ResourceSyncScreen() {
           .toLowerCase()
           .includes(query.toLowerCase()),
     ) ?? [];
-  const catalog = (snapshot?.graph.resources ?? [])
-    .filter(
-      (r) =>
+  const catalog = [
+    ...(snapshot?.graph.resources ?? []),
+    ...changes.filter((r) => r.operation === "create").map((r) => r.after),
+  ]
+    .filter((r) => {
+      const change = changes.find(
+        (c) => c.after.kind === r.kind && c.after.id === r.id,
+      );
+      return (
+        (status === "all" ||
+          (status === "out-of-sync" ? Boolean(change) : !change)) &&
+        (filter === "all" || change?.operation === filter) &&
         (kind === "all" || kind === r.kind) &&
         `${r.name} ${r.id} ${r.path}`
           .toLowerCase()
-          .includes(query.trim().toLowerCase()),
-    )
+          .includes(query.trim().toLowerCase())
+      );
+    })
     .sort((a, b) =>
       params.get("sort") === "desc"
         ? b.name.localeCompare(a.name)
@@ -134,6 +146,7 @@ export function ResourceSyncScreen() {
     ? diff(preview.snapshot).rows.filter((r) => r.operation !== "unchanged")
     : [];
   const users = new Set(previewRows.flatMap((r) => r.users));
+  const syncState = changes.length ? "Out of sync" : "Synced";
   async function review() {
     if (!snapshot) return;
     setBusy(true);
@@ -175,11 +188,11 @@ export function ResourceSyncScreen() {
     <div className="sync-page">
       <div className="sync-heading">
         <div>
-          <p className="muted">GITOPS / CLOUD CONFIG</p>
+          <p className="muted">GITOPS / RESOURCES</p>
           <h1>{t("리소스 관리")}</h1>
           <p>
             {t(
-              "Git 정의서와 현재 DB를 비교하고 검토한 버전을 수동 적용합니다.",
+              "Synced revision과 Git 정의서의 차이를 확인하고 검토 후 Sync합니다.",
             )}
           </p>
         </div>
@@ -190,7 +203,7 @@ export function ResourceSyncScreen() {
       {mode === "demo" && (
         <p className="sync-notice">
           {t(
-            "예제 모드: Cloud Config를 호출하지 않고 세션 데이터에 적용합니다.",
+            "예제 모드: 외부 config 서버를 호출하지 않고 세션 데이터에 적용합니다.",
           )}
         </p>
       )}
@@ -212,23 +225,25 @@ export function ResourceSyncScreen() {
         <>
           <div className="sync-versions">
             <section>
-              <span>{t("현재 DB")}</span>
+              <span>{t("상태")}</span>
+              <strong>{t(syncState)}</strong>
+              <code>
+                {changes.length
+                  ? `${changes.length} ${t("변경 사항")}`
+                  : t("변경 없음")}
+              </code>
+            </section>
+            <section>
+              <span>{t("Synced")}</span>
               <strong>revision {snapshot.dbRevision}</strong>
               <code>{snapshot.appliedCommit}</code>
             </section>
             <section>
-              <span>{t("Cloud Config 후보")}</span>
+              <span>{t("Out of sync")}</span>
               <strong>{snapshot.candidateCommit}</strong>
               <code>SHA-256 {snapshot.digest.slice(0, 16)}…</code>
-            </section>
-            <section>
-              <span>{t("배포 범위")}</span>
-              <strong>
-                {snapshot.environment} / {snapshot.region}
-              </strong>
               <span>
-                {t("동기화 방식")}: {t("수동 적용")} · Config:{" "}
-                {snapshot.cloudConfig}
+                {snapshot.environment} / {snapshot.region} · {t("수동 적용")}
               </span>
             </section>
           </div>
@@ -238,13 +253,15 @@ export function ResourceSyncScreen() {
                 {t("동기화 실행")}: {run.status}
               </strong>
               <p>
-                {t("적용 commit")}: {run.commit} · DB {run.dbRevision}
+                {t("적용 revision")}: {run.dbRevision} · {run.commit}
               </p>
               <p>
                 {run.phase} ·{" "}
                 {run.message === "DEMO_APPLIED"
-                  ? t("예제 DB 적용 완료")
-                  : run.message}
+                  ? t("예제 Sync 완료")
+                  : run.message === "DEMO_ROLLED_BACK"
+                    ? t("예제 Rollback 완료")
+                    : run.message}
               </p>
             </div>
           )}
@@ -258,29 +275,13 @@ export function ResourceSyncScreen() {
                       ? "정책이 연결된 리소스는 삭제할 수 없습니다."
                       : b.startsWith("PARENT_REFERENCE")
                         ? "하위 리소스의 상위 참조를 먼저 해결하세요."
-                        : "설정 준비 상태와 DB revision을 확인하세요.",
+                        : "config 준비 상태와 synced revision을 확인하세요.",
                   )}{" "}
                   <code>{b}</code>
                 </p>
               ))}
             </div>
           )}
-          <nav className="sync-tabs" aria-label={t("리소스 보기")}>
-            <Button
-              variant={tab === "current" ? "primary" : "secondary"}
-              aria-pressed={tab === "current"}
-              onClick={() => navigate("tab", "current")}
-            >
-              {t("현재 리소스")} · {snapshot.graph.resources.length}
-            </Button>
-            <Button
-              variant={tab === "changes" ? "primary" : "secondary"}
-              aria-pressed={tab === "changes"}
-              onClick={() => navigate("tab", "changes")}
-            >
-              {t("변경 사항")} · {changes.length}
-            </Button>
-          </nav>
           <div className="sync-toolbar">
             <label>
               {t("리소스 검색")}
@@ -306,27 +307,36 @@ export function ResourceSyncScreen() {
                 ))}
               </select>
             </label>
-            {tab === "changes" && (
+            <label>
+              {t("동기화 상태")}
+              <select
+                value={status}
+                onChange={(e) => navigate("status", e.target.value)}
+              >
+                <option value="all">{t("전체")}</option>
+                <option value="out-of-sync">Out of sync</option>
+                <option value="synced">Synced</option>
+              </select>
+            </label>
+            {
               <label>
                 {t("변경 유형")}
                 <select
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 >
-                  {["all", "create", "update", "delete", "unchanged"].map(
-                    (v) => (
-                      <option key={v} value={v}>
-                        {v === "all" ? t("전체") : operation(v)}
-                      </option>
-                    ),
-                  )}
+                  {["all", "create", "update", "delete"].map((v) => (
+                    <option key={v} value={v}>
+                      {v === "all" ? t("전체") : operation(v)}
+                    </option>
+                  ))}
                 </select>
               </label>
-            )}
+            }
             <span>
               {t("변경 리소스")} · {changes.length}
             </span>
-            {tab === "changes" && (
+            {
               <Button
                 disabled={
                   busy ||
@@ -339,11 +349,11 @@ export function ResourceSyncScreen() {
               >
                 Sync · {t("영향도 검토")} · {changes.length}
               </Button>
-            )}
+            }
           </div>
-          {tab === "current" ? (
+          {
             <div className="sync-catalog">
-              <table aria-label={t("현재 리소스")}>
+              <table aria-label={t("리소스 관리")}>
                 <thead>
                   <tr>
                     <th
@@ -368,7 +378,7 @@ export function ResourceSyncScreen() {
                     <th>{t("유형")}</th>
                     <th>{t("상위 리소스")}</th>
                     <th>{t("하위 리소스")}</th>
-                    <th>{t("변경 사항")}</th>
+                    <th>{t("동기화 상태")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -386,7 +396,11 @@ export function ResourceSyncScreen() {
                       return (
                         <tr key={`${r.kind}:${r.id}`}>
                           <td>
-                            <Link href={`/${r.kind}/${r.id}`}>{r.name}</Link>
+                            {change?.operation === "create" ? (
+                              <strong>{r.name}</strong>
+                            ) : (
+                              <Link href={`/${r.kind}/${r.id}`}>{r.name}</Link>
+                            )}
                             <small>
                               {r.id}
                               {r.path && ` · ${r.method} ${r.path}`}
@@ -403,7 +417,8 @@ export function ResourceSyncScreen() {
                             )}
                           </td>
                           <td>
-                            {["services", "workspaces"].includes(r.kind) ? (
+                            {change?.operation !== "create" &&
+                            ["services", "workspaces"].includes(r.kind) ? (
                               <Link
                                 href={`/${r.kind}/${r.id}?tab=${r.kind === "services" ? "endpoints" : "pages"}`}
                               >
@@ -427,12 +442,13 @@ export function ResourceSyncScreen() {
                             {change ? (
                               <Link
                                 className={`sync-badge ${change.operation}`}
-                                href={`/resources?tab=changes&type=${r.kind}&resource=${r.id}`}
+                                href={`/resources?type=${r.kind}&resource=${r.id}#resource-diff`}
                               >
-                                {operation(change.operation)} · {t("diff 확인")}
+                                Out of sync · {operation(change.operation)} ·{" "}
+                                {t("diff 확인")}
                               </Link>
                             ) : (
-                              t("변경 없음")
+                              "Synced"
                             )}
                           </td>
                         </tr>
@@ -463,7 +479,8 @@ export function ResourceSyncScreen() {
                 </div>
               </div>
             </div>
-          ) : (
+          }
+          {
             <>
               <p className="muted">
                 {t(
@@ -478,71 +495,72 @@ export function ResourceSyncScreen() {
                   {t("전체 변경 보기")}
                 </Button>
               )}
-              <div className="sync-diffs">
-                {rows.map((row) => (
-                  <details key={row.key} open={Boolean(selectedId)}>
-                    <summary>
-                      <span className={`sync-badge ${row.operation}`}>
-                        {operation(row.operation)}
-                      </span>
-                      <strong>{row.after.name || row.after.id}</strong>
-                      <span>{t(kindLabel[row.after.kind])}</span>
-                      <code>{row.after.id}</code>
-                      {row.after.parentId && (
-                        <span>
-                          {t("상위 리소스")}: {row.after.parentId}
+              <div className="sync-diffs" id="resource-diff">
+                {rows
+                  .filter((row) => row.after.id === selectedId)
+                  .map((row) => (
+                    <details key={row.key} open={Boolean(selectedId)}>
+                      <summary>
+                        <span className={`sync-badge ${row.operation}`}>
+                          {operation(row.operation)}
                         </span>
-                      )}
-                      <span>
-                        {t("정책")} {row.paths.length} · {t("사용자")}{" "}
-                        {row.users.length}
-                      </span>
-                    </summary>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>{t("필드")}</th>
-                          <th>{t("현재 DB")}</th>
-                          <th>{t("Git 후보")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(
-                          [
-                            "name",
-                            "description",
-                            "path",
-                            "method",
-                            "parentId",
-                            "state",
-                          ] as const
-                        )
-                          .filter(
-                            (f) =>
-                              row.operation === "create" ||
-                              row.operation === "delete" ||
-                              row.before?.[f] !== row.after[f],
+                        <strong>{row.after.name || row.after.id}</strong>
+                        <span>{t(kindLabel[row.after.kind])}</span>
+                        <code>{row.after.id}</code>
+                        {row.after.parentId && (
+                          <span>
+                            {t("상위 리소스")}: {row.after.parentId}
+                          </span>
+                        )}
+                        <span>
+                          {t("정책")} {row.paths.length} · {t("사용자")}{" "}
+                          {row.users.length}
+                        </span>
+                      </summary>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>{t("필드")}</th>
+                            <th>{t("Synced")}</th>
+                            <th>{t("Out of sync")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(
+                            [
+                              "name",
+                              "description",
+                              "path",
+                              "method",
+                              "parentId",
+                              "state",
+                            ] as const
                           )
-                          .map((f) => (
-                            <tr key={f}>
-                              <th>{f}</th>
-                              <td>{row.before?.[f] || "—"}</td>
-                              <td>
-                                {row.after.state === "absent"
-                                  ? "—"
-                                  : row.after[f] || "—"}
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                    {row.operation === "unchanged" && <p>{t("변경 없음")}</p>}
-                  </details>
-                ))}
-                {!rows.length && <p>{t("연결된 항목이 없습니다")}</p>}
+                            .filter(
+                              (f) =>
+                                row.operation === "create" ||
+                                row.operation === "delete" ||
+                                row.before?.[f] !== row.after[f],
+                            )
+                            .map((f) => (
+                              <tr key={f}>
+                                <th>{f}</th>
+                                <td>{row.before?.[f] || "—"}</td>
+                                <td>
+                                  {row.after.state === "absent"
+                                    ? "—"
+                                    : row.after[f] || "—"}
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                      {row.operation === "unchanged" && <p>{t("변경 없음")}</p>}
+                    </details>
+                  ))}
               </div>
             </>
-          )}
+          }
           <details className="sync-yaml">
             <summary>{t("YAML 정의서 보기")}</summary>
             <pre>{snapshot.yaml}</pre>
@@ -551,7 +569,7 @@ export function ResourceSyncScreen() {
       )}
       <Dialog
         title={t("동기화 영향도 검토")}
-        description={t("검토한 commit과 DB revision에 대해서만 적용합니다.")}
+        description={t("검토한 Out of sync 변경에 대해서만 적용합니다.")}
         trigger={
           <button type="button" hidden aria-label={t("동기화 영향도 검토")} />
         }
@@ -567,7 +585,7 @@ export function ResourceSyncScreen() {
               <strong>
                 {preview.snapshot.environment} / {preview.snapshot.region}
               </strong>{" "}
-              · DB {preview.snapshot.dbRevision} →{" "}
+              · {t("Synced")} revision {preview.snapshot.dbRevision} →{" "}
               {preview.snapshot.candidateCommit}
             </p>
             <p>
@@ -590,6 +608,44 @@ export function ResourceSyncScreen() {
                     {operation(row.operation)} ·{" "}
                     {row.after.name || row.after.id}
                   </h3>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{t("필드")}</th>
+                        <th>Synced</th>
+                        <th>Out of sync</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(
+                        [
+                          "name",
+                          "description",
+                          "path",
+                          "method",
+                          "parentId",
+                          "state",
+                        ] as const
+                      )
+                        .filter(
+                          (field) =>
+                            row.operation === "create" ||
+                            row.operation === "delete" ||
+                            row.before?.[field] !== row.after[field],
+                        )
+                        .map((field) => (
+                          <tr key={field}>
+                            <th>{field}</th>
+                            <td>{row.before?.[field] || "—"}</td>
+                            <td>
+                              {row.operation === "delete"
+                                ? "—"
+                                : row.after[field] || "—"}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
                   {!row.paths.length ? (
                     <p>
                       {t(

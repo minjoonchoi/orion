@@ -63,6 +63,8 @@ export const runSchema = object({
   commit: string,
   dbRevision: number,
   completedAt: optional(datetime),
+  rollbackOf: optional(string),
+  targetRevision: optional(number),
 });
 export type Run = ReturnType<typeof runSchema.parse>;
 export function parseBundle(

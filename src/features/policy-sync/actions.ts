@@ -1,7 +1,6 @@
 "use server";
-import { randomUUID, createHash } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import { stringify } from "yaml";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { deployment } from "@/lib/api/server";
@@ -19,13 +18,15 @@ import {
   runSchema,
   diff,
   applySnapshot,
-  parseBundle,
+  policyYamlForScope,
+  digestOf,
   type Snapshot,
   type Preview,
   type Run,
 } from "./model";
+
 const state = globalThis as typeof globalThis & {
-  orionSync?: Map<
+  orionPolicySync?: Map<
     string,
     {
       applied: string;
@@ -35,14 +36,15 @@ const state = globalThis as typeof globalThis & {
     }
   >;
 };
-const sessions = (state.orionSync ??= new Map());
+const sessions = (state.orionPolicySync ??= new Map());
+
 async function session() {
   const id = (await cookies()).get("orion-demo-access")?.value;
   if (!id) throw Error("CONFLICT");
   if (!sessions.has(id)) {
     if (sessions.size >= 100) sessions.delete(sessions.keys().next().value!);
     sessions.set(id, {
-      applied: "demo-db-baseline",
+      applied: "demo-policy-baseline",
       plans: new Map(),
       runs: new Map(),
       snapshots: new Map(),
@@ -52,6 +54,7 @@ async function session() {
   entry.snapshots ??= new Map();
   return entry;
 }
+
 async function remote<T>(path: string, schema: Schema<T>, body?: unknown) {
   const c = deployment();
   return (
@@ -64,6 +67,7 @@ async function remote<T>(path: string, schema: Schema<T>, body?: unknown) {
     })
   ).data;
 }
+
 function error(e: unknown) {
   if (e instanceof DataApiError)
     return e.status === 401
@@ -78,23 +82,23 @@ function error(e: unknown) {
     ? e.message
     : "REQUEST_FAILED";
 }
+
 function validateSnapshot(s: Snapshot) {
   const c = deployment();
   if (
     s.environment !== c.environment ||
     s.region !== c.region ||
-    s.digest !== createHash("sha256").update(s.yaml).digest("hex") ||
+    s.digest !== digestOf(s.yaml) ||
     !Number.isSafeInteger(s.dbRevision)
   )
     throw Error("CONFLICT");
   diff(s);
   return s;
 }
+
 async function snapshot(): Promise<Snapshot> {
   if (deployment().mode === "api")
-    return validateSnapshot(
-      await remote("resource-sync/status", snapshotSchema),
-    );
+    return validateSnapshot(await remote("policy-sync/status", snapshotSchema));
   const c = deployment();
   let graph = await existingGraph();
   if (!graph) {
@@ -102,52 +106,41 @@ async function snapshot(): Promise<Snapshot> {
     await saveDemoGraph(graph);
   }
   const raw = await readFile(
-    process.cwd() + "/config/resources/orion-resources.yaml",
+    process.cwd() + "/config/policies/orion-policies.yaml",
     "utf8",
   );
-  const bundle = parseBundle(raw, "development", "ap-northeast-2");
-  bundle.metadata.environment = c.environment;
-  bundle.metadata.region = c.region;
-  const yaml = stringify(bundle);
-  const digest = createHash("sha256").update(yaml).digest("hex");
+  const yaml = policyYamlForScope(raw, c.environment, c.region);
+  const digest = digestOf(yaml);
   const s = await session();
-  return {
+  return validateSnapshot({
     dbRevision: graph.revision,
     appliedCommit: s.applied,
-    candidateCommit: "demo-merged-" + digest.slice(0, 12),
+    candidateCommit: "demo-policy-merged-" + digest.slice(0, 12),
     digest,
     environment: c.environment,
     region: c.region,
     cloudConfig: "ready",
     yaml,
-    graph: snapshotSchema.parse({
-      dbRevision: graph.revision,
-      appliedCommit: s.applied,
-      candidateCommit: "demo",
-      digest,
-      environment: c.environment,
-      region: c.region,
-      cloudConfig: "ready",
-      yaml,
-      graph,
-    }).graph,
-  };
+    graph,
+  });
 }
-export async function loadSync() {
+
+export async function loadPolicySync() {
   try {
     return { data: await snapshot() };
   } catch (e) {
     return { error: error(e) };
   }
 }
-export async function previewSync(
+
+export async function previewPolicySync(
   commit: string,
   digest: string,
   revision: number,
 ) {
   try {
     if (deployment().mode === "api") {
-      const p = await remote("resource-sync/previews", previewSchema, {
+      const p = await remote("policy-sync/previews", previewSchema, {
         commit,
         digest,
         expectedDbRevision: revision,
@@ -189,11 +182,12 @@ export async function previewSync(
     return { error: error(e) };
   }
 }
-export async function executeSync(token: string) {
+
+export async function executePolicySync(token: string) {
   try {
     if (deployment().mode === "api")
       return {
-        data: await remote("resource-sync/runs", runSchema, {
+        data: await remote("policy-sync/runs", runSchema, {
           previewToken: token,
           idempotencyKey: token,
         }),
@@ -232,12 +226,13 @@ export async function executeSync(token: string) {
     return { error: error(e) };
   }
 }
-export async function syncRun(id: string) {
+
+export async function policySyncRun(id: string) {
   try {
     if (deployment().mode === "api")
       return {
         data: await remote(
-          "resource-sync/runs/" + encodeURIComponent(id),
+          "policy-sync/runs/" + encodeURIComponent(id),
           runSchema,
         ),
       };
@@ -249,10 +244,10 @@ export async function syncRun(id: string) {
   }
 }
 
-export async function syncHistory() {
+export async function policySyncHistory() {
   try {
     if (deployment().mode === "api")
-      return { data: await remote("resource-sync/runs", array(runSchema)) };
+      return { data: await remote("policy-sync/runs", array(runSchema)) };
     await snapshot();
     return { data: [...(await session()).runs.values()].reverse() };
   } catch (e) {
@@ -260,11 +255,11 @@ export async function syncHistory() {
   }
 }
 
-export async function rollbackSync(runId: string) {
+export async function rollbackPolicySync(runId: string) {
   try {
     if (deployment().mode === "api")
       return {
-        data: await remote("resource-sync/rollbacks", runSchema, {
+        data: await remote("policy-sync/rollbacks", runSchema, {
           runId,
           idempotencyKey: `rollback:${runId}`,
         }),
