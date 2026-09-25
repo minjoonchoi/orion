@@ -11,7 +11,6 @@ export type SubjectPath = {
   key: string;
   role: Named;
   policy: Named & { effect: "allow" | "deny" };
-  via: Named | null;
   resources: ResourceRef[];
   expiresAt: string | null;
   expired: boolean;
@@ -77,7 +76,6 @@ export function subjectImpact(
         key: `${role.id}:${policy.id}:direct`,
         role: { id: role.id, name: role.name },
         policy: { id: policy.id, name: policy.name, effect: policy.effect },
-        via: null,
         resources,
         expiresAt: binding.expiresAt,
         expired,
@@ -89,14 +87,6 @@ export function subjectImpact(
         role.organizationIds.includes(o.id),
       )) {
         add("organizations", org, base);
-        const inherited = {
-          ...base,
-          key: `${role.id}:${policy.id}:org:${org.id}`,
-          via: { id: org.id, name: org.name },
-        };
-        graph.users
-          .filter((u) => org.memberIds.includes(u.id))
-          .forEach((u) => add("users", u, inherited));
       }
       // Ownership is metadata. Only explicit service-account role grants confer a path.
       graph.serviceAccounts

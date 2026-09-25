@@ -19,7 +19,7 @@ test("resource impact starts with subjects and preserves every reason including 
   ).toHaveCount(1);
   await expect(
     user.locator(".subject-path-meta").filter({ hasText: "조직 경유" }),
-  ).toHaveCount(2);
+  ).toHaveCount(0);
   await expect(user.locator(".subject-path-chain").first()).toContainText(
     "플랫폼 조회",
   );
@@ -29,8 +29,10 @@ test("resource impact starts with subjects and preserves every reason including 
     .locator(".subject-row")
     .filter({ hasText: "org-platform" });
   await org.locator("summary").first().click();
-  await org.locator(".subject-members summary").click();
-  await expect(org.locator(".subject-members")).toContainText("김가람");
+  await expect(org.locator(".subject-members")).toHaveCount(0);
+  await expect(
+    org.getByRole("link", { name: "김가람", exact: true }),
+  ).toHaveCount(0);
   await impact
     .getByRole("button", { name: "서비스 어카운트 1", exact: true })
     .click();

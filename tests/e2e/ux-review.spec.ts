@@ -82,7 +82,7 @@ test("rollback requires review and records confirmed restoration", async ({
   await expect(page.getByRole("dialog")).not.toContainText("revision 2");
 });
 
-test("subject impact preserves direct and organization paths during rollback", async ({
+test("subject impact shows direct users without organization-member paths during rollback", async ({
   page,
   context,
 }) => {
@@ -109,7 +109,9 @@ test("subject impact preserves direct and organization paths during rollback", a
   await expect(subject).toHaveCount(1);
   await subject.locator("summary").first().click();
   await expect(subject.locator(".subject-paths")).toContainText("직접 연결");
-  await expect(subject.locator(".subject-paths")).toContainText("조직 경유");
+  await expect(subject.locator(".subject-paths")).not.toContainText(
+    "조직 경유",
+  );
   await expect(subject.locator(".subject-path-chain").first()).toContainText(
     "플랫폼 관리자",
   );

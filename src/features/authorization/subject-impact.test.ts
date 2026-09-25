@@ -57,20 +57,21 @@ const graph: Graph = {
   ],
   resources: [],
 };
-test("subject impact deduplicates subjects while retaining direct and organization paths; service-account ownership never inherits", () => {
+test("subject impact includes direct users and organizations without expanding members", () => {
   const result = subjectImpact(graph, {
     resources: [
       { kind: "services", id: "one" },
       { kind: "services", id: "one" },
     ],
   });
-  assert.equal(result.length, 4);
+  assert.equal(result.length, 3);
   const user = result.find((s) => s.kind === "users" && s.id === "shared")!;
-  assert.equal(user.paths.length, 2);
-  assert.deepEqual(
-    new Set(user.paths.map((p) => p.via?.id ?? "direct")),
-    new Set(["direct", "org"]),
+  assert.equal(user.paths.length, 1);
+  assert.equal(
+    result.some((s) => s.kind === "users" && s.id === "member"),
+    false,
   );
+  assert.equal(result.filter((s) => s.kind === "organizations").length, 1);
   assert.ok(
     result.every((s) =>
       s.paths.every(
@@ -103,7 +104,7 @@ test("policy scopes exclude other policies and merge selected resource evidence 
   assert.equal(subjectImpact(expired, { policyIds: ["policy"] }).length, 0);
   assert.equal(
     subjectImpact(expired, { policyIds: ["policy"] }, true).length,
-    4,
+    3,
   );
   assert.ok(
     subjectImpact(expired, { policyIds: ["policy"] }, true).every((s) =>
@@ -118,7 +119,7 @@ test("binding removals report users, organization and robots, without unchanged 
     bindings: [],
   });
   const delta = compareSubjectImpact(graph, after, { roleIds: ["role"] });
-  assert.equal(delta.length, 4);
+  assert.equal(delta.length, 3);
   assert.ok(
     delta.every((s) =>
       s.paths.every((p) => p.change === "removed" && p.policy.id === "policy"),
@@ -133,7 +134,7 @@ test("binding removals report users, organization and robots, without unchanged 
   const direct = compareSubjectImpact(graph, grants, { roleIds: ["role"] });
   assert.equal(direct.length, 1);
   assert.equal(direct[0].paths.length, 1);
-  assert.equal(direct[0].paths[0].via, null);
+  assert.equal(direct[0].paths[0].key, "role:policy:direct");
   assert.deepEqual(grants.serviceAccounts, graph.serviceAccounts);
 });
 test("API graph preserves account role links and distinguishes unavailable data from an empty result", () => {

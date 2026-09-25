@@ -44,7 +44,7 @@ export function SubjectImpact({
   const filtered = subjects
     .filter((s) => s.kind === kind)
     .filter((s) =>
-      `${s.name} ${s.id} ${s.paths.map((p) => `${p.role.name} ${p.role.id} ${p.policy.name} ${p.policy.id} ${p.via?.name ?? ""} ${p.resources.map((r) => `${r.name} ${r.id}`).join(" ")}`).join(" ")}`
+      `${s.name} ${s.id} ${s.paths.map((p) => `${p.role.name} ${p.role.id} ${p.policy.name} ${p.policy.id} ${p.resources.map((r) => `${r.name} ${r.id}`).join(" ")}`).join(" ")}`
         .toLowerCase()
         .includes(term),
     );
@@ -162,7 +162,7 @@ export function SubjectImpact({
       )}
       <p className="muted">
         {t(
-          "사용자는 직접 부여와 조직 경유를 구분합니다. 서비스 어카운트는 명시적으로 부여된 역할만 포함합니다.",
+          "사용자는 직접 역할이 부여된 대상만 표시합니다. 조직은 멤버를 펼치지 않고 별도 대상으로 표시합니다.",
         )}
       </p>
       <p className="muted">
@@ -219,7 +219,7 @@ function SubjectRow({
             className="subject-path"
           >
             <div className="subject-path-meta">
-              <span>{t(p.via ? "조직 경유" : "직접 연결")}</span>
+              <span>{t("직접 연결")}</span>
               {p.change && (
                 <span
                   className={
@@ -243,14 +243,6 @@ function SubjectRow({
               className="subject-path-chain"
               aria-label={t("대상에서 리소스까지의 경로")}
             >
-              {p.via && (
-                <li>
-                  <small>{t("조직")}</small>
-                  <Link href={href("organizations", p.via.id)}>
-                    {p.via.name}
-                  </Link>
-                </li>
-              )}
               <li>
                 <small>{t("역할")}</small>
                 <Link href={href("roles", p.role.id)}>{p.role.name}</Link>
@@ -285,24 +277,6 @@ function SubjectRow({
           >
             {t("영향 경로 더 보기")} · {s.paths.length - limit}
           </Button>
-        )}
-        {s.kind === "organizations" && (
-          <details className="subject-members">
-            <summary>{t("영향받는 조직 멤버")}</summary>
-            <div>
-              {graph.users
-                .filter((u) =>
-                  graph.organizations
-                    .find((o) => o.id === s.id)
-                    ?.memberIds.includes(u.id),
-                )
-                .map((u) => (
-                  <Link key={u.id} href={href("users", u.id)}>
-                    {u.name}
-                  </Link>
-                ))}
-            </div>
-          </details>
         )}
       </div>
     </details>

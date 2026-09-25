@@ -699,5 +699,6 @@
   "추가되는 경로": "Added path",
   "대상에서 리소스까지의 경로": "Path from subject to resource",
   "영향 경로 더 보기": "Show more impact paths",
-  "영향받는 조직 멤버": "Affected organization members"
+  "영향받는 조직 멤버": "Affected organization members",
+  "사용자는 직접 역할이 부여된 대상만 표시합니다. 조직은 멤버를 펼치지 않고 별도 대상으로 표시합니다.": "Users show direct role assignments only. Organizations are listed separately without expanding members."
 }

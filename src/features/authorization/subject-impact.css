@@ -178,18 +178,6 @@
   display: grid;
   gap: 6px;
 }
-.subject-members {
-  font-size: 12px;
-}
-.subject-members summary {
-  cursor: pointer;
-}
-.subject-members > div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
 .subject-empty,
 .subject-incomplete {
   padding: 16px;

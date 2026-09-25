@@ -709,8 +709,7 @@ export function ResourceSyncScreen() {
                             </span>
                           )}
                           <span>
-                            {t("정책")} {row.paths.length} · {t("사용자")}{" "}
-                            {row.users.length}
+                            {t("정책")} {row.paths.length}
                           </span>
                         </summary>
                         <table>

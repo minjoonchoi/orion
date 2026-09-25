@@ -77,7 +77,7 @@ test("policy Sync includes dependencies, previews role-based users and organizat
     .click();
   const impact = dialog.locator(".sync-workflow-impact");
   await expect(
-    impact.getByRole("button", { name: "사용자 7", exact: true }),
+    impact.getByRole("button", { name: "사용자 1", exact: true }),
   ).toBeVisible();
   await expect(
     impact.getByRole("button", { name: "조직 1", exact: true }),

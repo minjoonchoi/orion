@@ -103,11 +103,6 @@ try {
     .locator("summary")
     .first()
     .click();
-  await impact
-    .locator(".subject-row")
-    .filter({ hasText: "org-platform" })
-    .locator(".subject-members summary")
-    .click();
   await capture("02-organization-impact.png");
   await impact
     .getByRole("button", { name: "서비스 어카운트 1", exact: true })
@@ -173,7 +168,7 @@ try {
     violations: (await new AxeBuilder({ page }).analyze()).violations,
   });
   report.interactions.push(
-    "User, organization, service account paths; policy Sync and removal review; English mobile",
+    "Direct users, organizations without members, service accounts; policy Sync and removal; English mobile",
   );
 } catch (error) {
   report.errors.push(error.stack);

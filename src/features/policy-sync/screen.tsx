@@ -278,8 +278,7 @@ export function PolicySyncScreen() {
                     {row.after.processors.post.length}
                   </span>
                   <span>
-                    {t("역할")} {row.impact.roles.length} · {t("사용자")}{" "}
-                    {row.impact.userCount}
+                    {t("역할")} {row.impact.roles.length}
                   </span>
                 </summary>
                 <Button
