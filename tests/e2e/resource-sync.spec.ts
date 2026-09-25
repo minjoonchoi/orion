@@ -7,16 +7,17 @@ test("GitOps diff, explicit review, apply and catalog projection", async ({
   await expect(page.getByText("revision 0", { exact: true })).toBeVisible();
   await expect(page.getByRole("table", { name: "리소스 관리" })).toBeVisible();
   await page
-    .getByLabel("리소스 유형", { exact: true })
+    .getByRole("combobox", { name: "리소스 유형", exact: true })
     .selectOption("services");
   await expect(page.locator(".sync-catalog")).toContainText("Out of sync");
   await page
-    .getByRole("link", { name: /diff 확인/ })
+    .getByRole("button", { name: /diff 확인/ })
     .first()
     .click();
   await expect(page.locator("#resource-diff")).toContainText(
     "Orion Identity API",
   );
+  await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
   await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
   const dialog = page.getByRole("dialog");
   await expect(
@@ -126,6 +127,7 @@ test("unified catalog filters, detail diff links and persistent session history"
     .getByRole("link", { name: "변경 예정 · diff 확인", exact: true })
     .click();
   await expect(page.locator(".sync-diffs > details")).toHaveCount(1);
+  await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
   await expect(
     page.getByRole("button", { name: "Sync · 영향도 검토 · 5", exact: true }),
   ).toBeVisible();

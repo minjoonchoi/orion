@@ -1,4 +1,5 @@
 "use server";
+import { restoreDefinitions } from "../authorization/rollback";
 import { randomUUID, createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { stringify } from "yaml";
@@ -275,8 +276,7 @@ export async function rollbackSync(runId: string) {
     if (!target || !targetRun || targetRun.status !== "succeeded")
       throw Error("CONFLICT");
     const snap = await snapshot();
-    const next = structuredClone(target);
-    next.revision = snap.graph.revision + 1;
+    const next = restoreDefinitions(snap.graph, target, "resources");
     await saveDemoGraph(next, snap.graph.revision);
     s.applied = targetRun.commit;
     const run: Run = {

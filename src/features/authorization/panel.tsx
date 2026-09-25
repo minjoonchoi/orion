@@ -1221,6 +1221,19 @@ export function AuthorizationPanel({
     ).some((r) => r.id === id);
   if (resourceKinds.includes(kind as ResourceKind))
     return <ResourceDeploymentStatus kind={kind} id={id} />;
+  if (kind === "policies")
+    return (
+      <section className="access-entry">
+        <p>
+          {t(
+            "정책 정의는 Git에서 관리합니다. 리소스와 요청·응답 처리 변경은 Sync에서 검토하세요.",
+          )}
+        </p>
+        <Link className="identity-link" href="/policies/sync">
+          {t("정책 변경 검토")}
+        </Link>
+      </section>
+    );
   return (
     <section className="access-entry">
       <Dialog
@@ -1264,8 +1277,14 @@ export function AuthorizationPanel({
                   </Button>
                 </div>
               )}
-              {saved && <p role="status">{t("변경사항을 적용했습니다")}</p>}
-              {graph && exists && (
+              {saved && (
+                <div className="access-success" role="status">
+                  <h3>{t("변경사항을 적용했습니다")}</h3>
+                  <p>{t("상세 화면에서 적용된 연결을 확인할 수 있습니다.")}</p>
+                  <Button onClick={() => setOpen(false)}>{t("완료")}</Button>
+                </div>
+              )}
+              {graph && exists && !saved && (
                 <Editor
                   key={`${graph.revision}-${kind}-${id}`}
                   graph={graph}

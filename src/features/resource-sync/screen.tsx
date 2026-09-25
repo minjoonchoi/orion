@@ -22,6 +22,14 @@ const messages: Record<string, string> = {
   UNAUTHENTICATED: "로그인이 필요합니다",
   REQUEST_FAILED: "요청하지 못했습니다. 다시 시도해 주세요.",
 };
+const fieldLabels = {
+  name: "이름",
+  description: "설명",
+  path: "경로",
+  method: "HTTP 메서드",
+  parentId: "상위 리소스",
+  state: "정의 상태",
+};
 export function ResourceSyncScreen() {
   const { t, mode } = useI18n();
   const params = useSearchParams();
@@ -35,16 +43,17 @@ export function ResourceSyncScreen() {
     const next = new URLSearchParams(params.toString());
     next.set(key, value);
     if (key !== "page") next.delete("page");
-    next.delete("resource");
-    router.replace("/resources?" + next.toString(), { scroll: false });
+    if (key !== "resource") next.delete("resource");
+    if (key === "resource" && !value) next.delete("resource");
+    window.history.replaceState(null, "", "/resources?" + next.toString());
   }
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [run, setRun] = useState<Run | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("all");
+  const query = params.get("q") ?? "";
+  const filter = params.get("change") ?? "all";
   const [confirmed, setConfirmed] = useState(false);
   async function refresh() {
     setBusy(true);
@@ -96,11 +105,7 @@ export function ResourceSyncScreen() {
       (r) =>
         r.operation !== "unchanged" &&
         (kind === "all" || r.after.kind === kind) &&
-        (!selectedId || r.after.id === selectedId) &&
-        (filter === "all" || r.operation === filter) &&
-        `${r.after.name} ${r.after.id}`
-          .toLowerCase()
-          .includes(query.toLowerCase()),
+        (!selectedId || r.after.id === selectedId),
     ) ?? [];
   const catalog = [
     ...(snapshot?.graph.resources ?? []),
@@ -196,9 +201,18 @@ export function ResourceSyncScreen() {
             )}
           </p>
         </div>
-        <Button variant="secondary" disabled={busy || active} onClick={refresh}>
-          {t("새로고침")}
-        </Button>
+        <div className="ui-actions">
+          <Link className="identity-link" href="/resource-sync/history">
+            {t("동기화 이력")}
+          </Link>
+          <Button
+            variant="secondary"
+            disabled={busy || active}
+            onClick={refresh}
+          >
+            {t("새로고침")}
+          </Button>
+        </div>
       </div>
       {mode === "demo" && (
         <p className="sync-notice">
@@ -227,11 +241,11 @@ export function ResourceSyncScreen() {
             <section>
               <span>{t("상태")}</span>
               <strong>{t(syncState)}</strong>
-              <code>
+              <span>
                 {changes.length
                   ? `${changes.length} ${t("변경 사항")}`
                   : t("변경 없음")}
-              </code>
+              </span>
             </section>
             <section>
               <span>{t("Synced")}</span>
@@ -239,7 +253,7 @@ export function ResourceSyncScreen() {
               <code>{snapshot.appliedCommit}</code>
             </section>
             <section>
-              <span>{t("Out of sync")}</span>
+              <span>{t(syncState)}</span>
               <strong>{snapshot.candidateCommit}</strong>
               <code>SHA-256 {snapshot.digest.slice(0, 16)}…</code>
               <span>
@@ -288,8 +302,7 @@ export function ResourceSyncScreen() {
               <input
                 value={query}
                 onChange={(e) => {
-                  setQuery(e.target.value);
-                  if (params.has("page")) navigate("page", "1");
+                  navigate("q", e.target.value);
                 }}
               />
             </label>
@@ -323,7 +336,7 @@ export function ResourceSyncScreen() {
                 {t("변경 유형")}
                 <select
                   value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
+                  onChange={(e) => navigate("change", e.target.value)}
                 >
                   {["all", "create", "update", "delete"].map((v) => (
                     <option key={v} value={v}>
@@ -336,6 +349,17 @@ export function ResourceSyncScreen() {
             <span>
               {t("변경 리소스")} · {changes.length}
             </span>
+            {(query ||
+              filter !== "all" ||
+              kind !== "all" ||
+              status !== "all") && (
+              <Button
+                variant="ghost"
+                onClick={() => router.replace("/resources", { scroll: false })}
+              >
+                {t("초기화")}
+              </Button>
+            )}
             {
               <Button
                 disabled={
@@ -440,13 +464,15 @@ export function ResourceSyncScreen() {
                           </td>
                           <td>
                             {change ? (
-                              <Link
+                              <Button
+                                variant="ghost"
+                                size="sm"
                                 className={`sync-badge ${change.operation}`}
-                                href={`/resources?type=${r.kind}&resource=${r.id}#resource-diff`}
+                                onClick={() => navigate("resource", r.id)}
                               >
                                 Out of sync · {operation(change.operation)} ·{" "}
                                 {t("diff 확인")}
-                              </Link>
+                              </Button>
                             ) : (
                               "Synced"
                             )}
@@ -456,7 +482,12 @@ export function ResourceSyncScreen() {
                     })}
                 </tbody>
               </table>
-              {!catalog.length && <p>{t("연결된 항목이 없습니다")}</p>}
+              {!catalog.length && (
+                <p>
+                  {t("검색 결과가 없습니다")} ·{" "}
+                  {t("검색어나 필터를 변경해 주세요.")}
+                </p>
+              )}
               <div className="sync-toolbar sync-pagination">
                 <span>
                   {catalog.length} · {currentPage} / {pages}
@@ -495,70 +526,90 @@ export function ResourceSyncScreen() {
                   {t("전체 변경 보기")}
                 </Button>
               )}
-              <div className="sync-diffs" id="resource-diff">
-                {rows
-                  .filter((row) => row.after.id === selectedId)
-                  .map((row) => (
-                    <details key={row.key} open={Boolean(selectedId)}>
-                      <summary>
-                        <span className={`sync-badge ${row.operation}`}>
-                          {operation(row.operation)}
-                        </span>
-                        <strong>{row.after.name || row.after.id}</strong>
-                        <span>{t(kindLabel[row.after.kind])}</span>
-                        <code>{row.after.id}</code>
-                        {row.after.parentId && (
-                          <span>
-                            {t("상위 리소스")}: {row.after.parentId}
+              <Dialog
+                title={t("리소스 변경 내용")}
+                description={t(
+                  "변경 전후를 확인한 뒤 목록의 Sync에서 전체 영향도를 검토하세요.",
+                )}
+                open={Boolean(selectedId)}
+                onOpenChange={(open) => {
+                  if (!open) navigate("resource", "");
+                }}
+                trigger={<button hidden aria-label={t("리소스 변경 내용")} />}
+              >
+                <div className="sync-diffs" id="resource-diff">
+                  {rows
+                    .filter((row) => row.after.id === selectedId)
+                    .map((row) => (
+                      <details key={row.key} open={Boolean(selectedId)}>
+                        <summary>
+                          <span className={`sync-badge ${row.operation}`}>
+                            {operation(row.operation)}
                           </span>
-                        )}
-                        <span>
-                          {t("정책")} {row.paths.length} · {t("사용자")}{" "}
-                          {row.users.length}
-                        </span>
-                      </summary>
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>{t("필드")}</th>
-                            <th>{t("Synced")}</th>
-                            <th>{t("Out of sync")}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(
-                            [
-                              "name",
-                              "description",
-                              "path",
-                              "method",
-                              "parentId",
-                              "state",
-                            ] as const
-                          )
-                            .filter(
-                              (f) =>
-                                row.operation === "create" ||
-                                row.operation === "delete" ||
-                                row.before?.[f] !== row.after[f],
+                          <strong>{row.after.name || row.after.id}</strong>
+                          <span>{t(kindLabel[row.after.kind])}</span>
+                          <code>{row.after.id}</code>
+                          {row.after.parentId && (
+                            <span>
+                              {t("상위 리소스")}: {row.after.parentId}
+                            </span>
+                          )}
+                          <span>
+                            {t("정책")} {row.paths.length} · {t("사용자")}{" "}
+                            {row.users.length}
+                          </span>
+                        </summary>
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>{t("필드")}</th>
+                              <th>{t("Synced")}</th>
+                              <th>{t("Out of sync")}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(
+                              [
+                                "name",
+                                "description",
+                                "path",
+                                "method",
+                                "parentId",
+                                "state",
+                              ] as const
                             )
-                            .map((f) => (
-                              <tr key={f}>
-                                <th>{f}</th>
-                                <td>{row.before?.[f] || "—"}</td>
-                                <td>
-                                  {row.after.state === "absent"
-                                    ? "—"
-                                    : row.after[f] || "—"}
-                                </td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
-                      {row.operation === "unchanged" && <p>{t("변경 없음")}</p>}
-                    </details>
-                  ))}
-              </div>
+                              .filter(
+                                (f) =>
+                                  row.operation === "create" ||
+                                  row.operation === "delete" ||
+                                  row.before?.[f] !== row.after[f],
+                              )
+                              .map((f) => (
+                                <tr key={f}>
+                                  <th>{t(fieldLabels[f])}</th>
+                                  <td>{row.before?.[f] || "—"}</td>
+                                  <td>
+                                    {row.after.state === "absent"
+                                      ? "—"
+                                      : row.after[f] || "—"}
+                                  </td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                        {row.operation === "unchanged" && (
+                          <p>{t("변경 없음")}</p>
+                        )}
+                      </details>
+                    ))}
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate("resource", "")}
+                >
+                  {t("목록으로 돌아가기")}
+                </Button>
+              </Dialog>
             </>
           }
           <details className="sync-yaml">
@@ -611,9 +662,9 @@ export function ResourceSyncScreen() {
                   <table>
                     <thead>
                       <tr>
-                        <th>{t("필드")}</th>
-                        <th>Synced</th>
-                        <th>Out of sync</th>
+                        <th scope="col">{t("필드")}</th>
+                        <th scope="col">Synced</th>
+                        <th scope="col">Out of sync</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -635,7 +686,7 @@ export function ResourceSyncScreen() {
                         )
                         .map((field) => (
                           <tr key={field}>
-                            <th>{field}</th>
+                            <th scope="row">{t(fieldLabels[field])}</th>
                             <td>{row.before?.[field] || "—"}</td>
                             <td>
                               {row.operation === "delete"

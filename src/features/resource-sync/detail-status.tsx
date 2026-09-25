@@ -49,7 +49,7 @@ export function ResourceDeploymentStatus({
       </p>
       {snapshot && (
         <p>
-          {t("배포 기준 버전")}: <code>{snapshot.appliedCommit}</code> · DB{" "}
+          Synced: <code>{snapshot.appliedCommit}</code> · revision{" "}
           {snapshot.dbRevision}
           {applied?.completedAt && (
             <>

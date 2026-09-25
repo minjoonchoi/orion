@@ -21,7 +21,7 @@ async function save(page: Page) {
     dialog.getByRole("heading", { name: "변경사항 확인" }),
   ).toBeVisible();
   await dialog.getByRole("button", { name: "변경 적용", exact: true }).click();
-  await expect(dialog.getByRole("status")).toHaveText(
+  await expect(dialog.getByRole("status")).toContainText(
     "변경사항을 적용했습니다",
   );
 }
@@ -84,35 +84,27 @@ test("policy binding expiry validates past dates and persists on the role", asyn
   await expect(dialog.getByRole("alert")).toContainText("현재 이후");
   await card.getByLabel("만료 시점", { exact: true }).fill("2030-12-31T10:00");
   await save(page);
+  await dialog.getByRole("button", { name: "완료", exact: true }).click();
+  await page
+    .getByRole("button", { name: "역할 부여 관리", exact: true })
+    .click();
   await dialog.getByRole("button", { name: "정책 부여와 만료" }).click();
   await expect(dialog.getByLabel("만료 시점", { exact: true })).toHaveValue(
     "2030-12-31T10:00",
   );
 });
-test("one deny policy can link resources of all four types and expose indirect impact", async ({
-  page,
-}) => {
-  let dialog = await open(
-    page,
-    "/policies/policy-platform",
-    "리소스 연결과 정책 효과",
-  );
-  await dialog.getByRole("radio", { name: "거부", exact: true }).check();
-  await dialog.getByLabel("리소스 유형", { exact: true }).selectOption("pages");
-  await dialog.getByRole("checkbox", { name: /사용자 관리/ }).check();
-  await dialog.getByRole("checkbox", { name: /조직 관리/ }).check();
-  await save(page);
-  await dialog.getByRole("button", { name: "닫기", exact: true }).click();
-  await page.goto("/pages/page-users");
+test("policy definitions are reviewed through GitOps", async ({ page }) => {
+  await page.goto("/policies/policy-platform");
   await expect(
-    page
-      .getByRole("link", { name: "변경 예정 · diff 확인", exact: true })
-      .last(),
-  ).toBeVisible();
-  await page.goto("/resource-sync");
+    page.getByRole("button", { name: "리소스 연결과 정책 효과" }),
+  ).toHaveCount(0);
+  await page.getByRole("link", { name: "정책 변경 검토" }).click();
+  await expect(page).toHaveURL(/policies\/sync$/);
   await page.getByRole("button", { name: /Sync · 영향도 검토/ }).click();
-  dialog = page.getByRole("dialog");
-  await expect(dialog).toContainText("거부");
+  await expect(page.getByRole("dialog")).toContainText("변경 정책");
+  await expect(
+    page.getByRole("button", { name: "최종 적용", exact: true }),
+  ).toBeDisabled();
 });
 test("logout clears demo session and keeps locale; common denied screen is accessible", async ({
   page,

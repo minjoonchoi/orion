@@ -59,7 +59,8 @@ export async function changeAuthorization(
   try {
     if (!Number.isSafeInteger(revision) || revision < 0) throw Error();
     const change = parseChange(input);
-    if (change.type === "resource") return { error: "FORBIDDEN" };
+    if (change.type === "resource" || change.type === "policy")
+      return { error: "FORBIDDEN" };
     if (deployment().mode === "api") {
       const graph = await remote({ revision, change });
       revalidatePath("/", "layout");

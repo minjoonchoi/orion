@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { RollbackButton } from "../resource-sync/rollback-button";
 import { DateValue, useI18n } from "@/i18n/provider";
 import {
   loadPolicySync,
@@ -175,9 +176,14 @@ export function PolicySyncScreen() {
       if (r.data) {
         setRun(r.data);
         await refresh();
-      } else setError(r.error!);
+        return true;
+      } else {
+        setError(r.error!);
+        return false;
+      }
     } catch {
       setError("REQUEST_FAILED");
+      return false;
     } finally {
       setRollbackId("");
     }
@@ -185,6 +191,9 @@ export function PolicySyncScreen() {
 
   return (
     <div className="sync-page">
+      <Link className="identity-link" href="/policies">
+        ← {t("정책")}
+      </Link>
       <div className="sync-heading">
         <div>
           <p className="muted">GITOPS / POLICIES</p>
@@ -238,7 +247,7 @@ export function PolicySyncScreen() {
               <code>{snapshot.appliedCommit}</code>
             </section>
             <section>
-              <span>{t("Out of sync")}</span>
+              <span>{t(syncState)}</span>
               <strong>{snapshot.candidateCommit}</strong>
               <code>SHA-256 {snapshot.digest.slice(0, 16)}…</code>
               <span>
@@ -309,7 +318,7 @@ export function PolicySyncScreen() {
           </div>
           <div className="sync-diffs">
             {rows.map((row) => (
-              <details key={row.key} open>
+              <details key={row.key}>
                 <summary>
                   <span className={`sync-badge ${row.operation}`}>
                     {operation(row.operation)}
@@ -488,15 +497,12 @@ export function PolicySyncScreen() {
                     </td>
                     <td>
                       {r.status === "succeeded" ? (
-                        <Button
-                          variant="secondary"
-                          size="sm"
+                        <RollbackButton
+                          revision={r.dbRevision}
+                          commit={r.commit}
                           disabled={Boolean(rollbackId)}
-                          loading={rollbackId === r.id}
-                          onClick={() => rollback(r.id)}
-                        >
-                          {t("이 revision으로 롤백")}
-                        </Button>
+                          onConfirm={() => rollback(r.id)}
+                        />
                       ) : (
                         "—"
                       )}
@@ -525,6 +531,11 @@ export function PolicySyncScreen() {
       >
         {preview && (
           <div className="sync-review">
+            {error && (
+              <p role="alert">
+                {t(messages[error] ?? messages.REQUEST_FAILED)}
+              </p>
+            )}
             <p>
               <strong>
                 {preview.snapshot.environment} / {preview.snapshot.region}

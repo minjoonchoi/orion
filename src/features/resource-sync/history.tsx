@@ -5,6 +5,7 @@ import { rollbackSync, syncHistory } from "./actions";
 import type { Run } from "./model";
 import { DateValue, useI18n } from "@/i18n/provider";
 import { Button } from "@/components/ui/button";
+import { RollbackButton } from "./rollback-button";
 import "./styles.css";
 export function SyncHistoryScreen() {
   const { t, mode, environment, region } = useI18n();
@@ -35,10 +36,15 @@ export function SyncHistoryScreen() {
     setError(false);
     try {
       const r = await rollbackSync(runId);
-      if (!r.data) setError(true);
+      if (!r.data) {
+        setError(true);
+        return false;
+      }
       await refresh();
+      return true;
     } catch {
       setError(true);
+      return false;
     } finally {
       setRollbackId("");
     }
@@ -62,7 +68,9 @@ export function SyncHistoryScreen() {
           {t("새로고침")}
         </Button>
       </div>
-      <Link href="/resources?tab=changes">{t("리소스 관리")}</Link>
+      <Link className="identity-link" href="/resources">
+        ← {t("리소스 관리")}
+      </Link>
       {mode === "demo" && (
         <p className="sync-notice">
           {t("예제 이력은 현재 세션에서만 유지됩니다.")}
@@ -111,15 +119,12 @@ export function SyncHistoryScreen() {
                   </td>
                   <td>
                     {r.status === "succeeded" ? (
-                      <Button
-                        variant="secondary"
-                        size="sm"
+                      <RollbackButton
+                        revision={r.dbRevision}
+                        commit={r.commit}
                         disabled={Boolean(rollbackId)}
-                        loading={rollbackId === r.id}
-                        onClick={() => rollback(r.id)}
-                      >
-                        {t("이 revision으로 롤백")}
-                      </Button>
+                        onConfirm={() => rollback(r.id)}
+                      />
                     ) : (
                       "—"
                     )}

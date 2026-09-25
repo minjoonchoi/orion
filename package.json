@@ -14,7 +14,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --experimental-strip-types --test src/lib/api/client.test.ts src/features/auth/login-url.test.ts src/lib/api/deployment.test.ts src/features/authorization/model.test.ts src/features/resource-sync/model.test.ts",
+    "test": "node --experimental-strip-types --test src/lib/api/client.test.ts src/features/auth/login-url.test.ts src/lib/api/deployment.test.ts src/features/authorization/model.test.ts src/features/resource-sync/model.test.ts src/features/policy-sync/model.test.ts src/features/authorization/rollback.test.ts",
     "check": "npm run lint && npm run typecheck && npm run format:check && npm test",
     "test:e2e": "playwright test",
     "test:api": "playwright test --config=playwright.api.config.ts",

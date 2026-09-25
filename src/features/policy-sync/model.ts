@@ -1,5 +1,4 @@
 import { parseDocument, stringify } from "yaml";
-import { createHash } from "node:crypto";
 import {
   graphSchema,
   resourceKinds,
@@ -261,10 +260,6 @@ export function policyYamlForScope(
   bundle.metadata.environment = environment;
   bundle.metadata.region = region;
   return stringify(bundle);
-}
-
-export function digestOf(yaml: string) {
-  return createHash("sha256").update(yaml).digest("hex");
 }
 
 export function policyImpact(graph: Graph, policyId: string) {

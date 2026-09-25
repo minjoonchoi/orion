@@ -16,7 +16,7 @@ test("unified resource catalog and legacy type filters", async ({ page }) => {
     .getByLabel("리소스 검색", { exact: true })
     .fill("no-resource-found");
   await expect(page.locator(".sync-catalog")).toContainText(
-    "연결된 항목이 없습니다",
+    "검색 결과가 없습니다",
   );
 });
 test("organization and policy links lead to service and endpoint details", async ({

@@ -1,5 +1,6 @@
 "use server";
-import { randomUUID } from "node:crypto";
+import { restoreDefinitions } from "../authorization/rollback";
+import { randomUUID, createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
@@ -19,11 +20,14 @@ import {
   diff,
   applySnapshot,
   policyYamlForScope,
-  digestOf,
   type Snapshot,
   type Preview,
   type Run,
 } from "./model";
+
+function digestOf(yaml: string) {
+  return createHash("sha256").update(yaml).digest("hex");
+}
 
 const state = globalThis as typeof globalThis & {
   orionPolicySync?: Map<
@@ -270,8 +274,7 @@ export async function rollbackPolicySync(runId: string) {
     if (!target || !targetRun || targetRun.status !== "succeeded")
       throw Error("CONFLICT");
     const snap = await snapshot();
-    const next = structuredClone(target);
-    next.revision = snap.graph.revision + 1;
+    const next = restoreDefinitions(snap.graph, target, "policies");
     await saveDemoGraph(next, snap.graph.revision);
     s.applied = targetRun.commit;
     const run: Run = {

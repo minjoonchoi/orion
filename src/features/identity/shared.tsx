@@ -21,7 +21,7 @@ export function DemoNotice() {
   return (
     <p className="identity-demo">
       <Badge>{t("예제 데이터")}</Badge>
-      {t("조회 화면 미리보기입니다. 실제 사내 계정과 연결되지 않았습니다.")}
+      {t("실제 사내 계정과 연결되지 않은 예제 환경입니다.")}
     </p>
   );
 }

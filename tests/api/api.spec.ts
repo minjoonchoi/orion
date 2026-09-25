@@ -98,7 +98,9 @@ test("authorization changes use real POST responses and handle conflicts and for
   await dialog
     .getByRole("button", { name: "Apply changes", exact: true })
     .click();
-  await expect(dialog.getByRole("status")).toHaveText("Changes applied");
+  await expect(dialog.getByRole("status")).toContainText("Changes applied");
+  await dialog.getByRole("button", { name: "Close", exact: true }).click();
+  await page.getByRole("button", { name: "Assign roles", exact: true }).click();
   await expect(
     dialog.getByRole("checkbox", { name: "Remote role", exact: true }),
   ).toBeChecked();
