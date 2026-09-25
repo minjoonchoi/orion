@@ -353,7 +353,9 @@ export function OrganizationScreen({ data }: { data: OrganizationDetail }) {
                     ...nameColumn,
                     render: (r) => (
                       <>
-                        {r.name}
+                        <DetailLink href={`/service-accounts/${r.id}`}>
+                          {r.name}
+                        </DetailLink>
                         <div className="identity-meta">{r.id}</div>
                       </>
                     ),

@@ -14,6 +14,11 @@ export const navigationGroups = [
         description:
           "조직 멤버, 서비스 어카운트, 관리 서비스와 역할을 조회합니다.",
       },
+      {
+        href: "/service-accounts",
+        label: "서비스 어카운트",
+        description: "서비스 어카운트 정보와 연결된 역할·API 키를 조회합니다.",
+      },
     ],
   },
   {
