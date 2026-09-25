@@ -686,6 +686,8 @@
   "이 실행에 포함된 정책과 변경된 리소스를 복원합니다. 사용자·조직·역할 부여는 유지됩니다.": "Restore policies and changed resources included in this run. Current user, organization and role assignments are retained.",
   "영향받는 대상": "Affected subjects",
   "변경으로 영향받는 대상": "Subjects affected by this change",
+  "영향 대상 요약": "Affected subject summary",
+  "확인된 대상": "Known subjects",
   "영향 대상 유형": "Affected subject type",
   "대상 수는 중복을 제외합니다. 각 대상을 펼치면 영향을 받는 역할·정책 경로를 확인할 수 있습니다.": "Subjects are counted once. Expand a subject to see the roles and policies behind its impact.",
   "서비스 어카운트 연결 정보가 제공되지 않아 해당 영향도는 확인할 수 없습니다.": "Service account assignments were not provided; their impact is unavailable.",

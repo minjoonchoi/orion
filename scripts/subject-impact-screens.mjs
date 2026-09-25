@@ -92,11 +92,16 @@ try {
   await visit("/services/svc-orion");
   await page.getByRole("button", { name: "영향도 보기", exact: true }).click();
   let impact = page.getByRole("region", { name: "영향받는 대상", exact: true });
+  await impact.locator(".subject-row").first().waitFor({ state: "visible" });
+  await page.evaluate(() => document.fonts.ready);
+  await capture("00-unified-impact.png");
   await impact.getByLabel("영향 대상·경로 검색").fill("김가람");
   await impact.locator(".subject-row > summary").click();
   await capture("01-user-impact-paths.png");
   await impact.getByLabel("영향 대상·경로 검색").clear();
-  await impact.getByRole("button", { name: "조직 2", exact: true }).click();
+  await impact
+    .getByRole("combobox", { name: "영향 대상 유형" })
+    .selectOption("organizations");
   await impact
     .locator(".subject-row")
     .filter({ hasText: "org-platform" })
@@ -105,8 +110,8 @@ try {
     .click();
   await capture("02-organization-impact.png");
   await impact
-    .getByRole("button", { name: "서비스 어카운트 1", exact: true })
-    .click();
+    .getByRole("combobox", { name: "영향 대상 유형" })
+    .selectOption("service-accounts");
   await impact.locator(".subject-row > summary").click();
   await capture("03-service-account-impact.png");
   await page.getByRole("button", { name: "닫기", exact: true }).click();
@@ -120,10 +125,7 @@ try {
     .getByRole("button", { name: "변경·영향도 검토", exact: true })
     .click();
   impact = page.locator(".sync-workflow-impact .subject-impact");
-  await impact
-    .getByRole("button", { name: "서비스 어카운트 1", exact: true })
-    .click();
-  await impact.locator(".subject-row > summary").click();
+  await impact.scrollIntoViewIfNeeded();
   await capture("04-policy-sync-subjects.png");
   await page.getByRole("button", { name: "닫기", exact: true }).click();
   await visit("/roles/role-platform");
@@ -145,8 +147,8 @@ try {
     .click();
   impact = dialog.getByRole("region", { name: "영향받는 대상", exact: true });
   await impact
-    .getByRole("button", { name: "서비스 어카운트 1", exact: true })
-    .click();
+    .getByRole("combobox", { name: "영향 대상 유형" })
+    .selectOption("service-accounts");
   await impact.locator(".subject-row > summary").click();
   await impact.scrollIntoViewIfNeeded();
   await capture("05-policy-removal-impact.png");
@@ -158,8 +160,8 @@ try {
   await page.getByRole("button", { name: "View impact", exact: true }).click();
   impact = page.getByRole("region", { name: "Affected subjects", exact: true });
   await impact
-    .getByRole("button", { name: "Service accounts 1", exact: true })
-    .click();
+    .getByRole("combobox", { name: "Affected subject type" })
+    .selectOption("service-accounts");
   await impact.locator(".subject-row > summary").click();
   await impact.scrollIntoViewIfNeeded();
   await capture("06-mobile-service-account.png");

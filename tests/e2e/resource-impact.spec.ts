@@ -33,7 +33,7 @@ test("selected impact spans filters, survives reload, and can narrow to one reso
   await expect(dialog.locator(".impact-scope li")).toHaveCount(2);
   await expect(dialog.locator(".impact-scope")).toContainText("svc-orion");
   await expect(dialog.locator(".impact-scope")).toContainText("ws-platform");
-  await expect(dialog.locator(".subject-kind-filters button")).toHaveCount(3);
+  await expect(dialog.locator(".subject-counts > div")).toHaveCount(3);
   await expect(
     dialog.getByRole("button", { name: "최종 Sync 적용" }),
   ).toHaveCount(0);
@@ -44,11 +44,11 @@ test("selected impact spans filters, survives reload, and can narrow to one reso
   await expect(dialog.locator(".impact-scope")).not.toContainText(
     "ws-platform",
   );
-  await expect(dialog.locator(".subject-kind-filters button")).toHaveCount(3);
+  await expect(dialog.locator(".subject-counts > div")).toHaveCount(3);
   await dialog
     .getByRole("combobox", { name: "영향도 조회 범위" })
     .selectOption("all");
-  await expect(dialog.locator(".subject-kind-filters button")).toHaveCount(3);
+  await expect(dialog.locator(".subject-counts > div")).toHaveCount(3);
   await dialog.getByRole("button", { name: "목록으로 돌아가기" }).click();
   await page
     .getByRole("row")

@@ -10,6 +10,21 @@ test("resource impact starts with subjects and preserves every reason including 
     name: "영향받는 대상",
     exact: true,
   });
+  await expect(
+    impact.getByRole("combobox", { name: "영향 대상 유형" }),
+  ).toHaveValue("all");
+  await expect(impact.locator(".subject-row")).toHaveCount(6);
+  for (const [label, count] of [
+    ["사용자", 3],
+    ["조직", 2],
+    ["서비스 어카운트", 1],
+  ] as const) {
+    await expect(
+      impact
+        .locator(".subject-type")
+        .filter({ hasText: new RegExp(`^${label}$`) }),
+    ).toHaveCount(count);
+  }
   await impact.getByLabel("영향 대상·경로 검색").fill("김가람");
   const user = impact.locator(".subject-row");
   await expect(user).toHaveCount(1);
@@ -24,7 +39,9 @@ test("resource impact starts with subjects and preserves every reason including 
     "플랫폼 조회",
   );
   await impact.getByLabel("영향 대상·경로 검색").clear();
-  await impact.getByRole("button", { name: "조직 2", exact: true }).click();
+  await impact
+    .getByRole("combobox", { name: "영향 대상 유형" })
+    .selectOption("organizations");
   const org = impact
     .locator(".subject-row")
     .filter({ hasText: "org-platform" });
@@ -34,8 +51,15 @@ test("resource impact starts with subjects and preserves every reason including 
     org.getByRole("link", { name: "김가람", exact: true }),
   ).toHaveCount(0);
   await impact
-    .getByRole("button", { name: "서비스 어카운트 1", exact: true })
-    .click();
+    .getByRole("combobox", { name: "영향 대상 유형" })
+    .selectOption("service-accounts");
+  await impact
+    .getByRole("combobox", { name: "영향 대상 유형" })
+    .selectOption("all");
+  await expect(impact.locator(".subject-row")).toHaveCount(6);
+  await impact
+    .getByRole("combobox", { name: "영향 대상 유형" })
+    .selectOption("service-accounts");
   const robot = impact.locator(".subject-row");
   await expect(robot).toContainText("platform-ci");
   await expect(impact).not.toContainText("directory-sync");
@@ -80,8 +104,8 @@ test("policy removal review shows affected service accounts and removed role-pol
     exact: true,
   });
   await impact
-    .getByRole("button", { name: "서비스 어카운트 1", exact: true })
-    .click();
+    .getByRole("combobox", { name: "영향 대상 유형" })
+    .selectOption("service-accounts");
   const robot = impact.locator(".subject-row");
   await robot.locator("summary").first().click();
   await expect(robot).toContainText("해제되는 경로");
@@ -105,8 +129,8 @@ test("English mobile subject paths are accessible and search keeps the policy re
     exact: true,
   });
   await impact
-    .getByRole("button", { name: "Service accounts 1", exact: true })
-    .click();
+    .getByRole("combobox", { name: "Affected subject type" })
+    .selectOption("service-accounts");
   await impact.getByLabel("Search subjects and paths").fill("policy-platform");
   await impact.locator(".subject-row > summary").click();
   await expect(impact.locator(".subject-path-chain")).toContainText(

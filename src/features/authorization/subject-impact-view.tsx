@@ -30,7 +30,7 @@ export function SubjectImpact({
   afterGraph?: Graph;
 }) {
   const { t } = useI18n();
-  const [kind, setKind] = useState<SubjectKind>("users");
+  const [kind, setKind] = useState<SubjectKind | "all">("all");
   const [query, setQuery] = useState("");
   const [expired, setExpired] = useState(false);
   const [page, setPage] = useState(1);
@@ -41,42 +41,29 @@ export function SubjectImpact({
     graph.serviceAccounts === undefined ||
     Boolean(afterGraph && afterGraph.serviceAccounts === undefined);
   const term = query.trim().toLowerCase();
-  const filtered = subjects
-    .filter((s) => s.kind === kind)
-    .filter((s) =>
-      `${s.name} ${s.id} ${s.paths.map((p) => `${p.role.name} ${p.role.id} ${p.policy.name} ${p.policy.id} ${p.resources.map((r) => `${r.name} ${r.id}`).join(" ")}`).join(" ")}`
-        .toLowerCase()
-        .includes(term),
-    );
+  const scoped = subjects.filter((s) => kind === "all" || s.kind === kind);
+  const filtered = scoped.filter((s) =>
+    `${s.name} ${s.id} ${s.paths.map((p) => `${p.role.name} ${p.role.id} ${p.policy.name} ${p.policy.id} ${p.resources.map((r) => `${r.name} ${r.id}`).join(" ")}`).join(" ")}`
+      .toLowerCase()
+      .includes(term),
+  );
   const pages = Math.max(1, Math.ceil(filtered.length / 8));
   const current = Math.min(page, pages);
   return (
     <section className="subject-impact" aria-label={t("영향받는 대상")}>
       <h3>{t(afterGraph ? "변경으로 영향받는 대상" : "영향받는 대상")}</h3>
-      <div
-        className="subject-kind-filters"
-        role="group"
-        aria-label={t("영향 대상 유형")}
-      >
+      <dl className="subject-counts" aria-label={t("영향 대상 요약")}>
         {kinds.map((k) => (
-          <button
-            type="button"
-            key={k}
-            aria-pressed={kind === k}
-            onClick={() => {
-              setKind(k);
-              setPage(1);
-            }}
-          >
-            <span>{t(labels[k])}</span>
-            <strong>
+          <div key={k}>
+            <dt>{t(labels[k])}</dt>
+            <dd>
               {k === "service-accounts" && missingAccounts
                 ? "—"
                 : subjects.filter((s) => s.kind === k).length}
-            </strong>
-          </button>
+            </dd>
+          </div>
         ))}
-      </div>
+      </dl>
       <p className="muted">
         {t(
           "대상 수는 중복을 제외합니다. 각 대상을 펼치면 영향을 받는 역할·정책 경로를 확인할 수 있습니다.",
@@ -90,7 +77,7 @@ export function SubjectImpact({
         </p>
       )}
       <div className="subject-tools">
-        <label>
+        <label className="subject-search">
           {t("영향 대상·경로 검색")}
           <input
             value={query}
@@ -100,6 +87,23 @@ export function SubjectImpact({
               setPage(1);
             }}
           />
+        </label>
+        <label className="subject-type-filter">
+          {t("영향 대상 유형")}
+          <select
+            value={kind}
+            onChange={(e) => {
+              setKind(e.target.value as SubjectKind | "all");
+              setPage(1);
+            }}
+          >
+            <option value="all">{t("전체")}</option>
+            {kinds.map((k) => (
+              <option key={k} value={k}>
+                {t(labels[k])}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="subject-expired">
           <input
@@ -114,14 +118,21 @@ export function SubjectImpact({
         </label>
       </div>
       <div className="subject-results" aria-live="polite">
-        {t(labels[kind])} ·{" "}
+        {t(
+          kind === "all"
+            ? missingAccounts
+              ? "확인된 대상"
+              : "전체"
+            : labels[kind],
+        )}{" "}
+        ·{" "}
         {kind === "service-accounts" && missingAccounts ? "—" : filtered.length}
-        {term && ` / ${subjects.filter((s) => s.kind === kind).length}`}
+        {term && ` / ${scoped.length}`}
       </div>
       <div className="subject-list">
         {filtered.slice((current - 1) * 8, current * 8).map((s) => (
           <SubjectRow
-            key={`${kind}:${s.id}:${term}:${expired}:${current}`}
+            key={`${kind}:${s.kind}:${s.id}:${term}:${expired}:${current}`}
             subject={s}
             graph={afterGraph ?? graph}
           />
@@ -191,7 +202,10 @@ function SubjectRow({
     <details className="subject-row">
       <summary>
         <div>
-          <strong>{s.name}</strong>
+          <span className="subject-title">
+            <strong>{s.name}</strong>
+            <span className="subject-type">{t(labels[s.kind])}</span>
+          </span>
           <small>
             {s.id}
             {org && ` · ${t("소속 조직")}: ${org.name}`}

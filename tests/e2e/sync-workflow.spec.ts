@@ -76,15 +76,17 @@ test("policy Sync includes dependencies, previews role-based users and organizat
     .getByRole("button", { name: "변경·영향도 검토", exact: true })
     .click();
   const impact = dialog.locator(".sync-workflow-impact");
-  await expect(
-    impact.getByRole("button", { name: "사용자 1", exact: true }),
-  ).toBeVisible();
-  await expect(
-    impact.getByRole("button", { name: "조직 1", exact: true }),
-  ).toBeVisible();
+  await expect(impact.locator(".subject-row")).toHaveCount(3);
+  for (const label of ["사용자", "조직", "서비스 어카운트"]) {
+    await expect(
+      impact
+        .locator(".subject-type")
+        .filter({ hasText: new RegExp(`^${label}$`) }),
+    ).toHaveCount(1);
+  }
   await impact
-    .getByRole("button", { name: "서비스 어카운트 1", exact: true })
-    .click();
+    .getByRole("combobox", { name: "영향 대상 유형" })
+    .selectOption("service-accounts");
   const account = impact.locator(".subject-row");
   await expect(account).toContainText("platform-ci");
   await account.locator("summary").first().click();
