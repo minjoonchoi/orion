@@ -1,6 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { applyChange, impact, parseChange, type Graph } from "./model.ts";
+import {
+  applyChange,
+  impact,
+  impactForResources,
+  parseChange,
+  type Graph,
+} from "./model.ts";
 const graph: Graph = {
   revision: 0,
   users: [
@@ -39,6 +45,57 @@ const graph: Graph = {
     },
   ],
 };
+test("selected-resource impact excludes outside scope and deduplicates shared connections", () => {
+  const g = structuredClone(graph);
+  g.policies[0].resources.push({ kind: "services", id: "page1" });
+  g.users.push({ id: "outside", name: "Outside" });
+  g.policies.push({
+    ...g.policies[0],
+    id: "outside-policy",
+    resources: [{ kind: "pages", id: "outside" }],
+  });
+  g.roles.push({
+    ...g.roles[0],
+    id: "outside-role",
+    userIds: ["outside"],
+    organizationIds: [],
+    bindings: [{ policyId: "outside-policy", expiresAt: null }],
+  });
+  const result = impactForResources(g, [
+    { kind: "pages", id: "page1" },
+    { kind: "services", id: "page1" },
+    { kind: "pages", id: "page1" },
+  ]);
+  assert.deepEqual(result.counts, {
+    resources: 2,
+    policies: 1,
+    roles: 1,
+    organizations: 1,
+    users: 2,
+  });
+  assert.equal(result.entries.length, 2);
+  assert.deepEqual(impactForResources(g, []).counts, {
+    resources: 0,
+    policies: 0,
+    roles: 0,
+    organizations: 0,
+    users: 0,
+  });
+  assert.equal(
+    impactForResources(g, [{ kind: "pages", id: "outside" }]).counts.users,
+    1,
+  );
+  g.roles[0].bindings[0].expiresAt = "2020-01-01T00:00:00Z";
+  assert.equal(
+    impactForResources(g, [{ kind: "services", id: "page1" }]).counts.users,
+    0,
+  );
+  assert.equal(
+    impactForResources(g, [{ kind: "services", id: "page1" }], true).counts
+      .users,
+    2,
+  );
+});
 test("role grants replace direct assignments without changing organization membership", () => {
   const next = applyChange(graph, {
     type: "subjectRoles",

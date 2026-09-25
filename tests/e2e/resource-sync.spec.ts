@@ -129,10 +129,16 @@ test("unified catalog filters, detail diff links and persistent session history"
   await expect(page.locator(".sync-diffs > details")).toHaveCount(1);
   await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
   await expect(
-    page.getByRole("button", { name: "Sync · 영향도 검토 · 5", exact: true }),
+    page.getByRole("button", {
+      name: "전체 변경 Sync · 영향도 검토 · 5",
+      exact: true,
+    }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Sync · 영향도 검토 · 5", exact: true })
+    .getByRole("button", {
+      name: "전체 변경 Sync · 영향도 검토 · 5",
+      exact: true,
+    })
     .click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.locator(".sync-review-list > section")).toHaveCount(5);

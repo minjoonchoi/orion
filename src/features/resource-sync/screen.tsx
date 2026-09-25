@@ -1,5 +1,6 @@
 "use client";
 import { ResourceImpactTree } from "../authorization/impact-tree";
+import { ResourceImpact } from "../authorization/resource-impact";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -8,7 +9,11 @@ import { Dialog } from "@/components/ui/dialog";
 import { DateValue, useI18n } from "@/i18n/provider";
 import { loadSync, previewSync, executeSync, syncRun } from "./actions";
 import { ResourceHistoryDialog } from "./history";
-import { resourceKinds, type ResourceKind } from "../authorization/model";
+import {
+  resourceKinds,
+  type ResourceKind,
+  type ResourceRef,
+} from "../authorization/model";
 import {
   diff,
   kindLabel,
@@ -65,6 +70,32 @@ export function ResourceSyncScreen() {
   const query = params.get("q") ?? "";
   const filter = params.get("change") ?? "all";
   const [confirmed, setConfirmed] = useState(false);
+  const [impactReview, setImpactReview] = useState<{
+    snapshot: Snapshot;
+    resources: ResourceRef[];
+  } | null>(null);
+  async function inspectImpact(resources: ResourceRef[]) {
+    if (!resources.length) return;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await loadSync();
+      if (result.data) {
+        setSnapshot(result.data);
+        setImpactReview({ snapshot: result.data, resources });
+      } else setError(result.error!);
+    } catch {
+      setError("REQUEST_FAILED");
+    } finally {
+      setBusy(false);
+    }
+  }
+  function selectResources(keys: Set<string>) {
+    const next = new URLSearchParams(params.toString());
+    next.delete("selected");
+    keys.forEach((key) => next.append("selected", key));
+    window.history.replaceState(null, "", `/resources?${next}`);
+  }
   async function refresh() {
     setBusy(true);
     setError("");
@@ -117,13 +148,14 @@ export function ResourceSyncScreen() {
         (kind === "all" || r.after.kind === kind) &&
         (!selectedId || r.after.id === selectedId),
     ) ?? [];
-  const catalog = [
+  const resourceCatalog = [
     ...(snapshot?.graph.resources ?? []),
     ...changes.filter((r) => r.operation === "create").map((r) => r.after),
     ...(result?.rows
       .filter((r) => r.after.state === "absent" && !r.before)
       .map((r) => r.after) ?? []),
-  ]
+  ];
+  const catalog = resourceCatalog
     .filter((r) => {
       const change = changes.find(
         (c) => c.after.kind === r.kind && c.after.id === r.id,
@@ -148,6 +180,17 @@ export function ResourceSyncScreen() {
     pages,
     Math.max(1, Number(params.get("page")) || 1),
   );
+  const pageResources = catalog.slice((currentPage - 1) * 10, currentPage * 10);
+  const selection = resourceCatalog.filter((r) =>
+    params.getAll("selected").includes(`${r.kind}:${r.id}`),
+  );
+  const selectedKeys = new Set(selection.map((r) => `${r.kind}:${r.id}`));
+  const pageSelected = pageResources.filter((r) =>
+    selectedKeys.has(`${r.kind}:${r.id}`),
+  ).length;
+  const hiddenSelected = selection.filter(
+    (r) => !catalog.some((item) => item.kind === r.kind && item.id === r.id),
+  ).length;
   const operation = (op: string) =>
     t(
       (
@@ -365,7 +408,11 @@ export function ResourceSyncScreen() {
               status !== "all") && (
               <Button
                 variant="ghost"
-                onClick={() => router.replace("/resources", { scroll: false })}
+                onClick={() => {
+                  const next = new URLSearchParams();
+                  selectedKeys.forEach((key) => next.append("selected", key));
+                  router.replace(`/resources?${next}`, { scroll: false });
+                }}
               >
                 {t("초기화")}
               </Button>
@@ -381,15 +428,98 @@ export function ResourceSyncScreen() {
                 }
                 onClick={review}
               >
-                Sync · {t("영향도 검토")} · {changes.length}
+                {t("전체 변경")} Sync · {t("영향도 검토")} · {changes.length}
               </Button>
             }
           </div>
+          <section className="sync-selection" aria-label={t("리소스 선택")}>
+            <div className="ui-actions">
+              <strong>
+                {t("선택한 리소스")} · {selection.length}
+              </strong>
+              {hiddenSelected > 0 && (
+                <span className="muted">
+                  {t("현재 필터 밖 선택")} · {hiddenSelected}
+                </span>
+              )}
+              <Button
+                variant="secondary"
+                disabled={!selection.length || busy || active}
+                onClick={() => inspectImpact(selection)}
+              >
+                {t("선택 리소스 영향도 보기")}
+              </Button>
+              <Button
+                variant="ghost"
+                disabled={!selection.length}
+                onClick={() => selectResources(new Set())}
+              >
+                {t("선택 해제")}
+              </Button>
+            </div>
+            {!!selection.length && (
+              <details>
+                <summary>{t("선택 목록 확인")}</summary>
+                <ul>
+                  {selection.map((r) => (
+                    <li key={`${r.kind}:${r.id}`}>
+                      <span>
+                        {t(kindLabel[r.kind])} · {r.name}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        aria-label={`${r.name} · ${t("선택 해제")}`}
+                        onClick={() => {
+                          const next = new Set(selectedKeys);
+                          next.delete(`${r.kind}:${r.id}`);
+                          selectResources(next);
+                        }}
+                      >
+                        ×
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+            <p className="muted">
+              {t(
+                "선택은 영향도 조회에 사용됩니다. Sync는 전체 변경을 별도로 검토한 후 적용합니다.",
+              )}
+            </p>
+          </section>
           {
             <div className="sync-catalog">
               <table aria-label={t("리소스 관리")}>
                 <thead>
                   <tr>
+                    <th>
+                      <input
+                        type="checkbox"
+                        aria-label={t("현재 페이지 리소스 선택")}
+                        disabled={!pageResources.length}
+                        checked={
+                          !!pageResources.length &&
+                          pageSelected === pageResources.length
+                        }
+                        ref={(element) => {
+                          if (element)
+                            element.indeterminate =
+                              pageSelected > 0 &&
+                              pageSelected < pageResources.length;
+                        }}
+                        onChange={(e) => {
+                          const next = new Set(selectedKeys);
+                          pageResources.forEach((r) => {
+                            const key = `${r.kind}:${r.id}`;
+                            if (e.target.checked) next.add(key);
+                            else next.delete(key);
+                          });
+                          selectResources(next);
+                        }}
+                      />
+                    </th>
                     <th
                       aria-sort={
                         params.get("sort") === "desc"
@@ -414,100 +544,124 @@ export function ResourceSyncScreen() {
                     <th>{t("하위 리소스")}</th>
                     <th>{t("동기화 상태")}</th>
                     <th>{t("동기화 이력")}</th>
+                    <th>{t("영향도")}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {catalog
-                    .slice((currentPage - 1) * 10, currentPage * 10)
-                    .map((r) => {
-                      const change = changes.find(
-                        (c) => c.after.kind === r.kind && c.after.id === r.id,
-                      );
-                      const parentKind =
-                        r.kind === "pages" ? "workspaces" : "services";
-                      const deleted =
-                        !snapshot.graph.resources.some(
-                          (current) =>
-                            current.kind === r.kind && current.id === r.id,
-                        ) && change?.operation !== "create";
-                      const parent = snapshot.graph.resources.find(
-                        (p) => p.kind === parentKind && p.id === r.parentId,
-                      );
-                      return (
-                        <tr key={`${r.kind}:${r.id}`}>
-                          <td>
-                            {change?.operation === "create" || deleted ? (
-                              <strong>{r.name}</strong>
-                            ) : (
-                              <Link href={`/${r.kind}/${r.id}`}>{r.name}</Link>
-                            )}
-                            <small>
-                              {r.id}
-                              {r.path && ` · ${r.method} ${r.path}`}
-                            </small>
-                          </td>
-                          <td>{t(kindLabel[r.kind])}</td>
-                          <td>
-                            {parent ? (
-                              <Link href={`/${parent.kind}/${parent.id}`}>
-                                {parent.name}
-                              </Link>
-                            ) : (
-                              "—"
-                            )}
-                          </td>
-                          <td>
-                            {!deleted &&
-                            change?.operation !== "create" &&
-                            ["services", "workspaces"].includes(r.kind) ? (
-                              <Link
-                                href={`/${r.kind}/${r.id}?tab=${r.kind === "services" ? "endpoints" : "pages"}`}
-                              >
-                                {
-                                  snapshot.graph.resources.filter(
-                                    (child) =>
-                                      child.parentId === r.id &&
-                                      child.kind ===
-                                        (r.kind === "services"
-                                          ? "service-endpoints"
-                                          : "pages"),
-                                  ).length
-                                }
-                                {t("개")}
-                              </Link>
-                            ) : (
-                              "—"
-                            )}
-                          </td>
-                          <td>
-                            {change ? (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className={`sync-badge ${change.operation}`}
-                                onClick={() => navigate("resource", r.id)}
-                              >
-                                Out of sync · {operation(change.operation)} ·{" "}
-                                {t("diff 확인")}
-                              </Button>
-                            ) : deleted ? (
-                              `Synced · ${t("삭제됨")}`
-                            ) : (
-                              "Synced"
-                            )}
-                          </td>
-                          <td>
-                            <Link
-                              href={historyUrl(r.kind, r.id)}
-                              scroll={false}
-                              aria-label={`${r.name} · ${t("동기화 이력")}`}
-                            >
-                              {t("이력 보기")}
+                  {pageResources.map((r) => {
+                    const change = changes.find(
+                      (c) => c.after.kind === r.kind && c.after.id === r.id,
+                    );
+                    const parentKind =
+                      r.kind === "pages" ? "workspaces" : "services";
+                    const deleted =
+                      !snapshot.graph.resources.some(
+                        (current) =>
+                          current.kind === r.kind && current.id === r.id,
+                      ) && change?.operation !== "create";
+                    const parent = snapshot.graph.resources.find(
+                      (p) => p.kind === parentKind && p.id === r.parentId,
+                    );
+                    return (
+                      <tr key={`${r.kind}:${r.id}`}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            aria-label={`${r.name} · ${t("리소스 선택")}`}
+                            checked={selectedKeys.has(`${r.kind}:${r.id}`)}
+                            onChange={(e) => {
+                              const next = new Set(selectedKeys);
+                              if (e.target.checked)
+                                next.add(`${r.kind}:${r.id}`);
+                              else next.delete(`${r.kind}:${r.id}`);
+                              selectResources(next);
+                            }}
+                          />
+                        </td>
+                        <td>
+                          {change?.operation === "create" || deleted ? (
+                            <strong>{r.name}</strong>
+                          ) : (
+                            <Link href={`/${r.kind}/${r.id}`}>{r.name}</Link>
+                          )}
+                          <small>
+                            {r.id}
+                            {r.path && ` · ${r.method} ${r.path}`}
+                          </small>
+                        </td>
+                        <td>{t(kindLabel[r.kind])}</td>
+                        <td>
+                          {parent ? (
+                            <Link href={`/${parent.kind}/${parent.id}`}>
+                              {parent.name}
                             </Link>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td>
+                          {!deleted &&
+                          change?.operation !== "create" &&
+                          ["services", "workspaces"].includes(r.kind) ? (
+                            <Link
+                              href={`/${r.kind}/${r.id}?tab=${r.kind === "services" ? "endpoints" : "pages"}`}
+                            >
+                              {
+                                snapshot.graph.resources.filter(
+                                  (child) =>
+                                    child.parentId === r.id &&
+                                    child.kind ===
+                                      (r.kind === "services"
+                                        ? "service-endpoints"
+                                        : "pages"),
+                                ).length
+                              }
+                              {t("개")}
+                            </Link>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td>
+                          {change ? (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className={`sync-badge ${change.operation}`}
+                              onClick={() => navigate("resource", r.id)}
+                            >
+                              Out of sync · {operation(change.operation)} ·{" "}
+                              {t("diff 확인")}
+                            </Button>
+                          ) : deleted ? (
+                            `Synced · ${t("삭제됨")}`
+                          ) : (
+                            "Synced"
+                          )}
+                        </td>
+                        <td>
+                          <Link
+                            href={historyUrl(r.kind, r.id)}
+                            scroll={false}
+                            aria-label={`${r.name} · ${t("동기화 이력")}`}
+                          >
+                            {t("이력 보기")}
+                          </Link>
+                        </td>
+                        <td>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            disabled={busy || active}
+                            aria-label={`${r.name} · ${t("영향도 보기")}`}
+                            onClick={() => inspectImpact([r])}
+                          >
+                            {t("영향도 보기")}
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
               {!catalog.length && (
@@ -794,6 +948,37 @@ export function ResourceSyncScreen() {
                 onClick={apply}
               >
                 {t("최종 Sync 적용")}
+              </Button>
+            </div>
+          </div>
+        )}
+      </Dialog>
+      <Dialog
+        title={t("리소스 영향도 검토")}
+        description={t("조회 대상으로 선택한 리소스의 연결 관계만 표시합니다.")}
+        trigger={<button hidden aria-label={t("리소스 영향도 검토")} />}
+        open={Boolean(impactReview)}
+        onOpenChange={(open) => {
+          if (!open) setImpactReview(null);
+        }}
+      >
+        {impactReview && (
+          <div className="resource-impact-review">
+            <p className="muted">
+              {impactReview.snapshot.environment} /{" "}
+              {impactReview.snapshot.region} · {t("조회 기준")} revision{" "}
+              {impactReview.snapshot.dbRevision}
+            </p>
+            <ResourceImpact
+              key={impactReview.resources
+                .map((r) => `${r.kind}:${r.id}`)
+                .join(",")}
+              graph={impactReview.snapshot.graph}
+              resources={impactReview.resources}
+            />
+            <div className="ui-dialog-footer">
+              <Button variant="secondary" onClick={() => setImpactReview(null)}>
+                {t("목록으로 돌아가기")}
               </Button>
             </div>
           </div>

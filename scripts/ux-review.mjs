@@ -219,6 +219,41 @@ try {
   await visit("/resources");
   await capture("03-resources.png");
   await page
+    .getByRole("combobox", { name: "리소스 유형", exact: true })
+    .selectOption("services");
+  await page
+    .getByRole("row")
+    .filter({ hasText: "svc-orion" })
+    .getByRole("checkbox")
+    .check();
+  await page
+    .getByRole("combobox", { name: "리소스 유형", exact: true })
+    .selectOption("workspaces");
+  await page
+    .getByRole("row")
+    .filter({ hasText: "ws-platform" })
+    .getByRole("checkbox")
+    .check();
+  await page.getByText("선택 목록 확인", { exact: true }).click();
+  await capture("10-resource-selection.png");
+  await page.getByRole("button", { name: "선택 리소스 영향도 보기" }).click();
+  await page.getByRole("dialog").locator(".impact-scope li").last().waitFor();
+  await page.setViewportSize({ width: 1440, height: 1400 });
+  await capture("11-selected-resource-impact.png");
+  await page
+    .getByRole("combobox", { name: "영향도 조회 범위" })
+    .selectOption("services:svc-orion");
+  await capture("12-single-resource-impact.png");
+  await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
+  await page.setViewportSize({ width: 1440, height: 1050 });
+  await page.getByRole("button", { name: "선택 해제", exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "리소스 유형", exact: true })
+    .selectOption("all");
+  report.interactions.push(
+    "Selected resources define impact scope; per-resource focus preserves selection",
+  );
+  await page
     .getByRole("button", { name: /diff 확인/ })
     .first()
     .click();

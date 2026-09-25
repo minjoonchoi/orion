@@ -2,6 +2,50 @@
   max-width: 1250px;
   margin: 0 auto;
 }
+.ui-dialog:has(.resource-impact-review) {
+  width: min(1000px, calc(100vw - 32px));
+}
+.sync-selection {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-subtle);
+  margin: 16px 0;
+}
+.sync-selection p {
+  margin: 10px 0 0;
+  font-size: 12px;
+}
+.sync-selection details {
+  margin-top: 10px;
+}
+.sync-selection summary {
+  cursor: pointer;
+  font-size: 13px;
+}
+.sync-selection ul {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sync-selection li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding-left: 10px;
+  font-size: 13px;
+}
+.sync-catalog input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
 .ui-dialog:has(.resource-history) {
   width: min(900px, calc(100vw - 32px));
 }

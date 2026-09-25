@@ -9,7 +9,6 @@ import { useI18n, DateValue } from "@/i18n/provider";
 import { AccessDenied } from "@/features/auth/access-denied";
 import { loadAuthorization, changeAuthorization } from "./actions";
 import {
-  impact,
   applyChange,
   resourceKinds,
   type Graph,
@@ -19,7 +18,7 @@ import {
 } from "./model";
 import "./styles.css";
 import { Explorer, type ExplorerNode } from "./explorer";
-import { ResourceImpactTree } from "./impact-tree";
+import { ResourceImpact } from "./resource-impact";
 const labels: Record<FocusKind, string> = {
   users: "사용자",
   organizations: "조직",
@@ -122,82 +121,7 @@ export function ImpactExplorer({
   kind: ResourceKind;
   id: string;
 }) {
-  const { t } = useI18n();
-  const [expired, setExpired] = useState(false);
-  const [query, setQuery] = useState("");
-  const paths = impact(graph, kind, id, expired);
-  const users = new Set(
-    paths.flatMap((p) =>
-      p.roles.flatMap((r) => [
-        ...r.users.map((u) => u.id),
-        ...r.organizations.flatMap((o) => o.members.map((u) => u.id)),
-      ]),
-    ),
-  );
-  const roles = new Set(paths.flatMap((p) => p.roles.map((r) => r.role.id)));
-  const organizations = new Set(
-    paths.flatMap((p) =>
-      p.roles.flatMap((r) => r.organizations.map((o) => o.id)),
-    ),
-  );
-  return (
-    <section className="access-impact" aria-label={t("영향 범위 탐색")}>
-      <h3>{t("영향 범위 탐색")}</h3>
-      <p>
-        {t(
-          "리소스 → 정책 → 역할 → 조직·사용자 경로입니다. 조직 멤버는 간접 연결로 구분하며, 실제 접근 판정은 서버가 수행합니다.",
-        )}
-      </p>
-      <div className="access-metrics">
-        {[
-          [t("정책"), paths.length],
-          [t("역할"), roles.size],
-          [t("조직"), organizations.size],
-          [t("사용자"), users.size],
-        ].map(([label, count]) => (
-          <div key={label}>
-            <strong>{count}</strong>
-            <span>{label}</span>
-          </div>
-        ))}
-      </div>
-      <div className="access-tools">
-        <label>
-          {t("관계 검색")}
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("정책·역할·조직·사용자 검색")}
-          />
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={expired}
-            onChange={(e) => setExpired(e.target.checked)}
-          />
-          {t("만료된 연결 포함")}
-        </label>
-      </div>
-      <p className="muted">
-        {t(
-          "들여쓰기와 연결선은 연결 깊이를 나타냅니다. 조직 경유 사용자는 조직 아래에 표시됩니다.",
-        )}
-      </p>
-      <ResourceImpactTree
-        graph={graph}
-        kind={kind}
-        id={id}
-        includeExpired={expired}
-        query={query}
-      />
-      <p className="muted">
-        {t(
-          "사용자 수는 중복을 제외합니다. 서비스·워크스페이스의 하위 리소스 권한을 자동으로 포함하지 않습니다.",
-        )}
-      </p>
-    </section>
-  );
+  return <ResourceImpact graph={graph} resources={[{ kind, id }]} />;
 }
 function ReviewConnections({
   graph,

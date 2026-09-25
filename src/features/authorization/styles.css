@@ -1,6 +1,49 @@
 .access-entry {
   margin: 1rem 0;
 }
+.impact-scope {
+  background: var(--surface-subtle);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 16px 0;
+}
+.impact-scope ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.impact-scope li {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 5px;
+  padding: 8px 12px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.impact-scope small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+}
+.impact-focus {
+  display: block;
+  margin: 16px 0;
+}
+.impact-focus select {
+  display: block;
+  font: inherit;
+  margin-top: 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px;
+  max-width: 100%;
+  background: var(--surface);
+  color: var(--text);
+}
 .ui-dialog:has(.authorization-editor) {
   width: min(1100px, calc(100vw - 32px));
 }

@@ -1,7 +1,13 @@
 "use client";
 import { useI18n } from "@/i18n/provider";
 import { Explorer, type ExplorerNode } from "./explorer";
-import { impact, type Graph, type ResourceKind } from "./model";
+import {
+  impact,
+  impactForResources,
+  type Graph,
+  type ResourceKind,
+  type ResourceRef,
+} from "./model";
 import "./styles.css";
 
 type ImpactRole = Omit<
@@ -67,32 +73,54 @@ export function ResourceImpactTree({
   includeExpired?: boolean;
   query?: string;
 }) {
+  return (
+    <ResourceSetImpactTree
+      graph={graph}
+      resources={[{ kind, id }]}
+      includeExpired={includeExpired}
+      query={query}
+    />
+  );
+}
+export function ResourceSetImpactTree({
+  graph,
+  resources,
+  includeExpired = false,
+  query = "",
+}: {
+  graph: Graph;
+  resources: ResourceRef[];
+  includeExpired?: boolean;
+  query?: string;
+}) {
   const { t } = useI18n();
-  const resource = graph.resources.find((r) => r.kind === kind && r.id === id);
-  const paths = impact(graph, kind, id, includeExpired);
-  const nodes: ExplorerNode[] = [
-    {
-      id: `${kind}:${id}`,
-      name: resource?.name ?? id,
-      kind: "리소스",
-      detail: id,
-      children: paths.map((p) => ({
-        id: `policy:${p.policy.id}`,
-        name: p.policy.name,
-        kind: "정책",
-        relation: "리소스 연결",
-        href: `/policies/${p.policy.id}`,
-        detail: t(p.policy.effect === "allow" ? "허용" : "거부"),
-        children: p.roles.map((r) => roleNode(r, t)),
-      })),
-    },
-  ];
+  const entries = impactForResources(graph, resources, includeExpired).entries;
+  const nodes: ExplorerNode[] = entries.map(({ resource, paths }) => ({
+    id: `${resource.kind}:${resource.id}`,
+    name:
+      graph.resources.find(
+        (r) => r.kind === resource.kind && r.id === resource.id,
+      )?.name ??
+      resource.name ??
+      resource.id,
+    kind: "리소스",
+    detail: resource.id,
+    children: paths.map((p) => ({
+      id: `policy:${p.policy.id}`,
+      name: p.policy.name,
+      kind: "정책",
+      relation: "리소스 연결",
+      href: `/policies/${p.policy.id}`,
+      detail: t(p.policy.effect === "allow" ? "허용" : "거부"),
+      children: p.roles.map((r) => roleNode(r, t)),
+    })),
+  }));
   const term = query.trim().toLowerCase();
   return (
     <Explorer
-      key={`${term}:${includeExpired}`}
+      key={`${resources.map((r) => `${r.kind}:${r.id}`).join(",")}:${term}:${includeExpired}`}
       nodes={term ? searchNodes(nodes, term) : nodes}
-      initialDepth={term ? Infinity : 2}
+      initialDepth={term ? Infinity : resources.length === 1 ? 2 : 1}
     />
   );
 }
