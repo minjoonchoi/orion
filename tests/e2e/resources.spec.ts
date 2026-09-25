@@ -1,17 +1,29 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-test("unified resource catalog and legacy type filters", async ({ page }) => {
-  for (const kind of ["services", "service-endpoints", "workspaces", "pages"]) {
+test("resource navigation opens applied catalogs and parent filters", async ({
+  page,
+}) => {
+  for (const [kind, title] of [
+    ["services", "서비스"],
+    ["service-endpoints", "서비스 엔드포인트"],
+    ["workspaces", "워크스페이스"],
+    ["pages", "페이지"],
+  ]) {
     await page.goto("/" + kind);
-    await expect(page).toHaveURL(new RegExp("resources\\?type=" + kind));
+    await expect(page).toHaveURL(new RegExp("/" + kind + "$"));
     await expect(
-      page.getByRole("combobox", { name: "리소스 유형", exact: true }),
-    ).toHaveValue(kind);
-    await expect(page.locator(".sync-catalog tbody tr").first()).toBeVisible();
+      page.getByRole("heading", { level: 1, name: title, exact: true }),
+    ).toBeVisible();
+    await expect(page.locator("nav a[aria-current=page]")).toHaveAttribute(
+      "href",
+      "/" + kind,
+    );
+    await expect(page.locator(".sync-catalog")).toHaveCount(0);
   }
   await page.goto("/resources");
-  await page.getByRole("button", { name: "다음", exact: true }).click();
-  await expect(page).toHaveURL(/page=2/);
+  await expect(
+    page.getByRole("heading", { name: "변경 관리", exact: true }),
+  ).toBeVisible();
   await page
     .getByLabel("리소스 검색", { exact: true })
     .fill("no-resource-found");

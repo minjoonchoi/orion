@@ -1,10 +1,4 @@
-import { Suspense } from "react";
-import { PolicySyncScreen } from "@/features/policy-sync/screen";
-
+import { redirect } from "next/navigation";
 export default function Page() {
-  return (
-    <Suspense>
-      <PolicySyncScreen />
-    </Suspense>
-  );
+  redirect("/resources?type=policies");
 }

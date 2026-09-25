@@ -49,20 +49,19 @@ test("detail and multi-select use the same two steps and only selected resources
   await expect(dialog).toHaveCount(0);
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();
   await page.goto("/resources?status=out-of-sync");
-  const catalog = page.getByRole("table", { name: "리소스 관리" });
+  const catalog = page.getByRole("table", { name: "변경 관리" });
   await expect(catalog).not.toContainText("svc-orion");
   await expect(catalog).not.toContainText("ws-platform");
-  await expect(catalog.locator("tbody tr")).toHaveCount(3);
+  await expect(catalog.locator("tbody tr")).toHaveCount(6);
 });
 
 test("policy Sync includes dependencies, previews role-based users and organizations, then commits one revision", async ({
   page,
 }) => {
-  await page.goto("/policies/sync");
+  await page.goto("/resources?type=policies&resource=policy-platform");
   const card = page
     .locator(".sync-diffs > details")
     .filter({ hasText: "policy-platform" });
-  await card.locator("summary").click();
   await card.getByRole("button", { name: "이 정책 동기화" }).click();
   const dialog = page.getByRole("dialog");
   const targets = dialog.getByRole("table", { name: "동기화 대상" });
@@ -104,8 +103,8 @@ test("policy Sync includes dependencies, previews role-based users and organizat
     page.getByText("revision 1", { exact: true }).first(),
   ).toBeVisible();
   await page.goto("/resources?status=out-of-sync");
-  const catalog = page.getByRole("table", { name: "리소스 관리" });
-  await expect(catalog.locator("tbody tr")).toHaveCount(2);
+  const catalog = page.getByRole("table", { name: "변경 관리" });
+  await expect(catalog.locator("tbody tr")).toHaveCount(4);
   await expect(catalog).toContainText("ep-users-list");
   await expect(catalog).toContainText("ws-empty");
   await page.goto("/resources?history=services:svc-orion");

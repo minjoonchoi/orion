@@ -5,7 +5,7 @@ test("GitOps diff, explicit review, apply and catalog projection", async ({
 }) => {
   await page.goto("/resource-sync");
   await expect(page.getByText("revision 0", { exact: true })).toBeVisible();
-  await expect(page.getByRole("table", { name: "리소스 관리" })).toBeVisible();
+  await expect(page.getByRole("table", { name: "변경 관리" })).toBeVisible();
   await page
     .getByRole("combobox", { name: "리소스 유형", exact: true })
     .selectOption("services");
@@ -30,7 +30,7 @@ test("GitOps diff, explicit review, apply and catalog projection", async ({
   await expect(
     dialog.getByRole("heading", { name: "변경 전후", exact: true }),
   ).toBeVisible();
-  await expect(dialog).toContainText("리소스 5");
+  await expect(dialog).toContainText("리소스 8");
   await dialog.locator(".sync-confirm input").check();
   await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(page.getByRole("status")).toContainText("succeeded");
@@ -121,7 +121,7 @@ test("unified catalog filters, detail diff links and persistent session history"
 }) => {
   await page.goto("/resources");
   await expect(
-    page.getByRole("heading", { name: "리소스 관리", exact: true }),
+    page.getByRole("heading", { name: "변경 관리", exact: true }),
   ).toBeVisible();
   await page
     .getByRole("combobox", { name: "리소스 유형", exact: true })
@@ -138,13 +138,13 @@ test("unified catalog filters, detail diff links and persistent session history"
   await page.getByRole("button", { name: "목록으로 돌아가기" }).click();
   await expect(
     page.getByRole("button", {
-      name: "전체 변경 동기화 · 5",
+      name: "전체 변경 동기화 · 8",
       exact: true,
     }),
   ).toBeVisible();
   await page
     .getByRole("button", {
-      name: "전체 변경 동기화 · 5",
+      name: "전체 변경 동기화 · 8",
       exact: true,
     })
     .click();
@@ -152,7 +152,7 @@ test("unified catalog filters, detail diff links and persistent session history"
   await dialog
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
-  await expect(dialog.locator(".sync-review-list > details")).toHaveCount(5);
+  await expect(dialog.locator(".sync-review-list > details")).toHaveCount(8);
   await dialog.locator(".sync-confirm input").check();
   await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(page.getByText("revision 1", { exact: true })).toBeVisible();

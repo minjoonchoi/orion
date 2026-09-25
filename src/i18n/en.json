@@ -701,5 +701,18 @@
   "동기화": "Sync",
   "전체 변경 동기화": "Sync all changes",
   "선택한 정책과 연결된 리소스를 동기화합니다. 변경사항과 영향도를 검토한 뒤 적용하세요.": "Sync the selected policies and linked resources. Review changes and impact before applying.",
-  "선택한 리소스를 동기화합니다. 변경사항과 영향도를 검토한 뒤 적용하세요.": "Sync the selected resources. Review changes and impact before applying."
+  "선택한 리소스를 동기화합니다. 변경사항과 영향도를 검토한 뒤 적용하세요.": "Sync the selected resources. Review changes and impact before applying.",
+  "권한 관리": "Access management",
+  "변경 관리": "Change management",
+  "정책과 리소스의 변경사항을 검토하고 적용합니다.": "Review and apply changes to policies and resources.",
+  "워크스페이스와 소속 페이지를 탐색합니다.": "Browse workspaces and their pages.",
+  "페이지 경로와 소속 워크스페이스를 탐색합니다.": "Browse page paths and parent workspaces.",
+  "서비스와 소속 엔드포인트를 탐색합니다.": "Browse services and their endpoints.",
+  "HTTP 메서드와 경로로 엔드포인트를 탐색합니다.": "Browse endpoints by HTTP method and path.",
+  "현재 적용된 접근 대상을 탐색합니다.": "Browse currently applied access targets.",
+  "조회 대상으로 선택한 정책과 리소스의 연결 관계만 표시합니다.": "Only relationships for selected policies and resources are shown.",
+  "정책과 함께 적용된 리소스가 있으면 해당 실행의 범위를 함께 복원합니다.": "Rollback restores the policies and resources included in that run together.",
+  "대상 정보가 없는 이전 실행은 정책별 이력에서 제외됩니다.": "Older runs without target information are excluded from per-policy history.",
+  "변경사항": "Changes",
+  "적용 범위": "Scope"
 }

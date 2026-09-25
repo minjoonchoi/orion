@@ -4,9 +4,10 @@ import path from "node:path";
 import { chromium } from "playwright-core";
 import AxeBuilder from "@axe-core/playwright";
 
-const output = process.env.ORION_UX_OUTPUT ?? "../orion-sync-workflow-screens";
+const output =
+  process.env.ORION_UX_OUTPUT ?? "../orion-resource-navigation-screens";
 fs.mkdirSync(output, { recursive: true });
-const origin = "http://127.0.0.1:3125";
+const origin = "http://127.0.0.1:3135";
 const server = spawn(
   "node",
   [
@@ -17,7 +18,7 @@ const server = spawn(
     "--hostname",
     "127.0.0.1",
     "--port",
-    "3125",
+    "3135",
   ],
   {
     stdio: ["ignore", "pipe", "pipe"],
@@ -89,66 +90,64 @@ try {
       fullPage: !(await page.getByRole("dialog").isVisible()),
     });
   }
-  await visit("/services/svc-orion");
-  await page.getByRole("button", { name: "동기화", exact: true }).click();
-  await page.getByRole("table", { name: "동기화 대상" }).waitFor();
-  await capture("01-detail-sync-target.png");
+  await visit("/workspaces");
+  await capture("01-workspaces.png");
+  await visit("/service-endpoints");
   await page
-    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
-    .click();
-  await page.locator(".sync-confirm input").waitFor();
-  await capture("02-detail-sync-review.png");
-  await page.getByRole("button", { name: "닫기", exact: true }).click();
-  await visit("/resources?type=services");
+    .getByLabel("서비스 필터", { exact: true })
+    .selectOption("svc-orion");
+  await capture("02-endpoint-exploration.png");
+  await visit("/policies");
+  await capture("03-policy-exploration.png");
+  await visit("/resources?status=out-of-sync");
+  await page.getByRole("table", { name: "변경 관리", exact: true }).waitFor();
+  await capture("04-change-management.png");
   await page
+    .getByRole("combobox", { name: "리소스 유형", exact: true })
+    .selectOption("policies");
+  await page
+    .getByRole("table", { name: "변경 관리", exact: true })
     .getByRole("row")
-    .filter({ hasText: "svc-orion" })
+    .filter({ hasText: "policy-platform" })
     .getByRole("checkbox")
     .check();
   await page
     .getByRole("combobox", { name: "리소스 유형", exact: true })
-    .selectOption("workspaces");
+    .selectOption("service-endpoints");
   await page
+    .getByRole("table", { name: "변경 관리", exact: true })
     .getByRole("row")
-    .filter({ hasText: "ws-platform" })
+    .filter({ hasText: "ep-users-list" })
     .getByRole("checkbox")
     .check();
   await page
     .getByRole("button", { name: "선택 리소스 동기화", exact: true })
     .click();
-  await page.getByRole("table", { name: "동기화 대상" }).waitFor();
-  await capture("03-selected-sync-targets.png");
+  await page.getByRole("table", { name: "동기화 대상", exact: true }).waitFor();
+  await capture("05-mixed-sync-targets.png");
   await page
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
-  await page.locator(".sync-confirm input").waitFor();
-  await capture("04-selected-sync-review.png");
+  await page.locator(".sync-workflow-impact .subject-impact").waitFor();
+  await capture("06-mixed-impact-review.png");
+  report.pages.push({
+    route: "change-review",
+    violations: (await new AxeBuilder({ page }).analyze()).violations,
+  });
   await page.getByRole("button", { name: "닫기", exact: true }).click();
-  await visit("/resources?type=policies&resource=policy-platform");
-  const card = page
-    .locator(".sync-diffs > details")
-    .filter({ hasText: "policy-platform" });
-  await card.getByRole("button", { name: "이 정책 동기화" }).click();
-  await page.getByRole("table", { name: "동기화 대상" }).waitFor();
-  await capture("05-policy-resource-targets.png");
-  await page
-    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
-    .click();
-  await page.locator(".sync-confirm input").waitFor();
-  await capture("06-policy-role-impact.png");
-  const diff = page.locator(".sync-review-list > details").first();
-  await diff.locator("summary").click();
-  await diff.scrollIntoViewIfNeeded();
-  await capture("07-policy-diff.png");
-  await page.getByRole("button", { name: "대상으로 돌아가기" }).click();
-  await page.getByRole("table", { name: "동기화 대상" }).waitFor();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole("dialog").evaluate((el) => (el.scrollTop = 0));
-  await capture("08-mobile-targets.png");
-  const violations = (await new AxeBuilder({ page }).analyze()).violations;
-  report.pages.push({ route: "policy-sync-dialog", violations });
+  await visit("/service-endpoints");
+  report.pages.push({
+    route: "endpoints-mobile",
+    mobileOverflow: await page.evaluate(
+      () => document.documentElement.scrollWidth > innerWidth,
+    ),
+    violations: (await new AxeBuilder({ page }).analyze()).violations,
+  });
+  await page.getByRole("button", { name: "메뉴 열기", exact: true }).click();
+  await capture("07-mobile-navigation.png");
   report.interactions.push(
-    "Single detail and selected list share two stages; policy resources, role impact and diff captured",
+    "Applied resource catalogs; policies in resource navigation; combined change catalog; mixed policy and resource Sync",
   );
 } catch (error) {
   report.errors.push(error.stack);

@@ -49,7 +49,7 @@ const fields: Record<string, string> = {
   processors: "전처리·후처리",
 };
 
-function Changes({
+export function Changes({
   before,
   after,
 }: {

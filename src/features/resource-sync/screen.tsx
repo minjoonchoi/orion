@@ -1,4 +1,12 @@
 "use client";
+import { loadPolicySync } from "../policy-sync/actions";
+import {
+  diff as policyDiff,
+  type Snapshot as PolicySnapshot,
+} from "../policy-sync/model";
+import { PolicyHistoryDialog } from "../policy-sync/history";
+import { SubjectImpact } from "../authorization/subject-impact-view";
+import { Changes } from "../sync-workflow/dialog";
 import { SyncDialog } from "../sync-workflow/dialog";
 import type { Selection } from "../sync-workflow/model";
 import { ResourceImpact } from "../authorization/resource-impact";
@@ -33,6 +41,17 @@ const fieldLabels = {
   parentId: "상위 리소스",
   state: "정의 상태",
 };
+type CatalogItem = {
+  kind: ResourceKind | "policies";
+  id: string;
+  name: string;
+  path: string;
+  method: string;
+  parentId?: string;
+};
+const catalogLabels = { ...kindLabel, policies: "정책" };
+const isAccessResource = (r: CatalogItem): r is CatalogItem & ResourceRef =>
+  r.kind !== "policies";
 export function ResourceSyncScreen() {
   const { t, mode } = useI18n();
   const params = useSearchParams();
@@ -42,6 +61,7 @@ export function ResourceSyncScreen() {
     (params.get("tab") === "changes" ? "out-of-sync" : "all");
   const kind = params.get("type") ?? "all";
   const selectedId = params.get("resource");
+  const diffKind = params.get("diffType") ?? kind;
   const [historyKind, historyId] = (params.get("history") ?? "").split(":");
   function historyUrl(kind: string, id: string) {
     const next = new URLSearchParams(params.toString());
@@ -54,9 +74,12 @@ export function ResourceSyncScreen() {
     next.set(key, value);
     if (key !== "page") next.delete("page");
     if (key !== "resource") next.delete("resource");
-    if (key === "resource" && !value) next.delete("resource");
+    if (!value) next.delete(key);
     window.history.replaceState(null, "", "/resources?" + next.toString());
   }
+  const [policySnapshot, setPolicySnapshot] = useState<PolicySnapshot | null>(
+    null,
+  );
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [syncSelection, setSyncSelection] = useState<Selection | null>(null);
   const [run, setRun] = useState<Run | null>(null);
@@ -66,18 +89,18 @@ export function ResourceSyncScreen() {
   const filter = params.get("change") ?? "all";
   const [impactReview, setImpactReview] = useState<{
     snapshot: Snapshot;
-    resources: ResourceRef[];
+    resources: CatalogItem[];
   } | null>(null);
-  async function inspectImpact(resources: ResourceRef[]) {
+  async function inspectImpact(resources: CatalogItem[]) {
     if (!resources.length) return;
     setBusy(true);
     setError("");
     try {
-      const result = await loadSync();
-      if (result.data) {
-        setSnapshot(result.data);
-        setImpactReview({ snapshot: result.data, resources });
-      } else setError(result.error!);
+      const result = await loadSnapshots();
+      setImpactReview({
+        snapshot: { ...result.resource, graph: result.policy.graph },
+        resources,
+      });
     } catch {
       setError("REQUEST_FAILED");
     } finally {
@@ -90,45 +113,87 @@ export function ResourceSyncScreen() {
     keys.forEach((key) => next.append("selected", key));
     window.history.replaceState(null, "", `/resources?${next}`);
   }
+  async function loadSnapshots() {
+    const r = await loadSync();
+    if (!r.data) throw Error(r.error);
+    const p = await loadPolicySync();
+    if (!p.data) throw Error(p.error);
+    if (
+      r.data.dbRevision !== p.data.dbRevision ||
+      r.data.environment !== p.data.environment ||
+      r.data.region !== p.data.region
+    )
+      throw Error("CONFLICT");
+    setSnapshot(r.data);
+    setPolicySnapshot(p.data);
+    return { resource: r.data, policy: p.data };
+  }
   async function refresh() {
     setBusy(true);
     setError("");
     try {
-      const r = await loadSync();
-      if (r.data) setSnapshot(r.data);
-      else setError(r.error!);
-    } catch {
-      setError("REQUEST_FAILED");
+      await loadSnapshots();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "REQUEST_FAILED");
     } finally {
       setBusy(false);
     }
   }
   useEffect(() => {
-    void loadSync()
-      .then((r) => (r.data ? setSnapshot(r.data) : setError(r.error!)))
-      .catch(() => setError("REQUEST_FAILED"));
+    void loadSnapshots().catch((e) =>
+      setError(e instanceof Error ? e.message : "REQUEST_FAILED"),
+    );
+    // The catalog is reloaded explicitly after an apply, rollback or refresh.
   }, []);
   let result: ReturnType<typeof diff> | null = null;
+  let policies: ReturnType<typeof policyDiff> | null = null;
   let invalid = false;
   try {
     if (snapshot) result = diff(snapshot);
+    if (policySnapshot) policies = policyDiff(policySnapshot);
   } catch {
     invalid = true;
   }
-  const changes = result?.rows.filter((r) => r.operation !== "unchanged") ?? [];
+  const resourceChanges =
+    result?.rows.filter((r) => r.operation !== "unchanged") ?? [];
+  const policyChanges =
+    policies?.rows.filter((r) => r.operation !== "unchanged") ?? [];
+  const changes = [
+    ...resourceChanges.map((r) => ({ ...r, after: r.after as CatalogItem })),
+    ...policyChanges.map((r) => ({
+      ...r,
+      after: { ...r.after, kind: "policies" as const, path: "", method: "" },
+    })),
+  ];
   const rows =
     result?.rows.filter(
       (r) =>
         r.operation !== "unchanged" &&
-        (kind === "all" || r.after.kind === kind) &&
+        (diffKind === "all" || r.after.kind === diffKind) &&
         (!selectedId || r.after.id === selectedId),
     ) ?? [];
-  const resourceCatalog = [
+  const resourceCatalog: CatalogItem[] = [
     ...(snapshot?.graph.resources ?? []),
-    ...changes.filter((r) => r.operation === "create").map((r) => r.after),
+    ...resourceChanges
+      .filter((r) => r.operation === "create")
+      .map((r) => r.after),
     ...(result?.rows
       .filter((r) => r.after.state === "absent" && !r.before)
       .map((r) => r.after) ?? []),
+    ...(policySnapshot?.graph.policies ?? []).map((p) => ({
+      ...p,
+      kind: "policies" as const,
+      path: "",
+      method: "",
+    })),
+    ...(policies?.rows
+      .filter((p) => !p.before)
+      .map((p) => ({
+        ...p.after,
+        kind: "policies" as const,
+        path: "",
+        method: "",
+      })) ?? []),
   ];
   const catalog = resourceCatalog
     .filter((r) => {
@@ -179,24 +244,26 @@ export function ResourceSyncScreen() {
     );
   const active = Boolean(run && ["queued", "running"].includes(run.status));
   const syncState = changes.length ? "Out of sync" : "Synced";
-  function startSync(resources: ResourceRef[]) {
+  function startSync(resources: CatalogItem[]) {
     setSyncSelection({
-      mode: "resources",
-      resources: resources.map(({ kind, id }) => ({ kind, id })),
-      policyIds: [],
+      mode: resources.some((r) => r.kind === "policies")
+        ? "policies"
+        : "resources",
+      resources: resources
+        .filter(isAccessResource)
+        .map(({ kind, id }) => ({ kind, id })),
+      policyIds: resources
+        .filter((r) => r.kind === "policies")
+        .map((r) => r.id),
     });
   }
   return (
     <div className="sync-page">
       <div className="sync-heading">
         <div>
-          <p className="muted">GITOPS / RESOURCES</p>
-          <h1>{t("리소스 관리")}</h1>
-          <p>
-            {t(
-              "Synced revision과 Git 정의서의 차이를 확인하고 검토 후 동기화합니다.",
-            )}
-          </p>
+          <p className="muted">{t("리소스")}</p>
+          <h1>{t("변경 관리")}</h1>
+          <p>{t("정책과 리소스의 변경사항을 검토하고 적용합니다.")}</p>
         </div>
         <div className="ui-actions">
           <Button
@@ -242,7 +309,7 @@ export function ResourceSyncScreen() {
               </span>
             </section>
             <section>
-              <span>{t("Synced")}</span>
+              <span>{t("리소스")} · Synced</span>
               <strong>revision {snapshot.dbRevision}</strong>
               <code>{snapshot.appliedCommit}</code>
             </section>
@@ -255,6 +322,13 @@ export function ResourceSyncScreen() {
               </span>
             </section>
           </div>
+          {policySnapshot && (
+            <p className="muted">
+              {t("정책")} · Synced: <code>{policySnapshot.appliedCommit}</code>{" "}
+              · {t("Git revision")}:{" "}
+              <code>{policySnapshot.candidateCommit}</code>
+            </p>
+          )}
           {run && (
             <div className="sync-notice" role="status">
               <strong>
@@ -271,23 +345,6 @@ export function ResourceSyncScreen() {
                     ? t("예제 Rollback 완료")
                     : run.message}
               </p>
-            </div>
-          )}
-          {!!result?.blockers.length && (
-            <div role="alert" className="sync-blockers">
-              <strong>{t("동기화 차단")}</strong>
-              {result.blockers.map((b) => (
-                <p key={b}>
-                  {t(
-                    b.startsWith("POLICY_REFERENCE")
-                      ? "정책이 연결된 리소스는 삭제할 수 없습니다."
-                      : b.startsWith("PARENT_REFERENCE")
-                        ? "하위 리소스의 상위 참조를 먼저 해결하세요."
-                        : "config 준비 상태와 synced revision을 확인하세요.",
-                  )}{" "}
-                  <code>{b}</code>
-                </p>
-              ))}
             </div>
           )}
           <div className="sync-toolbar">
@@ -307,7 +364,7 @@ export function ResourceSyncScreen() {
                 onChange={(e) => navigate("type", e.target.value)}
               >
                 <option value="all">{t("전체")}</option>
-                {Object.entries(kindLabel).map(([key, label]) => (
+                {Object.entries(catalogLabels).map(([key, label]) => (
                   <option key={key} value={key}>
                     {t(label)}
                   </option>
@@ -365,7 +422,7 @@ export function ResourceSyncScreen() {
                   active ||
                   invalid ||
                   !changes.length ||
-                  !!result?.blockers.length
+                  !policySnapshot
                 }
                 onClick={() => startSync(changes.map((r) => r.after))}
               >
@@ -384,14 +441,26 @@ export function ResourceSyncScreen() {
                 </span>
               )}
               <Button
-                disabled={!selection.length || busy || active}
+                disabled={
+                  !selection.length ||
+                  busy ||
+                  active ||
+                  invalid ||
+                  !policySnapshot
+                }
                 onClick={() => startSync(selection)}
               >
                 {t("선택 리소스 동기화")}
               </Button>
               <Button
                 variant="secondary"
-                disabled={!selection.length || busy || active}
+                disabled={
+                  !selection.length ||
+                  busy ||
+                  active ||
+                  invalid ||
+                  !policySnapshot
+                }
                 onClick={() => inspectImpact(selection)}
               >
                 {t("선택 리소스 영향도 검토")}
@@ -411,7 +480,7 @@ export function ResourceSyncScreen() {
                   {selection.map((r) => (
                     <li key={`${r.kind}:${r.id}`}>
                       <span>
-                        {t(kindLabel[r.kind])} · {r.name}
+                        {t(catalogLabels[r.kind])} · {r.name}
                       </span>
                       <Button
                         size="sm"
@@ -438,7 +507,7 @@ export function ResourceSyncScreen() {
           </section>
           {
             <div className="sync-catalog">
-              <table aria-label={t("리소스 관리")}>
+              <table aria-label={t("변경 관리")}>
                 <thead>
                   <tr>
                     <th>
@@ -502,10 +571,13 @@ export function ResourceSyncScreen() {
                     const parentKind =
                       r.kind === "pages" ? "workspaces" : "services";
                     const deleted =
-                      !snapshot.graph.resources.some(
-                        (current) =>
-                          current.kind === r.kind && current.id === r.id,
-                      ) && change?.operation !== "create";
+                      !(r.kind === "policies"
+                        ? policySnapshot?.graph.policies.some(
+                            (p) => p.id === r.id,
+                          )
+                        : snapshot.graph.resources.some(
+                            (p) => p.kind === r.kind && p.id === r.id,
+                          )) && change?.operation !== "create";
                     const parent = snapshot.graph.resources.find(
                       (p) => p.kind === parentKind && p.id === r.parentId,
                     );
@@ -536,7 +608,7 @@ export function ResourceSyncScreen() {
                             {r.path && ` · ${r.method} ${r.path}`}
                           </small>
                         </td>
-                        <td>{t(kindLabel[r.kind])}</td>
+                        <td>{t(catalogLabels[r.kind])}</td>
                         <td>
                           {parent ? (
                             <Link href={`/${parent.kind}/${parent.id}`}>
@@ -575,7 +647,18 @@ export function ResourceSyncScreen() {
                               variant="ghost"
                               size="sm"
                               className={`sync-badge ${change.operation}`}
-                              onClick={() => navigate("resource", r.id)}
+                              onClick={() => {
+                                const next = new URLSearchParams(
+                                  params.toString(),
+                                );
+                                next.set("resource", r.id);
+                                next.set("diffType", r.kind);
+                                window.history.replaceState(
+                                  null,
+                                  "",
+                                  `/resources?${next}`,
+                                );
+                              }}
                             >
                               Out of sync · {operation(change.operation)} ·{" "}
                               {t("diff 확인")}
@@ -667,6 +750,17 @@ export function ResourceSyncScreen() {
                     }}
                   />
                 )}
+              {historyKind === "policies" && historyId && (
+                <PolicyHistoryDialog
+                  key={historyId}
+                  id={historyId}
+                  onClose={() => navigate("history", "")}
+                  onUpdated={() => {
+                    void refresh();
+                    router.refresh();
+                  }}
+                />
+              )}
               <p className="muted">
                 {t(
                   "선택 리소스 동기화는 선택 범위에만 적용됩니다. 전체 변경 동기화는 모든 변경을 검토합니다.",
@@ -681,7 +775,7 @@ export function ResourceSyncScreen() {
                 </Button>
               )}
               <Dialog
-                title={t("리소스 변경 내용")}
+                title={t("변경사항")}
                 description={t(
                   "변경 전후를 확인한 뒤 선택 리소스 동기화에서 영향도를 검토하세요.",
                 )}
@@ -689,9 +783,42 @@ export function ResourceSyncScreen() {
                 onOpenChange={(open) => {
                   if (!open) navigate("resource", "");
                 }}
-                trigger={<button hidden aria-label={t("리소스 변경 내용")} />}
+                trigger={<button hidden aria-label={t("변경사항")} />}
               >
                 <div className="sync-diffs" id="resource-diff">
+                  {(diffKind === "policies" || diffKind === "all") &&
+                    policies?.rows
+                      .filter((row) => row.after.id === selectedId)
+                      .map((row) => (
+                        <details key={`policies:${row.key}`} open>
+                          <summary>
+                            <strong>{row.after.name}</strong> · {t("정책")} ·{" "}
+                            {row.after.id}
+                          </summary>
+                          <Changes
+                            before={row.before}
+                            after={
+                              row.operation === "delete" ? null : row.after
+                            }
+                          />
+                          <Button
+                            onClick={() => {
+                              navigate("resource", "");
+                              startSync([
+                                {
+                                  kind: "policies",
+                                  id: row.after.id,
+                                  name: row.after.name,
+                                  path: "",
+                                  method: "",
+                                },
+                              ]);
+                            }}
+                          >
+                            {t("이 정책 동기화")}
+                          </Button>
+                        </details>
+                      ))}
                   {rows
                     .filter((row) => row.after.id === selectedId)
                     .map((row) => (
@@ -767,7 +894,10 @@ export function ResourceSyncScreen() {
           }
           <details className="sync-yaml">
             <summary>{t("YAML 정의서 보기")}</summary>
+            <h3>{t("리소스")}</h3>
             <pre>{snapshot.yaml}</pre>
+            <h3>{t("정책")}</h3>
+            <pre>{policySnapshot?.yaml}</pre>
           </details>
         </>
       )}
@@ -784,7 +914,9 @@ export function ResourceSyncScreen() {
       )}
       <Dialog
         title={t("영향도 검토")}
-        description={t("조회 대상으로 선택한 리소스의 연결 관계만 표시합니다.")}
+        description={t(
+          "조회 대상으로 선택한 정책과 리소스의 연결 관계만 표시합니다.",
+        )}
         trigger={<button hidden aria-label={t("영향도 검토")} />}
         open={Boolean(impactReview)}
         onOpenChange={(open) => {
@@ -798,13 +930,50 @@ export function ResourceSyncScreen() {
               {impactReview.snapshot.region} · {t("조회 기준")} revision{" "}
               {impactReview.snapshot.dbRevision}
             </p>
-            <ResourceImpact
-              key={impactReview.resources
-                .map((r) => `${r.kind}:${r.id}`)
-                .join(",")}
-              graph={impactReview.snapshot.graph}
-              resources={impactReview.resources}
-            />
+            {impactReview.resources.some((r) => r.kind === "policies") ? (
+              <>
+                <p>
+                  {t("선택한 리소스")} ·{" "}
+                  {impactReview.resources
+                    .map((r) => `${t(catalogLabels[r.kind])}: ${r.name}`)
+                    .join(", ")}
+                </p>
+                <SubjectImpact
+                  graph={{
+                    ...impactReview.snapshot.graph,
+                    policies: impactReview.snapshot.graph.policies
+                      .map((p) => ({
+                        ...p,
+                        resources: impactReview.resources.some(
+                          (r) => r.kind === "policies" && r.id === p.id,
+                        )
+                          ? p.resources
+                          : p.resources.filter((ref) =>
+                              impactReview.resources.some(
+                                (r) => r.kind === ref.kind && r.id === ref.id,
+                              ),
+                            ),
+                      }))
+                      .filter(
+                        (p) =>
+                          p.resources.length ||
+                          impactReview.resources.some(
+                            (r) => r.kind === "policies" && r.id === p.id,
+                          ),
+                      ),
+                  }}
+                  scope={{}}
+                />
+              </>
+            ) : (
+              <ResourceImpact
+                key={impactReview.resources
+                  .map((r) => `${r.kind}:${r.id}`)
+                  .join(",")}
+                graph={impactReview.snapshot.graph}
+                resources={impactReview.resources.filter(isAccessResource)}
+              />
+            )}
             <div className="ui-dialog-footer">
               <Button variant="secondary" onClick={() => setImpactReview(null)}>
                 {t("목록으로 돌아가기")}

@@ -221,3 +221,34 @@ test("scoped rollback restores coupled definitions while keeping unrelated chang
     /BLOCKED/,
   );
 });
+
+test("mixed policy and resource selection applies an atomic union and preserves explicit selection reasons", () => {
+  const c = context(true);
+  c.selection.resources = [
+    { kind: "services", id: "other" },
+    { kind: "services", id: "svc" },
+  ];
+  const plan = buildPlan(c);
+  assert.deepEqual(plan.blockers, []);
+  assert.equal(plan.resources.find((r) => r.id === "svc")?.reason, "selected");
+  assert.equal(
+    plan.resources.find((r) => r.id === "other")?.reason,
+    "selected",
+  );
+  assert.equal(
+    new Set(plan.resources.map((r) => `${r.kind}:${r.id}`)).size,
+    plan.resources.length,
+  );
+  assert.equal(
+    plan.next?.resources.find((r) => r.id === "other")?.name,
+    "Unrelated change",
+  );
+  assert.equal(
+    plan.next?.resources.some((r) => r.id === "ep-new"),
+    true,
+  );
+  assert.equal(plan.next?.revision, 5);
+  assert.deepEqual(plan.next?.roles, c.resource.graph.roles);
+  c.resource.dbRevision += 1;
+  assert.throws(() => buildPlan(c), /CONFLICT/);
+});

@@ -190,9 +190,9 @@ export function PoliciesList({ rows }: { rows: PolicyRow[] }) {
         actions={
           <Link
             className="ui-button ui-button--secondary ui-button--md"
-            href="/policies/sync"
+            href="/resources?type=policies"
           >
-            {t("Out of sync 확인")}
+            {t("변경 관리")}
           </Link>
         }
       />

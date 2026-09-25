@@ -35,7 +35,14 @@ export function Navigation() {
             </h2>
             <ul className="navigation-items">
               {group.items.map((item) => (
-                <li key={item.href}>
+                <li
+                  key={item.href}
+                  className={
+                    item.href === "/policies" || item.href === "/resources"
+                      ? "navigation-divider"
+                      : undefined
+                  }
+                >
                   <Link
                     href={item.href}
                     onClick={() => setExpandedPath(null)}

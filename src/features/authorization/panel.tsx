@@ -962,7 +962,10 @@ export function AuthorizationPanel({
             "정책 정의는 Git에서 관리합니다. 리소스와 요청·응답 처리 변경은 동기화에서 검토하세요.",
           )}
         </p>
-        <Link className="identity-link" href="/policies/sync">
+        <Link
+          className="identity-link"
+          href={`/resources?type=policies&resource=${encodeURIComponent(id)}`}
+        >
           {t("정책 변경 검토")}
         </Link>
       </section>

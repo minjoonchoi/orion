@@ -86,7 +86,7 @@ test("page selection, clearing, and English mobile impact remain scoped and acce
   ]);
   await page.goto("/resources?type=services");
   const rows = page
-    .getByRole("table", { name: "Resource management" })
+    .getByRole("table", { name: "Change management" })
     .locator("tbody tr");
   await expect(rows.first()).toBeVisible();
   const count = await rows.count();

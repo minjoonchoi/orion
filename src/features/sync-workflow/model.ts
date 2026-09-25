@@ -62,7 +62,7 @@ export function normalizeSelection(input: unknown): Selection {
   s.policyIds = [...new Set(s.policyIds)].sort();
   if (
     (s.mode === "resources" && (!s.resources.length || s.policyIds.length)) ||
-    (s.mode === "policies" && (!s.policyIds.length || s.resources.length)) ||
+    (s.mode === "policies" && !s.policyIds.length) ||
     s.resources.length + s.policyIds.length > 500 ||
     [...s.resources.map((r) => r.id), ...s.policyIds].some(
       (id) => !/^[a-z0-9][a-z0-9_-]{0,99}$/.test(id),
@@ -113,7 +113,8 @@ export function buildPlan(context: Context) {
   for (const policy of policyDefinitions)
     if (policy.state === "present")
       for (const ref of policy.resources)
-        refs.set(keyOf(ref), { ...ref, reason: "policy" });
+        if (!refs.has(keyOf(ref)))
+          refs.set(keyOf(ref), { ...ref, reason: "policy" });
   // Add ancestors explicitly. No siblings or unrelated definitions are selected.
   for (const ref of refs.values()) {
     const desired = resourceBundle.spec.resources.find(

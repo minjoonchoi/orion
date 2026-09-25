@@ -28,11 +28,13 @@ const identity = (route: string, r: { id: string; name: string }) => (
 );
 function ListFrame({
   title,
+  kind,
   description,
   count,
   children,
 }: {
   title: string;
+  kind: string;
   description: string;
   count: number;
   children: ReactNode;
@@ -41,8 +43,14 @@ function ListFrame({
   return (
     <>
       <PageHeading title={t(title)} description={t(description)} />
+      <p className="muted">
+        {t("현재 적용된 접근 대상을 탐색합니다.")}{" "}
+        <Link className="identity-link" href={`/resources?type=${kind}`}>
+          {t("변경 관리")} ↗
+        </Link>
+      </p>
       <DemoNotice />
-      <Summary items={[{ label: t(`전체 ${title}`), value: count }]} />
+      <Summary items={[{ label: t("전체"), value: count }]} />
       {children}
     </>
   );
@@ -77,6 +85,7 @@ export function ServicesList({ rows }: { rows: ServiceRow[] }) {
   const { t } = useI18n();
   return (
     <ListFrame
+      kind="services"
       title={t("서비스")}
       description={t("접근 제어 대상 서비스와 소속 엔드포인트를 조회합니다.")}
       count={rows.length}
@@ -149,7 +158,9 @@ export function EndpointsTable({
           label: t("HTTP 메서드 필터"),
           options: [
             { value: "GET", label: "GET" },
-            { value: "POST", label: "POST" },
+            ...["POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"].map(
+              (method) => ({ value: method, label: method }),
+            ),
           ],
           matches: (r, v) => r.method === v,
         },
@@ -197,6 +208,7 @@ export function EndpointsList({
   const { t } = useI18n();
   return (
     <ListFrame
+      kind="service-endpoints"
       title={t("서비스 엔드포인트")}
       description={t("서비스별 API 메서드와 경로를 조회합니다.")}
       count={rows.length}
@@ -209,6 +221,7 @@ export function WorkspacesList({ rows }: { rows: WorkspaceRow[] }) {
   const { t } = useI18n();
   return (
     <ListFrame
+      kind="workspaces"
       title={t("워크스페이스")}
       description={t(
         "화면 접근 제어 대상 워크스페이스와 소속 페이지를 조회합니다.",
@@ -319,6 +332,7 @@ export function PagesList({
   const { t } = useI18n();
   return (
     <ListFrame
+      kind="pages"
       title={t("페이지")}
       description={t("워크스페이스별 화면 경로와 페이지 정보를 조회합니다.")}
       count={rows.length}

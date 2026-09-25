@@ -86,7 +86,7 @@ export function ResourceDeploymentStatus({
             : `/resources?type=${kind}`
         }
       >
-        {t(changed ? "변경 예정 · diff 확인" : "리소스 관리")}
+        {t(changed ? "변경 예정 · diff 확인" : "변경 관리")}
       </Link>
       <Button
         size="sm"

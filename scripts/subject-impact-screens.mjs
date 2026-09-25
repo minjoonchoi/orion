@@ -115,11 +115,10 @@ try {
   await impact.locator(".subject-row > summary").click();
   await capture("03-service-account-impact.png");
   await page.getByRole("button", { name: "닫기", exact: true }).click();
-  await visit("/policies/sync");
+  await visit("/resources?type=policies&resource=policy-platform");
   const card = page
     .locator(".sync-diffs > details")
     .filter({ hasText: "policy-platform" });
-  await card.locator("summary").click();
   await card.getByRole("button", { name: "이 정책 동기화" }).click();
   await page
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })

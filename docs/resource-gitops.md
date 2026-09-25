@@ -107,7 +107,7 @@ spec:
 
 영향도 조회는 단일 리소스 또는 선택한 리소스 집합 기준이다. 행/상세의 `영향도 보기`는 그 리소스만, 목록 체크박스의 `선택 리소스 영향도 보기`는 선택한 리소스만 포함한다. 모달에서 전체 선택과 개별 리소스를 전환할 수 있고 정책·역할·조직·사용자를 각각 중복 제거하여 집계한다. 조회를 열 때 기존 `GET resource-sync/status`로 최신 snapshot을 가져오며 환경·리전·revision을 명시한다. 선택 ID는 `selected=kind:id` 반복 쿼리로 보존한다. 선택은 읽기 전용 영향도 조회와 선택 리소스 Sync의 범위에 사용된다. 전체 변경 Sync는 별도로 모든 변경을 검토한다.
 
-`/resources`에서 synced 리소스와 Out of sync 변경 사항을 한 목록으로 제공합니다. type 쿼리로 유형을 필터링하고 resource 쿼리로 특정 diff에 접근합니다. 기존 유형별 목록 주소는 필터로 이동하며 상세 주소는 유지합니다. 필터는 조회 전용이며 Sync 범위는 명시적으로 선택한 대상에 의해 결정됩니다.
+`/resources`는 ‘변경 관리’이며 정책과 리소스의 Synced / Out of sync 상태를 한 목록으로 제공합니다. type 쿼리는 정책(policies)과 접근 대상 네 유형을 지원합니다. resource 및 diffType 쿼리로 유형+ID별 diff에 접근합니다. `/workspaces`, `/pages`, `/services`, `/service-endpoints`는 현재 적용된 목록을 조회하는 독립 탐색 화면입니다. `/policies/sync`와 `/policy-sync`는 변경 관리의 정책 필터로 이동합니다. 필터는 조회 전용이며 Sync 범위는 명시적으로 선택한 대상에 의해 결정됩니다.
 
 동기화 이력은 별도 메뉴 없이 목록의 각 리소스 `이력 보기`와 상세 화면 `동기화 이력`에서 엽니다. 목록의 `history=kind:id` 쿼리를 새로고침해도 동일 이력을 열고 다른 필터를 유지합니다. 기존 `/resource-sync/history`는 `/resources`로 이동합니다. YAML에 명시된 삭제 완료 항목도 목록에 남아 삭제 기록을 조회할 수 있습니다.
 
@@ -126,8 +126,8 @@ Snapshot에서 외부 자동 동기화 상태 필드(autoSync)를 제거했습�
 정책 영향도는 선택 정책 → 부여된 역할 → 직접 사용자·조직 → 조직 멤버로 표시하고 중복 ID를 제외합니다. 만료된 부여는 연결 경로에서 표시하며 실제 접근 판정과 구분합니다. 함께 변경되는 리소스가 다른 정책에도 사용되면 ‘리소스 변경의 추가 영향’에서 그 관계를 확인합니다. 역할·사용자·조직 부여는 Sync로 변경하지 않습니다.
 
 - 첫 단계 조회는 `GET resource-sync/status`와 정책 선택 시 `GET policy-sync/status`를 사용합니다. 두 snapshot의 환경·리전·revision과 리소스 상태는 일치해야 합니다.
-- `POST sync-plans/previews`: `{selection,revision,resourceCommit,resourceDigest,policyCommit,policyDigest}`. `selection`은 `{mode:"resources",resources:[{kind,id}],policyIds:[]}` 또는 `{mode:"policies",resources:[],policyIds:[id]}`입니다. 정책이 없으면 policy commit/digest는 빈 문자열입니다. 응답은 `{data:{token,expiresAt,context:{selection,resource:ResourceSnapshot,policy:PolicySnapshot|null}}}`입니다.
-- 서버는 선택 범위와 의존성 포함 범위를 재계산하고 모든 대상의 권한을 검증합니다. token에는 사용자, 환경·리전, 전체 인가 revision, 두 source의 commit/digest, 정확한 대상 및 의존성을 바인딩합니다. UI도 응답 scope, revision, 원본 SHA-256, 만료를 확인합니다. 선택은 종류+ID로 정규화하며 비어 있거나 혼합된 mode는 거부합니다.
+- `POST sync-plans/previews`: `{selection,revision,resourceCommit,resourceDigest,policyCommit,policyDigest}`. `selection`은 `{mode:"resources",resources:[{kind,id}],policyIds:[]}` 또는 `{mode:"policies",resources:[{kind,id}],policyIds:[id]}`입니다. 정책 모드의 resources는 빈 배열 또는 함께 선택한 접근 대상 목록입니다. API 서버도 혼합 선택을 허용하고 직접 선택+정책 연결+필수 상위의 합집합을 단일 검토 token/revision으로 검증·적용해야 합니다. 명시적으로 선택한 대상의 포함 사유를 우선하며 중복 적용하지 않습니다. 정책이 없으면 policy commit/digest는 빈 문자열입니다. 응답은 `{data:{token,expiresAt,context:{selection,resource:ResourceSnapshot,policy:PolicySnapshot|null}}}`입니다.
+- 서버는 선택 범위와 의존성 포함 범위를 재계산하고 모든 대상의 권한을 검증합니다. token에는 사용자, 환경·리전, 전체 인가 revision, 두 source의 commit/digest, 정확한 대상 및 의존성을 바인딩합니다. UI도 응답 scope, revision, 원본 SHA-256, 만료를 확인합니다. 선택은 종류+ID로 정규화합니다. resources 모드에 policyIds를 넣거나 policies 모드에서 policyIds를 비운 요청은 거부합니다. policies 모드의 resources는 함께 선택할 접근 대상을 허용합니다.
 - `POST sync-plans/runs`: `{previewToken,idempotencyKey}` → `{data:ResourceRun}`. **정책과 연관 리소스 전체를 하나의 트랜잭션으로 적용**하고 revision을 한 번 증가시킵니다. 재검증 실패 시 전부 거부합니다. 같은 key의 재시도는 기존 실행을 반환합니다. 이전 전체 Sync API로 대체하지 않습니다.
 - `GET sync-plans/runs/{id}`: 같은 DTO로 진행 상황을 반환합니다. queued/running 동안 재적용과 닫기를 잠그며 2초 간격으로 상태를 조회합니다. succeeded만 완료로 표시합니다. 실패 시 새 검토를 시작합니다.
 - 리소스별 이력은 실제 변경된 리소스의 before/after를 같은 실행 ID로 기록합니다. 정책 이력에는 `policyIds`와 실제 변경된 `resourceRefs`를 포함합니다. 정책 이력 롤백은 그 범위의 정의만 복원하고 나머지 리소스·정책·현재 부여는 보존하며 최종 참조를 함께 검증합니다. 기존 scope 없는 정책 실행만 이전 전체 정책 복원 의미를 유지합니다.
@@ -137,3 +137,11 @@ Snapshot에서 외부 자동 동기화 상태 필드(autoSync)를 제거했습�
 ### 영향받는 대상 우선 표시
 
 공통 검토의 첫 영향 화면은 사용자·조직·서비스 어카운트별 중복 없는 목록입니다. 대상별로 역할과 정책 요약을 먼저 표시하고 펼치면 직접 부여된 역할 → 정책 → 리소스 경로를 확인합니다. 조직은 별도 대상이며 멤버 사용자로 확장하지 않습니다. 리소스 검토의 단일/다중 선택 범위는 유지하며 정책 Sync는 선택 정책의 역할 연결로만 집계합니다. 서비스 어카운트 역할은 graph.serviceAccounts의 명시적 roleIds를 사용하고 조직 소속으로 추정하지 않습니다. Graph 확장 및 누락 응답 의미는 `docs/authorization-management.md`를 따릅니다.
+
+### 정책을 포함한 변경 관리
+
+LSB의 리소스 그룹은 워크스페이스·페이지·서비스·엔드포인트, 정책, 변경 관리 순서입니다. 역할은 권한 관리 그룹에 둡니다. 정책은 배포/변경 관리 유형이며 정책에 연결할 접근 대상의 ResourceKind는 기존 네 종류를 유지합니다.
+
+변경 관리는 resource-sync/status와 policy-sync/status를 모두 읽고 환경·리전·revision 일치를 확인합니다. 정책과 리소스의 source commit은 각각 표시합니다. 전체 변경 동기화는 필터와 무관하게 두 정의서의 변경 전체를 검토합니다. 리소스 단독 diff의 차단 사유로 정책을 포함한 합동 적용을 미리 차단하지 않으며 공통 preview에서 최종 결합 상태의 참조를 검증합니다.
+
+정책 행의 이력은 `history=policies:id`로 조회하며 run.policyIds에 해당 ID가 있는 실행만 표시합니다. policyIds가 없는 이전 전역 실행은 정책별 이력에서 제외하고 안내합니다. 기존 정책 rollback API는 실행 단위이므로 함께 적용한 정책·리소스 범위를 명시하고 그 실행 범위를 복원합니다. 개별 정책만 복원하는 API로 오인해서는 안 됩니다. 리소스별 이력과 단일 리소스 롤백은 기존 계약을 유지합니다.

@@ -99,7 +99,12 @@ test("policy definitions are reviewed through GitOps", async ({ page }) => {
     page.getByRole("button", { name: "리소스 연결과 정책 효과" }),
   ).toHaveCount(0);
   await page.getByRole("link", { name: "정책 변경 검토" }).click();
-  await expect(page).toHaveURL(/policies\/sync$/);
+  await expect(page).toHaveURL(
+    /resources\?type=policies&resource=policy-platform/,
+  );
+  await page
+    .getByRole("button", { name: "목록으로 돌아가기", exact: true })
+    .click();
   await page.getByRole("button", { name: /전체 변경 동기화/ }).click();
   await page
     .getByRole("dialog")
