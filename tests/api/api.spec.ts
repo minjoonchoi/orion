@@ -18,8 +18,14 @@ test("one build selects different regional APIs and login URLs at runtime", asyn
     await expect(
       page.getByRole("heading", { name: `Live ${region} en`, exact: true }),
     ).toBeVisible();
-    await page.getByRole("link", { name: "Related API user" }).click();
-    await expect(page).toHaveURL(/remote-user-2$/);
+    await page.getByRole("tab", { name: "Roles (0)", exact: true }).click();
+    await expect(
+      page.getByRole("heading", { name: "No records", exact: true }),
+    ).toBeVisible();
+    await page.goto(`http://127.0.0.1:${port}/users/remote-user-2`);
+    await expect(
+      page.getByRole("heading", { name: `Live ${region} en`, exact: true }),
+    ).toBeVisible();
     await page.goto(`http://127.0.0.1:${port}/login`);
     await expect(
       page.getByRole("link", { name: "Sign in with Okta" }),
@@ -33,6 +39,14 @@ test("all lists use API empty results; session and locale are forwarded", async 
   page,
   context,
 }) => {
+  await context.addCookies([
+    {
+      name: "orion_session",
+      value: "api-empty",
+      domain: "127.0.0.1",
+      path: "/",
+    },
+  ]);
   for (const route of [
     "organizations",
     "roles",
@@ -82,62 +96,75 @@ test("API 404, access denial and malformed payloads fail without sample fallback
   }
 });
 
-test("authorization changes use real POST responses and handle conflicts and forbidden responses", async ({
+test("platform role assignments persist API responses and reject failed writes", async ({
   page,
   context,
 }) => {
-  await page.goto("/users/remote-user");
-  await page.getByRole("button", { name: "Assign roles", exact: true }).click();
-  const dialog = page.getByRole("dialog");
-  await dialog
-    .getByRole("checkbox", { name: "Remote role", exact: true })
-    .check();
-  await dialog
-    .getByRole("button", { name: "Review changes & impact", exact: true })
-    .click();
-  await dialog
-    .getByRole("button", { name: "Apply changes", exact: true })
-    .click();
-  await expect(dialog.getByRole("status")).toContainText("Changes applied");
-  await dialog.getByRole("button", { name: "Close", exact: true }).click();
-  await page.getByRole("button", { name: "Assign roles", exact: true }).click();
-  await expect(
-    dialog.getByRole("checkbox", { name: "Remote role", exact: true }),
-  ).toBeChecked();
-  await context.addCookies([
-    {
-      name: "orion_session",
-      value: "conflict",
-      domain: "127.0.0.1",
-      path: "/",
-    },
-  ]);
-  await dialog
-    .getByRole("checkbox", { name: "Remote role", exact: true })
-    .uncheck();
-  await dialog
-    .getByRole("button", { name: "Review changes & impact", exact: true })
-    .click();
-  await dialog
-    .getByRole("button", { name: "Apply changes", exact: true })
-    .click();
-  await expect(dialog.getByRole("alert")).toContainText(
-    "This configuration has changed",
-  );
-  await dialog.getByRole("button", { name: "Close", exact: true }).click();
-  await context.addCookies([
-    {
-      name: "orion_session",
-      value: "forbidden",
-      domain: "127.0.0.1",
-      path: "/",
-    },
-  ]);
-  await page.getByRole("button", { name: "Assign roles", exact: true }).click();
-  await expect(
-    dialog.getByRole("heading", { name: "Access denied" }),
-  ).toBeVisible();
-  await expect(dialog.getByRole("checkbox")).toHaveCount(0);
+  for (const value of [
+    "platform-ok",
+    "platform-conflict",
+    "platform-forbidden",
+  ]) {
+    await context.addCookies([
+      { name: "orion_session", value, domain: "127.0.0.1", path: "/" },
+    ]);
+    await page.goto("/roles/remote-role?tab=users");
+    await page.getByRole("button", { name: "Add users", exact: true }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog
+      .getByRole("checkbox", { name: /Remote user remote-user@example.test/ })
+      .check();
+    await dialog
+      .getByRole("button", { name: "Review changes & impact", exact: true })
+      .click();
+    await dialog
+      .getByRole("button", { name: "Apply changes", exact: true })
+      .click();
+    if (value === "platform-ok") {
+      await expect(dialog).toHaveCount(0);
+      await page.reload();
+      await expect(
+        page.getByRole("table", { name: "Users list", exact: true }),
+      ).toContainText("Remote user");
+      await page.goto("/users/remote-user?tab=roles");
+      await expect(
+        page.getByRole("link", { name: "Remote role", exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("tab", { name: "Platform (0)", exact: true }),
+      ).toBeVisible();
+    } else {
+      await expect(dialog.getByRole("alert")).toBeVisible();
+      await page.reload();
+      await expect(
+        page.getByRole("heading", { name: "No records", exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("link", { name: "Remote user", exact: true }),
+      ).toHaveCount(0);
+    }
+  }
+});
+test("platform directory denies or rejects malformed data without demo fallback", async ({
+  page,
+  context,
+}) => {
+  for (const value of ["directory-forbidden", "directory-malformed"]) {
+    await context.addCookies([
+      { name: "orion_session", value, domain: "127.0.0.1", path: "/" },
+    ]);
+    await page.goto("/roles");
+    await expect(
+      page.getByRole("heading", {
+        name:
+          value === "directory-forbidden"
+            ? "Access denied"
+            : "Unable to load this page",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(page.locator("tbody tr")).toHaveCount(0);
+  }
 });
 test("logout failure keeps session; confirmed backend logout clears the cookie and navigates to login", async ({
   page,

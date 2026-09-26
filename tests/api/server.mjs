@@ -1,3 +1,4 @@
+import { changeRecipients } from "../../src/features/platforms/model.ts";
 import { seed as workflowSeed } from "../../src/features/approval-workflow/demo.ts";
 import {
   apply as workflowApply,
@@ -19,6 +20,49 @@ const user = (region, locale, id = "remote-user") => ({
   email: "api@example.test",
   status: "employed",
 });
+const directorySessions = new Map();
+function directory(region, session) {
+  const key = region + ":" + session;
+  if (!directorySessions.has(key))
+    directorySessions.set(key, {
+      revision: 0,
+      platforms: [
+        {
+          id: "orion",
+          name: "Remote platform",
+          description: "API platform",
+          status: "active",
+          provider: "Okta OIDC",
+          issuer: "https://example.test",
+          clientId: "remote",
+          loginPath: "/auth/orion",
+        },
+      ],
+      users: ["remote-user", "remote-user-2"].map((id) => ({
+        id,
+        name: id === "remote-user" ? "Remote user" : "Related API user",
+        email: id + "@example.test",
+      })),
+      members: [],
+      userRoles: [],
+      organizations: [],
+      accounts: [],
+      workspaces: [],
+      policies: [],
+      roles: session.startsWith("orion_session=platform-")
+        ? [
+            {
+              id: "remote-role",
+              platformId: "orion",
+              name: "Remote role",
+              description: "API role",
+              policyIds: [],
+            },
+          ]
+        : [],
+    });
+  return directorySessions.get(key);
+}
 const authorizationGraphs = new Map();
 function authGraph(region) {
   if (!authorizationGraphs.has(region))
@@ -58,7 +102,20 @@ const handler = (expectedRegion) => (request, response) => {
       return send({}, 403);
     const key = region + ":" + (request.headers.cookie ?? "");
     const state = workflowSessions.get(key) ?? workflowSeed();
-    if (request.method === "GET") return send(publicState(state));
+    if (request.method === "GET") {
+      if (request.headers.cookie === "orion_session=api-empty")
+        return send(
+          publicState({
+            ...state,
+            templates: [],
+            documents: [],
+            keys: [],
+            policies: [],
+            roles: [],
+          }),
+        );
+      return send(publicState(state));
+    }
     if (request.method !== "POST" || parts[2] !== "commands")
       return send({}, 405);
     let body = "";
@@ -81,6 +138,41 @@ const handler = (expectedRegion) => (request, response) => {
         );
         workflowSessions.set(key, updated);
         send({ status: "ok", ...(hash ? { hash } : {}) });
+      } catch {
+        send({}, 409);
+      }
+    });
+    return;
+  }
+  if (parts[1] === "platform-directory" || parts[1] === "platforms") {
+    const session = request.headers.cookie ?? "";
+    const state = directory(region, session);
+    if (parts[1] === "platform-directory") {
+      if (session === "orion_session=directory-forbidden") return send({}, 403);
+      if (session === "orion_session=directory-malformed")
+        return send({ data: [] });
+      return send({ data: state });
+    }
+    if (
+      request.method !== "POST" ||
+      parts[3] !== "roles" ||
+      parts[5] !== "users"
+    )
+      return send({}, 404);
+    if (session === "orion_session=platform-forbidden") return send({}, 403);
+    if (session === "orion_session=platform-conflict") return send({}, 409);
+    let body = "";
+    request.on("data", (chunk) => (body += chunk));
+    request.on("end", () => {
+      try {
+        const updated = changeRecipients(state, {
+          ...JSON.parse(body),
+          kind: "role-users",
+          platformId: parts[2],
+          roleId: parts[4],
+        });
+        directorySessions.set(region + ":" + session, updated);
+        send({ data: updated });
       } catch {
         send({}, 409);
       }

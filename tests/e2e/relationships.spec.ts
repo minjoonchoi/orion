@@ -6,9 +6,9 @@ test("inverse relationships open the correct detail pages", async ({
   const cases = [
     [
       "/roles/role-platform?tab=service-accounts",
-      "서비스 어카운트",
+      "서비스 어카운트 목록",
       "platform-ci",
-      "/service-accounts/sa-platform-ci",
+      "/service-accounts/sa-platform-ci?tab=roles",
     ],
     [
       "/api-keys/key-directory?tab=service-accounts",
@@ -32,7 +32,7 @@ test("inverse relationships open the correct detail pages", async ({
     });
     await region.getByRole("searchbox").fill(label);
     await region.getByRole("link", { name: label, exact: true }).click();
-    await expect(page).toHaveURL(new RegExp(target + "$"));
+    await expect(page).toHaveURL((url) => url.pathname + url.search === target);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   }
 });
@@ -72,16 +72,16 @@ test("related lists support keyboard navigation, empty state and narrow screens"
   await page.goto("/roles/role-unassigned?tab=service-accounts");
   await expect(
     page
-      .getByRole("region", { name: "서비스 어카운트 조회" })
-      .getByRole("heading", { name: "서비스 어카운트 없음" }),
+      .getByRole("region", { name: "서비스 어카운트 목록 조회" })
+      .getByRole("heading", { name: "항목이 없습니다" }),
   ).toBeVisible();
   await page.goto("/roles/role-platform?tab=service-accounts");
   const link = page
-    .getByRole("region", { name: "서비스 어카운트 조회" })
+    .getByRole("region", { name: "서비스 어카운트 목록 조회" })
     .getByRole("link", { name: "platform-ci", exact: true });
   await link.focus();
   await link.press("Enter");
-  await expect(page).toHaveURL(/service-accounts\/sa-platform-ci$/);
+  await expect(page).toHaveURL(/service-accounts\/sa-platform-ci\?tab=roles$/);
   await page.goBack();
   await expect(page).toHaveURL(/roles\/role-platform\?tab=service-accounts$/);
   for (const route of [

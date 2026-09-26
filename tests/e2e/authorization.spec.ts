@@ -1,99 +1,62 @@
-import { test, expect, type Page } from "@playwright/test";
+import { selectRoleUser, applyRoleUser } from "./role-helpers";
+import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-async function open(page: Page, path: string, label: string) {
-  await page.goto(
-    path + (path.startsWith("/roles/") ? "?tab=policies" : "?tab=roles"),
-  );
-  await page.getByRole("button", { name: label, exact: true }).click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog.locator("form")).toBeVisible();
-  return dialog;
-}
-async function save(page: Page) {
-  const dialog = page.getByRole("dialog");
-  if (
-    await dialog
-      .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
-      .count()
-  )
-    await dialog
-      .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
-      .click();
-  await expect(
-    dialog.getByRole("heading", { name: "변경사항 확인" }),
-  ).toBeVisible();
-  await dialog.getByRole("button", { name: "변경 적용", exact: true }).click();
-  await expect(dialog.getByRole("status")).toContainText(
-    "변경사항을 적용했습니다",
-  );
-}
-test("assign roles with policy/resource preview and reflect changes in user and organization details", async ({
+test("role user review preserves membership and allows add/remove from role details", async ({
   page,
 }) => {
-  const dialog = await open(page, "/users/usr-014", "역할 부여");
-  await dialog
-    .getByRole("checkbox", { name: "플랫폼 관리자", exact: true })
-    .check();
-  await expect(dialog.locator(".assignment-summary")).toHaveCount(0);
-  await dialog
-    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
-    .click();
-  const summary = dialog.getByRole("complementary", { name: "부여 내용 요약" });
-  await expect(summary).toContainText("부여받는 대상 · 1");
-  await summary.getByText("변경 후 정책·리소스 확인", { exact: true }).click();
-  await expect(summary).toContainText("인사 업무 조회");
-  await dialog
-    .getByRole("button", { name: "수정으로 돌아가기", exact: true })
-    .click();
+  const dialog = await selectRoleUser(
+    page,
+    "role-platform",
+    "member14@example.test",
+  );
+  await expect(dialog).toContainText("Orion");
+  await expect(dialog).toContainText("플랫폼 관리자");
   await expect(
-    dialog.getByRole("checkbox", { name: "플랫폼 관리자", exact: true }),
-  ).toBeChecked();
-  await save(page);
-  await dialog.getByRole("button", { name: "닫기", exact: true }).click();
-  await page.getByRole("tab", { name: "역할 (1)", exact: true }).click();
-  await expect(
-    page.getByRole("table", { name: "역할 목록", exact: true }),
-  ).toContainText("플랫폼 관리자");
-  await open(page, "/organizations/org-archive", "역할 부여");
-  await page
-    .getByRole("dialog")
-    .getByRole("checkbox", { name: "보안 검토자", exact: true })
-    .check();
-  await save(page);
-  await page
-    .getByRole("dialog")
-    .getByRole("button", { name: "닫기", exact: true })
-    .click();
-  await page.getByRole("tab", { name: "역할 (1)", exact: true }).click();
-  await expect(
-    page.getByRole("table", { name: "역할 목록", exact: true }),
-  ).toContainText("보안 검토자");
-});
-test("policy binding expiry validates past dates and persists on the role", async ({
-  page,
-}) => {
-  const dialog = await open(page, "/roles/role-unassigned", "역할 부여 관리");
-  await dialog
-    .getByRole("button", { name: "정책 부여와 만료", exact: true })
-    .click();
-  const card = dialog
-    .locator(".access-card")
-    .filter({ hasText: "인사 사용자 상세 조회" });
-  await card.getByRole("checkbox", { name: /인사 사용자 상세 조회/ }).check();
-  await card.getByRole("checkbox", { name: "무기한", exact: true }).uncheck();
-  await card.getByLabel("만료 시점", { exact: true }).fill("2020-01-01T10:00");
+    dialog.getByRole("link", { name: "인사 사용자 상세 조회" }),
+  ).toHaveAttribute("href", "/policies/policy-platform");
+  await expect(dialog).toContainText("플랫폼 멤버십은 변경하지 않습니다.");
+  await dialog.getByRole("button", { name: "이전", exact: true }).click();
+  await expect(dialog.getByRole("checkbox")).toBeChecked();
   await dialog.getByRole("button", { name: "변경사항 및 영향도 검토" }).click();
-  await expect(dialog.getByRole("alert")).toContainText("현재 이후");
-  await card.getByLabel("만료 시점", { exact: true }).fill("2030-12-31T10:00");
-  await save(page);
-  await dialog.getByRole("button", { name: "완료", exact: true }).click();
-  await page
-    .getByRole("button", { name: "역할 부여 관리", exact: true })
-    .click();
-  await dialog.getByRole("button", { name: "정책 부여와 만료" }).click();
-  await expect(dialog.getByLabel("만료 시점", { exact: true })).toHaveValue(
-    "2030-12-31T10:00",
+  await applyRoleUser(page);
+  await expect(
+    page.getByRole("table", { name: "사용자 목록", exact: true }),
+  ).toContainText("member14@example.test");
+  await page.goto("/users/usr-014?tab=roles");
+  await expect(
+    page.getByRole("table", { name: "플랫폼 역할 목록", exact: true }),
+  ).toContainText("플랫폼 관리자");
+  await expect(
+    page.getByRole("tab", { name: "플랫폼 (0)", exact: true }),
+  ).toBeVisible();
+  await selectRoleUser(
+    page,
+    "role-platform",
+    "member14@example.test",
+    "remove",
   );
+  await applyRoleUser(page);
+  await page.goto("/users/usr-014?tab=roles");
+  await expect(
+    page.getByRole("heading", { name: "항목이 없습니다" }),
+  ).toBeVisible();
+});
+test("scoped organization and policy tabs are read-only until editors are integrated", async ({
+  page,
+}) => {
+  // ROL-04/05, GAP-04: expiry/model tests remain in authorization/model.test.ts.
+  for (const tab of ["organizations", "policies"]) {
+    await page.goto(`/roles/role-platform?tab=${tab}`);
+    await expect(page.getByRole("tabpanel")).toContainText(
+      tab === "policies" ? "인사 사용자 상세 조회" : "플랫폼개발팀",
+    );
+    await expect(
+      page.getByRole("button", { name: "역할 부여 관리", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "사용자 추가", exact: true }),
+    ).toHaveCount(0);
+  }
 });
 test("policy definitions are read-only and use common sync review", async ({
   page,
@@ -114,11 +77,13 @@ test("logout clears demo session and keeps locale; common denied screen is acces
   page,
   context,
 }) => {
-  await open(page, "/users/usr-014", "역할 부여");
-  await page
-    .getByRole("dialog")
-    .getByRole("button", { name: "닫기", exact: true })
-    .click();
+  await selectRoleUser(page, "role-platform", "member14@example.test");
+  await applyRoleUser(page);
+  await page.goto("/policies/policy-platform");
+  await expect(page.locator(".sync-status")).toHaveText("Out of sync");
+  expect(
+    (await context.cookies()).some((c) => c.name === "orion-platform-demo"),
+  ).toBe(true);
   expect(
     (await context.cookies()).some((c) => c.name === "orion-demo-access"),
   ).toBe(true);
@@ -134,6 +99,9 @@ test("logout clears demo session and keeps locale; common denied screen is acces
   await expect(page).toHaveURL(/\/login$/);
   expect(
     (await context.cookies()).some((c) => c.name === "orion-demo-access"),
+  ).toBe(false);
+  expect(
+    (await context.cookies()).some((c) => c.name === "orion-platform-demo"),
   ).toBe(false);
 });
 test("English resource editing is read-only with YAML and sync", async ({
@@ -154,34 +122,26 @@ test("English resource editing is read-only with YAML and sync", async ({
     page.getByRole("button", { name: "Edit resource and explore impact" }),
   ).toHaveCount(0);
 });
-test("list explorer exposes removal and supports collapse", async ({
+test("role removal review keeps unrelated platform roles and memberships", async ({
   page,
 }) => {
-  const dialog = await open(page, "/roles/role-platform", "역할 부여 관리");
-  await dialog
-    .getByRole("button", { name: "정책 부여와 만료", exact: true })
-    .click();
-  const summary = dialog.getByRole("complementary", { name: "부여 내용 요약" });
-  await expect(summary).toHaveCount(0);
-  await dialog
-    .locator(".access-card")
-    .filter({ hasText: "인사 사용자 상세 조회" })
-    .getByRole("checkbox")
-    .first()
-    .uncheck();
-  await dialog
-    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
-    .click();
-  await summary.getByText("변경 후 정책·리소스 확인", { exact: true }).click();
-  await expect(summary.locator(".delta-remove")).toContainText(
-    "인사 사용자 상세 조회",
+  const dialog = await selectRoleUser(
+    page,
+    "role-platform",
+    "member1@example.test",
+    "remove",
   );
-  await summary.getByRole("button", { name: "모두 접기", exact: true }).click();
-  await expect(summary.locator(".explorer-row:visible")).toHaveCount(1);
-  await summary
-    .getByRole("button", { name: "모두 펼치기", exact: true })
-    .click();
-  await expect(summary.locator(".explorer-list:visible")).toContainText(
-    "직원 기본 조회",
-  );
+  await expect(dialog).toContainText("다른 역할과 플랫폼 멤버십은 유지합니다.");
+  await applyRoleUser(page);
+  await page.goto("/users/usr-001?tab=roles");
+  await expect(
+    page.getByRole("tab", { name: "플랫폼 (2)", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "항목이 없습니다" }),
+  ).toBeVisible();
+  await page.getByLabel("플랫폼 필터").selectOption("finance");
+  await expect(
+    page.getByRole("table", { name: "플랫폼 역할 목록", exact: true }),
+  ).toContainText("정산 검토자");
 });

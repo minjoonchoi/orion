@@ -400,6 +400,9 @@ export function WorkflowList({
     </>
   );
 }
+function documentTitle(s: State, d: Document) {
+  return `${d.template.name} · ${name(s.accounts, d.input.accountId)}`;
+}
 function Documents({ s, rows }: { s: State; rows: Document[] }) {
   const text = useText();
   return (
@@ -407,18 +410,14 @@ function Documents({ s, rows }: { s: State; rows: Document[] }) {
       sortValue={(r) => r.id}
       title={text("결재 목록", "Approvals")}
       rows={rows}
-      searchText={(d) =>
-        `${d.id} ${d.template.name} ${name(s.accounts, d.input.accountId)} ${d.input.reason}`
-      }
+      searchText={(d) => `${d.id} ${documentTitle(s, d)} ${d.input.reason}`}
       columns={[
         {
           key: "title",
           header: text("결재 문서", "Document"),
           render: (d) => (
             <>
-              <Ref href={`/approvals/${d.id}`}>
-                {d.template.name} · {name(s.accounts, d.input.accountId)}
-              </Ref>
+              <Ref href={`/approvals/${d.id}`}>{documentTitle(s, d)}</Ref>
               <div className="identity-meta">{d.id}</div>
             </>
           ),
