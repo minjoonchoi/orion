@@ -31,37 +31,32 @@ test("organization key counts lead to service scoped keys and detail", async ({
     info.getByRole("link", { name: "사내 디렉터리", exact: true }),
   ).toHaveAttribute("href", "/services/svc-directory");
 });
-test("key issuance selects and reviews account and service without creating a live key", async ({
+test("issuance starts a template-based approval without creating a live key", async ({
   page,
 }) => {
   await page.goto("/service-accounts/sa-platform-ci?tab=api-keys");
+  await page.getByRole("link", { name: "발급 요청", exact: true }).click();
+  await expect(page.getByLabel("서비스 어카운트", { exact: true })).toHaveValue(
+    "sa-platform-ci",
+  );
   await page
-    .getByRole("button", { name: "API 키 발급 요청", exact: true })
-    .click();
-  const dialog = page.getByRole("dialog");
-  await dialog
     .getByLabel("관리 서비스", { exact: true })
     .selectOption("svc-orion");
-  await dialog.getByLabel("키 이름", { exact: true }).fill("CI 교체 키");
-  await dialog.getByLabel("만료일", { exact: true }).fill("2099-01-01T12:00");
-  await dialog.getByLabel("요청 사유", { exact: true }).fill("정기 키 교체");
-  await dialog
-    .getByRole("button", { name: "요청 내용 검토", exact: true })
-    .click();
-  await expect(dialog).toContainText("platform-ci");
-  await expect(dialog).toContainText("Orion");
+  await page.getByRole("checkbox").first().check();
+  await page
+    .getByLabel("Secret name", { exact: true })
+    .fill("orion/platform/test");
+  await page.getByLabel("Secret value key", { exact: true }).fill("apiKey");
+  await page.getByLabel("요청 사유", { exact: true }).fill("자동화 연동");
+  await page.getByRole("button", { name: "검토", exact: true }).click();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-  await dialog
-    .getByRole("button", { name: "발급 요청 제출", exact: true })
-    .click();
-  await expect(dialog.getByRole("status")).toContainText(
-    "발급 요청이 접수되었습니다.",
-  );
-  await expect(dialog.getByRole("status")).toContainText(
-    "실제 키를 생성하지 않습니다",
+  await page.getByRole("button", { name: "결재 요청", exact: true }).click();
+  await expect(page).toHaveURL(/approvals\/[a-f0-9-]+$/);
+  await expect(page.locator("[data-detail-summary]")).toContainText(
+    "결재 진행",
   );
   await page.goto("/service-accounts/sa-audit-export?tab=api-keys");
   await expect(
-    page.getByRole("button", { name: "API 키 발급 요청", exact: true }),
-  ).toBeDisabled();
+    page.getByRole("link", { name: "발급 요청", exact: true }),
+  ).toHaveCount(0);
 });

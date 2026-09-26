@@ -18,10 +18,10 @@ test("inverse relationships open the correct detail pages", async ({
     ],
 
     [
-      "/approval-templates/template-key-issue-v1",
-      "템플릿을 사용한 결재",
-      "디렉터리 동기화 · API 키 발급",
-      "/approvals/approval-001",
+      "/approval-templates/api-key-issue?tab=approvals",
+      "결재 목록",
+      "API 키 발급 · directory-sync",
+      "/approvals/approval-demo-001",
     ],
   ];
   for (const [source, title, label, target] of cases) {
@@ -86,7 +86,7 @@ test("related lists support keyboard navigation, empty state and narrow screens"
   await expect(page).toHaveURL(/roles\/role-platform\?tab=service-accounts$/);
   for (const route of [
     "/users/usr-001",
-    "/approval-templates/template-key-issue-v1",
+    "/approval-templates/api-key-issue?tab=approvals",
   ]) {
     await page.goto(route);
     await expect(page.getByRole("tablist")).toBeVisible();

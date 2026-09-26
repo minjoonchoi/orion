@@ -1,3 +1,4 @@
+import { loadWorkflow } from "@/features/approval-workflow/server";
 import type { Metadata } from "next";
 import { getT } from "@/i18n/server";
 import { Suspense } from "react";
@@ -19,7 +20,7 @@ export default async function Page({
   if (!data) notFound();
   return (
     <Suspense fallback={<p role="status">{t("불러오는 중…")}</p>}>
-      <ServiceAccountScreen data={data} />
+      <ServiceAccountScreen data={data} workflow={await loadWorkflow()} />
     </Suspense>
   );
 }

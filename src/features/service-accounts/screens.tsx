@@ -1,4 +1,6 @@
 "use client";
+import { AccountWorkflow } from "../approval-workflow/screens";
+import type { State } from "../approval-workflow/model";
 import { IssueKeyDialog } from "../api-keys/issue-dialog";
 import { useI18n } from "@/i18n/provider";
 import Link from "next/link";
@@ -143,7 +145,13 @@ export function ServiceAccountsList({ rows }: { rows: AccountRow[] }) {
     </>
   );
 }
-export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
+export function ServiceAccountScreen({
+  data,
+  workflow,
+}: {
+  data: AccountDetail;
+  workflow?: State;
+}) {
   const { t } = useI18n();
   const { account: a, roles, keys } = data;
   return (
@@ -212,6 +220,9 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
                     "Orion 플랫폼 역할을 직접 부여받습니다. 플랫폼 멤버십 없이 API 키로 인증합니다.",
                   )}
                 </p>
+                {workflow && (
+                  <AccountWorkflow s={workflow} accountId={a.id} roles />
+                )}
                 <BrowseTable
                   title={t("역할 목록")}
                   rows={roles}
@@ -237,9 +248,12 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
           },
           {
             value: "api-keys",
-            label: t(`API 키 (${keys.length})`),
+            label: t(
+              `API 키 (${keys.length + (workflow?.keys.filter((k) => k.accountId === a.id).length ?? 0)})`,
+            ),
             content: (
               <>
+                {workflow && <AccountWorkflow s={workflow} accountId={a.id} />}
                 <p className="identity-role-note">
                   {t("API 키의 메타데이터입니다. 키 원문은 표시하지 않습니다.")}
                 </p>

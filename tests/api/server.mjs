@@ -1,3 +1,10 @@
+import { seed as workflowSeed } from "../../src/features/approval-workflow/demo.ts";
+import {
+  apply as workflowApply,
+  publicState,
+} from "../../src/features/approval-workflow/model.ts";
+import { createHash } from "node:crypto";
+const workflowSessions = new Map();
 import { readFileSync } from "node:fs";
 import {
   parseSources,
@@ -46,6 +53,40 @@ const handler = (expectedRegion) => (request, response) => {
   };
   if (region !== expectedRegion) return send({}, 500);
   if (parts[0] !== "v1") return send({}, 404);
+  if (parts[1] === "approval-workflow") {
+    if (request.headers.cookie === "orion_session=forbidden")
+      return send({}, 403);
+    const key = region + ":" + (request.headers.cookie ?? "");
+    const state = workflowSessions.get(key) ?? workflowSeed();
+    if (request.method === "GET") return send(publicState(state));
+    if (request.method !== "POST" || parts[2] !== "commands")
+      return send({}, 405);
+    let body = "";
+    request.on("data", (chunk) => {
+      body += chunk;
+    });
+    request.on("end", () => {
+      try {
+        const { command, expectedRevision } = JSON.parse(body);
+        const hash =
+          command.kind === "execute" && command.secretText
+            ? createHash("sha256").update(command.secretText).digest("hex")
+            : "";
+        const updated = workflowApply(
+          state,
+          command,
+          expectedRevision,
+          new Date().toISOString(),
+          hash,
+        );
+        workflowSessions.set(key, updated);
+        send({ status: "ok", ...(hash ? { hash } : {}) });
+      } catch {
+        send({}, 409);
+      }
+    });
+    return;
+  }
   if (parts[1] === "auth" && parts[2] === "logout") {
     if (request.method !== "POST") return send({}, 405);
     if (request.headers.cookie === "orion_session=logout-fail")
