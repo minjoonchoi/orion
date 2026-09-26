@@ -1,11 +1,18 @@
-import type { Metadata } from "next";
-import { getT } from "@/i18n/server";
-import { ApiKeysList } from "@/features/api-keys/screens";
 import { apiKeyRepository } from "@/features/api-keys/repository";
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getT();
-  return { title: t("API 키") };
-}
+import { LegacyKeys } from "@/features/approval-workflow/legacy";
+import { Suspense } from "react";
+import { loadWorkflow } from "@/features/approval-workflow/server";
+import { WorkflowList } from "@/features/approval-workflow/screens";
+import { deployment } from "@/lib/api/server";
 export default async function Page() {
-  return <ApiKeysList rows={await apiKeyRepository.listKeys()} />;
+  return (
+    <Suspense>
+      <WorkflowList
+        s={await loadWorkflow()}
+        demo={deployment().mode === "demo"}
+        kind="keys"
+      />
+      <LegacyKeys rows={await apiKeyRepository.listKeys()} />
+    </Suspense>
+  );
 }

@@ -19,6 +19,15 @@ PR #18과 #19의 최초 Frontend CI는 lint/typecheck/format/unit/build를 통�
 
 PR #18에서는 결재 목록의 표시 제목에 포함된 `·`가 검색 대상 문자열에서 누락된 실제 오류도 수정했다. 공통 Documents 표에서 제목 생성 함수를 검색과 표시가 함께 재사용한다. 목록 및 템플릿 상세의 결재 탭 모두 동일하게 적용된다. 발급/승인/열람 권한 규칙은 바뀌지 않는다.
 
-## 이 브랜치의 로컬 검증 결과
+## 충돌 해결 이전 검증 기록
 
-`npm run check`(lint/typecheck/format 및 단위 53건), production webpack build, 전체 E2E 74건, 전체 API 7건 통과. E2E는 Chromium 2 workers, API는 1 worker로 실행했다. GitHub CI는 푸시 후 별도로 확인한다.
+| 기준                   | 단위 | E2E | API |
+| ---------------------- | ---- | --- | --- |
+| PR #19, PR #18 병합 전 | 53   | 74  | 7   |
+| PR #18                 | 69   | 71  | 9   |
+
+두 브랜치에서 `npm run check`와 production webpack build가 통과했다. E2E는 Chromium 2 workers, API는 1 worker로 실행했다. 위 수치는 각 당시 브랜치 기준이며 합산하지 않는다.
+
+PR #18이 master에 병합된 뒤 #19에 master를 통합했다. API 모의 서버의 결재 workflow 처리와 플랫폼 directory 처리를 모두 보존했고, 애플리케이션 및 테스트 코드는 master와 동일하다. 템플릿 상세의 결재 목록 제거도 유지한다. 기획 변경은 없으며 M/P18 표기는 구현 유래를 나타낸다.
+
+이전 제목 검색 수정 당시 [스크린샷](screenshots/approval-title-search.png)은 과거 검증 기록이다. 현재 템플릿 상세는 [결재선·입력 필드 화면](screenshots/approval-template-detail.png)이다.

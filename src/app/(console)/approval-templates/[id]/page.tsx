@@ -1,25 +1,22 @@
-import type { Metadata } from "next";
-import { getT } from "@/i18n/server";
-import { getRelatedGroups } from "@/features/relationships/repository";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { TemplateScreen } from "@/features/approvals/screens";
-import { approvalRepository } from "@/features/approvals/repository";
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getT();
-  return { title: t("결재 템플릿 상세") };
-}
+import { loadWorkflow } from "@/features/approval-workflow/server";
+import { TemplateScreen } from "@/features/approval-workflow/screens";
+import { deployment } from "@/lib/api/server";
 export default async function Page({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const data = await approvalRepository.getTemplate(id);
-  if (!data) notFound();
-  const groups = await getRelatedGroups("approval-templates", id);
+  const s = await loadWorkflow();
+  const item = s.templates.find((v) => v.id === id);
+  if (!item) {
+    notFound();
+  }
   return (
-    <>
-      <TemplateScreen data={data} groups={groups} />
-    </>
+    <Suspense>
+      <TemplateScreen s={s} t={item} demo={deployment().mode === "demo"} />
+    </Suspense>
   );
 }
