@@ -1,8 +1,6 @@
-import { AuthorizationPanel } from "@/features/authorization/panel";
+import { loadDirectory } from "@/features/platforms/repository";
 import type { Metadata } from "next";
 import { getT } from "@/i18n/server";
-import { getRelatedGroups } from "@/features/relationships/repository";
-import { RelatedRecords } from "@/features/relationships/related-records";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { UserScreen } from "@/features/identity/screens";
@@ -20,12 +18,9 @@ export default async function Page({
   const { id } = await params;
   const data = await identityRepository.getUser(id);
   if (!data) notFound();
-  const groups = await getRelatedGroups("users", id);
   return (
     <Suspense fallback={<p role="status">{t("불러오는 중…")}</p>}>
-      <UserScreen data={data} />
-      <AuthorizationPanel kind="users" id={id} />
-      <RelatedRecords groups={groups} />
+      <UserScreen data={data} directory={await loadDirectory()} />
     </Suspense>
   );
 }

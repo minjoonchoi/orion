@@ -5,41 +5,18 @@ test("inverse relationships open the correct detail pages", async ({
 }) => {
   const cases = [
     [
-      "/roles/role-platform",
-      "연결 서비스 어카운트",
+      "/roles/role-platform?tab=service-accounts",
+      "서비스 어카운트",
       "platform-ci",
       "/service-accounts/sa-platform-ci",
     ],
     [
-      "/api-keys/key-directory",
-      "연결 서비스 어카운트",
+      "/api-keys/key-directory?tab=service-accounts",
+      "서비스 어카운트",
       "directory-sync",
       "/service-accounts/sa-directory-sync",
     ],
-    [
-      "/organizations/org-platform",
-      "조직 API 키",
-      "디렉터리 동기화",
-      "/api-keys/key-directory",
-    ],
-    [
-      "/users/usr-001",
-      "소유 API 키",
-      "디렉터리 동기화",
-      "/api-keys/key-directory",
-    ],
-    [
-      "/users/usr-001",
-      "요청한 결재",
-      "디렉터리 동기화 · API 키 발급",
-      "/approvals/approval-001",
-    ],
-    [
-      "/users/usr-006",
-      "처리한 결재",
-      "플랫폼 CI · API 키 발급",
-      "/approvals/approval-007",
-    ],
+
     [
       "/approval-templates/template-key-issue-v1",
       "템플릿을 사용한 결재",
@@ -74,7 +51,8 @@ test("relationship counts open the corresponding tab", async ({ page }) => {
     await page.goto(source);
     const row = page
       .getByRole("row")
-      .filter({ has: page.getByRole("link", { name, exact: true }) });
+      .filter({ has: page.getByRole("link", { name, exact: true }) })
+      .first();
     await row.getByRole("link", { name: count, exact: true }).click();
     await expect(page).toHaveURL((url) => url.pathname + url.search === target);
     await expect(page.getByRole("tab", { selected: true })).not.toHaveText(
@@ -91,29 +69,27 @@ test("relationship counts open the corresponding tab", async ({ page }) => {
 test("related lists support keyboard navigation, empty state and narrow screens", async ({
   page,
 }) => {
-  await page.goto("/api-keys/key-product");
+  await page.goto("/roles/role-unassigned?tab=service-accounts");
   await expect(
     page
-      .getByRole("region", { name: "연결 서비스 어카운트 조회" })
-      .getByRole("heading", { name: "연결 서비스 어카운트 없음" }),
+      .getByRole("region", { name: "서비스 어카운트 조회" })
+      .getByRole("heading", { name: "서비스 어카운트 없음" }),
   ).toBeVisible();
-  await page.goto("/roles/role-platform");
+  await page.goto("/roles/role-platform?tab=service-accounts");
   const link = page
-    .getByRole("region", { name: "연결 서비스 어카운트 조회" })
+    .getByRole("region", { name: "서비스 어카운트 조회" })
     .getByRole("link", { name: "platform-ci", exact: true });
   await link.focus();
   await link.press("Enter");
   await expect(page).toHaveURL(/service-accounts\/sa-platform-ci$/);
   await page.goBack();
-  await expect(page).toHaveURL(/roles\/role-platform$/);
+  await expect(page).toHaveURL(/roles\/role-platform\?tab=service-accounts$/);
   for (const route of [
     "/users/usr-001",
     "/approval-templates/template-key-issue-v1",
   ]) {
     await page.goto(route);
-    await expect(
-      page.getByRole("region", { name: "관련 항목", exact: true }),
-    ).toBeVisible();
+    await expect(page.getByRole("tablist")).toBeVisible();
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
     await page.setViewportSize({ width: 390, height: 844 });
     expect(

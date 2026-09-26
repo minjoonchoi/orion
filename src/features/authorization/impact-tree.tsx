@@ -24,7 +24,7 @@ function roleNode(r: ImpactRole, t: (s: string) => string): ExplorerNode {
     id: `role:${r.role.id}`,
     name: r.role.name,
     kind: "역할",
-    relation: "정책 연결",
+    relation: "정책 부여",
     href: `/roles/${r.role.id}`,
     detail: `${expired ? t("만료") + " · " : ""}${t("직접 부여 사용자")} ${r.users.length} · ${t("조직")} ${r.organizations.length}`,
     children: [
@@ -32,7 +32,7 @@ function roleNode(r: ImpactRole, t: (s: string) => string): ExplorerNode {
         id: `user:${u.id}`,
         name: u.name,
         kind: "사용자",
-        relation: "직접 연결",
+        relation: "직접 부여",
         href: `/users/${u.id}`,
       })),
       ...r.organizations.map((o) => ({
@@ -109,7 +109,7 @@ export function ResourceSetImpactTree({
       id: `policy:${p.policy.id}`,
       name: p.policy.name,
       kind: "정책",
-      relation: "리소스 연결",
+      relation: "리소스 지정",
       href: `/policies/${p.policy.id}`,
       detail: t(p.policy.effect === "allow" ? "허용" : "거부"),
       children: p.roles.map((r) => roleNode(r, t)),

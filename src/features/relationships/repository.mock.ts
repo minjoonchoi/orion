@@ -20,7 +20,12 @@ export type RelationKind =
   | "workspaces"
   | "api-keys"
   | "approval-templates";
-export type RelatedRecord = { id: string; name: string; href: string };
+export type RelatedRecord = {
+  id: string;
+  name: string;
+  href: string;
+  serviceAccounts?: { id: string; name: string }[];
+};
 export type RelatedGroup = { title: string; rows: RelatedRecord[] };
 const records = (
   route: string,
@@ -36,7 +41,7 @@ export async function getRelatedGroups(
     case "roles":
       return [
         {
-          title: "연결 서비스 어카운트",
+          title: "서비스 어카운트",
           rows: records(
             "service-accounts",
             serviceAccounts.filter((a) =>
@@ -48,7 +53,7 @@ export async function getRelatedGroups(
     case "api-keys":
       return [
         {
-          title: "연결 서비스 어카운트",
+          title: "서비스 어카운트",
           rows: records(
             "service-accounts",
             serviceAccounts.filter((a) =>
@@ -61,10 +66,26 @@ export async function getRelatedGroups(
       return [
         {
           title: "조직 API 키",
-          rows: records(
-            "api-keys",
-            apiKeys.filter((k) => k.organizationId === id),
-          ),
+          rows: apiKeys.flatMap((key) => {
+            const linked = serviceAccounts.filter(
+              (account) =>
+                account.organizationId === id &&
+                (serviceAccountKeys[account.id] ?? []).includes(key.id),
+            );
+            return linked.length
+              ? [
+                  {
+                    id: key.id,
+                    name: key.name,
+                    href: `/api-keys/${key.id}`,
+                    serviceAccounts: linked.map(({ id, name }) => ({
+                      id,
+                      name,
+                    })),
+                  },
+                ]
+              : [];
+          }),
         },
       ];
     case "users": {
@@ -116,7 +137,7 @@ export async function getRelatedGroups(
       );
       return [
         {
-          title: "정책이 연결된 역할",
+          title: "정책을 포함한 역할",
           rows: records(
             "roles",
             roles.filter((_, i) =>
@@ -138,7 +159,7 @@ export async function getRelatedGroups(
             : "workspaceIds";
       const groups: RelatedGroup[] = [
         {
-          title: "연결 정책",
+          title: "정책",
           rows: records(
             "policies",
             policies.filter((p) => p[field].includes(id)),

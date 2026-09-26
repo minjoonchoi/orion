@@ -10,6 +10,7 @@ export const identityRepository = {
   async listUsers(): Promise<UserRow[]> {
     return data.users.map((user) => ({
       ...user,
+      roleCount: (data.userRoles[user.id] ?? []).length,
       organizations: data.memberships
         .filter((m) => m.userId === user.id)
         .map((m) => {
@@ -18,12 +19,19 @@ export const identityRepository = {
           )!;
           return { id: org.id, name: org.name };
         }),
-      roleCount: (data.userRoles[user.id] ?? []).length,
     }));
   },
   async listOrganizations(): Promise<OrganizationRow[]> {
     return data.organizations.map((org) => ({
       ...org,
+      leader:
+        data.users
+          .filter((u) => u.id === data.organizationLeaders[org.id])
+          .map(({ id, name }) => ({ id, name }))[0] ?? null,
+      parentOrganization:
+        data.organizations
+          .filter((o) => o.id === data.organizationParents[org.id])
+          .map(({ id, name }) => ({ id, name }))[0] ?? null,
       memberCount: data.memberships.filter((m) => m.organizationId === org.id)
         .length,
       serviceAccountCount: data.serviceAccounts.filter(
@@ -38,15 +46,15 @@ export const identityRepository = {
     if (!user) return null;
     return {
       user,
+      roles: data.roles.filter((r) =>
+        (data.userRoles[id] ?? []).includes(r.id),
+      ),
       organizations: data.memberships
         .filter((m) => m.userId === id)
         .map((m) => ({
           ...data.organizations.find((o) => o.id === m.organizationId)!,
           joinedAt: m.joinedAt,
         })),
-      roles: data.roles.filter((r) =>
-        (data.userRoles[id] ?? []).includes(r.id),
-      ),
     };
   },
   async getOrganization(id: string): Promise<OrganizationDetail | null> {

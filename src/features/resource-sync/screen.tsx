@@ -467,7 +467,7 @@ export function ResourceSyncScreen() {
             )}
             <p className="muted">
               {t(
-                "선택한 항목의 변경사항과 영향도를 검토합니다. 정책 연결 리소스와 필수 상위 리소스는 포함 사유와 함께 표시됩니다.",
+                "선택한 항목의 변경사항과 영향도를 검토합니다. 정책 리소스와 필수 상위 리소스는 포함 사유와 함께 표시됩니다.",
               )}
             </p>
           </section>
@@ -884,7 +884,7 @@ export function ResourceSyncScreen() {
       <Dialog
         title={t("영향도 검토")}
         description={t(
-          "조회 대상으로 선택한 정책과 리소스의 연결 관계만 표시합니다.",
+          "조회 대상으로 선택한 정책과 리소스의 관계만 표시합니다.",
         )}
         trigger={<button hidden aria-label={t("영향도 검토")} />}
         open={Boolean(impactReview)}

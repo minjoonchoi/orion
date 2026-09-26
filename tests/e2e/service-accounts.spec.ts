@@ -8,7 +8,7 @@ test("service accounts menu and list search, filters and sorting", async ({
     name: "서비스 어카운트 목록",
     exact: true,
   });
-  await expect(table.locator("tbody tr")).toHaveCount(4);
+  await expect(table.locator("tbody tr")).toHaveCount(5);
   await expect(
     page
       .locator("aside")
@@ -37,7 +37,9 @@ test("service accounts menu and list search, filters and sorting", async ({
   await expect(table.locator("tbody tr").first()).toContainText("platform-ci");
   await expect(
     page.getByRole("button", { name: "다음", exact: true }),
-  ).toBeDisabled();
+  ).toBeEnabled();
+  await page.getByRole("button", { name: "다음", exact: true }).click();
+  await expect(table.locator("tbody tr")).toHaveCount(1);
 });
 test("organization account links, roles and API keys navigate to detail", async ({
   page,
@@ -53,7 +55,7 @@ test("organization account links, roles and API keys navigate to detail", async 
   await page.goto("/service-accounts/sa-platform-ci?tab=roles");
   await expect(
     page
-      .getByRole("table", { name: "연결 역할 목록", exact: true })
+      .getByRole("table", { name: "역할 목록", exact: true })
       .locator("tbody tr"),
   ).toHaveCount(2);
   await page.getByRole("link", { name: "플랫폼 관리자", exact: true }).click();
@@ -68,7 +70,7 @@ test("organization account links, roles and API keys navigate to detail", async 
   await page.getByLabel("키 상태 필터").selectOption("revoked");
   await expect(
     page
-      .getByRole("table", { name: "연결 API 키 목록", exact: true })
+      .getByRole("table", { name: "API 키 목록", exact: true })
       .locator("tbody tr"),
   ).toHaveCount(1);
   await page.getByRole("link", { name: "이전 CI 연동", exact: true }).click();
@@ -81,15 +83,15 @@ test("organization account links, roles and API keys navigate to detail", async 
 test("empty associations, optional metadata and absent IDs", async ({
   page,
 }) => {
-  for (const tab of ["roles", "api-keys"]) {
+  for (const tab of ["roles"]) {
     await page.goto(`/service-accounts/sa-audit-export?tab=${tab}`);
     await expect(
-      page.getByRole("heading", { name: "연결된 항목이 없습니다" }),
+      page.getByRole("heading", { name: "항목이 없습니다" }),
     ).toBeVisible();
   }
   await page.goto("/service-accounts/sa-audit-export?tab=unknown");
   await expect(
-    page.getByRole("tab", { name: "기본 정보", exact: true }),
+    page.getByRole("tab", { name: "역할 (0)", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
   await expect(page.getByText("기록 없음", { exact: true })).toBeVisible();
   await page.goto("/service-accounts/sa-approval-bot?tab=api-keys");

@@ -9,11 +9,12 @@ test("workspace and service children expose scoped links and persistent tabs", a
     .first()
     .click();
   await expect(page).toHaveURL(/pages\/platform~user-detail/);
-  await page.getByRole("tab", { name: "연결 관계", exact: true }).click();
+  await page.getByRole("tab", { name: /^관계 \(/ }).click();
   await page.reload();
-  await expect(
-    page.getByRole("tab", { name: "연결 관계", exact: true }),
-  ).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tab", { name: /^관계 \(/ })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
   await page.goto("/services/identity-api");
   await page
     .getByRole("link", { name: /사용자 기본 정보 조회/ })

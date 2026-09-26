@@ -4,9 +4,14 @@ export const navigationGroups = [
     label: "사용자·조직",
     items: [
       {
+        href: "/platforms",
+        label: "플랫폼",
+        description: "플랫폼별 인증과 멤버·역할을 관리합니다.",
+      },
+      {
         href: "/users",
         label: "사용자",
-        description: "사용자 정보, 소속 조직과 역할을 조회합니다.",
+        description: "전역 사용자 카탈로그와 플랫폼 멤버십을 조회합니다.",
       },
       {
         href: "/organizations",
@@ -17,7 +22,7 @@ export const navigationGroups = [
       {
         href: "/service-accounts",
         label: "서비스 어카운트",
-        description: "서비스 어카운트 정보와 연결된 역할·API 키를 조회합니다.",
+        description: "서비스 어카운트 정보와 관련된 역할·API 키를 조회합니다.",
       },
     ],
   },
@@ -28,7 +33,7 @@ export const navigationGroups = [
       {
         href: "/roles",
         label: "역할",
-        description: "역할에 연결된 사용자, 조직과 정책을 조회합니다.",
+        description: "역할에 관련된 사용자, 조직과 정책을 조회합니다.",
       },
     ],
   },
@@ -49,13 +54,13 @@ export const navigationGroups = [
       {
         href: "/domains",
         label: "업무 도메인",
-        description: "도메인별 Action과 연결 엔드포인트를 탐색합니다.",
+        description: "도메인별 Action과 관계 엔드포인트를 탐색합니다.",
       },
       {
         href: "/policies",
         label: "정책",
         description:
-          "정책에 연결된 서비스, 엔드포인트와 워크스페이스를 조회합니다.",
+          "정책에 대상 서비스, 엔드포인트와 워크스페이스를 조회합니다.",
       },
       {
         href: "/resources",

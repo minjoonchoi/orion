@@ -118,3 +118,21 @@
 .relationship-section > h2 {
   margin-bottom: 12px;
 }
+
+.detail-layout {
+  margin-top: 24px;
+}
+.detail-tab-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+.detail-tab-actions .access-entry {
+  margin: 0;
+}
+
+.detail-layout,
+.detail-layout > * {
+  min-width: 0;
+  max-width: 100%;
+}

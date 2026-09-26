@@ -11,6 +11,16 @@ export function StatusBadge({ status }: { status: Status }) {
     </Badge>
   );
 }
+export function EmploymentBadge({
+  status,
+}: {
+  status: "employed" | "on_leave";
+}) {
+  const { t } = useI18n();
+  return (
+    <Badge tone="neutral">{t(status === "employed" ? "재직" : "휴직")}</Badge>
+  );
+}
 export function date(value: string | null) {
   return <DateValue value={value} />;
 }
@@ -21,7 +31,7 @@ export function DemoNotice() {
   return (
     <p className="identity-demo">
       <Badge>{t("예제 데이터")}</Badge>
-      {t("실제 사내 계정과 연결되지 않은 예제 환경입니다.")}
+      {t("실제 사내 계정을 사용하지 않는 예제 환경입니다.")}
     </p>
   );
 }

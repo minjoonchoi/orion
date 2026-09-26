@@ -1,7 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 async function open(page: Page, path: string, label: string) {
-  await page.goto(path);
+  await page.goto(
+    path + (path.startsWith("/roles/") ? "?tab=policies" : "?tab=roles"),
+  );
   await page.getByRole("button", { name: label, exact: true }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.locator("form")).toBeVisible();
@@ -98,7 +100,7 @@ test("policy definitions are read-only and use common sync review", async ({
 }) => {
   await page.goto("/policies/policy-platform");
   await expect(
-    page.getByRole("button", { name: "리소스 연결과 정책 효과" }),
+    page.getByRole("button", { name: "리소스 지정과 정책 효과" }),
   ).toHaveCount(0);
   await page.getByRole("button", { name: "동기화", exact: true }).click();
   await page

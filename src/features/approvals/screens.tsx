@@ -1,4 +1,7 @@
 "use client";
+import { DetailTabs } from "../identity/detail-tabs";
+import { relatedTabs } from "../relationships/related-records";
+import type { RelatedGroup } from "../relationships/repository";
 import { DateValue, useI18n } from "@/i18n/provider";
 import Link from "next/link";
 import { PageHeading } from "@/components/ui/page-heading";
@@ -128,7 +131,13 @@ export function TemplatesList({ rows }: { rows: ApprovalTemplate[] }) {
     </>
   );
 }
-export function TemplateScreen({ data: template }: { data: ApprovalTemplate }) {
+export function TemplateScreen({
+  data: template,
+  groups = [],
+}: {
+  data: ApprovalTemplate;
+  groups?: RelatedGroup[];
+}) {
   const { t } = useI18n();
   return (
     <>
@@ -140,25 +149,42 @@ export function TemplateScreen({ data: template }: { data: ApprovalTemplate }) {
       />
       <PageHeading title={template.name} description={template.description} />
       <DemoNotice />
-      <section className="ui-panel">
-        <h2>{t("결재 템플릿 정보")}</h2>
-        <Details
-          items={[
-            { label: t("템플릿 ID"), value: template.id },
-            { label: t("이름"), value: template.name },
-            { label: t("설명"), value: template.description },
-            { label: t("요청 유형"), value: t(types[template.type]) },
-            { label: t("버전"), value: `v${template.version}` },
-            {
-              label: t("상태"),
-              value: <TemplateStatus status={template.status} />,
-            },
-            { label: t("작성 안내"), value: template.instructions },
-            { label: t("등록일"), value: timestamp(template.createdAt) },
-            { label: t("수정일"), value: timestamp(template.updatedAt) },
-          ]}
-        />
-      </section>
+      <DetailTabs
+        items={[
+          {
+            value: "info",
+            label: t("기본 정보"),
+            content: (
+              <section className="ui-panel">
+                <h2>{t("결재 템플릿 정보")}</h2>
+                <Details
+                  items={[
+                    { label: t("템플릿 ID"), value: template.id },
+                    { label: t("이름"), value: template.name },
+                    { label: t("설명"), value: template.description },
+                    { label: t("요청 유형"), value: t(types[template.type]) },
+                    { label: t("버전"), value: `v${template.version}` },
+                    {
+                      label: t("상태"),
+                      value: <TemplateStatus status={template.status} />,
+                    },
+                    { label: t("작성 안내"), value: template.instructions },
+                    {
+                      label: t("등록일"),
+                      value: timestamp(template.createdAt),
+                    },
+                    {
+                      label: t("수정일"),
+                      value: timestamp(template.updatedAt),
+                    },
+                  ]}
+                />
+              </section>
+            ),
+          },
+          ...relatedTabs(groups, t),
+        ]}
+      />
     </>
   );
 }

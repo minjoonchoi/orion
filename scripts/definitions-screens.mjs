@@ -99,7 +99,7 @@ try {
   await page.getByRole("heading", { name: "정책별 응답 범위" }).waitFor();
   await capture("02-action-policies.png");
   await visit("/service-endpoints/identity-api~detail");
-  await page.getByRole("tab", { name: "연결 관계", exact: true }).click();
+  await page.getByRole("tab", { name: "관계", exact: true }).click();
   await capture("03-endpoint-actions.png");
   await visit("/policies/policy-platform");
   await page

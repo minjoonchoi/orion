@@ -9,7 +9,7 @@ test("stale definition preview cannot overwrite a concurrent permission change",
     .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
     .click();
   const other = await context.newPage();
-  await other.goto("/users/usr-014");
+  await other.goto("/users/usr-014?tab=roles");
   await other.getByRole("button", { name: "역할 부여", exact: true }).click();
   const edit = other.getByRole("dialog");
   await edit

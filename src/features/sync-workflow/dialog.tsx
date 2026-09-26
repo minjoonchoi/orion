@@ -34,7 +34,7 @@ const operations: Record<string, string> = {
 };
 const reasons = {
   selected: "선택한 리소스",
-  policy: "정책 연결 리소스",
+  policy: "정책 리소스",
   parent: "필수 상위 리소스",
 };
 const fields: Record<string, string> = {
@@ -46,7 +46,7 @@ const fields: Record<string, string> = {
   state: "정의 상태",
   version: "버전",
   effect: "허용/거부",
-  resources: "연결 리소스",
+  resources: "리소스",
   processors: "전처리·후처리",
 };
 
@@ -234,7 +234,7 @@ export function SyncDialog({
       title={t("영향도 검토")}
       description={t(
         policyMode
-          ? "선택한 정책과 연결된 리소스를 동기화합니다. 변경사항과 영향도를 검토한 뒤 적용하세요."
+          ? "선택한 정책과 포함된 리소스를 동기화합니다. 변경사항과 영향도를 검토한 뒤 적용하세요."
           : "선택한 리소스를 동기화합니다. 변경사항과 영향도를 검토한 뒤 적용하세요.",
       )}
       open
@@ -289,7 +289,7 @@ export function SyncDialog({
                 <p>
                   {t(
                     policyMode
-                      ? "정책에 연결된 리소스와 필수 상위 리소스를 함께 검토합니다."
+                      ? "정책에 포함된 리소스와 필수 상위 리소스를 함께 검토합니다."
                       : "선택한 리소스와 필요한 상위 리소스만 동기화합니다.",
                   )}
                 </p>
@@ -415,7 +415,7 @@ export function SyncDialog({
                           <summary>{t("리소스 변경의 추가 영향")}</summary>
                           <p>
                             {t(
-                              "함께 변경되는 리소스를 사용하는 다른 정책의 연결 관계도 확인하세요.",
+                              "함께 변경되는 리소스를 사용하는 다른 정책의 관계도 확인하세요.",
                             )}
                           </p>
                           <ResourceImpact

@@ -49,13 +49,6 @@ export async function projectDemo<T>(method: string, value: T): Promise<T> {
         roleCount: roles.filter((r) => r.userIds.includes(String(u.id))).length,
       }));
       break;
-    case "listOrganizations":
-      result = (value as Record<string, unknown>[]).map((o) => ({
-        ...o,
-        roleCount: roles.filter((r) => r.organizationIds.includes(String(o.id)))
-          .length,
-      }));
-      break;
     case "getUser": {
       const user = record.user as { id: string };
       result = {
@@ -64,6 +57,13 @@ export async function projectDemo<T>(method: string, value: T): Promise<T> {
       };
       break;
     }
+    case "listOrganizations":
+      result = (value as Record<string, unknown>[]).map((o) => ({
+        ...o,
+        roleCount: roles.filter((r) => r.organizationIds.includes(String(o.id)))
+          .length,
+      }));
+      break;
     case "getOrganization": {
       const org = record.organization as { id: string };
       const linked = roles.filter((r) => r.organizationIds.includes(org.id));

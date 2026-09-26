@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getT } from "@/i18n/server";
 import { getRelatedGroups } from "@/features/relationships/repository";
-import { RelatedRecords } from "@/features/relationships/related-records";
 import { notFound } from "next/navigation";
 import { TemplateScreen } from "@/features/approvals/screens";
 import { approvalRepository } from "@/features/approvals/repository";
@@ -20,8 +19,7 @@ export default async function Page({
   const groups = await getRelatedGroups("approval-templates", id);
   return (
     <>
-      <TemplateScreen data={data} />
-      <RelatedRecords groups={groups} />
+      <TemplateScreen data={data} groups={groups} />
     </>
   );
 }

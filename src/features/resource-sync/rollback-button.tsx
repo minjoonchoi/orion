@@ -53,7 +53,7 @@ export function RollbackButton({
       </p>
       <p>
         {t(
-          "이후 동기화로 적용된 정의가 교체되므로 연결된 권한의 동작이 달라질 수 있습니다.",
+          "이후 동기화로 적용된 정의가 교체되므로 부여된 권한의 동작이 달라질 수 있습니다.",
         )}
       </p>
       <label className="sync-confirm">
@@ -67,7 +67,7 @@ export function RollbackButton({
       {error && (
         <p role="alert">
           {t(
-            "롤백하지 못했습니다. 연결 관계와 최신 상태를 확인한 후 다시 시도하세요.",
+            "롤백하지 못했습니다. 관계와 최신 상태를 확인한 후 다시 시도하세요.",
           )}
         </p>
       )}

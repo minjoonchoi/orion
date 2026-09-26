@@ -1,4 +1,7 @@
 "use client";
+import { AuthorizationPanel } from "../authorization/panel";
+import { relatedTabs } from "../relationships/related-records";
+import type { RelatedGroup } from "../relationships/repository";
 import { useI18n } from "@/i18n/provider";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -7,7 +10,13 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import type { Column } from "@/components/ui/data-table";
 import { BrowseTable, type BrowseFilter } from "../identity/browse-table";
 import { DetailTabs } from "../identity/detail-tabs";
-import { DemoNotice, Details, Summary, StatusBadge } from "../identity/shared";
+import {
+  DemoNotice,
+  Details,
+  Summary,
+  StatusBadge,
+  EmploymentBadge,
+} from "../identity/shared";
 import type {
   RoleRow,
   PolicyRow,
@@ -72,10 +81,10 @@ function Policies({ rows }: { rows: PolicyRow[] }) {
       filters={[
         {
           key: "resources",
-          label: t("리소스 연결 필터"),
+          label: t("리소스 포함 필터"),
           options: [
-            { value: "linked", label: t("연결됨") },
-            { value: "empty", label: t("미연결") },
+            { value: "linked", label: t("있음") },
+            { value: "empty", label: t("없음") },
           ],
           matches: (r, v) =>
             r.serviceCount + r.endpointCount + r.workspaceCount > 0 ===
@@ -117,18 +126,18 @@ export function RolesList({ rows }: { rows: RoleRow[] }) {
     <>
       <PageHeading
         title={t("역할")}
-        description={t("역할에 직접 연결된 사용자·조직과 정책을 조회합니다.")}
+        description={t("역할을 부여받은 사용자·조직과 정책을 조회합니다.")}
       />
       <DemoNotice />
       <Summary
         items={[
           { label: t("전체 역할"), value: rows.length },
           {
-            label: t("정책 연결 역할"),
+            label: t("정책 포함 역할"),
             value: rows.filter((r) => r.policyCount > 0).length,
           },
           {
-            label: t("정책 미연결 역할"),
+            label: t("정책 없는 역할"),
             value: rows.filter((r) => r.policyCount === 0).length,
           },
         ]}
@@ -140,10 +149,10 @@ export function RolesList({ rows }: { rows: RoleRow[] }) {
         filters={[
           {
             key: "policies",
-            label: t("정책 연결 필터"),
+            label: t("정책 포함 필터"),
             options: [
-              { value: "linked", label: t("연결됨") },
-              { value: "empty", label: t("미연결") },
+              { value: "linked", label: t("있음") },
+              { value: "empty", label: t("없음") },
             ],
             matches: (r, v) => r.policyCount > 0 === (v === "linked"),
           },
@@ -185,7 +194,7 @@ export function PoliciesList({ rows }: { rows: PolicyRow[] }) {
       <PageHeading
         title={t("정책")}
         description={t(
-          "정책에 연결된 서비스·엔드포인트·워크스페이스를 조회합니다.",
+          "정책에 대상 서비스·엔드포인트·워크스페이스를 조회합니다.",
         )}
         actions={
           <Link
@@ -201,7 +210,7 @@ export function PoliciesList({ rows }: { rows: PolicyRow[] }) {
         items={[
           { label: t("전체 정책"), value: rows.length },
           {
-            label: t("리소스 연결 정책"),
+            label: t("리소스 포함 정책"),
             value: rows.filter(
               (r) => r.serviceCount + r.endpointCount + r.workspaceCount > 0,
             ).length,
@@ -253,17 +262,24 @@ function Info({ item, label }: { item: Named; label: string }) {
     </section>
   );
 }
-export function RoleScreen({ data }: { data: RoleDetail }) {
+export function RoleScreen({
+  data,
+  groups = [],
+}: {
+  data: RoleDetail;
+  groups?: RelatedGroup[];
+}) {
   const { t } = useI18n();
   const { role, users, organizations, policies } = data;
   return (
     <Frame kind="roles" item={role}>
       <p className="identity-role-note">
         {t(
-          "직접 연결된 사용자와 조직입니다. 조직 소속에 따른 역할 상속은 포함하지 않습니다.",
+          "사용자·조직·서비스 어카운트는 역할을 부여받는 대상이며, 정책은 역할이 제공하는 권한입니다.",
         )}
       </p>
       <DetailTabs
+        actions={{ policies: <AuthorizationPanel kind="roles" id={role.id} /> }}
         items={[
           {
             value: "info",
@@ -275,11 +291,9 @@ export function RoleScreen({ data }: { data: RoleDetail }) {
             label: t(`사용자 (${users.length})`),
             content: (
               <BrowseTable
-                title={t("연결 사용자 목록")}
+                title={t("사용자 목록")}
                 rows={users}
-                searchText={(r) =>
-                  `${r.id} ${r.name} ${r.email} ${r.employeeNumber}`
-                }
+                searchText={(r) => `${r.id} ${r.name} ${r.email} `}
                 sortValue={(r) => r.name}
                 columns={[
                   {
@@ -292,7 +306,7 @@ export function RoleScreen({ data }: { data: RoleDetail }) {
                   {
                     key: "status",
                     header: t("상태"),
-                    render: (r) => <StatusBadge status={r.status} />,
+                    render: (r) => <EmploymentBadge status={r.status} />,
                   },
                 ]}
               />
@@ -303,7 +317,7 @@ export function RoleScreen({ data }: { data: RoleDetail }) {
             label: t(`조직 (${organizations.length})`),
             content: (
               <ResourceTable
-                title={t("연결 조직 목록")}
+                title={t("조직 목록")}
                 rows={organizations}
                 route="/organizations"
                 columns={[
@@ -321,6 +335,14 @@ export function RoleScreen({ data }: { data: RoleDetail }) {
               />
             ),
           },
+          ...relatedTabs(groups, t).map((tab) =>
+            tab.value === "service-accounts"
+              ? {
+                  ...tab,
+                  label: `${t("서비스 어카운트")} (${groups.find((group) => group.title === "서비스 어카운트")?.rows.length ?? 0})`,
+                }
+              : tab,
+          ),
           {
             value: "policies",
             label: t(`정책 (${policies.length})`),
@@ -338,7 +360,7 @@ export function PolicyScreen({ data }: { data: PolicyDetail }) {
     <Frame kind="policies" item={policy}>
       <p className="identity-role-note">
         {t(
-          "정책에 연결된 리소스입니다. 서비스 연결이 모든 엔드포인트에 대한 권한을 의미하지는 않습니다.",
+          "정책에 포함된 리소스입니다. 서비스 지정이 모든 엔드포인트에 대한 권한을 의미하지는 않습니다.",
         )}
       </p>
       <DetailTabs

@@ -14,9 +14,9 @@
 
 각 present 항목은 전체 필드를 포함하며 빈 필드는 빈 문자열로 표현합니다. 필드 오타, 중복 YAML key, 별칭, 중복 kind/ID, 유효하지 않은 경로/메서드, 환경·리전 불일치를 거부합니다. 비밀키·인증 토큰은 정의서에 넣지 않습니다.
 
-이 형식은 **명시적 변경 카탈로그**입니다. 파일에서 빠진 ID는 보존하고 implicit prune하지 않습니다. 삭제는 해당 ID의 `state: absent`로 선언합니다(나머지 필드는 식별/검토용으로 유지). 삭제에 연결 정책이 있으면 만료 여부와 무관하게 차단합니다. 삭제 이후 살아남는 하위 리소스가 부모를 잃어도 차단합니다. 정책 연결을 몰래 삭제하지 않습니다. 새로운 리소스에 역할/정책 권한은 자동 부여되지 않습니다. 목록에서 선택한 리소스 또는 상세의 단일 리소스와 필요한 상위 리소스만 한 트랜잭션으로 적용합니다. 전체 변경 Sync는 모든 변경을 명시적으로 선택하는 별도 진입점입니다.
+이 형식은 **명시적 변경 카탈로그**입니다. 파일에서 빠진 ID는 보존하고 implicit prune하지 않습니다. 삭제는 해당 ID의 `state: absent`로 선언합니다(나머지 필드는 식별/검토용으로 유지). 삭제에 정책이 있으면 만료 여부와 무관하게 차단합니다. 삭제 이후 살아남는 하위 리소스가 부모를 잃어도 차단합니다. 정책 부여을 몰래 삭제하지 않습니다. 새로운 리소스에 역할/정책 권한은 자동 부여되지 않습니다. 목록에서 선택한 리소스 또는 상세의 단일 리소스와 필요한 상위 리소스만 한 트랜잭션으로 적용합니다. 전체 변경 Sync는 모든 변경을 명시적으로 선택하는 별도 진입점입니다.
 
-정책 원본: `config/policies/orion-policies.yaml`. `apiVersion: orion.io/v1alpha1`, `kind: PolicyBundle`이며 각 정책은 버전, allow/deny 효과, 연결 리소스, 전처리·후처리 processor를 함께 선언합니다. 여기서 패키지는 정책과 분리된 엔티티가 아니라 정책을 Git/Cloud Config로 묶어 배포·검토하는 형식입니다. processor는 실행 코드가 아니라 Orion API가 사전에 등록한 `handler` 식별자와 설정입니다. 운영 서버는 handler allowlist, handler별 config schema, 실행 순서, 실패 정책을 최종 검증해야 합니다.
+정책 원본: `config/policies/orion-policies.yaml`. `apiVersion: orion.io/v1alpha1`, `kind: PolicyBundle`이며 각 정책은 버전, allow/deny 효과, 리소스, 전처리·후처리 processor를 함께 선언합니다. 여기서 패키지는 정책과 분리된 엔티티가 아니라 정책을 Git/Cloud Config로 묶어 배포·검토하는 형식입니다. processor는 실행 코드가 아니라 Orion API가 사전에 등록한 `handler` 식별자와 설정입니다. 운영 서버는 handler allowlist, handler별 config schema, 실행 순서, 실패 정책을 최종 검증해야 합니다.
 
 ```yaml
 apiVersion: orion.io/v1alpha1
@@ -52,13 +52,13 @@ spec:
               fields: ["/internalNotes"]
 ```
 
-정책 파일에서 빠진 ID는 보존하고 implicit prune하지 않습니다. 삭제는 `state: absent`로만 선언합니다. 역할에 연결된 정책 삭제는 차단합니다. 존재하지 않는 리소스 참조도 차단합니다. 정책 추가는 역할 부여를 자동 생성하지 않습니다.
+정책 파일에서 빠진 ID는 보존하고 implicit prune하지 않습니다. 삭제는 `state: absent`로만 선언합니다. 역할에 포함된 정책 삭제는 차단합니다. 존재하지 않는 리소스 참조도 차단합니다. 정책 추가는 역할 부여를 자동 생성하지 않습니다.
 
 ## merge와 수동 Sync
 
 리소스 관리는 `/resources` 단일 목록으로 제공합니다. Synced 리소스와 추가·수정·삭제 예정 항목을 함께 표시하고 유형·동기화 상태·변경 유형으로 필터링합니다. 별도 변경 탭 없이 목록의 diff 링크에서 변경 내용을 펼치며 Sync 검토에는 포함된 대상의 변경 전후 값과 영향도를 함께 표시합니다. 필터는 조회 범위만 바꿉니다. 선택은 필터를 넘어 유지되며 선택 리소스 Sync와 전체 변경 Sync를 구분합니다. 기존 `/resource-sync`는 `/resources`로 이동합니다.
 
-전처리·후처리는 정책이 허용하는 `service-endpoints`에만 적용합니다. 각 processor는 `endpointId`를 지정하며 해당 ID가 같은 정책의 리소스에 연결되어 있어야 합니다. 서비스에 연결했다고 하위 엔드포인트에 자동 적용하지 않습니다. 워크스페이스·페이지·서비스는 접근 권한만 평가합니다. deny 정책에는 processor를 선언할 수 없습니다.
+전처리·후처리는 정책이 허용하는 `service-endpoints`에만 적용합니다. 각 processor는 `endpointId`를 지정하며 해당 ID가 같은 정책의 리소스에 관계되어 있어야 합니다. 서비스에 관계했다고 하위 엔드포인트에 자동 적용하지 않습니다. 워크스페이스·페이지·서비스는 접근 권한만 평가합니다. deny 정책에는 processor를 선언할 수 없습니다.
 
 `pre`의 target은 `request.query` 또는 `request.body`이며 호출 전 파라미터·본문 필드를 변경합니다. `post`는 `response.body`만 지원하며 호출 후 응답 필드 변경·제거·필터링을 수행합니다. 각 배열 순서대로 실행합니다. 처리가 필요 없으면 pre/post를 빈 배열로 선언합니다. 예제 handler와 config는 API 계약 초안이며 실제 HTTP 변환 실행기는 이 웹 앱에 포함되지 않습니다. 서버는 handler별 설정, 필드 경로, 사용자 입력과 신뢰된 identity 값의 구분을 검증해야 하고, required 처리 실패 시 원본 요청·응답을 그대로 통과시키지 않아야 합니다.
 
@@ -121,14 +121,14 @@ Snapshot에서 외부 자동 동기화 상태 필드(autoSync)를 제거했습�
 
 ## 공통 Sync 계획 API
 
-상세 단일 리소스·목록 선택 리소스·정책 Sync는 `src/features/sync-workflow`의 같은 2단계 대화상자와 실행 API를 사용합니다. 첫 단계는 선택 대상, 정책 연결 리소스, 필수 상위 리소스와 포함 사유를 보여줍니다. 변경 없는 대상과 Git 정의가 없어 현재 상태를 유지하는 대상도 명시합니다. 두 번째 단계에서 서버의 검토 token에 묶인 변경 전후와 영향도를 확인하고 최종 적용합니다. 두 독립 실행을 순차 호출하지 않습니다.
+상세 단일 리소스·목록 선택 리소스·정책 Sync는 `src/features/sync-workflow`의 같은 2단계 대화상자와 실행 API를 사용합니다. 첫 단계는 선택 대상, 정책 리소스, 필수 상위 리소스와 포함 사유를 보여줍니다. 변경 없는 대상과 Git 정의가 없어 현재 상태를 유지하는 대상도 명시합니다. 두 번째 단계에서 서버의 검토 token에 묶인 변경 전후와 영향도를 확인하고 최종 적용합니다. 두 독립 실행을 순차 호출하지 않습니다.
 
-정책 기준 Sync는 선택한 정책의 적용 후 연결 리소스를 포함하고 페이지/엔드포인트의 상위 workspace/service를 재귀 포함합니다. 정책에서 제거한 참조와 삭제 정책의 이전 참조는 자동 Sync 대상에 넣지 않습니다. 이 정의 변경은 정책 diff에서 검토합니다. 필수 참조를 만들거나 변경하는 리소스와 정책을 함께 검증하므로 아직 존재하지 않는 신규 리소스도 같은 계획으로 생성할 수 있습니다. 필수 참조가 정의서와 현재 상태 모두에 없거나 삭제 후 참조가 끊기면 전체 계획을 차단합니다.
+정책 기준 Sync는 선택한 정책의 적용 후 리소스를 포함하고 페이지/엔드포인트의 상위 workspace/service를 재귀 포함합니다. 정책에서 제거한 참조와 삭제 정책의 이전 참조는 자동 Sync 대상에 넣지 않습니다. 이 정의 변경은 정책 diff에서 검토합니다. 필수 참조를 만들거나 변경하는 리소스와 정책을 함께 검증하므로 아직 존재하지 않는 신규 리소스도 같은 계획으로 생성할 수 있습니다. 필수 참조가 정의서와 현재 상태 모두에 없거나 삭제 후 참조가 끊기면 전체 계획을 차단합니다.
 
-정책 영향도는 선택 정책 → 부여된 역할 → 직접 사용자·조직 → 조직 멤버로 표시하고 중복 ID를 제외합니다. 만료된 부여는 연결 경로에서 표시하며 실제 접근 판정과 구분합니다. 함께 변경되는 리소스가 다른 정책에도 사용되면 ‘리소스 변경의 추가 영향’에서 그 관계를 확인합니다. 역할·사용자·조직 부여는 Sync로 변경하지 않습니다.
+정책 영향도는 선택 정책 → 부여된 역할 → 직접 사용자·조직 → 조직 멤버로 표시하고 중복 ID를 제외합니다. 만료된 부여는 부여 경로에서 표시하며 실제 접근 판정과 구분합니다. 함께 변경되는 리소스가 다른 정책에도 사용되면 ‘리소스 변경의 추가 영향’에서 그 관계를 확인합니다. 역할·사용자·조직 부여는 Sync로 변경하지 않습니다.
 
 - 첫 단계 조회는 `GET resource-sync/status`와 정책 선택 시 `GET policy-sync/status`를 사용합니다. 두 snapshot의 환경·리전·revision과 리소스 상태는 일치해야 합니다.
-- `POST sync-plans/previews`: `{selection,revision,resourceCommit,resourceDigest,policyCommit,policyDigest}`. `selection`은 `{mode:"resources",resources:[{kind,id}],policyIds:[]}` 또는 `{mode:"policies",resources:[{kind,id}],policyIds:[id]}`입니다. 정책 모드의 resources는 빈 배열 또는 함께 선택한 접근 대상 목록입니다. API 서버도 혼합 선택을 허용하고 직접 선택+정책 연결+필수 상위의 합집합을 단일 검토 token/revision으로 검증·적용해야 합니다. 명시적으로 선택한 대상의 포함 사유를 우선하며 중복 적용하지 않습니다. 정책이 없으면 policy commit/digest는 빈 문자열입니다. 응답은 `{data:{token,expiresAt,context:{selection,resource:ResourceSnapshot,policy:PolicySnapshot|null}}}`입니다.
+- `POST sync-plans/previews`: `{selection,revision,resourceCommit,resourceDigest,policyCommit,policyDigest}`. `selection`은 `{mode:"resources",resources:[{kind,id}],policyIds:[]}` 또는 `{mode:"policies",resources:[{kind,id}],policyIds:[id]}`입니다. 정책 모드의 resources는 빈 배열 또는 함께 선택한 접근 대상 목록입니다. API 서버도 혼합 선택을 허용하고 직접 선택+정책 부여+필수 상위의 합집합을 단일 검토 token/revision으로 검증·적용해야 합니다. 명시적으로 선택한 대상의 포함 사유를 우선하며 중복 적용하지 않습니다. 정책이 없으면 policy commit/digest는 빈 문자열입니다. 응답은 `{data:{token,expiresAt,context:{selection,resource:ResourceSnapshot,policy:PolicySnapshot|null}}}`입니다.
 - 서버는 선택 범위와 의존성 포함 범위를 재계산하고 모든 대상의 권한을 검증합니다. token에는 사용자, 환경·리전, 전체 인가 revision, 두 source의 commit/digest, 정확한 대상 및 의존성을 바인딩합니다. UI도 응답 scope, revision, 원본 SHA-256, 만료를 확인합니다. 선택은 종류+ID로 정규화합니다. resources 모드에 policyIds를 넣거나 policies 모드에서 policyIds를 비운 요청은 거부합니다. policies 모드의 resources는 함께 선택할 접근 대상을 허용합니다.
 - `POST sync-plans/runs`: `{previewToken,idempotencyKey}` → `{data:ResourceRun}`. **정책과 연관 리소스 전체를 하나의 트랜잭션으로 적용**하고 revision을 한 번 증가시킵니다. 재검증 실패 시 전부 거부합니다. 같은 key의 재시도는 기존 실행을 반환합니다. 이전 전체 Sync API로 대체하지 않습니다.
 - `GET sync-plans/runs/{id}`: 같은 DTO로 진행 상황을 반환합니다. queued/running 동안 재적용과 닫기를 잠그며 2초 간격으로 상태를 조회합니다. succeeded만 완료로 표시합니다. 실패 시 새 검토를 시작합니다.
@@ -138,11 +138,11 @@ Snapshot에서 외부 자동 동기화 상태 필드(autoSync)를 제거했습�
 
 ### 영향받는 대상 우선 표시
 
-공통 검토의 첫 영향 화면은 사용자·조직·서비스 어카운트별 중복 없는 목록입니다. 대상별로 역할과 정책 요약을 먼저 표시하고 펼치면 직접 부여된 역할 → 정책 → 리소스 경로를 확인합니다. 조직은 별도 대상이며 멤버 사용자로 확장하지 않습니다. 리소스 검토의 단일/다중 선택 범위는 유지하며 정책 Sync는 선택 정책의 역할 연결로만 집계합니다. 서비스 어카운트 역할은 graph.serviceAccounts의 명시적 roleIds를 사용하고 조직 소속으로 추정하지 않습니다. Graph 확장 및 누락 응답 의미는 `docs/authorization-management.md`를 따릅니다.
+공통 검토의 첫 영향 화면은 사용자·조직·서비스 어카운트별 중복 없는 목록입니다. 대상별로 역할과 정책 요약을 먼저 표시하고 펼치면 직접 부여된 역할 → 정책 → 리소스 경로를 확인합니다. 조직은 별도 대상이며 멤버 사용자로 확장하지 않습니다. 리소스 검토의 단일/다중 선택 범위는 유지하며 정책 Sync는 선택 정책의 역할 관계로만 집계합니다. 서비스 어카운트 역할은 graph.serviceAccounts의 명시적 roleIds를 사용하고 조직 소속으로 추정하지 않습니다. Graph 확장 및 누락 응답 의미는 `docs/authorization-management.md`를 따릅니다.
 
 ### 정책을 포함한 변경 관리
 
-LSB의 리소스 그룹은 워크스페이스·페이지·서비스·엔드포인트, 정책, 변경 관리 순서입니다. 역할은 권한 관리 그룹에 둡니다. 정책은 배포/변경 관리 유형이며 정책에 연결할 접근 대상의 ResourceKind는 기존 네 종류를 유지합니다.
+LSB의 리소스 그룹은 워크스페이스·페이지·서비스·엔드포인트, 정책, 변경 관리 순서입니다. 역할은 권한 관리 그룹에 둡니다. 정책은 배포/변경 관리 유형이며 정책에 관계할 접근 대상의 ResourceKind는 기존 네 종류를 유지합니다.
 
 변경 관리는 resource-sync/status와 policy-sync/status를 모두 읽고 환경·리전·revision 일치를 확인합니다. 정책과 리소스의 source commit은 각각 표시합니다. 환경 전체 동기화 버튼은 제공하지 않습니다. 각 행의 동기화 또는 명시적으로 선택한 항목만 검토합니다. 리소스 단독 diff의 차단 사유로 정책을 포함한 합동 적용을 미리 차단하지 않으며 공통 preview에서 최종 결합 상태의 참조를 검증합니다.
 
@@ -150,6 +150,6 @@ LSB의 리소스 그룹은 워크스페이스·페이지·서비스·엔드포�
 
 ### 항목 단위 동기화 진입
 
-동기화의 관리 단위는 종류+ID로 식별하는 리소스 또는 정책입니다. 변경 관리의 각 행에서 상태·diff·이력을 확인하고 해당 항목의 동기화 검토를 엽니다. diff 모달과 리소스 상세에서도 동일한 단일 항목 흐름을 사용합니다. 여러 항목 선택은 이 단위들의 합집합이며 환경 전체 배포로 확대하지 않습니다. 정책의 연결 리소스와 필수 상위 포함 규칙은 유지하고 검토 대상 표에 사유를 표시합니다.
+동기화의 관리 단위는 종류+ID로 식별하는 리소스 또는 정책입니다. 변경 관리의 각 행에서 상태·diff·이력을 확인하고 해당 항목의 동기화 검토를 엽니다. diff 모달과 리소스 상세에서도 동일한 단일 항목 흐름을 사용합니다. 여러 항목 선택은 이 단위들의 합집합이며 환경 전체 배포로 확대하지 않습니다. 정책의 리소스와 필수 상위 포함 규칙은 유지하고 검토 대상 표에 사유를 표시합니다.
 
 변경 관리 상단은 전체 항목 수와 항목별 Synced/Out of sync 건수만 요약합니다. 환경 공통 revision/commit을 개별 항목의 적용 버전처럼 표시하지 않습니다. 리소스 상세는 해당 항목의 실제 적용 이력을 표시하며 이력이 없으면 없음으로 안내합니다. 서버의 공통 revision은 동시 변경 충돌을 검증하는 snapshot 기준으로 유지합니다. 이번 UI 변경은 기존 preview·apply API나 정책 실행 단위 rollback 계약을 변경하지 않습니다.

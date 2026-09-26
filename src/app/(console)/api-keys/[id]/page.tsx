@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getT } from "@/i18n/server";
 import { getRelatedGroups } from "@/features/relationships/repository";
-import { RelatedRecords } from "@/features/relationships/related-records";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ApiKeyScreen } from "@/features/api-keys/screens";
@@ -22,8 +21,7 @@ export default async function Page({
   const groups = await getRelatedGroups("api-keys", id);
   return (
     <Suspense fallback={<p role="status">{t("불러오는 중…")}</p>}>
-      <ApiKeyScreen data={data} />
-      <RelatedRecords groups={groups} />
+      <ApiKeyScreen data={data} groups={groups} />
     </Suspense>
   );
 }

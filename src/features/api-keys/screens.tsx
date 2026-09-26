@@ -1,4 +1,6 @@
 "use client";
+import { relatedTabs } from "../relationships/related-records";
+import type { RelatedGroup } from "../relationships/repository";
 import { DateValue, useI18n } from "@/i18n/provider";
 import Link from "next/link";
 import { PageHeading } from "@/components/ui/page-heading";
@@ -85,7 +87,7 @@ export function ApiKeysList({ rows }: { rows: KeyRow[] }) {
         title={t("API 키 목록")}
         rows={rows}
         searchText={(r) =>
-          `${r.name} ${r.id} ${r.displayHint} ${r.description} ${r.owner.name} ${r.organization.name}`
+          `${r.name} ${r.id} ${r.displayHint} ${r.description} ${r.owner.name} ${r.organization.name} ${r.service.name} ${r.serviceAccount.name}`
         }
         sortValue={(r, k) =>
           k === "createdAt"
@@ -109,6 +111,30 @@ export function ApiKeysList({ rows }: { rows: KeyRow[] }) {
           },
         ]}
         columns={[
+          {
+            key: "service",
+            header: t("관리 서비스"),
+            render: (r) => (
+              <Link
+                className="identity-link"
+                href={`/services/${r.service.id}`}
+              >
+                {r.service.name}
+              </Link>
+            ),
+          },
+          {
+            key: "serviceAccount",
+            header: t("서비스 어카운트"),
+            render: (r) => (
+              <Link
+                className="identity-link"
+                href={`/service-accounts/${r.serviceAccount.id}`}
+              >
+                {r.serviceAccount.name}
+              </Link>
+            ),
+          },
           {
             key: "name",
             header: t("이름"),
@@ -136,7 +162,7 @@ export function ApiKeysList({ rows }: { rows: KeyRow[] }) {
           },
           {
             key: "owner",
-            header: t("소유자"),
+            header: t("발급 요청자"),
             render: (r) => personLink(r.owner),
           },
           {
@@ -245,7 +271,13 @@ function Approvals({ rows }: { rows: ApprovalRow[] }) {
     </>
   );
 }
-export function ApiKeyScreen({ data }: { data: KeyDetail }) {
+export function ApiKeyScreen({
+  data,
+  groups = [],
+}: {
+  data: KeyDetail;
+  groups?: RelatedGroup[];
+}) {
   const { t } = useI18n();
   const { key: k, approvals } = data;
   return (
@@ -280,7 +312,29 @@ export function ApiKeyScreen({ data }: { data: KeyDetail }) {
                       value: <State state={keyStates[k.status]} />,
                     },
                     { label: t("소속 조직"), value: orgLink(k.organization) },
-                    { label: t("소유자"), value: personLink(k.owner) },
+                    {
+                      label: t("서비스 어카운트"),
+                      value: (
+                        <Link
+                          className="identity-link"
+                          href={`/service-accounts/${k.serviceAccount.id}`}
+                        >
+                          {k.serviceAccount.name}
+                        </Link>
+                      ),
+                    },
+                    {
+                      label: t("관리 서비스"),
+                      value: (
+                        <Link
+                          className="identity-link"
+                          href={`/services/${k.service.id}`}
+                        >
+                          {k.service.name}
+                        </Link>
+                      ),
+                    },
+                    { label: t("발급 요청자"), value: personLink(k.owner) },
                     {
                       label: t("발급일"),
                       value: timestamp(k.createdAt),
@@ -307,6 +361,7 @@ export function ApiKeyScreen({ data }: { data: KeyDetail }) {
             label: t(`결재 이력 (${approvals.length})`),
             content: <Approvals rows={approvals} />,
           },
+          ...relatedTabs(groups, t),
         ]}
       />
     </>
