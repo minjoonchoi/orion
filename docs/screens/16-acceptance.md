@@ -98,3 +98,7 @@
 - P18 소스: [approval-workflow](https://github.com/minjoonchoi/orion/tree/20f1da401851007852ed8cfe4a0ff602636362d4/src/features/approval-workflow), [캡처 스크립트](https://github.com/minjoonchoi/orion/blob/20f1da401851007852ed8cfe4a0ff602636362d4/scripts/approval-workflow-screens.mjs).
 - 앞선 구현 PR의 테스트 결과는 해당 PR에 기록되어 있다. 이 문서 PR은 기능 코드를 변경하지 않으며 기존 검증을 이번에 재실행한 것처럼 서술하지 않는다.
 - 실제 OIDC·인가·Cloud Config·AWS·분산 실패 복구는 각각 별도 서버 통합 검수가 필요하다. [미완료 표](15-gaps-and-decisions.md)의 항목을 해결한 뒤 운영 완료로 전환한다.
+
+## CI 회귀 정비 — 2026-09-26
+
+[회귀 검증 기록](../ci-regression-2026-09-26.md). 최초 PR #18/#19 CI는 각각 E2E 13건이 실패했다. 플랫폼 개편 전 진입점/표 제목/URL을 최신 요구에 맞추고, 현재 사용자 부여·정의 Sync·API directory 계약을 검증하도록 갱신한다. ROL-04/05의 미완료 편집기와 directory↔definitions 통합은 여전히 GAP-02~04이며 통과한 테스트로 완료를 주장하지 않는다. 만료·정책 해제의 모델 단위 검증은 유지한다.

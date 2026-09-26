@@ -27,7 +27,7 @@ test("users search, filters, sorting and pagination", async ({ page }) => {
 test("user and organization details link together and tabs survive navigation", async ({
   page,
 }) => {
-  await page.goto("/users/usr-001");
+  await page.goto("/users/usr-001?tab=organizations");
   await expect(
     page.getByRole("heading", { name: "김가람", exact: true }),
   ).toBeVisible();
@@ -36,7 +36,7 @@ test("user and organization details link together and tabs survive navigation", 
   ).toBeVisible();
   await page.getByRole("tab", { name: "역할 (2)", exact: true }).click();
   await expect(
-    page.getByRole("table", { name: "역할 목록", exact: true }),
+    page.getByRole("table", { name: "플랫폼 역할 목록", exact: true }),
   ).toContainText("플랫폼 관리자");
   await expect(page.getByText("소유 API 키", { exact: true })).toHaveCount(0);
   await expect(page.getByText("재직", { exact: true })).toBeVisible();
@@ -161,6 +161,6 @@ test("organization leaders, parents and service account key links", async ({
     .click();
   await expect(page).toHaveURL(/users\/usr-001\?tab=roles/);
   await expect(
-    page.getByRole("table", { name: "역할 목록", exact: true }),
+    page.getByRole("table", { name: "플랫폼 역할 목록", exact: true }),
   ).toContainText("플랫폼 관리자");
 });

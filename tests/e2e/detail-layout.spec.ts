@@ -54,7 +54,7 @@ test("tab state, history, empty roles, localized labels and accessibility", asyn
   await page.goto("/users/usr-001?tab=roles");
   await expect(
     page.getByRole("button", { name: "역할 부여", exact: true }),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await page.getByRole("tab", { name: "소속 조직 (2)", exact: true }).click();
   await expect(page).toHaveURL(/tab=organizations/);
   await page.goBack();
