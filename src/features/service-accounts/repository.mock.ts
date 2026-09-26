@@ -1,4 +1,10 @@
-import { serviceAccounts, organizations, roles } from "../identity/fixtures";
+import {
+  serviceAccounts,
+  organizations,
+  roles,
+  services,
+  organizationServices,
+} from "../identity/fixtures";
 import type { ServiceAccount, Role } from "../identity/types";
 import type { KeyRow } from "../api-keys/types";
 import { apiKeyRepository } from "../api-keys/repository";
@@ -12,6 +18,7 @@ export type AccountDetail = {
   account: AccountRow;
   roles: Role[];
   keys: KeyRow[];
+  issuableServices: { id: string; name: string }[];
 };
 const rows = (): AccountRow[] =>
   serviceAccounts.map((a) => {
@@ -32,6 +39,15 @@ export const serviceAccountRepository = {
     if (!account) return null;
     return {
       account,
+      issuableServices: services
+        .filter(
+          (s) =>
+            s.status === "active" &&
+            (organizationServices[account.organization.id] ?? []).includes(
+              s.id,
+            ),
+        )
+        .map(({ id, name }) => ({ id, name })),
       roles: roles.filter((r) =>
         (serviceAccountRoles[id] ?? []).includes(r.id),
       ),

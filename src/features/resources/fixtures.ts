@@ -79,7 +79,7 @@ export const pages: ResourcePage[] = [
   {
     id: "page-roles",
     name: "역할 관리",
-    description: "역할과 연결 정보 조회",
+    description: "역할과 관계 정보 조회",
     workspaceId: "ws-platform",
     path: "/roles",
   },

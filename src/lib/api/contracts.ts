@@ -14,11 +14,7 @@ const userShape = {
   id: s,
   name: s,
   email: s,
-  employeeNumber: s,
-  title: s,
-  status,
-  createdAt: dt,
-  lastSignedInAt: nil(dt),
+  status: en(["employed", "on_leave"]),
 };
 const user = obj(userShape);
 const orgShape = {
@@ -45,6 +41,8 @@ const account = obj(accountShape);
 const userRow = obj({ ...userShape, organizations: arr(person), roleCount: n });
 const orgRow = obj({
   ...orgShape,
+  leader: nil(person),
+  parentOrganization: nil(person),
   memberCount: n,
   serviceAccountCount: n,
   serviceCount: n,
@@ -92,6 +90,10 @@ const page = obj({
 });
 const serviceRow = obj({ ...serviceShape, endpointCount: n });
 const key = obj({
+  serviceAccountId: s,
+  serviceId: s,
+  serviceAccount: person,
+  service: person,
   id: s,
   name: s,
   description: s,
@@ -151,8 +153,8 @@ export const contracts = {
     list: userRow,
     detail: obj({
       user,
-      organizations: arr(obj({ ...orgShape, joinedAt: dt })),
       roles: arr(role),
+      organizations: arr(obj({ ...orgShape, joinedAt: dt })),
     }),
   },
   organizations: {
@@ -202,9 +204,24 @@ export const contracts = {
   approvals: { list: approval, detail: approval },
   "service-accounts": {
     list: accountRow,
-    detail: obj({ account: accountRow, roles: arr(role), keys: arr(key) }),
+    detail: obj({
+      account: accountRow,
+      roles: arr(role),
+      keys: arr(key),
+      issuableServices: arr(person),
+    }),
   },
 };
 export const relatedGroups = arr(
-  obj({ title: s, rows: arr(obj({ id: s, name: s, href: s })) }),
+  obj({
+    title: s,
+    rows: arr(
+      obj({
+        id: s,
+        name: s,
+        href: s,
+        serviceAccounts: optional(arr(obj({ id: s, name: s }))),
+      }),
+    ),
+  }),
 );

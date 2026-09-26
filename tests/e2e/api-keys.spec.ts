@@ -40,7 +40,10 @@ test("API key metadata links to owner and organization and handles optional date
     .getByRole("link", { name: "디렉터리 동기화", exact: true })
     .click();
   await expect(page.getByText("•••• a001", { exact: true })).toBeVisible();
-  await page.getByRole("link", { name: "김가람", exact: true }).click();
+  await page
+    .locator("[data-detail-summary]")
+    .getByRole("link", { name: "김가람", exact: true })
+    .click();
   await expect(page).toHaveURL(/users\/usr-001$/);
   await page.goBack();
   await page.getByRole("link", { name: "플랫폼개발팀", exact: true }).click();
@@ -55,7 +58,7 @@ test("approval history filters, paginates, restores tabs and shows decision meta
   page,
 }) => {
   await page.goto("/api-keys/key-directory");
-  await page.getByRole("tab", { name: "결재 이력 (6)", exact: true }).click();
+  await page.goto("/api-keys/key-directory?tab=approvals");
   await expect(page).toHaveURL(/tab=approvals/);
   await page.reload();
   await expect(
@@ -104,7 +107,7 @@ test("empty history, missing key, invalid tab, accessibility and mobile", async 
   ).toBeVisible();
   await page.goto("/api-keys/key-directory?tab=unknown");
   await expect(
-    page.getByRole("tab", { name: "기본 정보", exact: true }),
+    page.getByRole("tab", { name: "결재 이력 (6)", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
   for (const route of [
     "/api-keys",

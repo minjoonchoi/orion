@@ -1,13 +1,10 @@
 export type Status = "active" | "inactive";
+/** name is the user nickname; id is the stable relationship key. */
 export type User = {
   id: string;
   name: string;
   email: string;
-  employeeNumber: string;
-  title: string;
-  status: Status;
-  createdAt: string;
-  lastSignedInAt: string | null;
+  status: "employed" | "on_leave";
 };
 export type Organization = {
   id: string;
@@ -38,19 +35,21 @@ export type Membership = {
   joinedAt: string;
 };
 export type UserRow = User & {
-  organizations: Pick<Organization, "id" | "name">[];
   roleCount: number;
+  organizations: Pick<Organization, "id" | "name">[];
 };
 export type OrganizationRow = Organization & {
+  leader: Pick<User, "id" | "name"> | null;
+  parentOrganization: Pick<Organization, "id" | "name"> | null;
   memberCount: number;
   serviceAccountCount: number;
   serviceCount: number;
   roleCount: number;
 };
 export type UserDetail = {
+  roles: Role[];
   user: User;
   organizations: (Organization & { joinedAt: string })[];
-  roles: Role[];
 };
 export type OrganizationDetail = {
   organization: OrganizationRow;

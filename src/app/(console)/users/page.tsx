@@ -1,3 +1,4 @@
+import { loadDirectory } from "@/features/platforms/repository";
 import type { Metadata } from "next";
 import { getT } from "@/i18n/server";
 import { UsersList } from "@/features/identity/screens";
@@ -9,6 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Page() {
   return (
     <UsersList
+      directory={await loadDirectory()}
       rows={await identityRepository.listUsers()}
       organizations={await identityRepository.listOrganizations()}
     />

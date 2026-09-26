@@ -49,10 +49,10 @@ export default async function LoginPage() {
             <h2>
               {t("하나의 계정.")}
               <br />
-              {t("연결된 업무.")}
+              {t("하나의 업무 환경.")}
             </h2>
             <p className="login-story-description">
-              {t("사내 업무 도구를 연결하는")}
+              {t("사내 업무 도구를 위한")}
               <br />
               {t("통합 인증과 접근 권한의 시작점.")}
             </p>

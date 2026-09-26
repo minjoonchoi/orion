@@ -236,10 +236,10 @@ export function WorkspacesList({ rows }: { rows: WorkspaceRow[] }) {
         filters={[
           {
             key: "pages",
-            label: t("페이지 연결 필터"),
+            label: t("페이지 포함 필터"),
             options: [
-              { value: "linked", label: t("연결됨") },
-              { value: "empty", label: t("미연결") },
+              { value: "linked", label: t("있음") },
+              { value: "empty", label: t("없음") },
             ],
             matches: (r, v) => r.pageCount > 0 === (v === "linked"),
           },

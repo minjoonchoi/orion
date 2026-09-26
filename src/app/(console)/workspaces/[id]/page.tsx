@@ -1,3 +1,4 @@
+import { loadDirectory } from "@/features/platforms/repository";
 import { Suspense } from "react";
 import { DefinitionsScreen } from "@/features/definitions/screen";
 export default async function Page({
@@ -8,7 +9,11 @@ export default async function Page({
   const { id } = await params;
   return (
     <Suspense>
-      <DefinitionsScreen kind="workspaces" id={id} />
+      <DefinitionsScreen
+        directory={await loadDirectory()}
+        kind="workspaces"
+        id={id}
+      />
     </Suspense>
   );
 }

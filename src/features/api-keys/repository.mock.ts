@@ -1,4 +1,9 @@
-import { users, organizations } from "../identity/fixtures";
+import {
+  users,
+  organizations,
+  serviceAccounts,
+  services,
+} from "../identity/fixtures";
 import { apiKeys } from "./fixtures";
 import { approvals } from "../approvals/fixtures";
 import type { KeyRow, KeyDetail, Person } from "./types";
@@ -11,6 +16,14 @@ const rows = (): KeyRow[] =>
     const org = organizations.find((o) => o.id === key.organizationId)!;
     return {
       ...key,
+      serviceAccount: {
+        id: key.serviceAccountId,
+        name: serviceAccounts.find((a) => a.id === key.serviceAccountId)!.name,
+      },
+      service: {
+        id: key.serviceId,
+        name: services.find((s) => s.id === key.serviceId)!.name,
+      },
       organization: { id: org.id, name: org.name },
       owner: person(key.ownerId),
       approvalCount: approvals.filter((a) => a.keyId === key.id).length,

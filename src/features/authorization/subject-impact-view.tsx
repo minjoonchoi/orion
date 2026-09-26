@@ -72,7 +72,7 @@ export function SubjectImpact({
       {missingAccounts && (
         <p role="status" className="subject-incomplete">
           {t(
-            "서비스 어카운트 연결 정보가 제공되지 않아 해당 영향도는 확인할 수 없습니다.",
+            "서비스 어카운트 관계 정보가 제공되지 않아 해당 영향도는 확인할 수 없습니다.",
           )}
         </p>
       )}
@@ -114,7 +114,7 @@ export function SubjectImpact({
               setPage(1);
             }}
           />
-          {t("만료된 연결 포함")}
+          {t("만료된 부여 포함")}
         </label>
       </div>
       <div className="subject-results" aria-live="polite">
@@ -144,7 +144,7 @@ export function SubjectImpact({
             {t(
               term
                 ? "검색 결과가 없습니다."
-                : "이 범위에 연결된 대상이 없습니다.",
+                : "이 범위에 해당하는 대상이 없습니다.",
             )}
           </p>
         )}
@@ -177,7 +177,7 @@ export function SubjectImpact({
         )}
       </p>
       <p className="muted">
-        {t("연결 관계 기준이며 최종 접근 허용 여부는 서버에서 판정합니다.")}
+        {t("관계 기준이며 최종 접근 허용 여부는 서버에서 판정합니다.")}
       </p>
     </section>
   );
@@ -233,7 +233,7 @@ function SubjectRow({
             className="subject-path"
           >
             <div className="subject-path-meta">
-              <span>{t("직접 연결")}</span>
+              <span>{t("직접 부여")}</span>
               {p.change && (
                 <span
                   className={

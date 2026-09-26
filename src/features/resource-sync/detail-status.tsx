@@ -141,7 +141,7 @@ export function ResourceDeploymentStatus({
       </Button>
       <Dialog
         title={t("영향도 검토")}
-        description={t("조회 대상으로 선택한 리소스의 연결 관계만 표시합니다.")}
+        description={t("조회 대상으로 선택한 리소스의 관계만 표시합니다.")}
         trigger={<button hidden aria-label={t("영향도 검토")} />}
         open={impactOpen}
         onOpenChange={setImpactOpen}

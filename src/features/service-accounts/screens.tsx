@@ -1,4 +1,5 @@
 "use client";
+import { IssueKeyDialog } from "../api-keys/issue-dialog";
 import { useI18n } from "@/i18n/provider";
 import Link from "next/link";
 import { PageHeading } from "@/components/ui/page-heading";
@@ -35,7 +36,7 @@ export function ServiceAccountsList({ rows }: { rows: AccountRow[] }) {
       <PageHeading
         title={t("서비스 어카운트")}
         description={t(
-          "자동화 작업과 서비스 연동에 사용하는 계정의 조직·역할·API 키를 조회합니다.",
+          "플랫폼에 종속되지 않는 서버 통신 계정입니다. API 키로 인증하고 Orion 역할로 인가합니다.",
         )}
       />
       <DemoNotice />
@@ -156,6 +157,11 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
       <PageHeading title={a.name} description={a.description} />
       <DemoNotice />
       <DetailTabs
+        actions={{
+          "api-keys": (
+            <IssueKeyDialog account={a} services={data.issuableServices} />
+          ),
+        }}
         items={[
           {
             value: "info",
@@ -166,6 +172,12 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
                 <Details
                   items={[
                     { label: t("서비스 어카운트 ID"), value: a.id },
+                    { label: t("인증 방식"), value: "API Key" },
+                    { label: t("주체 범위"), value: t("전역") },
+                    {
+                      label: t("역할 플랫폼"),
+                      value: link("/platforms", "orion", "Orion"),
+                    },
                     { label: t("이름"), value: a.name },
                     { label: t("설명"), value: a.description },
                     {
@@ -197,11 +209,11 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
               <>
                 <p className="identity-role-note">
                   {t(
-                    "직접 연결된 역할입니다. 소속 조직의 역할 상속이나 유효 권한을 의미하지 않습니다.",
+                    "Orion 플랫폼 역할을 직접 부여받습니다. 플랫폼 멤버십 없이 API 키로 인증합니다.",
                   )}
                 </p>
                 <BrowseTable
-                  title={t("연결 역할 목록")}
+                  title={t("역할 목록")}
                   rows={roles}
                   searchText={(r) => `${r.id} ${r.name} ${r.description}`}
                   sortValue={(r) => r.name}
@@ -229,20 +241,31 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
             content: (
               <>
                 <p className="identity-role-note">
-                  {t(
-                    "연결된 API 키의 메타데이터입니다. 키 원문은 표시하지 않습니다.",
-                  )}
+                  {t("API 키의 메타데이터입니다. 키 원문은 표시하지 않습니다.")}
                 </p>
                 <BrowseTable
-                  title={t("연결 API 키 목록")}
+                  title={t("API 키 목록")}
                   rows={keys}
                   searchText={(r) =>
-                    `${r.id} ${r.name} ${r.displayHint} ${r.description}`
+                    `${r.id} ${r.name} ${r.displayHint} ${r.description} ${r.service.name}`
                   }
                   sortValue={(r, k) =>
                     k === "expiresAt" ? (r.expiresAt ?? "9999") : r.name
                   }
                   filters={[
+                    {
+                      key: "service",
+                      label: t("관리 서비스 필터"),
+                      options: [
+                        ...new Map(
+                          keys.map((k) => [
+                            k.service.id,
+                            { value: k.service.id, label: k.service.name },
+                          ]),
+                        ).values(),
+                      ],
+                      matches: (r, v) => r.serviceId === v,
+                    },
                     {
                       key: "status",
                       label: t("키 상태 필터"),
@@ -254,6 +277,17 @@ export function ServiceAccountScreen({ data }: { data: AccountDetail }) {
                     },
                   ]}
                   columns={[
+                    {
+                      key: "service",
+                      header: t("관리 서비스"),
+                      render: (r) =>
+                        link("/services", r.service.id, r.service.name),
+                    },
+                    {
+                      key: "createdAt",
+                      header: t("발급일"),
+                      render: (r) => date(r.createdAt),
+                    },
                     {
                       key: "name",
                       header: t("이름"),

@@ -3,6 +3,8 @@ import type { ApiKey } from "./types";
 export const apiKeys: ApiKey[] = [
   {
     id: "key-directory",
+    serviceAccountId: "sa-directory-sync",
+    serviceId: "svc-directory",
     name: "디렉터리 동기화",
     description: "구성원 동기화 배치 연동용 예제 키",
     displayHint: "•••• a001",
@@ -16,6 +18,8 @@ export const apiKeys: ApiKey[] = [
   },
   {
     id: "key-platform-ci",
+    serviceAccountId: "sa-platform-ci",
+    serviceId: "svc-orion",
     name: "플랫폼 CI",
     description: "배포 파이프라인 조회용",
     displayHint: "•••• a002",
@@ -29,6 +33,8 @@ export const apiKeys: ApiKey[] = [
   },
   {
     id: "key-audit",
+    serviceAccountId: "sa-audit-export",
+    serviceId: "svc-orion",
     name: "감사 자료 추출",
     description: "감사 리포트 연동용",
     displayHint: "•••• a003",
@@ -42,6 +48,8 @@ export const apiKeys: ApiKey[] = [
   },
   {
     id: "key-approval",
+    serviceAccountId: "sa-approval-bot",
+    serviceId: "svc-approval",
     name: "결재 알림",
     description: "결재 알림 작업용",
     displayHint: "•••• a004",
@@ -55,6 +63,8 @@ export const apiKeys: ApiKey[] = [
   },
   {
     id: "key-finance",
+    serviceAccountId: "sa-finance-report",
+    serviceId: "svc-settlement",
     name: "정산 리포트",
     description: "정산 리포트 조회용",
     displayHint: "•••• a005",
@@ -68,6 +78,8 @@ export const apiKeys: ApiKey[] = [
   },
   {
     id: "key-product",
+    serviceAccountId: "sa-product-metrics",
+    serviceId: "svc-orion",
     name: "제품 지표 조회",
     description: "제품 지표 연동용",
     displayHint: "•••• a006",
@@ -81,6 +93,8 @@ export const apiKeys: ApiKey[] = [
   },
   {
     id: "key-old-ci",
+    serviceAccountId: "sa-platform-ci",
+    serviceId: "svc-directory",
     name: "이전 CI 연동",
     description: "이전 파이프라인 연동용",
     displayHint: "•••• a007",

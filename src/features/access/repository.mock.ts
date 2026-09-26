@@ -45,7 +45,7 @@ const policies: Policy[] = [
   {
     id: "policy-platform",
     name: "플랫폼 조회",
-    description: "플랫폼 역할·정책 조회 리소스 연결",
+    description: "플랫폼 역할·정책 조회 리소스 지정",
     serviceIds: ["svc-orion"],
     endpointIds: ["ep-roles", "ep-policies"],
     workspaceIds: ["ws-platform"],
@@ -53,7 +53,7 @@ const policies: Policy[] = [
   {
     id: "policy-directory",
     name: "구성원 조회",
-    description: "구성원과 조직 조회 리소스 연결",
+    description: "구성원과 조직 조회 리소스 지정",
     serviceIds: ["svc-directory"],
     endpointIds: ["ep-users", "ep-orgs"],
     workspaceIds: ["ws-directory"],
@@ -61,7 +61,7 @@ const policies: Policy[] = [
   {
     id: "policy-security",
     name: "보안 검토",
-    description: "보안 검토용 플랫폼과 디렉터리 연결",
+    description: "보안 검토용 플랫폼과 디렉터리 관계",
     serviceIds: ["svc-orion", "svc-directory"],
     endpointIds: ["ep-roles", "ep-policies", "ep-users", "ep-orgs"],
     workspaceIds: ["ws-platform", "ws-directory"],
@@ -69,7 +69,7 @@ const policies: Policy[] = [
   {
     id: "policy-approval-read",
     name: "결재 조회",
-    description: "결재 이력 조회 리소스 연결",
+    description: "결재 이력 조회 리소스 지정",
     serviceIds: ["svc-approval"],
     endpointIds: ["ep-approvals"],
     workspaceIds: ["ws-approval"],
@@ -77,7 +77,7 @@ const policies: Policy[] = [
   {
     id: "policy-approval-submit",
     name: "결재 요청",
-    description: "결재 요청 리소스 연결",
+    description: "결재 요청 리소스 지정",
     serviceIds: ["svc-approval"],
     endpointIds: ["ep-approval-submit"],
     workspaceIds: ["ws-approval"],
@@ -85,15 +85,15 @@ const policies: Policy[] = [
   {
     id: "policy-settlement",
     name: "정산 조회",
-    description: "정산 서비스 연결",
+    description: "정산 서비스 지정",
     serviceIds: ["svc-settlement"],
     endpointIds: [],
     workspaceIds: [],
   },
   {
     id: "policy-unassigned",
-    name: "미연결 정책",
-    description: "연결 리소스가 없는 예제 정책",
+    name: "미정책",
+    description: "리소스가 없는 예제 정책",
     serviceIds: [],
     endpointIds: [],
     workspaceIds: [],
@@ -109,8 +109,8 @@ const roles: Role[] = [
   ...identity.roles,
   {
     id: "role-unassigned",
-    name: "미연결 역할",
-    description: "사용자·조직·정책이 연결되지 않은 예제 역할",
+    name: "미역할",
+    description: "사용자·조직·정책이 지정되지 않은 예제 역할",
   },
   {
     id: "role-finance",

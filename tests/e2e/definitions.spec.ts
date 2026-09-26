@@ -15,10 +15,10 @@ test("domain actions navigate to scoped endpoint and policy response rules", asy
   await expect(
     page.getByRole("heading", { name: "정책별 응답 범위" }),
   ).toBeVisible();
-  await page.getByRole("tab", { name: "연결 관계", exact: true }).click();
+  await page.getByRole("tab", { name: /^관계 \(/ }).click();
   await page.getByRole("link", { name: /사용자 기본 정보 조회/ }).click();
   await expect(page).toHaveURL(/service-endpoints\/identity-api~detail/);
-  await page.getByRole("tab", { name: "연결 관계", exact: true }).click();
+  await page.getByRole("tab", { name: /^관계 \(/ }).click();
   await expect(
     page.getByRole("heading", { name: "동일 엔드포인트의 Action 비교" }),
   ).toBeVisible();
@@ -70,7 +70,7 @@ test("policy preview includes dependencies; same two views and consent, scoped a
   await expect(
     page.getByRole("row").filter({ hasText: "/phone" }),
   ).toContainText("keep-last");
-  await page.getByRole("tab", { name: "동기화 이력", exact: true }).click();
+  await page.getByRole("tab", { name: /^동기화 이력 \(/ }).click();
   await expect(
     page.getByRole("button", { name: "이 버전으로 복원 검토" }),
   ).toHaveCount(2);
@@ -86,11 +86,11 @@ test("policy preview includes dependencies; same two views and consent, scoped a
     .check();
   await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(dialog).toHaveCount(0);
-  await page.getByRole("tab", { name: "상세 정보", exact: true }).click();
+  await page.getByRole("tab", { name: /^Action \(/ }).click();
   await expect(
     page.getByRole("row").filter({ hasText: "/phone" }),
   ).toContainText("미포함");
-  await page.goto("/service-endpoints/identity-api~detail");
+  await page.goto("/service-endpoints/identity-api~detail?tab=response");
   await expect(
     page.getByRole("heading", { name: "사용자 상세 조회", exact: true }),
   ).toBeVisible();
@@ -124,14 +124,14 @@ test("partial sync preserves other pending policy and selection across filtering
 test("same local endpoint ID is resolved using service parent", async ({
   page,
 }) => {
-  await page.goto("/service-endpoints/directory-api~detail");
+  await page.goto("/service-endpoints/directory-api~detail?tab=response");
   await expect(
     page.getByRole("heading", { name: "디렉터리 사용자 조회", exact: true }),
   ).toBeVisible();
   await expect(
     page.locator("[role=tabpanel]:visible .def-table").last(),
   ).not.toContainText("phone");
-  await page.goto("/service-endpoints/identity-api~detail");
+  await page.goto("/service-endpoints/identity-api~detail?tab=response");
   await expect(
     page.locator("[role=tabpanel]:visible .def-table").last(),
   ).toContainText("phone");

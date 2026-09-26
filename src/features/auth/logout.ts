@@ -34,6 +34,8 @@ export async function logout(): Promise<{ ok: boolean }> {
     }
   }
   if (config.sessionCookie) jar.delete(config.sessionCookie);
+  jar.delete("orion-demo-key-requests");
+  jar.delete("orion-platform-demo");
   await clearDemo();
   return { ok: true };
 }

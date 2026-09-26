@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 test("policy removal review shows affected service accounts and removed role-policy paths", async ({
   page,
 }) => {
-  await page.goto("/roles/role-platform");
+  await page.goto("/roles/role-platform?tab=policies");
   await page
     .getByRole("button", { name: "역할 부여 관리", exact: true })
     .click();

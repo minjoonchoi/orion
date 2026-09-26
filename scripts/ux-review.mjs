@@ -316,7 +316,7 @@ try {
   await page.getByRole("button", { name: "완료", exact: true }).click();
   await visit("/policies/policy-platform");
   assert.equal(
-    await page.getByRole("button", { name: "리소스 연결과 정책 효과" }).count(),
+    await page.getByRole("button", { name: "리소스 지정과 정책 효과" }).count(),
     0,
   );
   await page.getByRole("link", { name: "정책 변경 검토" }).click();

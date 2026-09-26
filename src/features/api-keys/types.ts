@@ -8,6 +8,8 @@ export type ApiKey = {
   description: string;
   displayHint: string;
   status: KeyStatus;
+  serviceAccountId: string;
+  serviceId: string;
   organizationId: string;
   ownerId: string;
   createdAt: string;
@@ -17,6 +19,8 @@ export type ApiKey = {
 };
 export type Person = { id: string; name: string };
 export type KeyRow = ApiKey & {
+  serviceAccount: Person;
+  service: Person;
   organization: Person;
   owner: Person;
   approvalCount: number;

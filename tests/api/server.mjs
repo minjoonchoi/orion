@@ -10,11 +10,7 @@ const user = (region, locale, id = "remote-user") => ({
   id,
   name: `Live ${region} ${locale}`,
   email: "api@example.test",
-  employeeNumber: "API-1",
-  title: "API record",
-  status: "active",
-  createdAt: "2026-09-23T00:00:00Z",
-  lastSignedInAt: null,
+  status: "employed",
 });
 const authorizationGraphs = new Map();
 function authGraph(region) {
@@ -181,7 +177,7 @@ const handler = (expectedRegion) => (request, response) => {
     return send({
       data: [
         {
-          title: locale === "en" ? "Assigned users" : "연결 사용자",
+          title: locale === "en" ? "Assigned users" : "사용자",
           rows: [
             {
               id: "remote-user-2",

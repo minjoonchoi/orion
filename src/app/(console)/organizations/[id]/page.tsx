@@ -1,8 +1,6 @@
-import { AuthorizationPanel } from "@/features/authorization/panel";
 import type { Metadata } from "next";
 import { getT } from "@/i18n/server";
 import { getRelatedGroups } from "@/features/relationships/repository";
-import { RelatedRecords } from "@/features/relationships/related-records";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { OrganizationScreen } from "@/features/identity/screens";
@@ -23,9 +21,7 @@ export default async function Page({
   const groups = await getRelatedGroups("organizations", id);
   return (
     <Suspense fallback={<p role="status">{t("불러오는 중…")}</p>}>
-      <OrganizationScreen data={data} />
-      <AuthorizationPanel kind="organizations" id={id} />
-      <RelatedRecords groups={groups} />
+      <OrganizationScreen data={data} groups={groups} />
     </Suspense>
   );
 }

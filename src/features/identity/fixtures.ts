@@ -26,17 +26,7 @@ export const users: User[] = [
   id: `usr-${String(i + 1).padStart(3, "0")}`,
   name,
   email: `member${i + 1}@example.test`,
-  employeeNumber: `E${String(i + 1).padStart(4, "0")}`,
-  title: [
-    "백엔드 엔지니어",
-    "프론트엔드 엔지니어",
-    "프로덕트 매니저",
-    "운영 매니저",
-  ][i % 4],
-  status: i === 4 || i === 11 ? "inactive" : "active",
-  createdAt: "2026-07-01T00:00:00Z",
-  lastSignedInAt:
-    i === 13 ? null : `2026-09-${String(10 + i).padStart(2, "0")}T01:30:00Z`,
+  status: i === 4 || i === 11 ? "on_leave" : "employed",
 }));
 export const organizations: Organization[] = [
   {
@@ -188,9 +178,28 @@ export const organizationServices: Record<string, string[]> = {
   "org-security": ["svc-orion"],
   "org-operations": ["svc-approval"],
   "org-finance": ["svc-settlement"],
+  "org-product": ["svc-orion"],
 };
 export const serviceAccounts: (ServiceAccount & { organizationId: string })[] =
   [
+    {
+      id: "sa-finance-report",
+      name: "finance-report",
+      description: "정산 리포트 연동",
+      status: "active",
+      organizationId: "org-finance",
+      createdAt: "2026-07-15T00:00:00Z",
+      lastUsedAt: null,
+    },
+    {
+      id: "sa-product-metrics",
+      name: "product-metrics",
+      description: "제품 지표 연동",
+      status: "active",
+      organizationId: "org-product",
+      createdAt: "2026-09-01T00:00:00Z",
+      lastUsedAt: null,
+    },
     {
       id: "sa-directory-sync",
       name: "directory-sync",
@@ -228,3 +237,18 @@ export const serviceAccounts: (ServiceAccount & { organizationId: string })[] =
       lastUsedAt: "2026-09-23T00:00:00Z",
     },
   ];
+
+// Explicit synthetic organization hierarchy and leaders; null denotes no assignment.
+export const organizationLeaders: Record<string, string> = {
+  "org-platform": "usr-001",
+  "org-security": "usr-006",
+  "org-product": "usr-009",
+  "org-operations": "usr-012",
+  "org-finance": "usr-013",
+};
+export const organizationParents: Record<string, string> = {
+  "org-security": "org-platform",
+  "org-product": "org-platform",
+  "org-operations": "org-platform",
+  "org-archive": "org-product",
+};

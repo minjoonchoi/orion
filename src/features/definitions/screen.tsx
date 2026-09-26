@@ -1,11 +1,14 @@
 "use client";
+import type { Directory } from "../platforms/model";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { AccessDenied } from "../auth/access-denied";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Tabs } from "@/components/ui/tabs";
+import { DetailTabs } from "../identity/detail-tabs";
+import { BrowseTable } from "../identity/browse-table";
+import { Details } from "../identity/shared";
 import { useI18n, DateValue } from "@/i18n/provider";
 import { ChangeViews, YamlDiff } from "../sync-workflow/change-views";
 import {
@@ -201,6 +204,9 @@ function Relations({
   );
   return (
     <div className="def-relations">
+      {!children.length && !refs.length && !uses.length && (
+        <p>{t("항목이 없습니다.")}</p>
+      )}
       {[
         ["하위 정의", children],
         ["참조하는 정의", refs],
@@ -220,7 +226,7 @@ function Relations({
               </div>
             ))}
             {!(items as Entity[]).length && (
-              <p className="muted">{t("연결된 항목이 없습니다.")}</p>
+              <p className="muted">{t("항목이 없습니다.")}</p>
             )}
           </section>
         ))}
@@ -443,7 +449,7 @@ function Impact({
           </div>
         </details>
       ))}
-      {!filtered.length && <p>{t("직접 연결된 영향 대상이 없습니다.")}</p>}
+      {!filtered.length && <p>{t("직접 영향 대상이 없습니다.")}</p>}
       {filtered.length > limit && (
         <Button variant="ghost" onClick={() => setLimit(limit + 8)}>
           {t("더 보기")}
@@ -451,7 +457,7 @@ function Impact({
       )}
       <p className="muted">
         {t(
-          "연결 관계 기준의 영향도입니다. 최종 접근 결과는 권한 평가에서 확인하세요.",
+          "관계 기준의 영향도입니다. 최종 접근 결과는 권한 평가에서 확인하세요.",
         )}
       </p>
     </section>
@@ -577,8 +583,10 @@ function Evaluator({
 export function DefinitionsScreen({
   kind,
   id: routeId,
+  directory,
 }: {
   kind?: Kind;
+  directory?: Directory;
   id?: string;
 }) {
   const { t, mode } = useI18n();
@@ -591,13 +599,6 @@ export function DefinitionsScreen({
   const [confirmed, setConfirmed] = useState(false);
   const [inspect, setInspect] = useState<Entity | null>(null);
   const [impact, setImpact] = useState<string[] | null>(null);
-  const requestedTab = params.get("tab") ?? "overview";
-  const tab = ["overview", "relations", "history", "yaml", "evaluate"].includes(
-    requestedTab,
-  )
-    ? requestedTab
-    : "overview";
-  const setTab = (value: string) => navigate({ tab: value });
   const [notice, setNotice] = useState("");
   const selected = params.getAll("selected"),
     query = params.get("q") ?? "",
@@ -710,6 +711,11 @@ export function DefinitionsScreen({
     .filter(
       (e) =>
         (filter === "all" || e.kind === filter) &&
+        (!directory ||
+          !params.get("platform") ||
+          directory.workspaces.some(
+            (w) => w.id === e.id && w.platformId === params.get("platform"),
+          )) &&
         (!params.get("parent") || e.parent === params.get("parent")) &&
         (status === "all" ||
           (status === "out-of-sync" ? pending(e) : !pending(e))) &&
@@ -844,6 +850,34 @@ export function DefinitionsScreen({
       </table>
     </div>
   );
+  const childEntities = entity
+    ? snapshot.applied.filter((e) =>
+        entity.kind === "pages"
+          ? e.kind === "actions" && entity.refs.includes(e.key)
+          : e.parent === entity.id &&
+            e.kind ===
+              (entity.kind === "domains"
+                ? "actions"
+                : entity.kind === "services"
+                  ? "service-endpoints"
+                  : "pages"),
+      )
+    : [];
+  const childLabel =
+    entity?.kind === "domains" || entity?.kind === "pages"
+      ? "Action"
+      : entity?.kind === "services"
+        ? "엔드포인트"
+        : "페이지";
+  const relatedCount = entity
+    ? new Set([
+        ...entity.refs,
+        ...childEntities.map((e) => e.key),
+        ...snapshot.applied
+          .filter((e) => e.refs.includes(entity.key))
+          .map((e) => e.key),
+      ]).size
+    : 0;
   const detail = entity && (
     <>
       <div className="def-section-head">
@@ -853,6 +887,21 @@ export function DefinitionsScreen({
             {entity.id}
           </p>
           <h1>{entity.name}</h1>
+          {directory && (
+            <p>
+              {t("플랫폼")} ·{" "}
+              <Link
+                href={`/platforms/${directory.workspaces.find((w) => w.id === entity.id)?.platformId}`}
+              >
+                {directory.platforms.find(
+                  (p) =>
+                    p.id ===
+                    directory.workspaces.find((w) => w.id === entity.id)
+                      ?.platformId,
+                )?.name ?? t("미지정")}
+              </Link>
+            </p>
+          )}
         </div>
         <div className="def-actions">
           <State pending={pending(entity)} />
@@ -867,14 +916,47 @@ export function DefinitionsScreen({
           </Button>
         </div>
       </div>
-      <Tabs
-        label="상세 정보"
-        value={tab}
-        onValueChange={setTab}
+      <DetailTabs
         items={[
           {
+            value: "info",
+            label: t("기본 정보"),
+            content: (
+              <section className="ui-panel">
+                <h2>{t("기본 정보")}</h2>
+                <Details
+                  items={[
+                    { label: t("이름"), value: entity.name },
+                    { label: "ID", value: entity.key },
+                    { label: t("유형"), value: t(labels[entity.kind]) },
+                    {
+                      label: t("설명"),
+                      value: String(entity.definition.description ?? "—"),
+                    },
+                    ...(entity.kind === "service-endpoints"
+                      ? [
+                          {
+                            label: t("엔드포인트"),
+                            value: `${entity.definition.method} ${entity.definition.path}`,
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
+              </section>
+            ),
+          },
+
+          {
             value: "overview",
-            label: "상세 정보",
+            label:
+              entity.kind === "policies"
+                ? `${t("Action")} (${grants(entity).length})`
+                : entity.kind === "actions"
+                  ? `${t("정책")} (${snapshot.applied.filter((e) => e.kind === "policies" && e.refs.includes(entity.key)).length})`
+                  : entity.kind === "service-endpoints"
+                    ? `${t("요청 필드")} (${Object.keys(fields(entity, "request")).length})`
+                    : `${t(childLabel)} (${childEntities.length})`,
             content: (
               <>
                 <p className="muted">
@@ -900,7 +982,7 @@ export function DefinitionsScreen({
                               );
                               return p ? <EntityLink key={k} entity={p} /> : k;
                             })
-                        : t("페이지 연결 없음")}
+                        : t("페이지 없음")}
                       <p className="muted">
                         {t(
                           "페이지와 Action 권한은 각각 명시적으로 부여합니다.",
@@ -915,7 +997,7 @@ export function DefinitionsScreen({
                       <strong>{String(entity.definition.method)}</strong>{" "}
                       <code>{String(entity.definition.path)}</code>
                     </p>
-                    {(["request", "response"] as const).map((phase) => (
+                    {(["request"] as const).map((phase) => (
                       <section key={phase}>
                         <h3>
                           {t(phase === "request" ? "요청 필드" : "응답 필드")}
@@ -988,35 +1070,82 @@ export function DefinitionsScreen({
                   </>
                 ) : (
                   <>
-                    <h3>
-                      {t(
-                        entity.kind === "domains"
-                          ? "Action"
-                          : entity.kind === "services"
-                            ? "엔드포인트"
-                            : "페이지",
-                      )}
-                    </h3>
-                    {table(
-                      snapshot.applied.filter(
-                        (e) =>
-                          e.parent === entity.id &&
-                          e.kind ===
-                            (entity.kind === "domains"
-                              ? "actions"
-                              : entity.kind === "services"
-                                ? "service-endpoints"
-                                : "pages"),
-                      ),
-                    )}
+                    <BrowseTable
+                      title={t(childLabel + " 목록")}
+                      rows={childEntities}
+                      searchText={(e) => `${e.name} ${e.key}`}
+                      sortValue={(e) => e.name}
+                      columns={[
+                        {
+                          key: "name",
+                          header: t("이름"),
+                          sortable: true,
+                          render: (e) => <EntityLink entity={e} />,
+                        },
+                        { key: "key", header: "ID", render: (e) => e.key },
+                        {
+                          key: "status",
+                          header: t("동기화 상태"),
+                          render: (e) => <State pending={pending(e)} />,
+                        },
+                      ]}
+                    />
                   </>
                 )}
               </>
             ),
           },
+          ...(entity.kind === "service-endpoints"
+            ? [
+                {
+                  value: "response",
+                  label: `${t("응답 필드")} (${Object.keys(fields(entity, "response")).length})`,
+                  content: (
+                    <>
+                      {(["response"] as const).map((phase) => (
+                        <section key={phase}>
+                          <h3>{t("응답 필드")}</h3>
+                          <div className="def-table">
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>ID</th>
+                                  <th>{t("경로")}</th>
+                                  <th>{t("타입")}</th>
+                                  <th>{t("필수")}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {Object.entries(fields(entity, phase)).map(
+                                  ([id, value]) => (
+                                    <tr key={id}>
+                                      <td>{id}</td>
+                                      <td>
+                                        {String(object(value).location ?? "")}{" "}
+                                        {String(object(value).path)}
+                                      </td>
+                                      <td>{String(object(value).type)}</td>
+                                      <td>
+                                        {object(value).required
+                                          ? t("필수")
+                                          : "—"}
+                                      </td>
+                                    </tr>
+                                  ),
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </section>
+                      ))}
+                    </>
+                  ),
+                },
+              ]
+            : []),
           {
             value: "relations",
-            label: "연결 관계",
+            label: `${t("관계")} (${relatedCount})`,
             content: (
               <>
                 <Relations entity={entity} entities={snapshot.applied} />
@@ -1074,9 +1203,12 @@ export function DefinitionsScreen({
           },
           {
             value: "history",
-            label: "동기화 이력",
+            label: `${t("동기화 이력")} (${snapshot.history.filter((h) => h.key === entity.key).length})`,
             content: (
               <div>
+                {!snapshot.history.some((h) => h.key === entity.key) && (
+                  <p>{t("동기화 이력이 없습니다")}</p>
+                )}
                 {snapshot.history
                   .filter((h) => h.key === entity.key)
                   .sort((a, b) => b.revision - a.revision)
@@ -1163,7 +1295,7 @@ export function DefinitionsScreen({
               <p className="muted">
                 {t(
                   kind
-                    ? "적용된 정의와 연결 관계를 탐색합니다."
+                    ? "적용된 정의와 관계를 탐색합니다."
                     : "리소스·정책별 변경사항을 검토하고 명시적으로 동기화합니다.",
                 )}
               </p>
@@ -1187,6 +1319,20 @@ export function DefinitionsScreen({
             </div>
           )}
           <div className="def-toolbar">
+            {directory && (
+              <select
+                aria-label={t("플랫폼 필터")}
+                value={params.get("platform") ?? ""}
+                onChange={(e) => navigate({ platform: e.target.value })}
+              >
+                <option value="">{t("모든 플랫폼")}</option>
+                {directory.platforms.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            )}
             <input
               aria-label={t("리소스 검색")}
               placeholder={t("이름·ID·경로 검색")}
@@ -1299,7 +1445,7 @@ export function DefinitionsScreen({
       </Dialog>
       <Dialog
         title={t("영향도 검토")}
-        description={t("선택한 정의에 연결된 부여 대상과 경로를 확인합니다.")}
+        description={t("선택한 정의에 부여 대상과 경로를 확인합니다.")}
         trigger={<button hidden />}
         open={!!impact}
         onOpenChange={(open) => !open && setImpact(null)}

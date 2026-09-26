@@ -24,10 +24,10 @@ test("role and policy lists search, filter, sort and paginate", async ({
     await header.getByRole("button").click();
     await expect(header).toHaveAttribute("aria-sort", "descending");
     await page
-      .getByLabel(route === "roles" ? "정책 연결 필터" : "리소스 연결 필터")
+      .getByLabel(route === "roles" ? "정책 포함 필터" : "리소스 포함 필터")
       .selectOption("empty");
     await expect(table.locator("tbody tr")).toHaveCount(1);
-    await expect(table).toContainText("미연결");
+    await expect(table).toContainText("없음");
     await page.getByLabel(`${title} 검색`).fill("없는결과");
     await expect(
       page.getByRole("heading", { name: "검색 결과가 없습니다" }),
@@ -66,12 +66,12 @@ test("empty associations, invalid tabs and absent records", async ({
     for (const tab of tabs) {
       await page.goto(`/${route}?tab=${tab}`);
       await expect(
-        page.getByRole("heading", { name: "연결된 항목이 없습니다" }),
+        page.getByRole("heading", { name: "항목이 없습니다" }),
       ).toBeVisible();
     }
     await page.goto(`/${route}?tab=unknown`);
     await expect(
-      page.getByRole("tab", { name: "기본 정보", exact: true }),
+      page.getByRole("tab", { name: "사용자 (0)", exact: true }),
     ).toHaveAttribute("aria-selected", "true");
   }
   for (const route of ["roles", "policies"]) {

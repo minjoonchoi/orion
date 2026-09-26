@@ -20,7 +20,7 @@ export function BrowseTable<T extends { id: string }>({
   searchText,
   sortValue,
   filters = [],
-  emptyTitle = "연결된 항목이 없습니다",
+  emptyTitle = "항목이 없습니다",
 }: {
   title: string;
   rows: T[];
@@ -172,7 +172,7 @@ export function BrowseTable<T extends { id: string }>({
         emptyDescription={
           searching
             ? t("검색어나 필터를 변경해 주세요.")
-            : t("연결된 항목이 있으면 이곳에 표시됩니다.")
+            : t("항목이 있으면 이곳에 표시됩니다.")
         }
       />
       <Pagination

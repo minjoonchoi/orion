@@ -96,7 +96,7 @@ function roleNodes(
               id: policy.id,
               name: policy.name,
               kind: "정책",
-              relation: "정책 연결",
+              relation: "정책 부여",
               href: `/policies/${policy.id}`,
               detail: (
                 <>
@@ -306,7 +306,7 @@ function Editor({
   );
   const delta = (
     <div className="assignment-delta">
-      <h4>{t("연결 변경사항")}</h4>
+      <h4>{t("부여 변경사항")}</h4>
       <div className="delta-add">
         <strong>
           {t("추가")} · {added.length}
@@ -321,7 +321,7 @@ function Editor({
       </div>
       <p className="muted">
         {t(
-          "연결 변경 기준입니다. 다른 경로의 접근 유지 여부는 서버 판정이 필요합니다.",
+          "부여 변경 기준입니다. 다른 경로의 접근 유지 여부는 서버 판정이 필요합니다.",
         )}
       </p>
     </div>
@@ -333,7 +333,7 @@ function Editor({
         {delta}
         {!!removed.length && (
           <details className="review-resource-details">
-            <summary>{t("해제되는 연결의 리소스 확인")}</summary>
+            <summary>{t("해제 대상의 리소스 확인")}</summary>
             <Explorer
               nodes={
                 kind === "roles" && tab === "bindings"
@@ -443,7 +443,7 @@ function Editor({
         <ReviewConnections graph={graph} change={review} />
         <p>
           {t(
-            "저장하면 연결과 접근 범위에 반영됩니다. 대상과 만료 시점을 확인해 주세요.",
+            "저장하면 부여 내역과 접근 범위에 반영됩니다. 대상과 만료 시점을 확인해 주세요.",
           )}
         </p>
         {review.type === "bindings" &&
@@ -495,7 +495,7 @@ function Editor({
               <strong>{t(effect === "allow" ? "허용" : "거부")}</strong>
             </p>
             <p>
-              {t("기존 연결")}: {policy!.resources.length} → {refs.length}
+              {t("기존 항목")}: {policy!.resources.length} → {refs.length}
             </p>
           </>
         )}
@@ -643,7 +643,7 @@ function Editor({
               <>
                 <p>
                   {t(
-                    "만료 시점은 역할·정책 연결에만 적용됩니다. 다른 역할의 동일 정책에는 영향을 주지 않습니다.",
+                    "만료 시점은 역할·정책 부여에만 적용됩니다. 다른 역할의 동일 정책에는 영향을 주지 않습니다.",
                   )}
                 </p>
                 <p className="muted">
@@ -738,7 +738,7 @@ function Editor({
             {kind === "policies" && (
               <>
                 <fieldset className="access-effect-selector">
-                  <legend>{t("연결된 모든 리소스에 적용할 효과")}</legend>
+                  <legend>{t("모든 대상 리소스에 적용할 효과")}</legend>
                   {(["allow", "deny"] as const).map((v) => (
                     <label key={v}>
                       <input
@@ -753,7 +753,7 @@ function Editor({
                 </fieldset>
                 <p>
                   {t(
-                    "유형별로 여러 리소스를 연결할 수 있습니다. 선택한 모든 리소스에 같은 효과가 적용됩니다.",
+                    "유형별로 여러 리소스를 지정할 수 있습니다. 선택한 모든 리소스에 같은 효과가 적용됩니다.",
                   )}
                 </p>
                 <div className="access-tools">
@@ -909,7 +909,7 @@ export function AuthorizationPanel({
       : kind === "roles"
         ? "역할 부여 관리"
         : kind === "policies"
-          ? "리소스 연결과 정책 효과"
+          ? "리소스 지정과 정책 효과"
           : "리소스 수정과 영향 범위";
   async function load() {
     setBusy(true);
@@ -977,7 +977,7 @@ export function AuthorizationPanel({
       <Dialog
         title={t(title)}
         description={t(
-          "연결된 권한과 리소스를 확인하고 변경사항을 검토한 후 적용하세요.",
+          "부여된 권한과 리소스를 확인하고 변경사항을 검토한 후 적용하세요.",
         )}
         trigger={<Button variant="secondary">{t(title)}</Button>}
         open={open}
@@ -1018,7 +1018,9 @@ export function AuthorizationPanel({
               {saved && (
                 <div className="access-success" role="status">
                   <h3>{t("변경사항을 적용했습니다")}</h3>
-                  <p>{t("상세 화면에서 적용된 연결을 확인할 수 있습니다.")}</p>
+                  <p>
+                    {t("상세 화면에서 적용된 변경사항을 확인할 수 있습니다.")}
+                  </p>
                   <Button onClick={() => setOpen(false)}>{t("완료")}</Button>
                 </div>
               )}

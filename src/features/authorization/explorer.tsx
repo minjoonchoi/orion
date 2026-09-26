@@ -87,7 +87,7 @@ export function Explorer({
   return (
     <div className="access-explorer">
       <div className="explorer-toolbar">
-        <strong>{t("연결 목록")}</strong>
+        <strong>{t("관계 목록")}</strong>
         <button
           type="button"
           onClick={() => {
@@ -108,10 +108,10 @@ export function Explorer({
         </button>
       </div>
       <div className="explorer-list">
-        <ul className="explorer-roots" aria-label={t("연결 목록")}>
+        <ul className="explorer-roots" aria-label={t("관계 목록")}>
           {rows(nodes)}
         </ul>
-        {!nodes.length && <p>{t("연결된 항목이 없습니다")}</p>}
+        {!nodes.length && <p>{t("항목이 없습니다")}</p>}
       </div>
     </div>
   );

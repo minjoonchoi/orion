@@ -154,7 +154,7 @@ export function ResourceHistoryDialog({
             onUpdated?.();
           } else if (result.data.status === "failed")
             setError(
-              "롤백하지 못했습니다. 연결 관계와 최신 상태를 확인한 후 다시 시도하세요.",
+              "롤백하지 못했습니다. 관계와 최신 상태를 확인한 후 다시 시도하세요.",
             );
           setPending(result.data);
         })
@@ -207,7 +207,7 @@ export function ResourceHistoryDialog({
         setError(
           result.error === "CONFLICT"
             ? "버전이 변경되었습니다. 새로고침 후 다시 검토하세요."
-            : "롤백하지 못했습니다. 연결 관계와 최신 상태를 확인한 후 다시 시도하세요.",
+            : "롤백하지 못했습니다. 관계와 최신 상태를 확인한 후 다시 시도하세요.",
         );
         setConfirmed(false);
       } else {
@@ -220,7 +220,7 @@ export function ResourceHistoryDialog({
           onUpdated?.();
         } else if (result.data.status === "failed")
           setError(
-            "롤백하지 못했습니다. 연결 관계와 최신 상태를 확인한 후 다시 시도하세요.",
+            "롤백하지 못했습니다. 관계와 최신 상태를 확인한 후 다시 시도하세요.",
           );
       }
     } catch {
@@ -279,7 +279,7 @@ export function ResourceHistoryDialog({
             )}
             {blocked && (
               <p role="alert">
-                {t("연결된 정책 또는 하위 리소스가 있어 복원할 수 없습니다.")}
+                {t("포함된 정책 또는 하위 리소스가 있어 복원할 수 없습니다.")}
               </p>
             )}
             <label className="sync-confirm">
