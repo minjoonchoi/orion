@@ -1,0 +1,124 @@
+.ui-dialog:has(.sync-workflow) {
+  width: min(1080px, calc(100vw - 32px));
+}
+.sync-workflow {
+  display: grid;
+  gap: 16px;
+}
+.sync-workflow p,
+.sync-workflow h3 {
+  margin: 0;
+}
+.sync-workflow-steps {
+  display: flex;
+  gap: 24px;
+  padding: 0 0 16px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+.sync-workflow-steps li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.sync-workflow-steps span {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 12px;
+}
+.sync-workflow-steps [aria-current] {
+  color: var(--text);
+  font-weight: 650;
+}
+.sync-workflow-steps [aria-current] span {
+  background: #292929;
+  color: #fff;
+  border-color: #292929;
+}
+.sync-workflow-summary {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 16px;
+  background: var(--surface-subtle, #f5f5f4);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.sync-workflow-targets {
+  overflow-x: auto;
+}
+.sync-workflow table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+.sync-workflow th,
+.sync-workflow td {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.sync-workflow small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.sync-workflow .sync-badge {
+  white-space: nowrap;
+}
+.sync-workflow-impact {
+  display: grid;
+  gap: 12px;
+}
+.sync-impact-totals {
+  font-weight: 650;
+}
+.sync-workflow-extra {
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 8px;
+}
+.sync-workflow-extra summary {
+  cursor: pointer;
+}
+.sync-workflow-extra[open] > p {
+  margin: 12px 0;
+}
+.sync-workflow-footer {
+  position: sticky;
+  bottom: -24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 0;
+  background: var(--surface, #fff);
+  border-top: 1px solid var(--line);
+  z-index: 2;
+}
+.sync-workflow pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-width: 360px;
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .sync-workflow-steps {
+    gap: 12px;
+    font-size: 12px;
+  }
+  .sync-workflow th,
+  .sync-workflow td {
+    padding: 8px;
+  }
+  .sync-workflow-footer {
+    bottom: -16px;
+  }
+}

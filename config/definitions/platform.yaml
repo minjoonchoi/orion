@@ -1,0 +1,119 @@
+workspace:
+  id: platform
+  name: 플랫폼 운영
+  pages:
+    - id: users
+      name: 사용자 관리
+      path: /users
+      actions:
+        - ref: { domain: identity, action: read-summary }
+    - id: user-detail
+      name: 인사 사용자 상세
+      path: /users/:id
+      actions:
+        - ref: { domain: identity, action: read-hr }
+---
+service:
+  id: identity-api
+  name: Orion Identity API
+  endpoints:
+    - id: detail
+      name: 사용자 상세 조회
+      method: GET
+      path: /v1/users/{id}
+      request:
+        fields:
+          id: { location: path, path: id, type: string, required: true }
+      response:
+        fields:
+          id: { path: /id, type: string }
+          name: { path: /name, type: string }
+          email: { path: /email, type: string }
+          phone: { path: /phone, type: string }
+---
+service:
+  id: directory-api
+  name: 디렉터리 API
+  endpoints:
+    - id: detail
+      name: 디렉터리 사용자 조회
+      method: GET
+      path: /v1/users/{id}
+      response:
+        fields:
+          id: { path: /id, type: string }
+          email: { path: /email, type: string }
+---
+domain:
+  id: identity
+  name: 임직원 관리
+  actions:
+    read-summary:
+      name: 직원 기본 조회
+      endpoint:
+        ref: { service: identity-api, endpoint: detail }
+    read-hr:
+      name: 인사 업무 조회
+      endpoint:
+        ref: { service: identity-api, endpoint: detail }
+    directory-sync:
+      name: 디렉터리 연동
+      endpoint:
+        ref: { service: directory-api, endpoint: detail }
+---
+policy:
+  id: policy-platform
+  name: 인사 사용자 상세 조회
+  effect: allow
+  resources:
+    page:
+      ref: { workspace: platform, page: user-detail }
+    actions:
+      - ref: { domain: identity, action: read-hr }
+        response:
+          fields:
+            - ref: { field: id }
+            - ref: { field: name }
+            - ref: { field: email }
+              masking: { method: email }
+            - ref: { field: phone }
+              masking: { method: keep-last, count: 4, replacement: "*" }
+---
+policy:
+  id: policy-directory
+  name: 직원 기본 조회
+  effect: allow
+  resources:
+    page:
+      ref: { workspace: platform, page: users }
+    actions:
+      - ref: { domain: identity, action: read-summary }
+        response:
+          fields:
+            - ref: { field: id }
+            - ref: { field: name }
+            - ref: { field: email }
+              masking: { method: email }
+---
+policy:
+  id: directory-integration
+  name: 디렉터리 서버 연동
+  effect: allow
+  resources:
+    actions:
+      - ref: { domain: identity, action: directory-sync }
+        response:
+          fields:
+            - ref: { field: id }
+            - ref: { field: email }
+---
+policy:
+  id: email-unmask
+  name: 인사 이메일 원문 조회
+  effect: allow
+  resources:
+    actions:
+      - ref: { domain: identity, action: read-hr }
+        response:
+          unmask:
+            - ref: { field: email }

@@ -1,6 +1,6 @@
 # Orion
 
-서버 리소스 접근 권한 플랫폼 UI를 위한 Next.js 기반 프론트엔드입니다.
+사내 백오피스 제품의 통합 인증·인가 플랫폼을 위한 Next.js 기반 프론트엔드입니다.
 
 ## 시작하기
 
@@ -38,17 +38,15 @@ Next.js App Router, React, TypeScript strict, CSS, ESLint, Prettier를 사용합
 
 ## 초기 범위
 
-개요, 사용자, 역할, 서버 리소스, 접근 권한, 감사 로그 경로와 공통 레이아웃을 제공합니다. 관리 화면은 준비 중 상태이며 CRUD, 목 데이터, 로그인, 실제 권한 판정은 포함하지 않습니다.
+LSB는 사용자·조직, 역할·정책, 리소스, API 접근, 결재의 5개 그룹과 12개 목록 메뉴로 구성합니다. [메뉴 경로와 구현 범위](docs/navigation.md)를 참고하세요. 사용자·조직, 역할·정책, 리소스, API 접근, 결재 그룹은 예제 데이터 기반 목록·상세 조회를 제공합니다. API 키 상세에서는 결재 이력도 조회합니다. 서버 CRUD와 실제 권한 판정은 포함하지 않습니다. `/login`에서 Orion API를 통한 Okta 로그인 시작 화면을 제공합니다. `/components`에는 메모리 예제로 동작하는 공통 컴포넌트 확인 화면이 있습니다.
 
 ## API 연결
 
-`.env.local`의 `NEXT_PUBLIC_API_BASE_URL`에 백엔드 주소를 설정합니다. 이 값은 빌드 시 브라우저 번들에 포함되므로 비밀키를 넣지 않습니다.
+조회 화면은 서버의 repository → 검증된 API 응답 계층을 사용합니다. `ORION_DATA_SOURCE=demo`에서는 예제 데이터를, `api`에서는 실제 서버 응답만 사용합니다. 프로덕션 기본값은 `api`이며 설정 누락과 API 오류를 예제 데이터로 대체하지 않습니다.
 
-브라우저의 기능별 API 모듈에서 `getApiClient()`를 사용합니다. 응답은 `unknown`으로 반환되므로 실제 API 계약에 맞는 검증을 기능별 모듈에 추가합니다. JSON 본문을 보내는 경우 `Content-Type: application/json`과 `JSON.stringify`를 호출부에서 지정합니다. `AbortSignal`을 전달해 요청 취소를 지원할 수 있습니다.
+`.env.example`의 `ORION_ENVIRONMENT`, `ORION_REGION`, `ORION_API_ENDPOINTS_JSON` 또는 `ORION_API_BASE_URL`을 런타임에 설정합니다. 같은 빌드를 여러 리전에 배포할 수 있습니다. [API 계약과 배포 설정](docs/api-deployment.md)을 참고하세요.
 
-클라이언트는 쿠키를 포함하고 응답 캐시를 비활성화합니다. 교차 출처 연결 시 백엔드의 명시적 CORS origin 및 credentials 설정이 필요합니다. 인증 방식과 CSRF 정책은 백엔드 연동 전에 확정합니다. 현재 보호된 데이터 요청이나 변경 요청은 없습니다. 서버 컴포넌트에서는 브라우저용 클라이언트를 사용하지 말고 별도 서버 전용 모듈에서 인증을 처리합니다.
-
-메뉴 노출 여부는 보안 경계가 아닙니다. 모든 조회·변경에 대한 인증과 리소스 단위 인가는 백엔드가 검증해야 합니다. 토큰을 localStorage에 저장하지 않습니다.
+한국어·영어는 로그인/상단 언어 선택으로 전환합니다. 선택 쿠키 → 브라우저 언어 → `ORION_DEFAULT_LOCALE` 순서로 결정합니다. API 데이터 원문은 유지하고 UI 문구와 날짜 형식을 번역합니다. 시간대는 `ORION_TIME_ZONE`으로 지정합니다.
 
 ## 다음 구현 단계
 
@@ -56,3 +54,19 @@ Next.js App Router, React, TypeScript strict, CSS, ESLint, Prettier를 사용합
 2. 사용자·역할·리소스·권한 API 계약 확정
 3. 기능별 조회/변경 UI 및 응답 검증 구현
 4. 실제 권한 정책을 반영한 통합 테스트
+
+## 백오피스 컴포넌트
+
+[조사 결과와 사용 가이드](docs/backoffice-components.md)를 참고하세요. `/components`에서 목록·폼·모달·알림·권한 매트릭스를 확인할 수 있습니다. 브라우저 테스트는 `npm run build`, `npx playwright install chromium`, `npm run test:e2e` 순서로 실행합니다.
+
+## 로그인 화면
+
+`/login`에서 독립된 로그인 UI를 확인합니다. 서버 환경변수 `ORION_AUTH_LOGIN_URL`에 Okta로 리다이렉트하는 실제 Orion API의 절대 URL을 설정하세요. [로그인 API 계약과 설정](docs/login.md)을 참고하세요.
+
+## 권한 편집
+
+사용자·조직의 역할 부여, 역할별 정책 만료, 정책 리소스의 허용/거부, 리소스 편집과 영향 범위 탐색을 상세 화면에서 제공합니다. 공통 접근 거부 화면과 Orion 세션 로그아웃을 지원합니다. [UX와 저장 API 계약](docs/authorization-management.md)을 참고하세요. 실제 권한 판정·영구 저장·Okta 세션 처리는 백엔드와 연동해야 합니다.
+
+## 리소스 GitOps
+
+리소스 정의는 `config/definitions/*.yaml`의 workspace/service/domain/policy 문서로 관리합니다. 부모 범위의 로컬 ID와 복합 ref를 사용하며, 서비스의 엔드포인트 필드를 도메인 Action을 통해 정책에서 참조합니다. 정책은 단일 페이지(선택)·복수 Action과 응답 필드·마스킹·unmask를 정의합니다. `/resources`에서 개별 변경의 YAML diff·영향도를 검토하고 동기화하거나 항목 이력에서 복원합니다. [새 YAML·API 계약](docs/definition-management.md), [전체 예시](config/definitions/platform.yaml)를 참고하세요. `npm run validate:definitions`로 스키마와 연결 참조를 검사합니다. 이전 Bundle 예시는 레거시 회귀 참고용이며 새 관리 화면에서 읽지 않습니다. 운영 API의 영구 저장·최종 인가·응답 가공 구현은 별도로 필요합니다.

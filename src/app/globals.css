@@ -1,10 +1,18 @@
 :root {
-  --background: #f5f7fb;
-  --surface: #fff;
-  --text: #17233a;
-  --muted: #59677c;
-  --line: #e0e6ef;
-  --accent: #3459cf;
+  color-scheme: light;
+  --background: #f7f7f7;
+  --surface: #ffffff;
+  --surface-subtle: #f4f4f4;
+  --sidebar: #f0f0f0;
+  --text: #262626;
+  --muted: #666666;
+  --line: #dedede;
+  --accent: #333333;
+  --accent-hover: #1f1f1f;
+  --accent-subtle: #ededed;
+  --selected: #e8e8e8;
+  --radius: 6px;
+  --shadow: 0 8px 28px rgb(0 0 0 / 10%);
 }
 * {
   box-sizing: border-box;
@@ -13,7 +21,10 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--text);
-  font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+    "Malgun Gothic", "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
   line-height: 1.6;
 }
 a {
@@ -26,12 +37,12 @@ button {
   background: var(--accent);
   color: white;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius);
   font: inherit;
 }
 a:focus-visible,
 button:focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 2px solid var(--accent);
   outline-offset: 4px;
 }
 .shell {
@@ -39,16 +50,16 @@ button:focus-visible {
   min-height: 100vh;
 }
 .sidebar {
-  width: 240px;
+  width: 224px;
   flex-shrink: 0;
-  background: var(--surface);
+  background: var(--sidebar);
   border-right: 1px solid var(--line);
-  padding: 32px 20px;
+  padding: 28px 16px;
 }
 .brand {
-  font-weight: 800;
-  font-size: 26px;
-  letter-spacing: 3px;
+  font-weight: 650;
+  font-size: 25px;
+  letter-spacing: 2px;
   padding: 0 12px 32px;
 }
 .brand span {
@@ -57,22 +68,22 @@ button:focus-visible {
   color: var(--muted);
   letter-spacing: 2px;
 }
-nav {
+.sidebar nav {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
-nav a {
-  padding: 11px 14px;
-  border-radius: 8px;
+.sidebar nav a {
+  padding: 10px 14px;
+  border-radius: var(--radius);
   font-size: 14px;
   color: var(--muted);
 }
-nav a:hover {
+.sidebar nav a:hover {
   background: var(--background);
 }
-nav a[aria-current="page"] {
-  background: #eef2ff;
-  color: var(--accent);
+.sidebar nav a[aria-current="page"] {
+  background: var(--accent);
+  color: #ffffff;
   font-weight: 700;
 }
 .workspace {
@@ -81,9 +92,9 @@ nav a[aria-current="page"] {
 }
 .topbar {
   background: var(--surface);
-  min-height: 72px;
+  min-height: 60px;
   border-bottom: 1px solid var(--line);
-  padding: 20px 36px;
+  padding: 16px 36px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -95,7 +106,8 @@ main {
   margin: auto;
 }
 h1 {
-  font-size: 28px;
+  font-size: 27px;
+  letter-spacing: -0.6px;
   font-weight: 700;
   margin: 0 0 8px;
 }
@@ -112,17 +124,18 @@ p {
   margin-bottom: 28px;
 }
 .intro {
-  background: #eaf0ff;
-  border: 1px solid #d9e3ff;
+  background: var(--surface-subtle);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
   padding: 32px;
-  border-radius: 14px;
+  border-radius: var(--radius);
   margin-bottom: 24px;
 }
 .eyebrow {
   display: block;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
   color: var(--accent);
   margin-bottom: 14px;
 }
@@ -135,10 +148,11 @@ p {
   background: var(--surface);
   padding: 24px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius);
 }
 .card:hover {
   border-color: var(--accent);
+  background: #fafafa;
 }
 .card p {
   font-size: 14px;
@@ -151,16 +165,16 @@ p {
 .badge {
   display: inline-block;
   font-size: 12px;
-  border-radius: 20px;
+  border-radius: 4px;
   padding: 3px 10px;
   color: var(--muted);
-  background: #edf0f5;
+  background: var(--surface-subtle);
 }
 .empty-state {
   padding: 72px 24px;
   text-align: center;
-  border: 1px dashed #c2ccdc;
-  border-radius: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   background: var(--surface);
 }
 .empty-state h2 {
@@ -199,11 +213,11 @@ p {
     font-size: 22px;
     padding: 0 8px 14px;
   }
-  nav {
+  .sidebar nav {
     display: flex;
     overflow-x: auto;
   }
-  nav a {
+  .sidebar nav a {
     white-space: nowrap;
   }
   .topbar {
@@ -218,4 +232,135 @@ p {
   h1 {
     font-size: 25px;
   }
+}
+
+/* Grouped primary navigation: headings are labels, all nine destinations stay visible. */
+.brand {
+  display: block;
+}
+.sidebar nav {
+  display: grid;
+  gap: 24px;
+}
+.navigation-group-title {
+  margin: 0 14px 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.navigation-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 3px;
+}
+.navigation-items a {
+  display: block;
+}
+.overview-groups {
+  display: grid;
+  gap: 32px;
+}
+.overview-group-title {
+  font-size: 15px;
+  margin-bottom: 14px;
+  color: var(--muted);
+}
+.card h3 {
+  font-size: 17px;
+  margin: 0 0 10px;
+}
+@media (max-width: 760px) {
+  .sidebar nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 8px;
+    overflow: visible;
+  }
+  .sidebar nav a {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+  .navigation-group-title {
+    margin-left: 12px;
+  }
+}
+
+.language-select {
+  font: inherit;
+  font-size: 0.8rem;
+  color: inherit;
+  background: var(--surface, #fff);
+  border: 1px solid #dedede;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+}
+.topbar .language-select {
+  margin-left: auto;
+}
+.login-entry > .language-select {
+  align-self: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+/* Keep navigation available without consuming the mobile viewport. */
+.mobile-navigation-toggle {
+  display: none;
+}
+@media (min-width: 761px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+}
+.topbar {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.page-heading {
+  margin-bottom: 20px;
+}
+.browse-result-count {
+  font-size: 12px;
+  margin: 0 0 12px;
+}
+@media (max-width: 760px) {
+  .sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .sidebar .brand {
+    padding: 0;
+  }
+  .mobile-navigation-toggle {
+    display: block;
+    font-size: 13px;
+    padding: 9px 12px;
+  }
+  .sidebar nav {
+    width: 100%;
+  }
+  .sidebar nav[data-expanded="false"] {
+    display: none;
+  }
+  main {
+    padding: 20px 16px;
+  }
+  .topbar {
+    padding: 12px 16px;
+  }
+}
+
+.navigation-items > .navigation-divider {
+  border-top: 1px solid var(--line);
+  margin-top: 6px;
+  padding-top: 6px;
 }

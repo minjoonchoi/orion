@@ -1,0 +1,112 @@
+# Existing demo catalog carried forward with scoped child identifiers.
+workspace:
+  id: ws-platform
+  name: 플랫폼 운영
+  description: 플랫폼 관리 화면 모음
+  pages:
+    - id: page-users
+      name: 사용자 관리
+      description: 사용자 정보 조회
+      path: /users
+      actions: []
+    - id: page-organizations
+      name: 조직 관리
+      description: 조직과 멤버 조회
+      path: /organizations
+      actions: []
+    - id: page-roles
+      name: 역할 관리
+      description: 역할과 연결 정보 조회
+      path: /roles
+      actions: []
+    - id: page-policies
+      name: 정책 관리
+      description: 정책 리소스 조회
+      path: /policies
+      actions: []
+    - id: page-services
+      name: 서비스 관리
+      description: 서비스 리소스 조회
+      path: /services
+      actions: []
+    - id: page-workspaces
+      name: 워크스페이스 관리
+      description: 워크스페이스 조회
+      path: /workspaces
+      actions: []
+---
+workspace:
+  id: ws-directory
+  name: 구성원 디렉터리
+  description: 구성원과 조직 조회 화면
+  pages:
+    - id: page-directory
+      name: 구성원 검색
+      description: 사내 구성원 디렉터리
+      path: /directory
+      actions: []
+---
+workspace:
+  id: ws-approval
+  name: 결재 업무
+  description: 결재 요청과 이력 화면
+  pages:
+    - id: page-approvals
+      name: 결재 목록
+      description: 업무 결재 조회
+      path: /approvals
+      actions: []
+---
+workspace:
+  id: ws-empty
+  name: 준비 중 워크스페이스
+  description: 페이지가 없는 예제 워크스페이스
+  pages: []
+---
+service:
+  id: svc-orion
+  name: Orion
+  description: 통합 인증·인가 플랫폼
+  endpoints:
+    - id: ep-roles
+      name: 역할 목록 조회
+      path: /api/roles
+      method: GET
+    - id: ep-policies
+      name: 정책 목록 조회
+      path: /api/policies
+      method: GET
+---
+service:
+  id: svc-directory
+  name: 사내 디렉터리
+  description: 구성원과 조직 정보 제공
+  endpoints:
+    - id: ep-users
+      name: 사용자 목록 조회
+      path: /api/users
+      method: GET
+    - id: ep-orgs
+      name: 조직 목록 조회
+      path: /api/organizations
+      method: GET
+---
+service:
+  id: svc-approval
+  name: 전자결재
+  description: 업무 승인과 결재 이력 관리
+  endpoints:
+    - id: ep-approvals
+      name: 결재 목록 조회
+      path: /api/approvals
+      method: GET
+    - id: ep-approval-submit
+      name: 결재 요청
+      path: /api/approvals
+      method: POST
+---
+service:
+  id: svc-settlement
+  name: 정산 관리
+  description: 정산 데이터 조회 및 처리
+  endpoints: []

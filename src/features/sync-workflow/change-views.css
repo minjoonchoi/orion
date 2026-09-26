@@ -1,0 +1,81 @@
+.yaml-review {
+  min-width: 0;
+  margin: 16px 0;
+}
+.yaml-review .muted {
+  font-size: 12px;
+}
+.yaml-legend {
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+}
+.yaml-legend span:last-child {
+  margin-left: auto;
+}
+.yaml-code {
+  overflow: auto;
+  max-height: 420px;
+  border: 1px solid var(--line);
+  border-radius: 0 0 6px 6px;
+}
+.yaml-code pre {
+  margin: 0;
+  padding: 10px 0;
+  font-size: 12px;
+  line-height: 1.9;
+}
+.yaml-line {
+  display: flex;
+  min-width: max-content;
+  padding-right: 16px;
+}
+.yaml-line.add {
+  background: #eef5ef;
+  color: #285332;
+}
+.yaml-line.remove {
+  background: #faf0ee;
+  color: #823e36;
+}
+.yaml-number {
+  display: inline-block;
+  flex: 0 0 34px;
+  text-align: right;
+  padding-right: 10px;
+  color: #727272;
+  user-select: none;
+}
+.sync-status {
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--muted);
+}
+.sync-status.pending {
+  color: var(--text);
+}
+.sync-status::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #b8b8b8;
+  margin-right: 7px;
+}
+.sync-status.pending::before {
+  background: #575757;
+}
+
+.sync-diffs .ui-tab-list,
+.sync-diffs .ui-tab-panel {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+.yaml-code pre {
+  white-space: pre;
+  overflow-wrap: normal;
+}
