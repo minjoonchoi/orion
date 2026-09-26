@@ -1,38 +1,33 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-test("role and policy lists search, filter, sort and paginate", async ({
-  page,
-}) => {
-  for (const route of ["roles"]) {
-    const title = route === "roles" ? "역할 목록" : "정책 목록";
-    await page.goto(`/${route}`);
-    const table = page.getByRole("table", { name: title, exact: true });
-    await expect(table.locator("tbody tr")).toHaveCount(5);
-    await page.getByRole("button", { name: "다음", exact: true }).click();
-    await expect(page.getByText("2 / 2 페이지")).toBeVisible();
-    await page
-      .getByLabel(`${title} 검색`)
-      .fill(route === "roles" ? " ROLE-PLATFORM " : " POLICY-PLATFORM ");
-    await expect(table.locator("tbody tr")).toHaveCount(1);
-    await page.getByRole("button", { name: "초기화", exact: true }).click();
-    const header = page.getByRole("columnheader", {
-      name: "이름",
-      exact: true,
-    });
-    await header.getByRole("button").click();
-    await expect(header).toHaveAttribute("aria-sort", "ascending");
-    await header.getByRole("button").click();
-    await expect(header).toHaveAttribute("aria-sort", "descending");
-    await page
-      .getByLabel(route === "roles" ? "정책 포함 필터" : "리소스 포함 필터")
-      .selectOption("empty");
-    await expect(table.locator("tbody tr")).toHaveCount(1);
-    await expect(table).toContainText("없음");
-    await page.getByLabel(`${title} 검색`).fill("없는결과");
-    await expect(
-      page.getByRole("heading", { name: "검색 결과가 없습니다" }),
-    ).toBeVisible();
-  }
+test("platform roles search, filter, sort and paginate", async ({ page }) => {
+  await page.goto("/roles");
+  const region = page.getByRole("region", {
+    name: "플랫폼 역할 목록 조회",
+    exact: true,
+  });
+  const table = region.getByRole("table");
+  await expect(table.locator("tbody tr")).toHaveCount(5);
+  await region.getByRole("button", { name: "다음", exact: true }).click();
+  await expect(region.getByText("2 / 2 페이지")).toBeVisible();
+  await region.getByRole("searchbox").fill(" 플랫폼 관리자 ");
+  await expect(table.locator("tbody tr")).toHaveCount(1);
+  await region.getByRole("button", { name: "초기화", exact: true }).click();
+  const header = region.getByRole("columnheader", {
+    name: "역할",
+    exact: true,
+  });
+  await header.getByRole("button").click();
+  await expect(header).toHaveAttribute("aria-sort", "ascending");
+  await header.getByRole("button").click();
+  await expect(header).toHaveAttribute("aria-sort", "descending");
+  await region.getByLabel("플랫폼 필터").selectOption("finance");
+  await expect(table.locator("tbody tr")).toHaveCount(1);
+  await expect(table).toContainText("정산 검토자");
+  await region.getByRole("searchbox").fill("없는결과");
+  await expect(
+    region.getByRole("heading", { name: "검색 결과가 없습니다" }),
+  ).toBeVisible();
 });
 test("role associations match user and organization links and open policy details", async ({
   page,
@@ -42,13 +37,15 @@ test("role associations match user and organization links and open policy detail
   await expect(page).toHaveURL(/roles\/role-platform$/);
   await page.getByRole("tab", { name: "사용자 (1)", exact: true }).click();
   await page.getByRole("link", { name: "김가람", exact: true }).click();
-  await expect(page).toHaveURL(/users\/usr-001$/);
+  await expect(page).toHaveURL(/users\/usr-001\?tab=roles$/);
   await page.goto("/roles/role-platform?tab=organizations");
   await page.getByRole("link", { name: "플랫폼개발팀", exact: true }).click();
   await page.getByRole("tab", { name: "역할 (2)", exact: true }).click();
   await page.getByRole("link", { name: "플랫폼 관리자", exact: true }).click();
   await page.getByRole("tab", { name: "정책 (2)", exact: true }).click();
-  await page.getByRole("link", { name: "플랫폼 조회", exact: true }).click();
+  await page
+    .getByRole("link", { name: "인사 사용자 상세 조회", exact: true })
+    .click();
   await expect(page).toHaveURL(/policies\/policy-platform$/);
   await expect(
     page.getByRole("heading", { name: "인사 사용자 상세 조회", exact: true }),

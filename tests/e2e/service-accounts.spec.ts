@@ -86,7 +86,9 @@ test("empty associations, optional metadata and absent IDs", async ({
   for (const tab of ["roles"]) {
     await page.goto(`/service-accounts/sa-audit-export?tab=${tab}`);
     await expect(
-      page.getByRole("heading", { name: "항목이 없습니다" }),
+      page
+        .getByRole("region", { name: "역할 목록 조회", exact: true })
+        .getByRole("heading", { name: "항목이 없습니다" }),
     ).toBeVisible();
   }
   await page.goto("/service-accounts/sa-audit-export?tab=unknown");

@@ -1,3 +1,5 @@
+import { loadWorkflow } from "@/features/approval-workflow/server";
+import { ManagedGrants } from "@/features/approval-workflow/screens";
 import { Suspense } from "react";
 import { loadDirectory } from "@/features/platforms/repository";
 import { RoleCatalog } from "@/features/platforms/screens";
@@ -5,6 +7,7 @@ export default async function Page() {
   return (
     <Suspense>
       <RoleCatalog d={await loadDirectory()} />
+      <ManagedGrants s={await loadWorkflow()} kind="roles" />
     </Suspense>
   );
 }

@@ -6,7 +6,7 @@ const routes = [
   "/roles/role-platform",
   "/service-accounts/sa-directory-sync",
   "/api-keys/key-directory",
-  "/approval-templates/template-key-issue-v1",
+  "/approval-templates/api-key-issue",
   "/workspaces/platform",
   "/pages/platform~user-detail",
   "/services/identity-api",
@@ -54,7 +54,7 @@ test("tab state, history, empty roles, localized labels and accessibility", asyn
   await page.goto("/users/usr-001?tab=roles");
   await expect(
     page.getByRole("button", { name: "역할 부여", exact: true }),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await page.getByRole("tab", { name: "소속 조직 (2)", exact: true }).click();
   await expect(page).toHaveURL(/tab=organizations/);
   await page.goBack();
@@ -83,7 +83,7 @@ test("tab state, history, empty roles, localized labels and accessibility", asyn
   await expect(page.getByRole("tab", { selected: true })).not.toContainText(
     "조직",
   );
-  await page.goto("/approvals/approval-001");
+  await page.goto("/approvals/approval-demo-001");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByRole("tablist")).toHaveCount(0);
+  await expect(page.getByRole("tablist")).toHaveCount(1);
 });

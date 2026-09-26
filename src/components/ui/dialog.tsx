@@ -31,7 +31,7 @@ export function Dialog({
         if (!busy) onOpenChange(next);
       }}
     >
-      <Primitive.Trigger asChild>{trigger}</Primitive.Trigger>
+      {trigger && <Primitive.Trigger asChild>{trigger}</Primitive.Trigger>}
       <Primitive.Portal>
         <Primitive.Overlay className="ui-overlay" />
         <Primitive.Content
