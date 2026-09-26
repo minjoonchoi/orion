@@ -25,16 +25,6 @@ export function date(value: string | null) {
   return <DateValue value={value} />;
 }
 
-export function DemoNotice() {
-  const { t, mode } = useI18n();
-  if (mode !== "demo") return null;
-  return (
-    <p className="identity-demo">
-      <Badge>{t("예제 데이터")}</Badge>
-      {t("실제 사내 계정을 사용하지 않는 예제 환경입니다.")}
-    </p>
-  );
-}
 export function Summary({
   items,
 }: {

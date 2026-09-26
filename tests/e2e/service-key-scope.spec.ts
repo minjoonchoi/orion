@@ -36,6 +36,8 @@ test("issuance starts a template-based approval without creating a live key", as
 }) => {
   await page.goto("/service-accounts/sa-platform-ci?tab=api-keys");
   await page.getByRole("link", { name: "발급 요청", exact: true }).click();
+  await page.getByRole("radio", { name: "API 키 발급", exact: true }).check();
+  await page.getByRole("button", { name: "작성 시작", exact: true }).click();
   await expect(page.getByLabel("서비스 어카운트", { exact: true })).toHaveValue(
     "sa-platform-ci",
   );

@@ -4,68 +4,70 @@
 
 기준 master의 모든 page.tsx 경로와 P18 신규 `/approvals/new`를 대조했다. `[id]`는 실제 라우트 파일 표기이며 기획서의 `{workspaceId}~{pageId}` 등은 그 안에 들어갈 복합 식별자다. 같은 URL의 일반/결재 관리 정책·역할은 변형 화면으로 구분한다.
 
-| URL                                  | 화면 ID              | 기획서                                               |
-| ------------------------------------ | -------------------- | ---------------------------------------------------- |
-| `/`                                  | COM-02               | [00-common.md](00-common.md)                         |
-| `/access-grants`                     | COM-09 (placeholder) | [00-common.md](00-common.md)                         |
-| `/actions`                           | ACT-01               | [08-domains.md](08-domains.md)                       |
-| `/actions/[id]`                      | ACT-02               | [08-domains.md](08-domains.md)                       |
-| `/api-keys`                          | KEY-01               | [11-api-keys.md](11-api-keys.md)                     |
-| `/api-keys/[id]`                     | KEY-02               | [11-api-keys.md](11-api-keys.md)                     |
-| `/approval-templates`                | TPL-01               | [12-approval-templates.md](12-approval-templates.md) |
-| `/approval-templates/[id]`           | TPL-02               | [12-approval-templates.md](12-approval-templates.md) |
-| `/approvals`                         | APR-01               | [13-approvals.md](13-approvals.md)                   |
-| `/approvals/[id]`                    | APR-03               | [13-approvals.md](13-approvals.md)                   |
-| `/approvals/new`                     | APR-02 (P18)         | [13-approvals.md](13-approvals.md)                   |
-| `/audit-logs`                        | COM-09 (placeholder) | [00-common.md](00-common.md)                         |
-| `/components`                        | COM-09 (개발용)      | [00-common.md](00-common.md)                         |
-| `/domains`                           | DOM-01               | [08-domains.md](08-domains.md)                       |
-| `/domains/[id]`                      | DOM-02               | [08-domains.md](08-domains.md)                       |
-| `/forbidden`                         | COM-03               | [00-common.md](00-common.md)                         |
-| `/login`                             | COM-01               | [00-common.md](00-common.md)                         |
-| `/organizations`                     | ORG-01               | [03-organizations.md](03-organizations.md)           |
-| `/organizations/[id]`                | ORG-02               | [03-organizations.md](03-organizations.md)           |
-| `/pages`                             | PAG-01               | [06-workspaces.md](06-workspaces.md)                 |
-| `/pages/[id]`                        | PAG-02               | [06-workspaces.md](06-workspaces.md)                 |
-| `/platforms`                         | PLT-01               | [01-platforms.md](01-platforms.md)                   |
-| `/platforms/[id]`                    | PLT-02               | [01-platforms.md](01-platforms.md)                   |
-| `/platforms/[id]/members/[memberId]` | PLT-03               | [01-platforms.md](01-platforms.md)                   |
-| `/policies`                          | POL-01               | [09-policies.md](09-policies.md)                     |
-| `/policies/[id]`                     | POL-02 / POL-04      | [09-policies.md](09-policies.md)                     |
-| `/policies/sync`                     | CHG-05 (이동)        | [10-changes.md](10-changes.md)                       |
-| `/policy-sync`                       | CHG-05 (이동)        | [10-changes.md](10-changes.md)                       |
-| `/resource-sync`                     | CHG-05 (이동)        | [10-changes.md](10-changes.md)                       |
-| `/resource-sync/history`             | CHG-05 (이동)        | [10-changes.md](10-changes.md)                       |
-| `/resources`                         | CHG-01               | [10-changes.md](10-changes.md)                       |
-| `/roles`                             | ROL-01               | [05-roles.md](05-roles.md)                           |
-| `/roles/[id]`                        | ROL-02 / ROL-06      | [05-roles.md](05-roles.md)                           |
-| `/service-accounts`                  | SAC-01               | [04-service-accounts.md](04-service-accounts.md)     |
-| `/service-accounts/[id]`             | SAC-02               | [04-service-accounts.md](04-service-accounts.md)     |
-| `/service-endpoints`                 | END-01               | [07-services.md](07-services.md)                     |
-| `/service-endpoints/[id]`            | END-02               | [07-services.md](07-services.md)                     |
-| `/services`                          | SVC-01               | [07-services.md](07-services.md)                     |
-| `/services/[id]`                     | SVC-02               | [07-services.md](07-services.md)                     |
-| `/users`                             | USR-01               | [02-users.md](02-users.md)                           |
-| `/users/[id]`                        | USR-02               | [02-users.md](02-users.md)                           |
-| `/workspaces`                        | WSP-01               | [06-workspaces.md](06-workspaces.md)                 |
-| `/workspaces/[id]`                   | WSP-02               | [06-workspaces.md](06-workspaces.md)                 |
+| URL                                                | 화면 ID              | 기획서                                               |
+| -------------------------------------------------- | -------------------- | ---------------------------------------------------- |
+| `/`                                                | COM-02               | [00-common.md](00-common.md)                         |
+| `/access-grants`                                   | COM-09 (placeholder) | [00-common.md](00-common.md)                         |
+| `/actions`                                         | ACT-01               | [08-domains.md](08-domains.md)                       |
+| `/actions/[id]`                                    | ACT-02               | [08-domains.md](08-domains.md)                       |
+| `/api-keys`                                        | KEY-01               | [11-api-keys.md](11-api-keys.md)                     |
+| `/api-keys/[id]`                                   | KEY-02               | [11-api-keys.md](11-api-keys.md)                     |
+| `/approval-templates` → `/approvals?tab=templates` | TPL-01               | [12-approval-templates.md](12-approval-templates.md) |
+| `/approval-templates/new`                          | TPL-03               | [12-approval-templates.md](12-approval-templates.md) |
+| `/approval-templates/[id]/edit`                    | TPL-04               | [12-approval-templates.md](12-approval-templates.md) |
+| `/approval-templates/[id]`                         | TPL-02               | [12-approval-templates.md](12-approval-templates.md) |
+| `/approvals`                                       | APR-01               | [13-approvals.md](13-approvals.md)                   |
+| `/approvals/[id]`                                  | APR-03               | [13-approvals.md](13-approvals.md)                   |
+| `/approvals/new`                                   | APR-02 (P18)         | [13-approvals.md](13-approvals.md)                   |
+| `/audit-logs`                                      | COM-09 (placeholder) | [00-common.md](00-common.md)                         |
+| `/components`                                      | COM-09 (개발용)      | [00-common.md](00-common.md)                         |
+| `/domains`                                         | DOM-01               | [08-domains.md](08-domains.md)                       |
+| `/domains/[id]`                                    | DOM-02               | [08-domains.md](08-domains.md)                       |
+| `/forbidden`                                       | COM-03               | [00-common.md](00-common.md)                         |
+| `/login`                                           | COM-01               | [00-common.md](00-common.md)                         |
+| `/organizations`                                   | ORG-01               | [03-organizations.md](03-organizations.md)           |
+| `/organizations/[id]`                              | ORG-02               | [03-organizations.md](03-organizations.md)           |
+| `/pages`                                           | PAG-01               | [06-workspaces.md](06-workspaces.md)                 |
+| `/pages/[id]`                                      | PAG-02               | [06-workspaces.md](06-workspaces.md)                 |
+| `/platforms`                                       | PLT-01               | [01-platforms.md](01-platforms.md)                   |
+| `/platforms/[id]`                                  | PLT-02               | [01-platforms.md](01-platforms.md)                   |
+| `/platforms/[id]/members/[memberId]`               | PLT-03               | [01-platforms.md](01-platforms.md)                   |
+| `/policies`                                        | POL-01               | [09-policies.md](09-policies.md)                     |
+| `/policies/[id]`                                   | POL-02 / POL-04      | [09-policies.md](09-policies.md)                     |
+| `/policies/sync`                                   | CHG-05 (이동)        | [10-changes.md](10-changes.md)                       |
+| `/policy-sync`                                     | CHG-05 (이동)        | [10-changes.md](10-changes.md)                       |
+| `/resource-sync`                                   | CHG-05 (이동)        | [10-changes.md](10-changes.md)                       |
+| `/resource-sync/history`                           | CHG-05 (이동)        | [10-changes.md](10-changes.md)                       |
+| `/resources`                                       | CHG-01               | [10-changes.md](10-changes.md)                       |
+| `/roles`                                           | ROL-01               | [05-roles.md](05-roles.md)                           |
+| `/roles/[id]`                                      | ROL-02 / ROL-06      | [05-roles.md](05-roles.md)                           |
+| `/service-accounts`                                | SAC-01               | [04-service-accounts.md](04-service-accounts.md)     |
+| `/service-accounts/[id]`                           | SAC-02               | [04-service-accounts.md](04-service-accounts.md)     |
+| `/service-endpoints`                               | END-01               | [07-services.md](07-services.md)                     |
+| `/service-endpoints/[id]`                          | END-02               | [07-services.md](07-services.md)                     |
+| `/services`                                        | SVC-01               | [07-services.md](07-services.md)                     |
+| `/services/[id]`                                   | SVC-02               | [07-services.md](07-services.md)                     |
+| `/users`                                           | USR-01               | [02-users.md](02-users.md)                           |
+| `/users/[id]`                                      | USR-02               | [02-users.md](02-users.md)                           |
+| `/workspaces`                                      | WSP-01               | [06-workspaces.md](06-workspaces.md)                 |
+| `/workspaces/[id]`                                 | WSP-02               | [06-workspaces.md](06-workspaces.md)                 |
 
 ## URL 없이 열리는 모달·탭 업무
 
-| 화면 ID         | 진입                    | 검수 포인트                                          |
-| --------------- | ----------------------- | ---------------------------------------------------- |
-| PLT-04          | 플랫폼 멤버 탭          | 사용자 선택→검토, 기존 멤버 제외, 역할 불변          |
-| ROL-03          | 역할 사용자 탭          | 사용자 추가/해제, 플랫폼 문맥, 다른 부여 보존        |
-| ROL-04/05       | 역할 조직/정책 탭(목표) | 수신 조직, 관계 만료, 선택 정책/리소스 영향          |
-| ACT-03          | Action 권한 평가 탭     | 주체·Action 평가와 응답 규칙 근거                    |
-| POL-03          | 정책 Action별 응답      | field ref, masking/unmask, 호출/필드 권한 구분       |
-| CHG-02/03/04    | 행/상세/선택 집합       | 동일 대상 diff·영향도, 대상→검토→명시 적용           |
-| CHG-05          | 항목 동기화 이력        | 과거 revision을 새 revision으로 복원, 현재 참조 보호 |
-| KEY-03/04/05    | 키/계정/결재 요청       | 템플릿 요청으로 이동, 재사용 필드 고정               |
-| KEY-06 / APR-06 | 완료 결재 후속 처리     | 담당 팀 실행, 원문 미보관, hash와 이력               |
-| TPL-03/04       | 템플릿 목록/상세        | 생성, 카탈로그 기반 라인 편집, 버전 불변성           |
-| APR-04          | 현재 결재 단계          | 권한 검사 후 검토·승인/합의·반려                     |
-| APR-05          | 열람자 탭               | 자동 등록, 수동 추가 출처, 조회만 허용               |
+| 화면 ID         | 진입                    | 검수 포인트                                               |
+| --------------- | ----------------------- | --------------------------------------------------------- |
+| PLT-04          | 플랫폼 멤버 탭          | 사용자 선택→검토, 기존 멤버 제외, 역할 불변               |
+| ROL-03          | 역할 사용자 탭          | 사용자 추가/해제, 플랫폼 문맥, 다른 부여 보존             |
+| ROL-04/05       | 역할 조직/정책 탭(목표) | 수신 조직, 관계 만료, 선택 정책/리소스 영향               |
+| ACT-03          | Action 권한 평가 탭     | 주체·Action 평가와 응답 규칙 근거                         |
+| POL-03          | 정책 Action별 응답      | field ref, masking/unmask, 호출/필드 권한 구분            |
+| CHG-02/03/04    | 행/상세/선택 집합       | 동일 대상 diff·영향도, 대상→검토→명시 적용                |
+| CHG-05          | 항목 동기화 이력        | 과거 revision을 새 revision으로 복원, 현재 참조 보호      |
+| KEY-03/04/05    | 키/계정/결재 요청       | 템플릿 요청으로 이동, 재사용 필드 고정                    |
+| KEY-06 / APR-06 | 완료 결재 후속 처리     | 담당 팀 실행, 원문 미보관, hash와 이력                    |
+| TPL-03/04       | 생성·수정 전용 페이지   | 결재선/입력 필드 탭, 카탈로그 기반 라인 편집, 버전 불변성 |
+| APR-04          | 현재 결재 단계          | 권한 검사 후 검토·승인/합의·반려                          |
+| APR-05          | 열람자 탭               | 자동 등록, 수동 추가 출처, 조회만 허용                    |
 
 ## 핵심 시나리오와 완료 조건
 
@@ -102,3 +104,12 @@
 ## CI 회귀 정비 — 2026-09-26
 
 [회귀 검증 기록](../ci-regression-2026-09-26.md). 최초 PR #18/#19 CI는 각각 E2E 13건이 실패했다. 플랫폼 개편 전 진입점/표 제목/URL을 최신 요구에 맞추고, 현재 사용자 부여·정의 Sync·API directory 계약을 검증하도록 갱신한다. ROL-04/05의 미완료 편집기와 directory↔definitions 통합은 여전히 GAP-02~04이며 통과한 테스트로 완료를 주장하지 않는다. 만료·정책 해제의 모델 단위 검증은 유지한다.
+
+## 통합 HTML 수용 기준
+
+- 결재 LSB 한 항목, 문서/템플릿 탭, 기존 템플릿 목록 주소 리다이렉트와 상세 활성 표시.
+- 등록 템플릿 선택으로만 작성 시작; 미등록 ID 및 빈 템플릿 목록 차단.
+- API 키 모달·페이지 작성에 같은 RequestForm 적용; 제출 시 스냅샷 검증 유지.
+- 모든 업무 화면에서 데모 사용자·예제 안내·모의 실행 조작 제거. 서버 세션별 문서 열람/관리자 접근 검사 유지.
+- `npm run demo:check` 통과; 실제 앱과 HTML의 메뉴·핵심 화면 표현 및 작성·관계 이동 동작 비교.
+- HTML은 file://에서 네트워크 요청 없이 실행하고 라우팅·탭·검색·다중 선택·작성·검토·제출·언어 전환을 지원.

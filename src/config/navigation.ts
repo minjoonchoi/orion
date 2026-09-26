@@ -85,11 +85,6 @@ export const navigationGroups = [
     label: "결재",
     items: [
       {
-        href: "/approval-templates",
-        label: "결재 템플릿",
-        description: "결재 템플릿의 기본 정보와 요청 안내를 조회합니다.",
-      },
-      {
         href: "/approvals",
         label: "결재",
         description: "결재 요청 정보와 처리 결과를 조회합니다.",
@@ -105,6 +100,7 @@ export function isNavigationActive(pathname: string, href: string) {
     "/workspaces": "/pages",
     "/services": "/service-endpoints",
     "/domains": "/actions",
+    "/approvals": "/approval-templates",
   };
   return (
     pathname === href ||

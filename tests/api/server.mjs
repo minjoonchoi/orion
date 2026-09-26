@@ -102,6 +102,21 @@ const handler = (expectedRegion) => (request, response) => {
       return send({}, 403);
     const key = region + ":" + (request.headers.cookie ?? "");
     const state = workflowSessions.get(key) ?? workflowSeed();
+    if (request.headers.cookie === "orion_session=workflow-outsider")
+      state.actorId = "usr-014";
+    if (
+      request.headers.cookie === "orion_session=workflow-many-endpoints" &&
+      !workflowSessions.has(key)
+    ) {
+      const endpoint = state.endpoints.find((e) => e.serviceId === "svc-orion");
+      state.endpoints = Array.from({ length: 12 }, (_, i) => ({
+        ...endpoint,
+        id: `bulk-${i}`,
+        name: `Bulk endpoint ${i}`,
+        path: `/bulk/${i}`,
+      }));
+      workflowSessions.set(key, state);
+    }
     if (request.method === "GET") {
       if (request.headers.cookie === "orion_session=api-empty")
         return send(

@@ -1,6 +1,7 @@
 "use client";
 import {
   useState,
+  useEffect,
   startTransition,
   useId,
   cloneElement,
@@ -13,11 +14,13 @@ import { DateValue, useI18n } from "@/i18n/provider";
 import { PageHeading } from "@/components/ui/page-heading";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs } from "@/components/ui/tabs";
+import { EndpointPicker } from "./endpoint-picker";
 import { Dialog } from "@/components/ui/dialog";
 import { Details } from "../identity/shared";
 import { DetailTabs } from "../identity/detail-tabs";
 import { BrowseTable } from "../identity/browse-table";
-import { workflowCommand, demoActor } from "./actions";
+import { workflowCommand } from "./actions";
 import {
   canAddViewer,
   canExecute,
@@ -145,35 +148,7 @@ function Status({ value }: { value: string }) {
     </Badge>
   );
 }
-export function WorkflowContext({ s, demo }: { s: State; demo: boolean }) {
-  const text = useText(),
-    router = useRouter();
-  return demo ? (
-    <div className="wf-demo" data-actor-id={s.actorId}>
-      <span>
-        {text(
-          "데모 · AWS 저장 및 실제 권한 반영 없이 흐름을 검증합니다. 실제 키를 입력하지 마세요.",
-          "Demo · No AWS storage or live authorization changes. Do not enter real keys.",
-        )}
-      </span>
-      <Field label={text("데모 사용자", "Demo user")}>
-        <select
-          value={s.actorId}
-          onChange={async (e) => {
-            await demoActor(e.target.value);
-            router.refresh();
-          }}
-        >
-          {s.users.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.name}
-            </option>
-          ))}
-        </select>
-      </Field>
-    </div>
-  ) : null;
-}
+
 function TargetLabel({ s, target }: { s: State; target: Target }) {
   return (
     <Ref
@@ -276,127 +251,143 @@ function RequestInfo({
     </>
   );
 }
+function TemplateTable({ s }: { s: State }) {
+  const text = useText();
+  return (
+    <BrowseTable
+      sortValue={(r) => r.id}
+      title={text("결재 템플릿 목록", "Approval templates")}
+      rows={s.templates}
+      searchText={(r) => r.name}
+      columns={[
+        {
+          key: "name",
+          header: text("템플릿", "Template"),
+          render: (r) => (
+            <Ref href={`/approval-templates/${r.id}`}>{r.name}</Ref>
+          ),
+        },
+        {
+          key: "version",
+          header: text("버전", "Version"),
+          render: (r) => `v${r.version}`,
+        },
+        {
+          key: "fields",
+          header: text("입력 필드", "Input fields"),
+          render: (r) => r.fields.length,
+        },
+        {
+          key: "line",
+          header: text("결재선", "Approval line"),
+          render: (r) => r.line.map((l) => l.label).join(" → "),
+        },
+      ]}
+    />
+  );
+}
 export function WorkflowList({
   s,
-  demo,
   kind,
 }: {
   s: State;
-  demo: boolean;
   kind: "approvals" | "templates" | "keys";
 }) {
   const text = useText();
+  const params = useSearchParams();
+  const router = useRouter();
+  const tab = params.get("tab") === "templates" ? "templates" : "documents";
+  if (kind !== "keys")
+    return (
+      <>
+        <PageHeading
+          title={text("결재", "Approvals")}
+          description={text(
+            "결재 문서를 확인하고 등록된 템플릿으로 새 문서를 작성합니다.",
+            "Review documents and create new requests from registered templates.",
+          )}
+          actions={
+            <>
+              {tab === "templates" &&
+                s.templateAdminIds.includes(s.actorId) && (
+                  <Ref href="/approval-templates/new">
+                    {text("템플릿 추가", "Add template")}
+                  </Ref>
+                )}
+              <Ref href="/approvals/new">
+                {text("결재 작성", "New approval")}
+              </Ref>
+            </>
+          }
+        />
+        <Tabs
+          label={text("결재 메뉴", "Approvals workspace")}
+          value={tab}
+          onValueChange={(value) => router.replace(`/approvals?tab=${value}`)}
+          items={[
+            {
+              value: "documents",
+              label: text("결재 문서", "Documents"),
+              content: <Documents s={s} rows={s.documents} />,
+            },
+            {
+              value: "templates",
+              label: text("결재 템플릿", "Templates"),
+              content: <TemplateTable s={s} />,
+            },
+          ]}
+        />
+      </>
+    );
   return (
     <>
       <PageHeading
-        title={
-          kind === "approvals"
-            ? text("결재", "Approvals")
-            : kind === "templates"
-              ? text("결재 템플릿", "Approval templates")
-              : text("API 키", "API keys")
-        }
-        description={
-          kind === "approvals"
-            ? text(
-                "열람 권한이 있는 문서와 결재 이후 처리 상태를 확인합니다.",
-                "Documents you can view and their post-approval execution status.",
-              )
-            : kind === "templates"
-              ? text(
-                  "결재 유형, 입력 필드와 카탈로그 기반 결재선을 관리합니다.",
-                  "Manage request types, input fields, and catalog-based approval lines.",
-                )
-              : text(
-                  "승인된 결재를 근거로 관리서비스 팀이 발급한 키를 관리합니다.",
-                  "Manage keys provisioned by service teams after approval.",
-                )
-        }
-        actions={
-          kind !== "templates" ? (
-            <Ref href="/approvals/new">
-              {text("발급 요청", "Request issuance")}
-            </Ref>
-          ) : (
-            <CreateTemplate s={s} />
-          )
-        }
+        title={text("API 키", "API keys")}
+        description={text(
+          "승인된 결재를 근거로 관리서비스 팀이 발급한 키를 관리합니다.",
+          "Manage keys provisioned by service teams after approval.",
+        )}
+        actions={<IssueRequestDialog s={s} />}
       />
-      <WorkflowContext s={s} demo={demo} />
-      {kind === "templates" ? (
-        <BrowseTable
-          sortValue={(r) => r.id}
-          title={text("결재 템플릿 목록", "Approval templates")}
-          rows={s.templates}
-          searchText={(r) => r.name}
-          columns={[
-            {
-              key: "name",
-              header: text("템플릿", "Template"),
-              render: (r) => (
-                <Ref href={`/approval-templates/${r.id}`}>{r.name}</Ref>
-              ),
-            },
-            {
-              key: "version",
-              header: text("버전", "Version"),
-              render: (r) => `v${r.version}`,
-            },
-            {
-              key: "fields",
-              header: text("입력 필드", "Input fields"),
-              render: (r) => r.fields.length,
-            },
-            {
-              key: "line",
-              header: text("결재선", "Approval line"),
-              render: (r) => r.line.map((l) => l.label).join(" → "),
-            },
-          ]}
-        />
-      ) : kind === "approvals" ? (
-        <Documents s={s} rows={s.documents} />
-      ) : (
-        <BrowseTable
-          sortValue={(r) => r.id}
-          title={text("API 키 목록", "API keys")}
-          rows={s.keys}
-          searchText={(k) =>
-            `${k.id} ${name(s.accounts, k.accountId)} ${name(s.services, k.serviceId)} ${k.hash}`
-          }
-          columns={[
-            {
-              key: "account",
-              header: text("서비스 어카운트", "Service account"),
-              render: (k) => (
-                <Ref href={`/api-keys/${k.id}`}>
-                  {name(s.accounts, k.accountId)}
-                </Ref>
-              ),
-            },
-            {
-              key: "service",
-              header: text("관리 서비스", "Managed service"),
-              render: (k) => name(s.services, k.serviceId),
-            },
-            {
-              key: "status",
-              header: text("상태", "Status"),
-              render: (k) => <Status value={k.status} />,
-            },
-            {
-              key: "version",
-              header: text("키 버전", "Key version"),
-              render: (k) => `v${k.version}`,
-            },
-            {
-              key: "hash",
-              header: "API key hash",
-              render: (k) => <Hash value={k.hash} />,
-            },
-          ]}
-        />
-      )}
+      <BrowseTable
+        sortValue={(r) => r.id}
+        title={text("API 키 목록", "API keys")}
+        rows={s.keys}
+        searchText={(k) =>
+          `${k.id} ${name(s.accounts, k.accountId)} ${name(s.services, k.serviceId)} ${k.hash}`
+        }
+        columns={[
+          {
+            key: "account",
+            header: text("서비스 어카운트", "Service account"),
+            render: (k) => (
+              <Ref href={`/api-keys/${k.id}`}>
+                {name(s.accounts, k.accountId)}
+              </Ref>
+            ),
+          },
+          {
+            key: "service",
+            header: text("관리 서비스", "Managed service"),
+            render: (k) => name(s.services, k.serviceId),
+          },
+          {
+            key: "status",
+            header: text("상태", "Status"),
+            render: (k) => <Status value={k.status} />,
+          },
+          {
+            key: "version",
+            header: text("키 버전", "Key version"),
+            render: (k) => `v${k.version}`,
+          },
+          {
+            key: "hash",
+            header: "API key hash",
+            render: (k) => <Hash value={k.hash} />,
+          },
+        ]}
+      />
     </>
   );
 }
@@ -449,21 +440,197 @@ function Documents({ s, rows }: { s: State; rows: Document[] }) {
     />
   );
 }
-export function RequestScreen({ s, demo }: { s: State; demo: boolean }) {
+export function RequestScreen({ s }: { s: State }) {
+  const query = useSearchParams();
+  const template = s.templates.find((t) => t.id === query.get("template"));
+  if (
+    !query.get("template") ||
+    (template && template.type !== "issue" && !query.get("key"))
+  )
+    return (
+      <ApprovalStart
+        key={["template", "key", "type", "account"]
+          .map((key) => query.get(key))
+          .join("|")}
+        s={s}
+      />
+    );
+  return <RequestForm key={query.toString()} s={s} />;
+}
+function IssueRequestDialog({ s }: { s: State }) {
+  const text = useText();
+  const [open, setOpen] = useState(false),
+    [busy, setBusy] = useState(false);
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+      busy={busy}
+      size="wide"
+      trigger={<Button>{text("발급 요청", "Request issuance")}</Button>}
+      title={text("API 키 신규 발급 결재", "New API key approval")}
+      description={text(
+        "요청 정보를 입력하고 결재선을 검토합니다. 승인 후에 키를 발급합니다.",
+        "Enter request details and review the approval line. Keys are provisioned after approval.",
+      )}
+    >
+      {open && <RequestForm s={s} embedded onBusyChange={setBusy} />}
+    </Dialog>
+  );
+}
+function ApprovalStart({ s }: { s: State }) {
+  const text = useText(),
+    router = useRouter(),
+    query = useSearchParams();
+  const [templateId, setTemplateId] = useState(query.get("template") ?? ""),
+    [keyId, setKeyId] = useState(query.get("key") ?? "");
+  const template = s.templates.find((t) => t.id === templateId);
+  const choices = s.templates.filter(
+    (t) => !query.get("type") || t.type === query.get("type"),
+  );
+  return (
+    <>
+      <PageHeading
+        title={text("결재 작성", "New approval")}
+        description={text(
+          "등록된 템플릿을 선택하세요. 템플릿에 정의된 입력 필드와 결재선으로 문서를 작성합니다.",
+          "Choose a registered template to use its input fields and approval line.",
+        )}
+        actions={
+          <Ref href="/approvals?tab=documents">
+            {text("목록으로 돌아가기", "Back to list")}
+          </Ref>
+        }
+      />
+      <BrowseTable
+        title={text("작성할 결재 템플릿", "Request templates")}
+        rows={choices}
+        searchText={(t) => t.name + " " + t.line.map((l) => l.label).join(" ")}
+        sortValue={(t) => t.name}
+        emptyTitle={text("등록된 템플릿이 없습니다", "No registered templates")}
+        columns={[
+          {
+            key: "select",
+            header: text("선택", "Select"),
+            render: (t) => (
+              <input
+                type="radio"
+                name="request-template"
+                aria-label={t.name}
+                checked={templateId === t.id}
+                onChange={() => {
+                  setTemplateId(t.id);
+                  if (t.type === "issue") setKeyId("");
+                }}
+              />
+            ),
+          },
+          {
+            key: "name",
+            header: text("템플릿", "Template"),
+            render: (t) => (
+              <>
+                <strong>{t.name}</strong>
+                <div className="identity-meta">v{t.version}</div>
+              </>
+            ),
+          },
+          {
+            key: "type",
+            header: text("처리 유형", "Execution type"),
+            render: (t) =>
+              t.type === "issue"
+                ? text("발급", "Issue")
+                : t.type === "replace"
+                  ? text("교체", "Replace")
+                  : text("폐기", "Revoke"),
+          },
+          {
+            key: "line",
+            header: text("결재선", "Approval line"),
+            render: (t) => t.line.map((l) => l.label).join(" → "),
+          },
+        ]}
+      />
+      <section className="ui-panel wf-form wf-template-start">
+        {template ? (
+          <p>
+            {text("선택한 템플릿", "Selected template")}:{" "}
+            <strong>{template.name}</strong> · v{template.version}
+          </p>
+        ) : (
+          <p>
+            {text(
+              "작성할 템플릿을 선택하세요.",
+              "Select a template to continue.",
+            )}
+          </p>
+        )}
+        {template && template.type !== "issue" && (
+          <Field label={text("대상 API 키", "Target API key")}>
+            <select value={keyId} onChange={(e) => setKeyId(e.target.value)}>
+              <option value="">{text("키 선택", "Choose a key")}</option>
+              {s.keys
+                .filter((k) => k.status === "active")
+                .map((k) => (
+                  <option key={k.id} value={k.id}>
+                    {name(s.accounts, k.accountId)} ·{" "}
+                    {name(s.services, k.serviceId)} · {k.id}
+                  </option>
+                ))}
+            </select>
+          </Field>
+        )}
+        <Button
+          disabled={
+            !template ||
+            (template.type !== "issue" &&
+              !s.keys.some((k) => k.id === keyId && k.status === "active"))
+          }
+          onClick={() =>
+            router.push(
+              `/approvals/new?template=${encodeURIComponent(templateId)}${keyId ? `&key=${encodeURIComponent(keyId)}` : ""}${query.get("account") ? `&account=${encodeURIComponent(query.get("account")!)}` : ""}`,
+            )
+          }
+        >
+          {text("작성 시작", "Start request")}
+        </Button>
+      </section>
+    </>
+  );
+}
+function RequestForm({
+  s,
+  embedded = false,
+  onBusyChange,
+}: {
+  s: State;
+  embedded?: boolean;
+  onBusyChange?: (busy: boolean) => void;
+}) {
   const text = useText(),
     query = useSearchParams(),
     router = useRouter();
-  const existing = s.keys.find((k) => k.id === query.get("key"));
-  const [templateId, setTemplateId] = useState(
-    query.get("type") === "revoke"
-      ? "api-key-revoke"
-      : existing
-        ? "api-key-replace"
-        : "api-key-issue",
-  );
-  const template = s.templates.find((t) => t.id === templateId)!;
+  const existing = embedded
+    ? undefined
+    : s.keys.find((k) => k.id === query.get("key"));
+  const requested = embedded ? undefined : query.get("template");
+  const initial = requested
+    ? s.templates.find((t) => t.id === requested)
+    : s.templates.find(
+        (t) =>
+          t.type ===
+          (existing
+            ? query.get("type") === "revoke"
+              ? "revoke"
+              : "replace"
+            : "issue"),
+      );
+  const [templateId, setTemplateId] = useState(initial?.id ?? "");
+  const template = s.templates.find((t) => t.id === templateId);
   const [input, setInput] = useState<Input>({
-    accountId: existing?.accountId ?? query.get("account") ?? "",
+    accountId:
+      existing?.accountId ?? (embedded ? "" : query.get("account")) ?? "",
     serviceId: existing?.serviceId ?? "",
     endpointIds: existing?.endpointIds ?? [],
     secretName: existing?.secretName ?? "",
@@ -473,6 +640,24 @@ export function RequestScreen({ s, demo }: { s: State; demo: boolean }) {
   const [review, setReview] = useState(false);
   const mutation = useMutation(s);
   const [requestId] = useState(() => crypto.randomUUID());
+  useEffect(() => {
+    onBusyChange?.(mutation.busy);
+    return () => onBusyChange?.(false);
+  }, [mutation.busy, onBusyChange]);
+  if (
+    !template ||
+    (existing ? template.type === "issue" : template.type !== "issue") ||
+    (!embedded && query.get("key") && !existing)
+  )
+    return (
+      <p role="alert">
+        {text(
+          "사용 가능한 템플릿과 API 키를 다시 선택하세요.",
+          "Select an available template and API key.",
+        )}{" "}
+        <Ref href="/approvals/new">{text("유형 선택", "Choose a type")}</Ref>
+      </p>
+    );
   function set<K extends keyof Input>(key: K, value: Input[K]) {
     setInput((i) => ({ ...i, [key]: value }));
   }
@@ -488,31 +673,30 @@ export function RequestScreen({ s, demo }: { s: State; demo: boolean }) {
   );
   return (
     <>
-      <PageHeading
-        title={template?.name ?? text("결재 요청", "Request approval")}
-        description={text(
-          "1. 요청 정보 선택 → 2. 변경사항과 결재선 검토",
-          "1. Request details → 2. Review changes and approval line",
-        )}
-      />
-      <WorkflowContext s={s} demo={demo} />
-      <section className="ui-panel">
+      {!embedded && (
+        <PageHeading
+          title={template?.name ?? text("결재 요청", "Request approval")}
+          description={text(
+            "1. 요청 정보 선택 → 2. 변경사항과 결재선 검토",
+            "1. Request details → 2. Review changes and approval line",
+          )}
+        />
+      )}
+      <section className={embedded ? "wf-request-modal" : "ui-panel"}>
         <h2>
           {review
             ? text("2. 변경사항 검토", "2. Review changes")
             : text("1. 요청 정보", "1. Request details")}
         </h2>
         {!review ? (
-          <div className="wf-form">
+          <div className="wf-form wf-request-grid">
             <Field label={text("결재 템플릿", "Approval template")}>
               <select
                 value={templateId}
                 onChange={(e) => setTemplateId(e.target.value)}
               >
                 {s.templates
-                  .filter((t) =>
-                    existing ? t.type !== "issue" : t.type === "issue",
-                  )
+                  .filter((t) => t.type === initial?.type)
                   .map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.name} · v{t.version}
@@ -564,40 +748,13 @@ export function RequestScreen({ s, demo }: { s: State; demo: boolean }) {
                 ))}
               </select>
             </Field>
-            <fieldset className="wf-checks">
-              <legend>{text("접근할 엔드포인트", "Endpoints to allow")}</legend>
-              {s.endpoints
-                .filter((e) => e.serviceId === input.serviceId)
-                .map((e) => (
-                  <label key={e.id}>
-                    <input
-                      type="checkbox"
-                      disabled={template.type === "revoke"}
-                      checked={input.endpointIds.includes(e.id)}
-                      onChange={(ev) =>
-                        set(
-                          "endpointIds",
-                          ev.target.checked
-                            ? [...input.endpointIds, e.id]
-                            : input.endpointIds.filter((id) => id !== e.id),
-                        )
-                      }
-                    />
-                    <code>
-                      {e.method} {e.path}
-                    </code>
-                    <span>{e.name}</span>
-                  </label>
-                ))}
-              {!s.endpoints.some((e) => e.serviceId === input.serviceId) && (
-                <p>
-                  {text(
-                    "서비스를 선택하면 엔드포인트가 표시됩니다.",
-                    "Select a service to view its endpoints.",
-                  )}
-                </p>
-              )}
-            </fieldset>
+            <EndpointPicker
+              key={input.serviceId}
+              rows={s.endpoints.filter((e) => e.serviceId === input.serviceId)}
+              selected={input.endpointIds}
+              onChange={(ids) => set("endpointIds", ids)}
+              disabled={template.type === "revoke"}
+            />
             <Field label={fieldLabel("secretName", "Secret name")}>
               <input
                 value={input.secretName}
@@ -738,15 +895,7 @@ function Hash({ value }: { value: string }) {
     </div>
   );
 }
-export function DocumentScreen({
-  s,
-  d,
-  demo,
-}: {
-  s: State;
-  d: Document;
-  demo: boolean;
-}) {
+export function DocumentScreen({ s, d }: { s: State; d: Document }) {
   const text = useText();
   const m = useMutation(s);
   const [target, setTarget] = useState(""),
@@ -762,7 +911,6 @@ export function DocumentScreen({
         title={`${d.template.name} · ${name(s.accounts, d.input.accountId)}`}
         description={`${d.id} · ${text("템플릿 스냅샷", "Template snapshot")} v${d.template.version}`}
       />
-      <WorkflowContext s={s} demo={demo} />
       <DetailTabs
         items={[
           {
@@ -1029,14 +1177,12 @@ export function DocumentScreen({
                         });
                       }}
                     >
-                      {demo
-                        ? text("데모 처리 실행", "Simulate execution")
-                        : d.template.type === "revoke"
-                          ? text("폐기 실행", "Revoke key")
-                          : text(
-                              "키 저장 및 권한 적용",
-                              "Store key and apply permissions",
-                            )}
+                      {d.template.type === "revoke"
+                        ? text("폐기 실행", "Revoke key")
+                        : text(
+                            "키 저장 및 권한 적용",
+                            "Store key and apply permissions",
+                          )}
                     </Button>
                     <ErrorMessage error={m.error} />
                   </>
@@ -1087,15 +1233,7 @@ export function DocumentScreen({
     </>
   );
 }
-export function KeyScreen({
-  s,
-  k,
-  demo,
-}: {
-  s: State;
-  k: KeyRecord;
-  demo: boolean;
-}) {
+export function KeyScreen({ s, k }: { s: State; k: KeyRecord }) {
   const text = useText();
   return (
     <>
@@ -1115,7 +1253,6 @@ export function KeyScreen({
           ) : undefined
         }
       />
-      <WorkflowContext s={s} demo={demo} />
       <DetailTabs
         items={[
           {
@@ -1222,19 +1359,8 @@ export function KeyScreen({
     </>
   );
 }
-export function TemplateScreen({
-  s,
-  t,
-  demo,
-}: {
-  s: State;
-  t: Template;
-  demo: boolean;
-}) {
-  const text = useText(),
-    m = useMutation(s);
-  const [edit, setEdit] = useState(false),
-    [draft, setDraft] = useState<Template>(structuredClone(t));
+export function TemplateScreen({ s, t }: { s: State; t: Template }) {
+  const text = useText();
   const options = [
     {
       value: "requester-leader:",
@@ -1262,19 +1388,18 @@ export function TemplateScreen({
           "Changes create a new version and do not alter existing approval snapshots.",
         )}
         actions={
-          s.templateAdminIds.includes(s.actorId) && (
-            <Button
-              onClick={() => {
-                setDraft(structuredClone(t));
-                setEdit(true);
-              }}
-            >
-              {text("템플릿 수정", "Edit template")}
-            </Button>
-          )
+          <>
+            <Ref href={`/approvals/new?template=${encodeURIComponent(t.id)}`}>
+              {text("이 템플릿으로 작성", "Use this template")}
+            </Ref>
+            {s.templateAdminIds.includes(s.actorId) && (
+              <Ref href={`/approval-templates/${t.id}/edit`}>
+                {text("템플릿 수정", "Edit template")}
+              </Ref>
+            )}
+          </>
         }
       />
-      <WorkflowContext s={s} demo={demo} />
       <DetailTabs
         items={[
           {
@@ -1368,157 +1493,288 @@ export function TemplateScreen({
           },
         ]}
       />
-      <Dialog
-        trigger={null}
-        open={edit}
-        onOpenChange={setEdit}
-        title={text("결재 템플릿 수정", "Edit approval template")}
+    </>
+  );
+}
+
+export function TemplateEditorScreen({ s, t }: { s: State; t?: Template }) {
+  const text = useText(),
+    m = useMutation(s),
+    router = useRouter();
+  const [section, setSection] = useState("line");
+  const [draft, setDraft] = useState<Template>(() =>
+    t
+      ? structuredClone(t)
+      : {
+          ...structuredClone(s.templates[0]),
+          id: `template-${crypto.randomUUID()}`,
+          version: 0,
+          name: "",
+        },
+  );
+  const options = [
+    {
+      value: "requester-leader:",
+      label: text("요청자 팀장", "Requester’s team lead"),
+    },
+    {
+      value: "service-team:",
+      label: text("관리서비스 팀", "Managed service team"),
+    },
+    ...s.users.map((u) => ({
+      value: `user:${u.id}`,
+      label: `${text("사용자", "User")} · ${u.name}`,
+    })),
+    ...s.organizations.map((o) => ({
+      value: `organization:${o.id}`,
+      label: `${text("조직", "Organization")} · ${o.name}`,
+    })),
+  ];
+  if (!s.templateAdminIds.includes(s.actorId))
+    return <p role="alert">{text("접근 권한이 없습니다", "Access denied")}</p>;
+  if (!draft.fields)
+    return (
+      <p role="alert">
+        {text("기본 템플릿이 없습니다.", "No base template available.")}
+      </p>
+    );
+  return (
+    <>
+      <PageHeading
+        title={
+          t
+            ? text("결재 템플릿 수정", "Edit approval template")
+            : text("결재 템플릿 생성", "Create approval template")
+        }
         description={text(
-          "사용자·조직 카탈로그에서 결재선을 설정합니다. API 키 처리에 필요한 필드는 필수입니다.",
-          "Configure approval lines from the user and organization catalogs. Fields required for key execution remain mandatory.",
+          "결재선과 입력 필드를 편집합니다. 기존 결재 문서의 내용은 유지됩니다.",
+          "Edit the approval line and input fields. Existing documents remain unchanged.",
         )}
-        busy={m.busy}
-      >
-        <div className="wf-form">
+        actions={
+          <Ref
+            href={
+              t ? `/approval-templates/${t.id}` : "/approvals?tab=templates"
+            }
+          >
+            {text("취소", "Cancel")}
+          </Ref>
+        }
+      />
+      <section className="ui-panel">
+        {" "}
+        <div className="wf-form wf-template-editor">
           <Field label={text("이름", "Name")}>
             <input
+              maxLength={120}
               value={draft.name}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })}
             />
           </Field>
-          <h3>{text("결재선", "Approval line")}</h3>
-          {draft.line.map((r, i) => (
-            <div className="wf-rule" key={i}>
-              <Field label={`${i + 1}. ${text("단계 이름", "Step name")}`}>
-                <input
-                  value={r.label}
-                  onChange={(e) =>
-                    setDraft({
-                      ...draft,
-                      line: draft.line.map((v, j) =>
-                        j === i ? { ...v, label: e.target.value } : v,
-                      ),
-                    })
-                  }
-                />
-              </Field>
-              <Field label={text("담당 대상", "Assignee")}>
-                <select
-                  value={`${r.kind}:${r.id}`}
-                  onChange={(e) => {
-                    const [kind, id] = e.target.value.split(":");
-                    setDraft({
-                      ...draft,
-                      line: draft.line.map((v, j) =>
-                        j === i ? { ...v, kind: kind as typeof r.kind, id } : v,
-                      ),
-                    });
-                  }}
-                >
-                  {options.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label={text("단계 유형", "Step type")}>
-                <select
-                  value={r.action}
-                  onChange={(e) =>
-                    setDraft({
-                      ...draft,
-                      line: draft.line.map((v, j) =>
-                        j === i
-                          ? { ...v, action: e.target.value as typeof r.action }
-                          : v,
-                      ),
-                    })
-                  }
-                >
-                  <option value="approve">{text("승인", "Approve")}</option>
-                  <option value="agree">{text("합의", "Agree")}</option>
-                </select>
-              </Field>
-              <div className="ui-actions">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  disabled={i === 0}
-                  onClick={() => {
-                    const line = [...draft.line];
-                    [line[i - 1], line[i]] = [line[i], line[i - 1]];
-                    setDraft({ ...draft, line });
-                  }}
-                >
-                  {text("위로", "Move up")}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() =>
-                    setDraft({
-                      ...draft,
-                      line: draft.line.filter((_, j) => j !== i),
-                    })
-                  }
-                >
-                  {text("삭제", "Remove")}
-                </Button>
-              </div>
-            </div>
-          ))}
-          <Button
-            variant="secondary"
-            onClick={() =>
-              setDraft({
-                ...draft,
-                line: [
-                  ...draft.line,
-                  {
-                    label: text("승인", "Approve"),
-                    action: "approve",
-                    kind: "user",
-                    id: s.users[0].id,
-                  },
-                ],
-              })
-            }
-          >
-            {text("단계 추가", "Add step")}
-          </Button>
-          <h3>{text("입력 필드 이름", "Input field labels")}</h3>
-          {draft.fields.map((f, i) => (
-            <Field key={f.key} label={`${f.key} · ${text("필수", "Required")}`}>
-              <input
-                value={f.label}
-                onChange={(e) =>
+          <Field label={text("처리 유형", "Execution type")}>
+            <select
+              value={draft.type}
+              disabled={!!t}
+              onChange={(e) => {
+                const base = s.templates.find((v) => v.type === e.target.value);
+                if (base)
                   setDraft({
-                    ...draft,
-                    fields: draft.fields.map((v, j) =>
-                      i === j ? { ...v, label: e.target.value } : v,
-                    ),
-                  })
-                }
-              />
-            </Field>
-          ))}
+                    ...structuredClone(base),
+                    id: draft.id,
+                    version: 0,
+                    name: draft.name,
+                  });
+              }}
+            >
+              {["issue", "replace", "revoke"].map((type) => (
+                <option
+                  key={type}
+                  value={type}
+                  disabled={!s.templates.some((v) => v.type === type)}
+                >
+                  {type === "issue"
+                    ? text("발급", "Issue")
+                    : type === "replace"
+                      ? text("교체", "Replace")
+                      : text("폐기", "Revoke")}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Tabs
+            label={text("템플릿 편집", "Template editor")}
+            value={section}
+            onValueChange={setSection}
+            items={[
+              {
+                value: "line",
+                label: text("결재선", "Approval line"),
+                content: (
+                  <div className="wf-editor-section">
+                    {" "}
+                    <h2>{text("결재선", "Approval line")}</h2>
+                    {draft.line.map((r, i) => (
+                      <div className="wf-rule wf-rule-compact" key={i}>
+                        <Field
+                          label={`${i + 1}. ${text("단계 이름", "Step name")}`}
+                        >
+                          <input
+                            value={r.label}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                line: draft.line.map((v, j) =>
+                                  j === i ? { ...v, label: e.target.value } : v,
+                                ),
+                              })
+                            }
+                          />
+                        </Field>
+                        <Field label={text("담당 대상", "Assignee")}>
+                          <select
+                            value={`${r.kind}:${r.id}`}
+                            onChange={(e) => {
+                              const [kind, id] = e.target.value.split(":");
+                              setDraft({
+                                ...draft,
+                                line: draft.line.map((v, j) =>
+                                  j === i
+                                    ? { ...v, kind: kind as typeof r.kind, id }
+                                    : v,
+                                ),
+                              });
+                            }}
+                          >
+                            {options.map((o) => (
+                              <option key={o.value} value={o.value}>
+                                {o.label}
+                              </option>
+                            ))}
+                          </select>
+                        </Field>
+                        <Field label={text("단계 유형", "Step type")}>
+                          <select
+                            value={r.action}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                line: draft.line.map((v, j) =>
+                                  j === i
+                                    ? {
+                                        ...v,
+                                        action: e.target
+                                          .value as typeof r.action,
+                                      }
+                                    : v,
+                                ),
+                              })
+                            }
+                          >
+                            <option value="approve">
+                              {text("승인", "Approve")}
+                            </option>
+                            <option value="agree">
+                              {text("합의", "Agree")}
+                            </option>
+                          </select>
+                        </Field>
+                        <div className="ui-actions">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            disabled={i === 0}
+                            onClick={() => {
+                              const line = [...draft.line];
+                              [line[i - 1], line[i]] = [line[i], line[i - 1]];
+                              setDraft({ ...draft, line });
+                            }}
+                          >
+                            {text("위로", "Move up")}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              setDraft({
+                                ...draft,
+                                line: draft.line.filter((_, j) => j !== i),
+                              })
+                            }
+                          >
+                            {text("삭제", "Remove")}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    <Button
+                      variant="secondary"
+                      disabled={draft.line.length >= 10 || !s.users.length}
+                      onClick={() =>
+                        setDraft({
+                          ...draft,
+                          line: [
+                            ...draft.line,
+                            {
+                              label: text("승인", "Approve"),
+                              action: "approve",
+                              kind: "user",
+                              id: s.users[0].id,
+                            },
+                          ],
+                        })
+                      }
+                    >
+                      {text("단계 추가", "Add step")}
+                    </Button>
+                  </div>
+                ),
+              },
+              {
+                value: "fields",
+                label: text("입력 필드", "Input fields"),
+                content: (
+                  <div className="wf-field-grid">
+                    {" "}
+                    <h2>{text("입력 필드 이름", "Input field labels")}</h2>
+                    {draft.fields.map((f, i) => (
+                      <Field
+                        key={f.key}
+                        label={`${f.key} · ${text("필수", "Required")}`}
+                      >
+                        <input
+                          value={f.label}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              fields: draft.fields.map((v, j) =>
+                                i === j ? { ...v, label: e.target.value } : v,
+                              ),
+                            })
+                          }
+                        />
+                      </Field>
+                    ))}
+                  </div>
+                ),
+              },
+            ]}
+          />{" "}
           <ErrorMessage error={m.error} />
           <Button
             loading={m.busy}
             onClick={async () => {
               if (await m.run({ kind: "template", template: draft }))
-                setEdit(false);
+                router.push(`/approval-templates/${draft.id}`);
             }}
           >
-            {text("새 버전 저장", "Save new version")}
+            {t
+              ? text("새 버전 저장", "Save new version")
+              : text("템플릿 생성", "Create template")}
           </Button>
         </div>
-      </Dialog>
+      </section>
     </>
   );
 }
-
 export function AccountWorkflow({
   s,
   accountId,
@@ -1579,66 +1835,6 @@ export function AccountWorkflow({
         />
       )}
     </section>
-  );
-}
-
-function CreateTemplate({ s }: { s: State }) {
-  const text = useText(),
-    router = useRouter(),
-    m = useMutation(s);
-  const [open, setOpen] = useState(false),
-    [type, setType] = useState<Template["type"]>("issue"),
-    [title, setTitle] = useState("");
-  if (!s.templateAdminIds.includes(s.actorId)) return null;
-  return (
-    <Dialog
-      open={open}
-      onOpenChange={setOpen}
-      trigger={<Button>{text("템플릿 추가", "Add template")}</Button>}
-      title={text("결재 템플릿 추가", "Add approval template")}
-      description={text(
-        "처리 유형의 기본 필드와 결재선으로 시작한 뒤 편집할 수 있습니다.",
-        "Start with the default fields and approval line for the selected type, then edit.",
-      )}
-      busy={m.busy}
-    >
-      <div className="wf-form">
-        <Field label={text("이름", "Name")}>
-          <input
-            value={title}
-            maxLength={120}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </Field>
-        <Field label={text("처리 유형", "Execution type")}>
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as Template["type"])}
-          >
-            <option value="issue">{text("발급", "Issue")}</option>
-            <option value="replace">{text("교체", "Replace")}</option>
-            <option value="revoke">{text("폐기", "Revoke")}</option>
-          </select>
-        </Field>
-        <ErrorMessage error={m.error} />
-        <Button
-          loading={m.busy}
-          disabled={!title.trim()}
-          onClick={async () => {
-            const template = {
-              ...structuredClone(s.templates.find((t) => t.type === type)!),
-              id: `template-${crypto.randomUUID()}`,
-              name: title.trim(),
-              version: 0,
-            };
-            if (await m.run({ kind: "template", template }))
-              router.push(`/approval-templates/${template.id}`);
-          }}
-        >
-          {text("생성", "Create")}
-        </Button>
-      </div>
-    </Dialog>
   );
 }
 

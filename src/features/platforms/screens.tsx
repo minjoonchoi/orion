@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { BrowseTable } from "../identity/browse-table";
 import { DetailTabs } from "../identity/detail-tabs";
-import { Details, DemoNotice } from "../identity/shared";
+import { Details } from "../identity/shared";
 import { userRoleIds, type Directory } from "./model";
 import { saveRecipients } from "./actions";
 const link = (href: string, name: string) => (
@@ -183,7 +183,6 @@ export function PlatformsScreen({ d, id }: { d: Directory; id?: string }) {
             "플랫폼별 로그인 인증과 멤버·워크스페이스·역할을 관리합니다.",
           )}
         />
-        <DemoNotice />
         <BrowseTable
           title={t("플랫폼 목록")}
           rows={d.platforms}
@@ -245,7 +244,6 @@ export function PlatformsScreen({ d, id }: { d: Directory; id?: string }) {
         items={[{ label: t("플랫폼"), href: "/platforms" }, { label: p.name }]}
       />
       <PageHeading title={p.name} description={p.description} />
-      <DemoNotice />
       <DetailTabs
         actions={{ members: <RecipientPicker d={d} platformId={p.id} /> }}
         items={[
@@ -607,7 +605,6 @@ export function MemberScreen({
         title={m.name}
         description={`${p.name} · ${t("플랫폼 멤버")}`}
       />
-      <DemoNotice />
       <DetailTabs
         items={[
           {
@@ -679,7 +676,6 @@ export function ScopedRoleScreen({ d, id }: { d: Directory; id: string }) {
         title={r.name}
         description={`${p.name} · ${r.description}`}
       />
-      <DemoNotice />
       <DetailTabs
         aliases={{ members: "users" }}
         actions={{
@@ -848,7 +844,6 @@ export function RoleCatalog({ d }: { d: Directory }) {
           "플랫폼별 역할을 관리합니다. 서비스 어카운트에는 Orion 역할을 부여합니다.",
         )}
       />
-      <DemoNotice />
       <ScopedRoles d={d} />
     </>
   );

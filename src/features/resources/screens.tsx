@@ -6,7 +6,7 @@ import { PageHeading } from "@/components/ui/page-heading";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { BrowseTable, statusOptions } from "../identity/browse-table";
 import { DetailTabs } from "../identity/detail-tabs";
-import { DemoNotice, Details, StatusBadge, Summary } from "../identity/shared";
+import { Details, StatusBadge, Summary } from "../identity/shared";
 import type {
   ServiceRow,
   EndpointRow,
@@ -49,7 +49,6 @@ function ListFrame({
           {t("변경 관리")} ↗
         </Link>
       </p>
-      <DemoNotice />
       <Summary items={[{ label: t("전체"), value: count }]} />
       {children}
     </>
@@ -76,7 +75,6 @@ function DetailFrame({
         title={item.name}
         description={item.description ?? t(`${title} 상세 정보를 조회합니다.`)}
       />
-      <DemoNotice />
       {children}
     </>
   );

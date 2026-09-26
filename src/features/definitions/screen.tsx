@@ -470,7 +470,7 @@ function Evaluator({
   snapshot: Snapshot;
   entity: Entity;
 }) {
-  const { t, mode } = useI18n();
+  const { t } = useI18n();
   const policies = snapshot.applied.filter((e) => e.kind === "policies");
   const people = subjects(snapshot.graph, policies);
   const [who, setWho] = useState("");
@@ -503,11 +503,7 @@ function Evaluator({
     <section>
       <h3>{t("접근 결과 미리보기")}</h3>
       <p className="muted">
-        {t(
-          mode === "demo"
-            ? "데모 정책 합성 결과입니다. 실제 API 호출이나 응답 변환을 실행하지 않습니다."
-            : "Orion API의 권한 평가 결과입니다.",
-        )}
+        {t("선택한 대상에게 적용되는 정책의 권한 평가 결과입니다.")}
       </p>
       <select
         aria-label={t("권한 평가 대상")}
@@ -589,7 +585,7 @@ export function DefinitionsScreen({
   directory?: Directory;
   id?: string;
 }) {
-  const { t, mode } = useI18n();
+  const { t } = useI18n();
   const params = useSearchParams();
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [error, setError] = useState("");
@@ -1272,11 +1268,6 @@ export function DefinitionsScreen({
         </p>
       )}
       {notice && <p role="status">{notice}</p>}
-      {mode === "demo" && (
-        <p className="def-demo">
-          {t("예제 모드 · 변경사항과 이력은 현재 세션에서만 유지됩니다.")}
-        </p>
-      )}
       {routeId ? (
         entity ? (
           detail

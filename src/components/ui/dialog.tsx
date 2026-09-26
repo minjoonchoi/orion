@@ -12,6 +12,7 @@ export function Dialog({
   onOpenChange,
   variant = "modal",
   busy = false,
+  size = "default",
 }: {
   trigger: ReactNode;
   title: string;
@@ -21,6 +22,7 @@ export function Dialog({
   onOpenChange: (open: boolean) => void;
   variant?: "modal" | "drawer";
   busy?: boolean;
+  size?: "default" | "wide";
 }) {
   const { t } = useI18n();
   const returnFocus = useRef<HTMLElement | null>(null);
@@ -35,7 +37,7 @@ export function Dialog({
       <Primitive.Portal>
         <Primitive.Overlay className="ui-overlay" />
         <Primitive.Content
-          className={`ui-dialog ui-dialog--${variant}`}
+          className={`ui-dialog ui-dialog--${variant} ui-dialog--${size}`}
           aria-busy={busy || undefined}
           onOpenAutoFocus={() => {
             returnFocus.current =

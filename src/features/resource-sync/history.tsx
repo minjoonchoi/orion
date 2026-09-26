@@ -82,7 +82,7 @@ export function ResourceHistoryDialog({
   onClose: () => void;
   onUpdated?: () => void;
 }) {
-  const { t, mode, environment, region } = useI18n();
+  const { t, environment, region } = useI18n();
   const router = useRouter();
   const [runs, setRuns] = useState<Run[] | null>(null);
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
@@ -387,11 +387,6 @@ export function ResourceHistoryDialog({
                 );
               })}
             </div>
-            {mode === "demo" && (
-              <p className="muted">
-                {t("예제 이력은 현재 세션에서만 유지됩니다.")}
-              </p>
-            )}
           </>
         )}
       </div>

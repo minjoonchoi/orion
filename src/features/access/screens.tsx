@@ -11,7 +11,6 @@ import type { Column } from "@/components/ui/data-table";
 import { BrowseTable, type BrowseFilter } from "../identity/browse-table";
 import { DetailTabs } from "../identity/detail-tabs";
 import {
-  DemoNotice,
   Details,
   Summary,
   StatusBadge,
@@ -128,7 +127,6 @@ export function RolesList({ rows }: { rows: RoleRow[] }) {
         title={t("역할")}
         description={t("역할을 부여받은 사용자·조직과 정책을 조회합니다.")}
       />
-      <DemoNotice />
       <Summary
         items={[
           { label: t("전체 역할"), value: rows.length },
@@ -205,7 +203,6 @@ export function PoliciesList({ rows }: { rows: PolicyRow[] }) {
           </Link>
         }
       />
-      <DemoNotice />
       <Summary
         items={[
           { label: t("전체 정책"), value: rows.length },
@@ -240,7 +237,6 @@ function Frame({
         ]}
       />
       <PageHeading title={item.name} description={item.description} />
-      <DemoNotice />
       {children}
     </>
   );
