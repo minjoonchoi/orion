@@ -9,3 +9,7 @@ test-results
 
 # Generated from the actual UI; regenerate with npm run demo:build
 docs/demo/orion.html
+
+docs/demo/preview.html
+docs/demo/approved.html
+prototype/overrides

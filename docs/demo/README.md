@@ -15,18 +15,30 @@ Okta 로그인은 화면 이동만 시연합니다. 실제 Orion API·AWS Secret
 
 변경 사항은 열린 문서의 메모리 안에 유지되며 새로고침/닫기 시 초기화됩니다. 브라우저의 뒤로/앞으로와 `#/경로` 링크를 사용할 수 있습니다. 접근 거부·미등록 템플릿·검증 실패도 같은 로직으로 표현합니다.
 
-## 최신화 및 검증
+## 개발 흐름
 
-```sh
-npm ci
-npm run demo:build
-npm run demo:check
-npm run check
-npm run build
-npm run test:e2e
-npm run test:api
-```
+1. `npm run demo:begin`
+2. 변경 파일을 `prototype/overrides/src/...`, `prototype/overrides/config/...`, `prototype/overrides/docs/screens/...`에 작성한다. 제품 파일은 유지한다.
+3. `npm run demo:preview` → `preview.html`과 `preview-screenshots/manifest.json`의 이미지를 사용자에게 보여준다.
+4. 사용자의 명시적 확정 이후 `npm run demo:approve -- "확정 메시지 참조"`로 검토 버전과 근거를 기록한다.
+5. `npm run demo:apply` → 확정 소스/기획서 제품 적용 → 제품에서 생성한 HTML과 확정 HTML 해시 비교.
+6. 실제 앱과 HTML의 시각·동작 비교, 기존 회귀 테스트, `demo:check` 통과 후 PR 생성.
 
-`demo:build`는 실제 코드·샘플 설정·모든 화면 기획서·AGENTS·빌드 도구·의존성 잠금 파일의 해시를 HTML에 포함합니다. CI의 `demo:check`는 재생성 결과와 커밋된 HTML이 정확히 일치하는지 검사합니다. 소스나 기획서만 변경하고 HTML을 갱신하지 않으면 실패합니다. 생성 파일은 수동 편집하지 않습니다.
+시안 변경은 승인 상태를 해제한다. 검토 중 제품 소스가 변경되거나 승인 후 override/HTML이 바뀌면 적용을 차단한다. 확정 이력은 Git으로 남긴 후 이전 overrides를 정리하고 다음 제안을 시작한다. 도구의 승인 기록은 사용자의 확인을 대신하지 않으며 에이전트가 스스로 승인할 수 없다.
 
-화면 비교 테스트: `tests/e2e/standalone.spec.ts`. 변경된 기능은 실제 앱과 HTML 양쪽에서 검증합니다. 이 HTML은 서버 구현의 완료 증거가 아니라 실제 프런트엔드와 공유 로직의 통합 시연 결과입니다.
+## 스크린샷 보관·재사용
+
+`tools/demo/screens.mjs`의 화면 ID/경로/조작을 기준으로 목록·상세·탭·모달을 촬영한다. `npm run demo:build`와 `demo:preview`는 HTML 생성 후 화면 캡처를 자동 수행한다. `demo:screens`는 HTML·등록표·캡처 설정과 PNG 해시가 같으면 브라우저를 실행하지 않고 저장된 이미지를 재사용한다.
+
+- 현재 제품: `docs/demo/screenshots/`
+- 검토 중 시안: `docs/demo/preview-screenshots/`
+- `manifest.json`: HTML 해시, 화면 ID/경로/상태, PNG 파일명/해시
+- `screens.zip`: 화면별 PNG 원본. 도구가 필요할 때 추출/검증한다. 이전 버전은 Git에서 복원한다.
+
+이미지를 요청받을 때 재생성부터 하지 않고 manifest와 저장된 PNG를 먼저 사용한다. HTML이 바뀌면 한 번 갱신하고 이후 요청은 캐시를 사용한다. 빠진 화면/상태는 등록표에 추가해야 하며 전체 기능의 모든 조합을 자동 보장한다고 주장하지 않는다.
+
+## 검증
+
+`demo:check`는 제품 코드/기획서로 재생성한 HTML, 저장된 스크린샷, 확정 기록의 일치를 검사한다. CI에서 수행한다. `tests/e2e/standalone.spec.ts`의 표현·동작 비교와 `tests/e2e/demo-visual.spec.ts`의 동일 환경 이미지 비교를 함께 사용한다. 픽셀 비교의 작은 렌더링 허용치는 기능 차이를 허용하는 규칙이 아니다.
+
+HTML은 실제 외부 인증·서버 인가·AWS 저장·영속 데이터의 검증을 대체하지 않는다. 이 부분은 별도의 API/통합 테스트로 검증한다.

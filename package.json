@@ -14,14 +14,19 @@
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --experimental-strip-types --test src/lib/api/client.test.ts src/features/auth/login-url.test.ts src/lib/api/deployment.test.ts src/features/authorization/model.test.ts src/features/resource-sync/model.test.ts src/features/policy-sync/model.test.ts src/features/authorization/rollback.test.ts src/features/sync-workflow/model.test.ts src/features/authorization/subject-impact.test.ts src/features/sync-workflow/yaml-diff.test.ts src/features/definitions/model.test.ts src/features/platforms/model.test.ts src/features/approval-workflow/model.test.ts",
+    "test": "node --experimental-strip-types --test src/lib/api/client.test.ts src/features/auth/login-url.test.ts src/lib/api/deployment.test.ts src/features/authorization/model.test.ts src/features/resource-sync/model.test.ts src/features/policy-sync/model.test.ts src/features/authorization/rollback.test.ts src/features/sync-workflow/model.test.ts src/features/authorization/subject-impact.test.ts src/features/sync-workflow/yaml-diff.test.ts src/features/definitions/model.test.ts src/features/platforms/model.test.ts src/features/approval-workflow/model.test.ts scripts/demo-workflow.test.mjs",
     "check": "npm run lint && npm run typecheck && npm run format:check && npm test",
     "test:e2e": "playwright test",
     "test:api": "playwright test --config=playwright.api.config.ts",
     "validate:resources": "node --experimental-strip-types scripts/validate-resources.ts",
     "validate:definitions": "node --experimental-strip-types scripts/validate-definitions.ts",
-    "demo:build": "node scripts/build-demo.mjs",
-    "demo:check": "node scripts/build-demo.mjs --check"
+    "demo:build": "node scripts/build-demo.mjs && node scripts/demo-screens.mjs",
+    "demo:check": "node scripts/build-demo.mjs --check && node scripts/demo-screens.mjs --check && node scripts/demo-workflow.mjs check",
+    "demo:screens": "node scripts/demo-screens.mjs",
+    "demo:begin": "node scripts/demo-workflow.mjs begin",
+    "demo:preview": "node scripts/demo-workflow.mjs preview",
+    "demo:approve": "node scripts/demo-workflow.mjs approve",
+    "demo:apply": "node scripts/demo-workflow.mjs apply"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.23",
@@ -44,7 +49,9 @@
     "esbuild": "^0.25.12",
     "eslint": "^9.39.0",
     "eslint-config-next": "16.3.6",
+    "pixelmatch": "^7.1.0",
     "playwright-core": "1.56.1",
+    "pngjs": "^7.0.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
   }

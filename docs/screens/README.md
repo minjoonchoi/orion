@@ -54,3 +54,5 @@
 KEY-01/03은 목록 내 신규 발급 결재 모달과 엔드포인트 검색을 제공한다. APR-01/02는 등록된 템플릿 선택 후 작성하며, TPL-03 `/approval-templates/new`와 TPL-04 `/approval-templates/{id}/edit`는 같은 탭 기반 페이지 편집기를 사용한다. 화면 캡처는 [approval-authoring](../screenshots/approval-authoring)에 보관한다.
 
 통합 실행형 HTML: [orion.html](../demo/orion.html). 모든 실제 페이지를 자동 수집하고 컴포넌트와 업무 로직을 재사용한다. 생성·검증·외부 연동 경계는 [사용 안내](../demo/README.md)를 참고한다.
+
+개발 절차는 HTML 시안 우선이며 사용자 확정 후 제품과 확정 기획서에 반영한다. 현재 화면 사양은 유지한다. 화면별 저장 이미지와 검토/확정 흐름은 [데모 개발 워크플로](../demo/README.md)를 따른다.

@@ -147,3 +147,7 @@ playwright-report/
 test-results/
 
 /test-results-api/
+
+# Per-screen PNGs are stored losslessly in screens.zip and restored on demand.
+/docs/demo/screenshots/*.png
+/docs/demo/preview-screenshots/*.png

@@ -1,7 +1,14 @@
 import { test, expect } from "@playwright/test";
 import { pathToFileURL } from "node:url";
 import path from "node:path";
-const html = pathToFileURL(path.resolve("docs/demo/orion.html")).href;
+import { existsSync } from "node:fs";
+const html = pathToFileURL(
+  path.resolve(
+    existsSync("docs/demo/approved.html")
+      ? "docs/demo/approved.html"
+      : "docs/demo/orion.html",
+  ),
+).href;
 
 test("standalone uses the same menu pages and templates as the application without network", async ({
   page,
