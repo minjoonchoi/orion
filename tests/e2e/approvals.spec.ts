@@ -30,27 +30,6 @@ test("templates describe issuance and replacement lines and allow catalog editin
   await page.goto("/approval-templates/api-key-replace");
   await expect(page.getByText("보안팀 합의", { exact: true })).toHaveCount(0);
 });
-test("document visibility is determined by viewers, including list and direct URL", async ({
-  page,
-}) => {
-  await page.goto("/approvals");
-  await expect(
-    page.getByRole("table", { name: "결재 목록", exact: true }),
-  ).toContainText("approval-demo-001");
-  await page.getByLabel("데모 사용자", { exact: true }).selectOption("usr-014");
-  await expect(page.locator(".wf-demo")).toHaveAttribute(
-    "data-actor-id",
-    "usr-014",
-  );
-  await expect(
-    page.getByRole("link", {
-      name: "API 키 발급 · directory-sync",
-      exact: true,
-    }),
-  ).toHaveCount(0);
-  await page.goto("/approvals/approval-demo-001");
-  await expect(page).toHaveURL(/forbidden/);
-});
 test("approval detail and request form are accessible", async ({ page }) => {
   for (const path of [
     "/approvals/approval-demo-001?tab=line",

@@ -74,3 +74,7 @@
 `/components`는 디자인 시스템 검토 화면이다. `/access-grants`, `/audit-logs`는 placeholder이며 신규 업무 완료 기준에 포함하지 않는다. 독립 동기화 이력 메뉴는 제공하지 않는다.
 
 결재 작성의 공통 `RequestForm`은 페이지와 API 키 목록의 모달에서 재사용한다. `EndpointPicker`는 DataTable·Pagination·Field·Input·Button을 조합하며 선택 ID를 부모 폼에서 관리한다. 작성 중 검색·페이지 상태는 URL에 저장하지 않고 폼 세션 안에서 유지한다. `Dialog`의 `size="wide"`는 넓은 선택 폼에 사용하며 기존 모달의 기본 너비·포커스·닫기 규칙은 유지한다. 템플릿 생성/수정은 `TemplateEditorScreen`과 공통 Tabs를 공유한다.
+
+### 통합 메뉴 및 데모 표시 규칙
+
+결재와 결재 템플릿은 LSB의 결재 한 항목에 통합한다. `/approval-templates/*` 상세·편집 경로도 결재를 활성 표시한다. 제품 화면은 데이터 어댑터와 무관하게 동일하며 데모 사용자 선택·예제 배너·모의 실행 버튼을 표시하지 않는다. 내부 개발용 샘플 어댑터는 운영 API 연동과 분리하고 운영 환경에서는 기존 API 설정 검증을 유지한다. 통합 HTML도 동일한 컴포넌트를 사용하며 외부 연동 대신 브라우저 내 샘플 세션으로 동작한다.

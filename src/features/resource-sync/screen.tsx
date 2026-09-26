@@ -45,7 +45,7 @@ const catalogLabels = { ...kindLabel, policies: "정책" };
 const isAccessResource = (r: CatalogItem): r is CatalogItem & ResourceRef =>
   r.kind !== "policies";
 export function ResourceSyncScreen() {
-  const { t, mode } = useI18n();
+  const { t } = useI18n();
   const params = useSearchParams();
   const router = useRouter();
   const status =
@@ -266,13 +266,6 @@ export function ResourceSyncScreen() {
           </Button>
         </div>
       </div>
-      {mode === "demo" && (
-        <p className="sync-notice">
-          {t(
-            "예제 모드: 외부 config 서버를 호출하지 않고 세션 데이터에 적용합니다.",
-          )}
-        </p>
-      )}
       {error && (
         <p role="alert">
           {t(messages[error] ?? messages.REQUEST_FAILED)}{" "}

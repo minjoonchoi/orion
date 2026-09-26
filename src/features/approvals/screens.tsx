@@ -8,7 +8,7 @@ import { PageHeading } from "@/components/ui/page-heading";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge, type Tone } from "@/components/ui/badge";
 import { BrowseTable } from "../identity/browse-table";
-import { DemoNotice, Details, Summary } from "../identity/shared";
+import { Details, Summary } from "../identity/shared";
 import type {
   ApprovalTemplate,
   ApprovalRecord,
@@ -58,7 +58,6 @@ export function TemplatesList({ rows }: { rows: ApprovalTemplate[] }) {
           "요청 유형별 결재 템플릿의 기본 정보와 작성 안내를 조회합니다.",
         )}
       />
-      <DemoNotice />
       <Summary
         items={[
           { label: t("전체 템플릿"), value: rows.length },
@@ -148,7 +147,6 @@ export function TemplateScreen({
         ]}
       />
       <PageHeading title={template.name} description={template.description} />
-      <DemoNotice />
       <DetailTabs
         items={[
           {
@@ -204,7 +202,6 @@ export function ApprovalsList({ rows }: { rows: ApprovalRecord[] }) {
         title={t("결재")}
         description={t("결재 요청의 상세 정보와 처리 결과를 조회합니다.")}
       />
-      <DemoNotice />
       <Summary
         items={[
           { label: t("전체 결재"), value: rows.length },
@@ -309,7 +306,6 @@ export function ApprovalScreen({ data: a }: { data: ApprovalRecord }) {
         title={a.title}
         description={t("결재 요청 정보와 처리 결과를 확인합니다.")}
       />
-      <DemoNotice />
       <section className="ui-panel">
         <h2>{t("결재 정보")}</h2>
         <Details

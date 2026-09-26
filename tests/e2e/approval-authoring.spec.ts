@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test("approval creation requires explicit type and template selection", async ({
+test("approval creation starts only from a registered template", async ({
   page,
 }) => {
   await page.goto("/approvals");
@@ -11,11 +11,15 @@ test("approval creation requires explicit type and template selection", async ({
   await page.getByRole("link", { name: "결재 작성", exact: true }).click();
   const start = page.getByRole("button", { name: "작성 시작", exact: true });
   await expect(start).toBeDisabled();
-  await page.getByLabel("결재 유형", { exact: true }).selectOption("issue");
   await expect(start).toBeDisabled();
+  await page.getByRole("radio", { name: "API 키 발급", exact: true }).check();
   await page
-    .getByLabel("결재 템플릿", { exact: true })
-    .selectOption("api-key-issue");
+    .getByLabel("작성할 결재 템플릿 검색", { exact: true })
+    .fill("교체");
+  await expect(page.getByText("선택한 템플릿", { exact: false })).toContainText(
+    "API 키 발급",
+  );
+  await expect(start).toBeEnabled();
   await start.click();
   await expect(
     page.getByLabel("서비스 어카운트", { exact: true }),
@@ -88,22 +92,4 @@ test("template creation and editing share tabbed pages", async ({ page }) => {
   await expect(page.getByLabel("이름", { exact: true })).toHaveValue(
     "공통 편집 검증",
   );
-});
-
-test("non-admins cannot open template creation or editing pages", async ({
-  page,
-}) => {
-  await page.goto("/approvals");
-  await page.getByLabel("데모 사용자", { exact: true }).selectOption("usr-014");
-  await expect(page.locator(".wf-demo")).toHaveAttribute(
-    "data-actor-id",
-    "usr-014",
-  );
-  for (const path of [
-    "/approval-templates/new",
-    "/approval-templates/api-key-issue/edit",
-  ]) {
-    await page.goto(path);
-    await expect(page).toHaveURL(/forbidden/);
-  }
 });

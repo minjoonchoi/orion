@@ -20,7 +20,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Details } from "../identity/shared";
 import { DetailTabs } from "../identity/detail-tabs";
 import { BrowseTable } from "../identity/browse-table";
-import { workflowCommand, demoActor } from "./actions";
+import { workflowCommand } from "./actions";
 import {
   canAddViewer,
   canExecute,
@@ -148,35 +148,7 @@ function Status({ value }: { value: string }) {
     </Badge>
   );
 }
-export function WorkflowContext({ s, demo }: { s: State; demo: boolean }) {
-  const text = useText(),
-    router = useRouter();
-  return demo ? (
-    <div className="wf-demo" data-actor-id={s.actorId}>
-      <span>
-        {text(
-          "데모 · AWS 저장 및 실제 권한 반영 없이 흐름을 검증합니다. 실제 키를 입력하지 마세요.",
-          "Demo · No AWS storage or live authorization changes. Do not enter real keys.",
-        )}
-      </span>
-      <Field label={text("데모 사용자", "Demo user")}>
-        <select
-          value={s.actorId}
-          onChange={async (e) => {
-            await demoActor(e.target.value);
-            router.refresh();
-          }}
-        >
-          {s.users.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.name}
-            </option>
-          ))}
-        </select>
-      </Field>
-    </div>
-  ) : null;
-}
+
 function TargetLabel({ s, target }: { s: State; target: Target }) {
   return (
     <Ref
@@ -279,129 +251,143 @@ function RequestInfo({
     </>
   );
 }
+function TemplateTable({ s }: { s: State }) {
+  const text = useText();
+  return (
+    <BrowseTable
+      sortValue={(r) => r.id}
+      title={text("결재 템플릿 목록", "Approval templates")}
+      rows={s.templates}
+      searchText={(r) => r.name}
+      columns={[
+        {
+          key: "name",
+          header: text("템플릿", "Template"),
+          render: (r) => (
+            <Ref href={`/approval-templates/${r.id}`}>{r.name}</Ref>
+          ),
+        },
+        {
+          key: "version",
+          header: text("버전", "Version"),
+          render: (r) => `v${r.version}`,
+        },
+        {
+          key: "fields",
+          header: text("입력 필드", "Input fields"),
+          render: (r) => r.fields.length,
+        },
+        {
+          key: "line",
+          header: text("결재선", "Approval line"),
+          render: (r) => r.line.map((l) => l.label).join(" → "),
+        },
+      ]}
+    />
+  );
+}
 export function WorkflowList({
   s,
-  demo,
   kind,
 }: {
   s: State;
-  demo: boolean;
   kind: "approvals" | "templates" | "keys";
 }) {
   const text = useText();
+  const params = useSearchParams();
+  const router = useRouter();
+  const tab = params.get("tab") === "templates" ? "templates" : "documents";
+  if (kind !== "keys")
+    return (
+      <>
+        <PageHeading
+          title={text("결재", "Approvals")}
+          description={text(
+            "결재 문서를 확인하고 등록된 템플릿으로 새 문서를 작성합니다.",
+            "Review documents and create new requests from registered templates.",
+          )}
+          actions={
+            <>
+              {tab === "templates" &&
+                s.templateAdminIds.includes(s.actorId) && (
+                  <Ref href="/approval-templates/new">
+                    {text("템플릿 추가", "Add template")}
+                  </Ref>
+                )}
+              <Ref href="/approvals/new">
+                {text("결재 작성", "New approval")}
+              </Ref>
+            </>
+          }
+        />
+        <Tabs
+          label={text("결재 메뉴", "Approvals workspace")}
+          value={tab}
+          onValueChange={(value) => router.replace(`/approvals?tab=${value}`)}
+          items={[
+            {
+              value: "documents",
+              label: text("결재 문서", "Documents"),
+              content: <Documents s={s} rows={s.documents} />,
+            },
+            {
+              value: "templates",
+              label: text("결재 템플릿", "Templates"),
+              content: <TemplateTable s={s} />,
+            },
+          ]}
+        />
+      </>
+    );
   return (
     <>
       <PageHeading
-        title={
-          kind === "approvals"
-            ? text("결재", "Approvals")
-            : kind === "templates"
-              ? text("결재 템플릿", "Approval templates")
-              : text("API 키", "API keys")
-        }
-        description={
-          kind === "approvals"
-            ? text(
-                "열람 권한이 있는 문서와 결재 이후 처리 상태를 확인합니다.",
-                "Documents you can view and their post-approval execution status.",
-              )
-            : kind === "templates"
-              ? text(
-                  "결재 유형, 입력 필드와 카탈로그 기반 결재선을 관리합니다.",
-                  "Manage request types, input fields, and catalog-based approval lines.",
-                )
-              : text(
-                  "승인된 결재를 근거로 관리서비스 팀이 발급한 키를 관리합니다.",
-                  "Manage keys provisioned by service teams after approval.",
-                )
-        }
-        actions={
-          kind === "keys" ? (
-            <IssueRequestDialog s={s} />
-          ) : kind === "approvals" ? (
-            <Ref href="/approvals/new">{text("결재 작성", "New approval")}</Ref>
-          ) : s.templateAdminIds.includes(s.actorId) ? (
-            <Ref href="/approval-templates/new">
-              {text("템플릿 추가", "Add template")}
-            </Ref>
-          ) : null
-        }
+        title={text("API 키", "API keys")}
+        description={text(
+          "승인된 결재를 근거로 관리서비스 팀이 발급한 키를 관리합니다.",
+          "Manage keys provisioned by service teams after approval.",
+        )}
+        actions={<IssueRequestDialog s={s} />}
       />
-      <WorkflowContext s={s} demo={demo} />
-      {kind === "templates" ? (
-        <BrowseTable
-          sortValue={(r) => r.id}
-          title={text("결재 템플릿 목록", "Approval templates")}
-          rows={s.templates}
-          searchText={(r) => r.name}
-          columns={[
-            {
-              key: "name",
-              header: text("템플릿", "Template"),
-              render: (r) => (
-                <Ref href={`/approval-templates/${r.id}`}>{r.name}</Ref>
-              ),
-            },
-            {
-              key: "version",
-              header: text("버전", "Version"),
-              render: (r) => `v${r.version}`,
-            },
-            {
-              key: "fields",
-              header: text("입력 필드", "Input fields"),
-              render: (r) => r.fields.length,
-            },
-            {
-              key: "line",
-              header: text("결재선", "Approval line"),
-              render: (r) => r.line.map((l) => l.label).join(" → "),
-            },
-          ]}
-        />
-      ) : kind === "approvals" ? (
-        <Documents s={s} rows={s.documents} />
-      ) : (
-        <BrowseTable
-          sortValue={(r) => r.id}
-          title={text("API 키 목록", "API keys")}
-          rows={s.keys}
-          searchText={(k) =>
-            `${k.id} ${name(s.accounts, k.accountId)} ${name(s.services, k.serviceId)} ${k.hash}`
-          }
-          columns={[
-            {
-              key: "account",
-              header: text("서비스 어카운트", "Service account"),
-              render: (k) => (
-                <Ref href={`/api-keys/${k.id}`}>
-                  {name(s.accounts, k.accountId)}
-                </Ref>
-              ),
-            },
-            {
-              key: "service",
-              header: text("관리 서비스", "Managed service"),
-              render: (k) => name(s.services, k.serviceId),
-            },
-            {
-              key: "status",
-              header: text("상태", "Status"),
-              render: (k) => <Status value={k.status} />,
-            },
-            {
-              key: "version",
-              header: text("키 버전", "Key version"),
-              render: (k) => `v${k.version}`,
-            },
-            {
-              key: "hash",
-              header: "API key hash",
-              render: (k) => <Hash value={k.hash} />,
-            },
-          ]}
-        />
-      )}
+      <BrowseTable
+        sortValue={(r) => r.id}
+        title={text("API 키 목록", "API keys")}
+        rows={s.keys}
+        searchText={(k) =>
+          `${k.id} ${name(s.accounts, k.accountId)} ${name(s.services, k.serviceId)} ${k.hash}`
+        }
+        columns={[
+          {
+            key: "account",
+            header: text("서비스 어카운트", "Service account"),
+            render: (k) => (
+              <Ref href={`/api-keys/${k.id}`}>
+                {name(s.accounts, k.accountId)}
+              </Ref>
+            ),
+          },
+          {
+            key: "service",
+            header: text("관리 서비스", "Managed service"),
+            render: (k) => name(s.services, k.serviceId),
+          },
+          {
+            key: "status",
+            header: text("상태", "Status"),
+            render: (k) => <Status value={k.status} />,
+          },
+          {
+            key: "version",
+            header: text("키 버전", "Key version"),
+            render: (k) => `v${k.version}`,
+          },
+          {
+            key: "hash",
+            header: "API key hash",
+            render: (k) => <Hash value={k.hash} />,
+          },
+        ]}
+      />
     </>
   );
 }
@@ -454,11 +440,22 @@ function Documents({ s, rows }: { s: State; rows: Document[] }) {
     />
   );
 }
-export function RequestScreen({ s, demo }: { s: State; demo: boolean }) {
+export function RequestScreen({ s }: { s: State }) {
   const query = useSearchParams();
-  if (!query.get("template") && !query.get("key") && !query.get("account"))
-    return <ApprovalStart s={s} demo={demo} />;
-  return <RequestForm key={query.toString()} s={s} demo={demo} />;
+  const template = s.templates.find((t) => t.id === query.get("template"));
+  if (
+    !query.get("template") ||
+    (template && template.type !== "issue" && !query.get("key"))
+  )
+    return (
+      <ApprovalStart
+        key={["template", "key", "type", "account"]
+          .map((key) => query.get(key))
+          .join("|")}
+        s={s}
+      />
+    );
+  return <RequestForm key={query.toString()} s={s} />;
 }
 function IssueRequestDialog({ s }: { s: State }) {
   const text = useText();
@@ -477,75 +474,99 @@ function IssueRequestDialog({ s }: { s: State }) {
         "Enter request details and review the approval line. Keys are provisioned after approval.",
       )}
     >
-      {open && (
-        <RequestForm s={s} demo={false} embedded onBusyChange={setBusy} />
-      )}
+      {open && <RequestForm s={s} embedded onBusyChange={setBusy} />}
     </Dialog>
   );
 }
-function ApprovalStart({ s, demo }: { s: State; demo: boolean }) {
+function ApprovalStart({ s }: { s: State }) {
   const text = useText(),
-    router = useRouter();
-  const [type, setType] = useState<Template["type"] | "">(""),
-    [templateId, setTemplateId] = useState(""),
-    [keyId, setKeyId] = useState("");
-  const choices = s.templates.filter((t) => t.type === type);
+    router = useRouter(),
+    query = useSearchParams();
+  const [templateId, setTemplateId] = useState(query.get("template") ?? ""),
+    [keyId, setKeyId] = useState(query.get("key") ?? "");
+  const template = s.templates.find((t) => t.id === templateId);
+  const choices = s.templates.filter(
+    (t) => !query.get("type") || t.type === query.get("type"),
+  );
   return (
     <>
       <PageHeading
         title={text("결재 작성", "New approval")}
         description={text(
-          "결재 유형과 템플릿을 선택하세요.",
-          "Choose an approval type and template.",
+          "등록된 템플릿을 선택하세요. 템플릿에 정의된 입력 필드와 결재선으로 문서를 작성합니다.",
+          "Choose a registered template to use its input fields and approval line.",
         )}
+        actions={
+          <Ref href="/approvals?tab=documents">
+            {text("목록으로 돌아가기", "Back to list")}
+          </Ref>
+        }
       />
-      <WorkflowContext s={s} demo={demo} />
-      <section className="ui-panel wf-form">
-        <Field label={text("결재 유형", "Approval type")}>
-          <select
-            value={type}
-            onChange={(e) => {
-              const value = e.target.value as Template["type"];
-              setType(value);
-              setTemplateId("");
-              setKeyId("");
-            }}
-          >
-            <option value="">{text("유형 선택", "Choose a type")}</option>
-            <option value="issue">
-              {text("API 키 신규 발급", "New API key")}
-            </option>
-            <option value="replace">
-              {text("API 키 교체", "Replace API key")}
-            </option>
-            <option value="revoke">
-              {text("API 키 폐기", "Revoke API key")}
-            </option>
-          </select>
-        </Field>
-        {type && (
-          <Field label={text("결재 템플릿", "Approval template")}>
-            <select
-              value={templateId}
-              onChange={(e) => setTemplateId(e.target.value)}
-            >
-              <option value="">
-                {text("템플릿 선택", "Choose a template")}
-              </option>
-              {choices.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name} · v{t.version}
-                </option>
-              ))}
-            </select>
-          </Field>
-        )}
-        {type && !choices.length && (
-          <p role="status">
-            {text("사용 가능한 템플릿이 없습니다.", "No templates available.")}
+      <BrowseTable
+        title={text("작성할 결재 템플릿", "Request templates")}
+        rows={choices}
+        searchText={(t) => t.name + " " + t.line.map((l) => l.label).join(" ")}
+        sortValue={(t) => t.name}
+        emptyTitle={text("등록된 템플릿이 없습니다", "No registered templates")}
+        columns={[
+          {
+            key: "select",
+            header: text("선택", "Select"),
+            render: (t) => (
+              <input
+                type="radio"
+                name="request-template"
+                aria-label={t.name}
+                checked={templateId === t.id}
+                onChange={() => {
+                  setTemplateId(t.id);
+                  if (t.type === "issue") setKeyId("");
+                }}
+              />
+            ),
+          },
+          {
+            key: "name",
+            header: text("템플릿", "Template"),
+            render: (t) => (
+              <>
+                <strong>{t.name}</strong>
+                <div className="identity-meta">v{t.version}</div>
+              </>
+            ),
+          },
+          {
+            key: "type",
+            header: text("처리 유형", "Execution type"),
+            render: (t) =>
+              t.type === "issue"
+                ? text("발급", "Issue")
+                : t.type === "replace"
+                  ? text("교체", "Replace")
+                  : text("폐기", "Revoke"),
+          },
+          {
+            key: "line",
+            header: text("결재선", "Approval line"),
+            render: (t) => t.line.map((l) => l.label).join(" → "),
+          },
+        ]}
+      />
+      <section className="ui-panel wf-form wf-template-start">
+        {template ? (
+          <p>
+            {text("선택한 템플릿", "Selected template")}:{" "}
+            <strong>{template.name}</strong> · v{template.version}
+          </p>
+        ) : (
+          <p>
+            {text(
+              "작성할 템플릿을 선택하세요.",
+              "Select a template to continue.",
+            )}
           </p>
         )}
-        {type && type !== "issue" && (
+        {template && template.type !== "issue" && (
           <Field label={text("대상 API 키", "Target API key")}>
             <select value={keyId} onChange={(e) => setKeyId(e.target.value)}>
               <option value="">{text("키 선택", "Choose a key")}</option>
@@ -561,10 +582,14 @@ function ApprovalStart({ s, demo }: { s: State; demo: boolean }) {
           </Field>
         )}
         <Button
-          disabled={!templateId || (type !== "issue" && !keyId)}
+          disabled={
+            !template ||
+            (template.type !== "issue" &&
+              !s.keys.some((k) => k.id === keyId && k.status === "active"))
+          }
           onClick={() =>
             router.push(
-              `/approvals/new?template=${encodeURIComponent(templateId)}${keyId ? `&key=${encodeURIComponent(keyId)}` : ""}`,
+              `/approvals/new?template=${encodeURIComponent(templateId)}${keyId ? `&key=${encodeURIComponent(keyId)}` : ""}${query.get("account") ? `&account=${encodeURIComponent(query.get("account")!)}` : ""}`,
             )
           }
         >
@@ -576,12 +601,10 @@ function ApprovalStart({ s, demo }: { s: State; demo: boolean }) {
 }
 function RequestForm({
   s,
-  demo,
   embedded = false,
   onBusyChange,
 }: {
   s: State;
-  demo: boolean;
   embedded?: boolean;
   onBusyChange?: (busy: boolean) => void;
 }) {
@@ -659,7 +682,6 @@ function RequestForm({
           )}
         />
       )}
-      {!embedded && <WorkflowContext s={s} demo={demo} />}
       <section className={embedded ? "wf-request-modal" : "ui-panel"}>
         <h2>
           {review
@@ -674,9 +696,7 @@ function RequestForm({
                 onChange={(e) => setTemplateId(e.target.value)}
               >
                 {s.templates
-                  .filter((t) =>
-                    existing ? t.type !== "issue" : t.type === "issue",
-                  )
+                  .filter((t) => t.type === initial?.type)
                   .map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.name} · v{t.version}
@@ -875,15 +895,7 @@ function Hash({ value }: { value: string }) {
     </div>
   );
 }
-export function DocumentScreen({
-  s,
-  d,
-  demo,
-}: {
-  s: State;
-  d: Document;
-  demo: boolean;
-}) {
+export function DocumentScreen({ s, d }: { s: State; d: Document }) {
   const text = useText();
   const m = useMutation(s);
   const [target, setTarget] = useState(""),
@@ -899,7 +911,6 @@ export function DocumentScreen({
         title={`${d.template.name} · ${name(s.accounts, d.input.accountId)}`}
         description={`${d.id} · ${text("템플릿 스냅샷", "Template snapshot")} v${d.template.version}`}
       />
-      <WorkflowContext s={s} demo={demo} />
       <DetailTabs
         items={[
           {
@@ -1166,14 +1177,12 @@ export function DocumentScreen({
                         });
                       }}
                     >
-                      {demo
-                        ? text("데모 처리 실행", "Simulate execution")
-                        : d.template.type === "revoke"
-                          ? text("폐기 실행", "Revoke key")
-                          : text(
-                              "키 저장 및 권한 적용",
-                              "Store key and apply permissions",
-                            )}
+                      {d.template.type === "revoke"
+                        ? text("폐기 실행", "Revoke key")
+                        : text(
+                            "키 저장 및 권한 적용",
+                            "Store key and apply permissions",
+                          )}
                     </Button>
                     <ErrorMessage error={m.error} />
                   </>
@@ -1224,15 +1233,7 @@ export function DocumentScreen({
     </>
   );
 }
-export function KeyScreen({
-  s,
-  k,
-  demo,
-}: {
-  s: State;
-  k: KeyRecord;
-  demo: boolean;
-}) {
+export function KeyScreen({ s, k }: { s: State; k: KeyRecord }) {
   const text = useText();
   return (
     <>
@@ -1252,7 +1253,6 @@ export function KeyScreen({
           ) : undefined
         }
       />
-      <WorkflowContext s={s} demo={demo} />
       <DetailTabs
         items={[
           {
@@ -1359,15 +1359,7 @@ export function KeyScreen({
     </>
   );
 }
-export function TemplateScreen({
-  s,
-  t,
-  demo,
-}: {
-  s: State;
-  t: Template;
-  demo: boolean;
-}) {
+export function TemplateScreen({ s, t }: { s: State; t: Template }) {
   const text = useText();
   const options = [
     {
@@ -1396,14 +1388,18 @@ export function TemplateScreen({
           "Changes create a new version and do not alter existing approval snapshots.",
         )}
         actions={
-          s.templateAdminIds.includes(s.actorId) && (
-            <Ref href={`/approval-templates/${t.id}/edit`}>
-              {text("템플릿 수정", "Edit template")}
+          <>
+            <Ref href={`/approvals/new?template=${encodeURIComponent(t.id)}`}>
+              {text("이 템플릿으로 작성", "Use this template")}
             </Ref>
-          )
+            {s.templateAdminIds.includes(s.actorId) && (
+              <Ref href={`/approval-templates/${t.id}/edit`}>
+                {text("템플릿 수정", "Edit template")}
+              </Ref>
+            )}
+          </>
         }
       />
-      <WorkflowContext s={s} demo={demo} />
       <DetailTabs
         items={[
           {
@@ -1501,15 +1497,7 @@ export function TemplateScreen({
   );
 }
 
-export function TemplateEditorScreen({
-  s,
-  t,
-  demo,
-}: {
-  s: State;
-  t?: Template;
-  demo: boolean;
-}) {
+export function TemplateEditorScreen({ s, t }: { s: State; t?: Template }) {
   const text = useText(),
     m = useMutation(s),
     router = useRouter();
@@ -1563,12 +1551,15 @@ export function TemplateEditorScreen({
           "Edit the approval line and input fields. Existing documents remain unchanged.",
         )}
         actions={
-          <Ref href={t ? `/approval-templates/${t.id}` : "/approval-templates"}>
+          <Ref
+            href={
+              t ? `/approval-templates/${t.id}` : "/approvals?tab=templates"
+            }
+          >
             {text("취소", "Cancel")}
           </Ref>
         }
       />
-      <WorkflowContext s={s} demo={demo} />
       <section className="ui-panel">
         {" "}
         <div className="wf-form wf-template-editor">

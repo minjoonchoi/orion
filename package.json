@@ -19,7 +19,9 @@
     "test:e2e": "playwright test",
     "test:api": "playwright test --config=playwright.api.config.ts",
     "validate:resources": "node --experimental-strip-types scripts/validate-resources.ts",
-    "validate:definitions": "node --experimental-strip-types scripts/validate-definitions.ts"
+    "validate:definitions": "node --experimental-strip-types scripts/validate-definitions.ts",
+    "demo:build": "node scripts/build-demo.mjs",
+    "demo:check": "node scripts/build-demo.mjs --check"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.23",
@@ -34,10 +36,12 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
+    "@noble/hashes": "^1.8.0",
     "@playwright/test": "1.56.1",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "esbuild": "^0.25.12",
     "eslint": "^9.39.0",
     "eslint-config-next": "16.3.6",
     "playwright-core": "1.56.1",

@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { loadWorkflow } from "@/features/approval-workflow/server";
 import { TemplateScreen } from "@/features/approval-workflow/screens";
-import { deployment } from "@/lib/api/server";
 export default async function Page({
   params,
 }: {
@@ -16,7 +15,7 @@ export default async function Page({
   }
   return (
     <Suspense>
-      <TemplateScreen s={s} t={item} demo={deployment().mode === "demo"} />
+      <TemplateScreen s={s} t={item} />
     </Suspense>
   );
 }

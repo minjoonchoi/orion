@@ -12,10 +12,7 @@ test("approval workflow loads via API and request commands create snapshots", as
     },
   ]);
   await page.goto("/approvals/new");
-  await page.getByLabel("결재 유형", { exact: true }).selectOption("issue");
-  await page
-    .getByLabel("결재 템플릿", { exact: true })
-    .selectOption("api-key-issue");
+  await page.getByRole("radio", { name: "API 키 발급", exact: true }).check();
   await page.getByRole("button", { name: "작성 시작", exact: true }).click();
   await expect(page.getByLabel("데모 사용자", { exact: true })).toHaveCount(0);
   await page
@@ -82,4 +79,52 @@ test("endpoint selections survive pagination and service changes clear them", as
   await expect(
     page.getByRole("button", { name: "선택만 보기 (0)", exact: true }),
   ).toBeVisible();
+});
+
+test("server identity controls document visibility and template administration", async ({
+  page,
+  context,
+}) => {
+  await context.addCookies([
+    { name: "orion-locale", value: "ko", url: "http://127.0.0.1:3200" },
+    {
+      name: "orion_session",
+      value: "workflow-outsider",
+      url: "http://127.0.0.1:3200",
+    },
+  ]);
+  await page.goto("/approvals");
+  await expect(
+    page.getByRole("link", {
+      name: "API 키 발급 · directory-sync",
+      exact: true,
+    }),
+  ).toHaveCount(0);
+  for (const path of [
+    "/approvals/approval-demo-001",
+    "/approval-templates/new",
+    "/approval-templates/api-key-issue/edit",
+  ]) {
+    await page.goto(path);
+    await expect(page).toHaveURL(/forbidden/);
+  }
+});
+test("no registered templates cannot create a document", async ({
+  page,
+  context,
+}) => {
+  await context.addCookies([
+    { name: "orion-locale", value: "ko", url: "http://127.0.0.1:3200" },
+    { name: "orion_session", value: "api-empty", url: "http://127.0.0.1:3200" },
+  ]);
+  await page.goto("/approvals/new");
+  await expect(
+    page.getByRole("button", { name: "작성 시작", exact: true }),
+  ).toBeDisabled();
+  await expect(page.getByRole("radio")).toHaveCount(0);
+  await page.goto("/approvals/new?template=unregistered");
+  await expect(page.locator("main").getByRole("alert")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "결재 요청", exact: true }),
+  ).toHaveCount(0);
 });

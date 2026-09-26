@@ -8,7 +8,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge, type Tone } from "@/components/ui/badge";
 import { BrowseTable } from "../identity/browse-table";
 import { DetailTabs } from "../identity/detail-tabs";
-import { DemoNotice, Details, Summary } from "../identity/shared";
+import { Details, Summary } from "../identity/shared";
 import type {
   KeyStatus,
   ApprovalStatus,
@@ -62,7 +62,6 @@ export function ApiKeysList({ rows }: { rows: KeyRow[] }) {
         title={t("API 키")}
         description={t("API 키의 상태와 소유 정보, 결재 이력을 조회합니다.")}
       />
-      <DemoNotice />
       <p className="identity-role-note">
         {t("키 원문은 저장하거나 표시하지 않습니다.")}
       </p>
@@ -286,7 +285,6 @@ export function ApiKeyScreen({
         items={[{ label: t("API 키"), href: "/api-keys" }, { label: k.name }]}
       />
       <PageHeading title={k.name} description={k.description} />
-      <DemoNotice />
       <p className="identity-role-note">
         {t("키 식별 표시는 원문이 아닌 구분용 정보입니다.")}
       </p>

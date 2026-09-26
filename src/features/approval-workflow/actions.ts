@@ -96,27 +96,3 @@ export async function workflowCommand(
     };
   }
 }
-export async function demoActor(userId: string) {
-  if (deployment().mode !== "demo") return { error: "FORBIDDEN" };
-  const s = await rawState();
-  if (!s.users.some((u) => u.id === userId)) return { error: "FORBIDDEN" };
-  const { sessions } = await import("./demo");
-  const jar = await cookies();
-  let id = jar.get("orion-approval-workflow")?.value;
-  if (!id) {
-    id = randomUUID();
-    jar.set("orion-approval-workflow", id, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 86400,
-      secure: process.env.ORION_ENVIRONMENT === "production",
-    });
-  }
-  sessions.set(id, {
-    state: { ...s, actorId: userId, revision: s.revision + 1 },
-    at: Date.now(),
-  });
-  revalidatePath("/", "layout");
-  return { ok: true };
-}

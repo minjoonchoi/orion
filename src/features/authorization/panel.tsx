@@ -896,7 +896,7 @@ export function AuthorizationPanel({
   kind: FocusKind;
   id: string;
 }) {
-  const { t, mode } = useI18n();
+  const { t } = useI18n();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [graph, setGraph] = useState<Graph | null>(null);
@@ -991,13 +991,6 @@ export function AuthorizationPanel({
         }}
       >
         <div className="authorization-editor">
-          {mode === "demo" && (
-            <p className="identity-demo">
-              {t(
-                "예제 변경은 현재 브라우저 세션에서만 유지되며 서버 재시작 시 초기화됩니다.",
-              )}
-            </p>
-          )}
           {busy && !graph && <p role="status">{t("불러오는 중…")}</p>}
           {error === "FORBIDDEN" ? (
             <AccessDenied />

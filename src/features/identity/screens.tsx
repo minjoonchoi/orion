@@ -10,14 +10,7 @@ import { PageHeading } from "@/components/ui/page-heading";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DetailTabs } from "./detail-tabs";
 import { BrowseTable, statusOptions } from "./browse-table";
-import {
-  date,
-  DemoNotice,
-  Details,
-  StatusBadge,
-  EmploymentBadge,
-  Summary,
-} from "./shared";
+import { date, Details, StatusBadge, EmploymentBadge, Summary } from "./shared";
 import type {
   UserRow,
   OrganizationRow,
@@ -79,7 +72,6 @@ export function UsersList({
           "전역 사용자 카탈로그에서 사용자 정보와 플랫폼별 역할을 조회합니다.",
         )}
       />
-      <DemoNotice />
       <Summary
         items={[
           { label: t("전체 사용자"), value: rows.length },
@@ -161,7 +153,6 @@ export function OrganizationsList({ rows }: { rows: OrganizationRow[] }) {
         title={t("조직")}
         description={t("조직별 멤버와 서비스, 역할의 현황을 조회합니다.")}
       />
-      <DemoNotice />
       <Summary
         items={[
           { label: t("전체 조직"), value: rows.length },
@@ -296,7 +287,6 @@ export function UserScreen({
         items={[{ label: t("사용자"), href: "/users" }, { label: u.name }]}
       />
       <PageHeading title={u.name} description={u.email} />
-      <DemoNotice />
       <DetailTabs
         items={[
           {
@@ -395,7 +385,6 @@ export function OrganizationScreen({
         ]}
       />
       <PageHeading title={o.name} description={o.description} />
-      <DemoNotice />
       <DetailTabs
         aliases={{ "api-keys": "service-accounts" }}
         items={[

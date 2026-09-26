@@ -245,3 +245,8 @@
     align-items: stretch;
   }
 }
+
+.wf-template-start {
+  max-width: none;
+  margin-top: 20px;
+}

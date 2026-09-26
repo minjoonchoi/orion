@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import fs from "node:fs/promises";
 import { chromium } from "playwright-core";
 import AxeBuilder from "@axe-core/playwright";
-const output = "docs/screenshots/approval-authoring";
+const output = "docs/screenshots/unified-approvals";
 const origin = "http://127.0.0.1:3136";
 const server = spawn(
   "node",
@@ -59,11 +59,10 @@ try {
   }
   await visit("/approvals");
   await capture("01-approvals");
+  await page.getByRole("tab", { name: "결재 템플릿", exact: true }).click();
+  await capture("08-templates-tab");
   await visit("/approvals/new");
-  await page.getByLabel("결재 유형", { exact: true }).selectOption("issue");
-  await page
-    .getByLabel("결재 템플릿", { exact: true })
-    .selectOption("api-key-issue");
+  await page.getByRole("radio", { name: "API 키 발급", exact: true }).check();
   await capture("02-approval-type");
   await visit("/api-keys");
   await page.getByRole("button", { name: "발급 요청", exact: true }).click();
@@ -95,7 +94,16 @@ try {
     .getByLabel("이름", { exact: true })
     .fill("자동화 연동 API 키 발급");
   await capture("07-template-create");
-  console.log("Captured 7 screens; accessibility audits passed.");
+  await page.goto(
+    "file://" +
+      process.cwd() +
+      "/docs/demo/orion.html#/approvals?tab=templates",
+  );
+  await page
+    .getByRole("table", { name: "결재 템플릿 목록", exact: true })
+    .waitFor();
+  await capture("09-standalone-templates");
+  console.log("Captured 9 screens; accessibility audits passed.");
 } finally {
   await browser?.close();
   server.kill("SIGTERM");

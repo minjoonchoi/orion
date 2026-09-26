@@ -875,5 +875,6 @@
   "실제 접근에는 활성 멤버십과 정책 평가가 필요합니다.": "Actual access requires active membership and policy evaluation.",
   "기존 사용자 역할은 유지하며 해당 플랫폼 로그인 시 확인합니다.": "Existing user roles are retained and checked when logging into this platform.",
   "변경사항을 저장하지 못했습니다.": "Could not save changes.",
-  "역할은 역할 상세의 사용자 탭에서 관리합니다.": "Manage assignments from the Users tab in role details."
+  "역할은 역할 상세의 사용자 탭에서 관리합니다.": "Manage assignments from the Users tab in role details.",
+  "선택한 대상에게 적용되는 정책의 권한 평가 결과입니다.": "Policy evaluation results for the selected subject."
 }

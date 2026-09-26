@@ -9,13 +9,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Badge, type Tone } from "@/components/ui/badge";
 import { BrowseTable, statusOptions } from "../identity/browse-table";
 import { DetailTabs } from "../identity/detail-tabs";
-import {
-  DemoNotice,
-  Details,
-  Summary,
-  StatusBadge,
-  date,
-} from "../identity/shared";
+import { Details, Summary, StatusBadge, date } from "../identity/shared";
 import type { AccountRow, AccountDetail } from "./repository";
 import type { KeyStatus } from "../api-keys/types";
 const link = (route: string, id: string, name: string) => (
@@ -41,7 +35,6 @@ export function ServiceAccountsList({ rows }: { rows: AccountRow[] }) {
           "플랫폼에 종속되지 않는 서버 통신 계정입니다. API 키로 인증하고 Orion 역할로 인가합니다.",
         )}
       />
-      <DemoNotice />
       <Summary
         items={[
           { label: t("전체 서비스 어카운트"), value: rows.length },
@@ -163,7 +156,6 @@ export function ServiceAccountScreen({
         ]}
       />
       <PageHeading title={a.name} description={a.description} />
-      <DemoNotice />
       <DetailTabs
         actions={{
           "api-keys": (

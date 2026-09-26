@@ -6,3 +6,6 @@ package-lock.json
 next-env.d.ts
 playwright-report
 test-results
+
+# Generated from the actual UI; regenerate with npm run demo:build
+docs/demo/orion.html
