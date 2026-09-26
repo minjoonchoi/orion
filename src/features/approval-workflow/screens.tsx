@@ -1366,16 +1366,6 @@ export function TemplateScreen({
               />
             ),
           },
-          {
-            value: "approvals",
-            label: text("결재", "Approvals"),
-            content: (
-              <Documents
-                s={s}
-                rows={s.documents.filter((d) => d.template.id === t.id)}
-              />
-            ),
-          },
         ]}
       />
       <Dialog
