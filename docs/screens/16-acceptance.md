@@ -13,6 +13,8 @@
 | `/api-keys`                          | KEY-01               | [11-api-keys.md](11-api-keys.md)                     |
 | `/api-keys/[id]`                     | KEY-02               | [11-api-keys.md](11-api-keys.md)                     |
 | `/approval-templates`                | TPL-01               | [12-approval-templates.md](12-approval-templates.md) |
+| `/approval-templates/new`            | TPL-03               | [12-approval-templates.md](12-approval-templates.md) |
+| `/approval-templates/[id]/edit`      | TPL-04               | [12-approval-templates.md](12-approval-templates.md) |
 | `/approval-templates/[id]`           | TPL-02               | [12-approval-templates.md](12-approval-templates.md) |
 | `/approvals`                         | APR-01               | [13-approvals.md](13-approvals.md)                   |
 | `/approvals/[id]`                    | APR-03               | [13-approvals.md](13-approvals.md)                   |
@@ -52,20 +54,20 @@
 
 ## URL 없이 열리는 모달·탭 업무
 
-| 화면 ID         | 진입                    | 검수 포인트                                          |
-| --------------- | ----------------------- | ---------------------------------------------------- |
-| PLT-04          | 플랫폼 멤버 탭          | 사용자 선택→검토, 기존 멤버 제외, 역할 불변          |
-| ROL-03          | 역할 사용자 탭          | 사용자 추가/해제, 플랫폼 문맥, 다른 부여 보존        |
-| ROL-04/05       | 역할 조직/정책 탭(목표) | 수신 조직, 관계 만료, 선택 정책/리소스 영향          |
-| ACT-03          | Action 권한 평가 탭     | 주체·Action 평가와 응답 규칙 근거                    |
-| POL-03          | 정책 Action별 응답      | field ref, masking/unmask, 호출/필드 권한 구분       |
-| CHG-02/03/04    | 행/상세/선택 집합       | 동일 대상 diff·영향도, 대상→검토→명시 적용           |
-| CHG-05          | 항목 동기화 이력        | 과거 revision을 새 revision으로 복원, 현재 참조 보호 |
-| KEY-03/04/05    | 키/계정/결재 요청       | 템플릿 요청으로 이동, 재사용 필드 고정               |
-| KEY-06 / APR-06 | 완료 결재 후속 처리     | 담당 팀 실행, 원문 미보관, hash와 이력               |
-| TPL-03/04       | 템플릿 목록/상세        | 생성, 카탈로그 기반 라인 편집, 버전 불변성           |
-| APR-04          | 현재 결재 단계          | 권한 검사 후 검토·승인/합의·반려                     |
-| APR-05          | 열람자 탭               | 자동 등록, 수동 추가 출처, 조회만 허용               |
+| 화면 ID         | 진입                    | 검수 포인트                                               |
+| --------------- | ----------------------- | --------------------------------------------------------- |
+| PLT-04          | 플랫폼 멤버 탭          | 사용자 선택→검토, 기존 멤버 제외, 역할 불변               |
+| ROL-03          | 역할 사용자 탭          | 사용자 추가/해제, 플랫폼 문맥, 다른 부여 보존             |
+| ROL-04/05       | 역할 조직/정책 탭(목표) | 수신 조직, 관계 만료, 선택 정책/리소스 영향               |
+| ACT-03          | Action 권한 평가 탭     | 주체·Action 평가와 응답 규칙 근거                         |
+| POL-03          | 정책 Action별 응답      | field ref, masking/unmask, 호출/필드 권한 구분            |
+| CHG-02/03/04    | 행/상세/선택 집합       | 동일 대상 diff·영향도, 대상→검토→명시 적용                |
+| CHG-05          | 항목 동기화 이력        | 과거 revision을 새 revision으로 복원, 현재 참조 보호      |
+| KEY-03/04/05    | 키/계정/결재 요청       | 템플릿 요청으로 이동, 재사용 필드 고정                    |
+| KEY-06 / APR-06 | 완료 결재 후속 처리     | 담당 팀 실행, 원문 미보관, hash와 이력                    |
+| TPL-03/04       | 생성·수정 전용 페이지   | 결재선/입력 필드 탭, 카탈로그 기반 라인 편집, 버전 불변성 |
+| APR-04          | 현재 결재 단계          | 권한 검사 후 검토·승인/합의·반려                          |
+| APR-05          | 열람자 탭               | 자동 등록, 수동 추가 출처, 조회만 허용                    |
 
 ## 핵심 시나리오와 완료 조건
 

@@ -12,6 +12,11 @@ test("approval workflow loads via API and request commands create snapshots", as
     },
   ]);
   await page.goto("/approvals/new");
+  await page.getByLabel("결재 유형", { exact: true }).selectOption("issue");
+  await page
+    .getByLabel("결재 템플릿", { exact: true })
+    .selectOption("api-key-issue");
+  await page.getByRole("button", { name: "작성 시작", exact: true }).click();
   await expect(page.getByLabel("데모 사용자", { exact: true })).toHaveCount(0);
   await page
     .getByLabel("서비스 어카운트", { exact: true })
@@ -41,4 +46,40 @@ test("API 403 is not replaced with demo approval data", async ({
   ]);
   await page.goto("/approvals");
   await expect(page).toHaveURL(/forbidden/);
+});
+
+test("endpoint selections survive pagination and service changes clear them", async ({
+  page,
+  context,
+}) => {
+  await context.addCookies([
+    { name: "orion-locale", value: "ko", url: "http://127.0.0.1:3200" },
+    {
+      name: "orion_session",
+      value: "workflow-many-endpoints",
+      url: "http://127.0.0.1:3200",
+    },
+  ]);
+  await page.goto("/approvals/new?template=api-key-issue");
+  await page
+    .getByLabel("관리 서비스", { exact: true })
+    .selectOption("svc-orion");
+  await page.getByRole("checkbox").first().check();
+  await page
+    .getByRole("navigation", { name: "엔드포인트 페이지 이동", exact: true })
+    .getByRole("button", { name: "다음", exact: true })
+    .click();
+  await page.getByRole("checkbox").first().check();
+  await page
+    .getByRole("button", { name: "선택만 보기 (2)", exact: true })
+    .click();
+  await expect(page.getByRole("checkbox")).toHaveCount(2);
+  await expect(page.getByRole("checkbox").first()).toBeChecked();
+  await expect(page.getByRole("checkbox").last()).toBeChecked();
+  await page
+    .getByLabel("관리 서비스", { exact: true })
+    .selectOption("svc-directory");
+  await expect(
+    page.getByRole("button", { name: "선택만 보기 (0)", exact: true }),
+  ).toBeVisible();
 });

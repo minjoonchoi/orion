@@ -5,7 +5,7 @@ test("new keys are absent until execution and existing metadata is preserved", a
 }) => {
   await page.goto("/api-keys");
   await expect(
-    page.getByRole("link", { name: "발급 요청", exact: true }),
+    page.getByRole("button", { name: "발급 요청", exact: true }),
   ).toBeVisible();
   await page.locator("summary").click();
   const table = page.getByRole("table", { name: "기존 API 키", exact: true });

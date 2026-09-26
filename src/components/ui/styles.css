@@ -367,6 +367,10 @@ select.ui-input {
   justify-content: flex-end;
   margin-top: 20px;
 }
+.ui-dialog--wide {
+  width: min(1000px, calc(100vw - 32px));
+  max-width: 1000px;
+}
 .ui-dialog--drawer {
   top: 0;
   left: auto;

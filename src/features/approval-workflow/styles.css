@@ -171,3 +171,77 @@
     align-items: stretch;
   }
 }
+
+.wf-request-grid {
+  max-width: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.wf-request-grid > .wf-field:first-child,
+.wf-request-grid > .wf-endpoint-picker,
+.wf-request-grid > .wf-field:has(textarea),
+.wf-request-grid > button {
+  grid-column: 1 / -1;
+}
+.wf-endpoint-picker {
+  min-width: 0;
+}
+.wf-endpoint-toolbar {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+.wf-endpoint-toolbar > :first-child {
+  flex: 1;
+}
+.wf-endpoint-picker code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.wf-request-modal h2 {
+  margin-top: 12px;
+}
+.wf-template-editor {
+  max-width: none;
+}
+.wf-rule-compact {
+  grid-template-columns: 2fr 2fr 1fr auto;
+  align-items: end;
+}
+.wf-rule-compact > * {
+  min-width: 0;
+}
+.wf-rule-compact .ui-actions {
+  flex-wrap: nowrap;
+  padding-bottom: 2px;
+}
+.wf-editor-section {
+  display: grid;
+  gap: 14px;
+}
+.wf-editor-section > button {
+  justify-self: start;
+}
+.wf-field-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.wf-field-grid h2 {
+  grid-column: 1 / -1;
+}
+@media (max-width: 800px) {
+  .wf-rule-compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .wf-request-grid,
+  .wf-field-grid,
+  .wf-rule-compact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wf-endpoint-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

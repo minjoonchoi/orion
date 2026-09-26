@@ -72,3 +72,5 @@
 뉴트럴 배경과 명확한 구분선, 텍스트 상태 배지를 사용한다. 색만으로 상태를 구분하지 않는다. 입력은 접근 가능한 라벨, 에러는 알림 영역, 모달은 포커스 복귀, 탭은 키보드 조작을 제공한다. 좁은 화면은 문서 전체의 가로 넘침을 막고 긴 ID/hash는 줄바꿈 또는 표 내부 스크롤을 사용한다.
 
 `/components`는 디자인 시스템 검토 화면이다. `/access-grants`, `/audit-logs`는 placeholder이며 신규 업무 완료 기준에 포함하지 않는다. 독립 동기화 이력 메뉴는 제공하지 않는다.
+
+결재 작성의 공통 `RequestForm`은 페이지와 API 키 목록의 모달에서 재사용한다. `EndpointPicker`는 DataTable·Pagination·Field·Input·Button을 조합하며 선택 ID를 부모 폼에서 관리한다. 작성 중 검색·페이지 상태는 URL에 저장하지 않고 폼 세션 안에서 유지한다. `Dialog`의 `size="wide"`는 넓은 선택 폼에 사용하며 기존 모달의 기본 너비·포커스·닫기 규칙은 유지한다. 템플릿 생성/수정은 `TemplateEditorScreen`과 공통 Tabs를 공유한다.

@@ -11,15 +11,15 @@ test("templates describe issuance and replacement lines and allow catalog editin
   await expect(table.locator("tbody tr")).toHaveCount(3);
   await table.getByRole("link", { name: "API 키 발급", exact: true }).click();
   await expect(page.getByText("보안팀 합의", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "템플릿 수정", exact: true }).click();
-  const dialog = page.getByRole("dialog");
+  await page.getByRole("link", { name: "템플릿 수정", exact: true }).click();
+  const dialog = page.locator("main");
   await expect(dialog.getByLabel("담당 대상").first()).toBeVisible();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await dialog.getByLabel("이름", { exact: true }).fill("새 발급 템플릿");
   await dialog
     .getByRole("button", { name: "새 버전 저장", exact: true })
     .click();
-  await expect(dialog).not.toBeVisible();
+  await expect(page).toHaveURL(/approval-templates\/api-key-issue$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "새 발급 템플릿",
   );
@@ -55,6 +55,9 @@ test("approval detail and request form are accessible", async ({ page }) => {
   for (const path of [
     "/approvals/approval-demo-001?tab=line",
     "/approvals/new",
+    "/approvals/new?template=api-key-issue",
+    "/approval-templates/new",
+    "/approval-templates/api-key-issue/edit",
     "/approval-templates/api-key-issue?tab=fields",
   ]) {
     await page.goto(path);

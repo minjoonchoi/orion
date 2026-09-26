@@ -97,10 +97,9 @@ try {
 
   await visit("/approval-templates/api-key-issue");
   await capture("01-template-line.png");
-  await page.getByRole("button", { name: "템플릿 수정", exact: true }).click();
+  await page.getByRole("link", { name: "템플릿 수정", exact: true }).click();
   await capture("02-template-editor.png");
-  await page.getByRole("button", { name: "닫기", exact: true }).click();
-  await visit("/approvals/new");
+  await visit("/approvals/new?template=api-key-issue");
   await page
     .getByLabel("서비스 어카운트", { exact: true })
     .selectOption("sa-platform-ci");

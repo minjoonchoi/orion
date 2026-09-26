@@ -48,3 +48,7 @@
 ## 문서 적용 원칙
 
 기존 `docs/*-screens.md`와 구현 당시 설명은 변경 이력이 포함된 참고 자료다. 최신 제품 동작은 이 목차의 화면별 요구와 미완료 표시를 우선한다. 기능 문서의 API 계약을 기획서가 임의로 운영 API로 확정하지 않는다. 범위를 변경하면 화면 ID, 수용 기준, 데이터 계약과 구현 상태를 함께 갱신한다.
+
+### 결재 작성 UX 후속 개편
+
+KEY-01/03은 목록 내 신규 발급 결재 모달과 엔드포인트 검색을 제공한다. APR-01/02는 결재 유형·템플릿 선택 후 작성하며, TPL-03 `/approval-templates/new`와 TPL-04 `/approval-templates/{id}/edit`는 같은 탭 기반 페이지 편집기를 사용한다. 화면 캡처는 [approval-authoring](../screenshots/approval-authoring)에 보관한다.
