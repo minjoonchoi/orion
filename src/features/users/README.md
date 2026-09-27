@@ -1,9 +1,10 @@
-# 사용자
+# 사용자 기능 위치
 
-사용자 기능의 API, 타입, 컴포넌트를 이 디렉터리에 추가합니다.
+이 디렉터리는 초기 자리표시자이며 사용자 구현을 소유하지 않는다.
 
-- `api.ts`: 공통 HTTP 클라이언트를 호출하고 응답을 검증합니다.
-- `types.ts`: API 계약에 맞는 타입을 정의합니다.
-- `components/`: 이 기능에서만 사용하는 UI를 배치합니다.
+- 사용자 목록·상세 UI: [identity/screens.tsx](../identity/screens.tsx)
+- 플랫폼 멤버십·사용자 역할: [platforms](../platforms)
+- 카탈로그 조회 어댑터: [identity/repository.ts](../identity/repository.ts)
+- 화면 요구: [사용자 명세](../../../docs/screens/02-users.md)
 
-페이지 조합과 라우팅은 `src/app`, 여러 기능의 공통 UI는 `src/components`에 둡니다. API 계약 확정 전에는 가상 엔드포인트를 구현하지 않습니다.
+사용자 기능 변경은 위 구현에 반영하고 이 폴더에 별도 API·모델을 중복 생성하지 않는다.
