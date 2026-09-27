@@ -381,11 +381,6 @@ export function WorkflowList({
             header: text("키 버전", "Key version"),
             render: (k) => `v${k.version}`,
           },
-          {
-            key: "hash",
-            header: "API key hash",
-            render: (k) => <Hash value={k.hash} />,
-          },
         ]}
       />
     </>
@@ -1270,9 +1265,6 @@ export function KeyScreen({ s, k }: { s: State; k: KeyRecord }) {
                       label: text("키 버전", "Key version"),
                       value: `v${k.version}`,
                     },
-                    { label: "Secret name", value: k.secretName },
-                    { label: "Secret value key", value: k.secretKey },
-                    { label: "API key hash", value: <Hash value={k.hash} /> },
                   ]}
                 />
               </section>
@@ -1283,34 +1275,44 @@ export function KeyScreen({ s, k }: { s: State; k: KeyRecord }) {
             label: text("접근 권한", "Access"),
             content: (
               <section className="ui-panel">
-                <h2>
-                  {text(
-                    "역할 → 정책 → 엔드포인트",
-                    "Role → Policy → Endpoints",
-                  )}
-                </h2>
-                <Details
-                  items={[
-                    {
-                      label: text("서비스 어카운트", "Service account"),
-                      value: (
-                        <Ref href={`/service-accounts/${k.accountId}`}>
-                          {name(s.accounts, k.accountId)}
-                        </Ref>
-                      ),
-                    },
-                    {
-                      label: text("Orion 역할", "Orion role"),
-                      value: <Ref href={`/roles/${k.roleId}`}>{k.roleId}</Ref>,
-                    },
-                    {
-                      label: text("접근 정책", "Access policy"),
-                      value: (
-                        <Ref href={`/policies/${k.policyId}`}>{k.policyId}</Ref>
-                      ),
-                    },
-                  ]}
-                />
+                <h2>{text("허용 API", "Allowed APIs")}</h2>
+                <details className="ui-panel">
+                  <summary>
+                    {text(
+                      "연결 설정·기술 정보",
+                      "Linked configuration and technical details",
+                    )}
+                  </summary>
+                  <Details
+                    items={[
+                      {
+                        label: text("서비스 어카운트", "Service account"),
+                        value: (
+                          <Ref href={`/service-accounts/${k.accountId}`}>
+                            {name(s.accounts, k.accountId)}
+                          </Ref>
+                        ),
+                      },
+                      {
+                        label: text("역할", "Role"),
+                        value: (
+                          <Ref href={`/roles/${k.roleId}`}>{k.roleId}</Ref>
+                        ),
+                      },
+                      {
+                        label: text("정책", "Policy"),
+                        value: (
+                          <Ref href={`/policies/${k.policyId}`}>
+                            {k.policyId}
+                          </Ref>
+                        ),
+                      },
+                      { label: "Secret name", value: k.secretName },
+                      { label: "Secret value key", value: k.secretKey },
+                      { label: "API key hash", value: <Hash value={k.hash} /> },
+                    ]}
+                  />
+                </details>
                 <Endpoints s={s} serviceId={k.serviceId} ids={k.endpointIds} />
               </section>
             ),

@@ -1,0 +1,30 @@
+[
+  {
+    "screen": "PLT-05-MEMBERS",
+    "difference": 0
+  },
+  {
+    "screen": "ROL-05-POLICIES",
+    "difference": 0
+  },
+  {
+    "screen": "USR-03-ACCESS",
+    "difference": 0
+  },
+  {
+    "screen": "CHK-01-ALLOW",
+    "difference": 0
+  },
+  {
+    "screen": "REQ-01-FORM",
+    "difference": 0
+  },
+  {
+    "screen": "ME-01-ACCESS",
+    "difference": 0
+  },
+  {
+    "screen": "SYNC-OUTCOMES",
+    "difference": 0
+  }
+]

@@ -398,6 +398,7 @@ export function SyncDialog({
                       <section className="sync-workflow-impact">
                         {policyMode ? (
                           <SubjectImpact
+                            afterGraph={plan.next ?? undefined}
                             graph={current.policy!.graph}
                             scope={{
                               policyIds: plan.policies.map((p) => p.after.id),
@@ -405,6 +406,7 @@ export function SyncDialog({
                           />
                         ) : (
                           <ResourceImpact
+                            afterGraph={plan.next ?? undefined}
                             graph={current.resource.graph}
                             resources={plan.resources}
                           />
@@ -419,6 +421,7 @@ export function SyncDialog({
                             )}
                           </p>
                           <ResourceImpact
+                            afterGraph={plan.next ?? undefined}
                             graph={current.resource.graph}
                             resources={plan.changedResources}
                           />

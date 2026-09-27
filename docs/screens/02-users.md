@@ -1,5 +1,7 @@
 # 사용자
 
+> **UI 구현 상태**: 승인된 화면을 제품 소스에 반영했다. 멤버·권한 UI의 메모리 상태와 서버 연동 제약은 [멤버·권한 관리](17-access-management.md)를 따른다.
+
 UI 구현: 구현됨. 소스: `src/features/identity/screens.tsx`, `src/features/platforms/screens.tsx`. 사용자 정보는 닉네임·이메일·재직/휴직 상태만을 업무 속성으로 보유한다. ID는 내부 참조키다. API 키·결재를 사용자 소유 목록으로 표시하지 않는다.
 
 ## USR-01 목록 — `/users`

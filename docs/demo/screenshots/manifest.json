@@ -1,8 +1,8 @@
 {
   "inputs": {
-    "html": "a28527a7a974af145aaa510a6f27a95bca152c8cdb48507a70514d3edbb8e8ae",
-    "registry": "6479bbae9d8382206dda91bbe9a75d56ce462bebb45771a67edbac4b8e37bbd5",
-    "capture": "51e391436b786e9c2e0c063253bea6497430512b695fdf30de63a8dce65a440c",
+    "html": "69fac81839504188636b0b27529c164689cf8b581a66e391aefeeed7b2ad1a5f",
+    "registry": "0bb6525d5d9b3ce2f9de87979c8d47f49c1b93ab80a6e26dc77e83b16f294f71",
+    "capture": "fc4c03f653b47be73f0f629345ec6af194219de96f2c3ecdf51d6d21c1f00493",
     "viewport": {
       "width": 1440,
       "height": 1100
@@ -16,7 +16,7 @@
       "action": null,
       "state": "default",
       "file": "HOME-01.png",
-      "sha256": "9a16ab72ef9fbf2fe667e1cc605ad01fbb55e58359eeeb5f53d46737bf2d7924"
+      "sha256": "3b1385ae4e6764abbfd553eebbca9078696d10526d11324b5268e436bea0ad18"
     },
     {
       "id": "AUTH-01",
@@ -24,7 +24,7 @@
       "action": null,
       "state": "default",
       "file": "AUTH-01.png",
-      "sha256": "fa831effee1e810cd5542c16cdd2884825194e1139c785945c9adf2f6762c736"
+      "sha256": "bd1231c07d4f4d8e68a338f5ed4758fc95d455313e6eed91d9f1fb19ee2177e3"
     },
     {
       "id": "COM-403",
@@ -32,7 +32,7 @@
       "action": null,
       "state": "default",
       "file": "COM-403.png",
-      "sha256": "53db9a9246e2e20cbc6edd397946285eaf7e3a4d1b59e534880a7cdbb8b1cccd"
+      "sha256": "042b1ab913e577dab3b88d94b7e83bb5ad820fdeba046e2fc088855af0893e79"
     },
     {
       "id": "PLT-01",
@@ -40,7 +40,7 @@
       "action": null,
       "state": "default",
       "file": "PLT-01.png",
-      "sha256": "af86de86632ab003304ad820c1ba2a69ed8db0a746149a698c1eb1edd79ab673"
+      "sha256": "af7f109671882ff2585e0c2785768dda14aac253d1ab353e5c62658352cc9499"
     },
     {
       "id": "PLT-02",
@@ -48,7 +48,7 @@
       "action": null,
       "state": "default",
       "file": "PLT-02.png",
-      "sha256": "0b1da36aa23df7f93682d791e40317e59e84bf4dafdf5f855017522a1ea0f15b"
+      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
     },
     {
       "id": "PLT-02-TAB-1",
@@ -56,7 +56,7 @@
       "action": null,
       "state": "멤버 (3)",
       "file": "PLT-02-TAB-1.png",
-      "sha256": "0b1da36aa23df7f93682d791e40317e59e84bf4dafdf5f855017522a1ea0f15b"
+      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
     },
     {
       "id": "PLT-02-TAB-2",
@@ -64,7 +64,7 @@
       "action": null,
       "state": "워크스페이스 (3)",
       "file": "PLT-02-TAB-2.png",
-      "sha256": "f365fe052ff40286ab4111e5d0e1a76df3fbe1e7d253a9340efa3158e41a7ddc"
+      "sha256": "79eb9bbdf580f29edc4c92daf1b79b65fa9a019eacfd3a3ab7595fd9f6e62a1e"
     },
     {
       "id": "PLT-02-TAB-3",
@@ -72,7 +72,7 @@
       "action": null,
       "state": "역할 (5)",
       "file": "PLT-02-TAB-3.png",
-      "sha256": "713e243da20761b494492aa8398b186d4120f85eb7d2e3d644b7342825935849"
+      "sha256": "5c002775cde7a67dbfab4f64d728d6fc0658c25ed59715ebaf86d73bcfda090f"
     },
     {
       "id": "PLT-02-TAB-4",
@@ -80,7 +80,7 @@
       "action": null,
       "state": "인증 설정",
       "file": "PLT-02-TAB-4.png",
-      "sha256": "03a709455a7a27f27ae9826e763c1ad665e2d0f001af2c74bc739e7a428bf128"
+      "sha256": "d5dd09f29f2caf4c75b8807d2dfb856b621a1e34165e0d1e542a9b419e06d982"
     },
     {
       "id": "USR-01",
@@ -88,7 +88,7 @@
       "action": null,
       "state": "default",
       "file": "USR-01.png",
-      "sha256": "a897ac41ceed39b9ab8f304f4b3e1f7a177185f212b6f27fa522319a29c20efb"
+      "sha256": "fb5bd67d765f7befb803029f8f9972e3b9d098afd60fbbcb24820d3e073202b2"
     },
     {
       "id": "USR-02",
@@ -96,31 +96,39 @@
       "action": null,
       "state": "default",
       "file": "USR-02.png",
-      "sha256": "5ea8ece9d21a385be569132915f319ee85f327ec157c9da2b04ef2ce3c208ce1"
+      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
     },
     {
       "id": "USR-02-TAB-1",
       "route": "/users/usr-001",
       "action": null,
-      "state": "플랫폼 (2)",
+      "state": "권한 종합",
       "file": "USR-02-TAB-1.png",
-      "sha256": "5ea8ece9d21a385be569132915f319ee85f327ec157c9da2b04ef2ce3c208ce1"
+      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
     },
     {
       "id": "USR-02-TAB-2",
       "route": "/users/usr-001",
       "action": null,
-      "state": "소속 조직 (2)",
+      "state": "플랫폼 (2)",
       "file": "USR-02-TAB-2.png",
-      "sha256": "a9e6ac077e4719687070900e9f5715fda78e482edb6e5fcc184c949ee07c7d44"
+      "sha256": "e3402f2831b399ad909fb53ad68194df8c37383d539384aa7147dbc5943bacb4"
     },
     {
       "id": "USR-02-TAB-3",
       "route": "/users/usr-001",
       "action": null,
-      "state": "역할 (2)",
+      "state": "소속 조직 (2)",
       "file": "USR-02-TAB-3.png",
-      "sha256": "051d638da81c8a307990cec9baff0b063036d88df344d6a3eaad1f79dd6f8188"
+      "sha256": "a43f07fbd3b160aea172dc635322d27640ecb83a4813bcb3ec86218a02c21228"
+    },
+    {
+      "id": "USR-02-TAB-4",
+      "route": "/users/usr-001",
+      "action": null,
+      "state": "역할 (2)",
+      "file": "USR-02-TAB-4.png",
+      "sha256": "a51b9a18de36ff8681b07eabcf05fc0a9ad61eafc96bb3b3c6d1f2440fc02e7d"
     },
     {
       "id": "ORG-01",
@@ -128,7 +136,7 @@
       "action": null,
       "state": "default",
       "file": "ORG-01.png",
-      "sha256": "19b94d525d6e95f30521bb5ec1227e751952830a2b7627a06abe0cb0fc6f8c0b"
+      "sha256": "2fab5d3e95ccdea1b4de28c91661b808c5209272e931c1a3ae8c7b676f3e2b34"
     },
     {
       "id": "ORG-02",
@@ -136,7 +144,7 @@
       "action": null,
       "state": "default",
       "file": "ORG-02.png",
-      "sha256": "a1646f39505447bb8d09d5edb7721036851901c33328b79f14c24328bba1540e"
+      "sha256": "5c664842d56c95b601e5dbcfca54abbcdd21bf27a274cf25fc4e02cf4d7919a5"
     },
     {
       "id": "ORG-02-TAB-1",
@@ -144,7 +152,7 @@
       "action": null,
       "state": "멤버 (7)",
       "file": "ORG-02-TAB-1.png",
-      "sha256": "a1646f39505447bb8d09d5edb7721036851901c33328b79f14c24328bba1540e"
+      "sha256": "5c664842d56c95b601e5dbcfca54abbcdd21bf27a274cf25fc4e02cf4d7919a5"
     },
     {
       "id": "ORG-02-TAB-2",
@@ -152,7 +160,7 @@
       "action": null,
       "state": "서비스 어카운트 (2)",
       "file": "ORG-02-TAB-2.png",
-      "sha256": "b5fe8592aa12376a511478da06c307b8290c426c00fcc0ecc438f00f92529d49"
+      "sha256": "8d15c4fa18d2a23e2de8db12bb1711c5c4d5916f83924998822bdaf68c5a8e4b"
     },
     {
       "id": "ORG-02-TAB-3",
@@ -160,7 +168,7 @@
       "action": null,
       "state": "관리 서비스 (2)",
       "file": "ORG-02-TAB-3.png",
-      "sha256": "b444ccd1727da99187a968f3c4ac06e0a045f1717133b74feceee35d71f860e7"
+      "sha256": "c6c9d0e045960da98e6175dec830a3875986f247c03949492161032de5c605be"
     },
     {
       "id": "ORG-02-TAB-4",
@@ -168,7 +176,7 @@
       "action": null,
       "state": "역할 (2)",
       "file": "ORG-02-TAB-4.png",
-      "sha256": "a170bb844a7f26f9aa242328d7492d82923003f7dd06f77c671de7c658ec28cc"
+      "sha256": "0bed704360d3cc8aa9e24f6bf89553643cc586bfdd4c977fb4c8dc528fb67a5b"
     },
     {
       "id": "SA-01",
@@ -176,7 +184,7 @@
       "action": null,
       "state": "default",
       "file": "SA-01.png",
-      "sha256": "9ef88864283872368198a0a65ce87334ede71f5133732fed0a9900b60c631a9e"
+      "sha256": "9136533dd95f02db711daba5059f4dd03c47b83698457c2825ef8d7ffe56c979"
     },
     {
       "id": "SA-02",
@@ -184,7 +192,7 @@
       "action": null,
       "state": "default",
       "file": "SA-02.png",
-      "sha256": "8ce76cd97f751426ecd5132f2169e7dab4dce43c7959b9c7c50d342619448425"
+      "sha256": "a4216d21b3ed41b5e3ba50cb5e49c11731d385087544ce4cf4bf47dbb4a4af0d"
     },
     {
       "id": "SA-02-TAB-1",
@@ -192,7 +200,7 @@
       "action": null,
       "state": "역할 (2)",
       "file": "SA-02-TAB-1.png",
-      "sha256": "8ce76cd97f751426ecd5132f2169e7dab4dce43c7959b9c7c50d342619448425"
+      "sha256": "a4216d21b3ed41b5e3ba50cb5e49c11731d385087544ce4cf4bf47dbb4a4af0d"
     },
     {
       "id": "SA-02-TAB-2",
@@ -200,7 +208,7 @@
       "action": null,
       "state": "API 키 (2)",
       "file": "SA-02-TAB-2.png",
-      "sha256": "1f20068979277384cecc0fdf963bce717c4698cbc9586b09f041a8b4fd77351d"
+      "sha256": "b353014ebd0819ab9a77b52b11cf8bcad7ecc40c673f081b512223f1e1d59bd5"
     },
     {
       "id": "ROLE-01",
@@ -208,7 +216,7 @@
       "action": null,
       "state": "default",
       "file": "ROLE-01.png",
-      "sha256": "93cadae82c5d39b8c61993fc49388aadcf5fb91987f7123526cdcc4a1827745b"
+      "sha256": "ec391caf0f2310fed0764e7ea99a64de399c6f79d775ccfaf4c8d6076d184f93"
     },
     {
       "id": "ROLE-02",
@@ -216,7 +224,7 @@
       "action": null,
       "state": "default",
       "file": "ROLE-02.png",
-      "sha256": "eba41ec2d41c1f1cf4d1a8843912629bbcb377c143794b279e50185fc86161f9"
+      "sha256": "463d419c57326425d8773ac57807fdaa4653a6ba2035ca1502d1383c2b444d96"
     },
     {
       "id": "ROLE-02-TAB-1",
@@ -224,7 +232,7 @@
       "action": null,
       "state": "사용자 (1)",
       "file": "ROLE-02-TAB-1.png",
-      "sha256": "eba41ec2d41c1f1cf4d1a8843912629bbcb377c143794b279e50185fc86161f9"
+      "sha256": "463d419c57326425d8773ac57807fdaa4653a6ba2035ca1502d1383c2b444d96"
     },
     {
       "id": "ROLE-02-TAB-2",
@@ -232,7 +240,7 @@
       "action": null,
       "state": "조직 (1)",
       "file": "ROLE-02-TAB-2.png",
-      "sha256": "e4e00a72612297230556587b425db137721fa9b0a7b3ad2cb8481737ff6fb6dd"
+      "sha256": "40acfb2b192e0e5712460dc6b485897b86f93198226ca33a356bfb617407e7a5"
     },
     {
       "id": "ROLE-02-TAB-3",
@@ -240,7 +248,7 @@
       "action": null,
       "state": "서비스 어카운트 (1)",
       "file": "ROLE-02-TAB-3.png",
-      "sha256": "199cdb14ec1e4c87f66a1d7dc2b27b5e41f76c48ccd2cf4b7ddc32dc43c20a55"
+      "sha256": "4a5ce164a985dbf40e7631942bc58ce0a1e47b5d587f6a324bc466166185a98b"
     },
     {
       "id": "ROLE-02-TAB-4",
@@ -248,7 +256,7 @@
       "action": null,
       "state": "정책 (2)",
       "file": "ROLE-02-TAB-4.png",
-      "sha256": "3285921667bb860ffcf217a524b9a9e8ed6791b2df20247b802b5001f5be11b8"
+      "sha256": "af1c8e9807d53ce574c6d11bc58fe8285bb646b272b7887e8d78d27089dfce1f"
     },
     {
       "id": "WS-01",
@@ -256,7 +264,7 @@
       "action": null,
       "state": "default",
       "file": "WS-01.png",
-      "sha256": "345bf8bd806a3ca5a9304907d7f2ef87182bd813047db6cbce7a952f5d8b258c"
+      "sha256": "fc228b794b2b35adecc9ec50577ddebef3876cc9e695c9dc07400650001c9d6c"
     },
     {
       "id": "WS-02",
@@ -264,7 +272,7 @@
       "action": null,
       "state": "default",
       "file": "WS-02.png",
-      "sha256": "f4ed2f964b24fea05d141e44c06ee9e5c3d50a13a52c9fbc1063989bef1257e3"
+      "sha256": "1bbd88d55f9643cbef7283732e6755d9dcd4f52172f82fa6197569866070d8b3"
     },
     {
       "id": "WS-02-TAB-1",
@@ -272,7 +280,7 @@
       "action": null,
       "state": "페이지 (2)",
       "file": "WS-02-TAB-1.png",
-      "sha256": "f4ed2f964b24fea05d141e44c06ee9e5c3d50a13a52c9fbc1063989bef1257e3"
+      "sha256": "1bbd88d55f9643cbef7283732e6755d9dcd4f52172f82fa6197569866070d8b3"
     },
     {
       "id": "WS-02-TAB-2",
@@ -280,7 +288,7 @@
       "action": null,
       "state": "관계 (2)",
       "file": "WS-02-TAB-2.png",
-      "sha256": "f7706c94509cd749d6ff6673fd9d0b69785302176121b9a2ab9230434e84161c"
+      "sha256": "a1a2ec48a3bae1dda76be4912ac0d2a27b9a3c922be60cef90025edd4bdae15d"
     },
     {
       "id": "WS-02-TAB-3",
@@ -288,7 +296,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "WS-02-TAB-3.png",
-      "sha256": "6acd8de9f7158a018cf5ab819ea8048c7d3656d8616cf749892e18f7c036a90e"
+      "sha256": "02d5f62dc346dd05dcf925b5c9fa12407da92d12160a6208ad6b8af36c9fe2dc"
     },
     {
       "id": "WS-02-TAB-4",
@@ -296,7 +304,7 @@
       "action": null,
       "state": "YAML",
       "file": "WS-02-TAB-4.png",
-      "sha256": "53f4aa5b72b77df512af403e1fbf597fcac2b9d97cf7fd88b31dffce943e66d1"
+      "sha256": "158cc099e357fc0dbfde3440cfef2c0cd1f8fac1ace03e0f0559cd03efe13945"
     },
     {
       "id": "PAGE-01",
@@ -304,7 +312,7 @@
       "action": null,
       "state": "default",
       "file": "PAGE-01.png",
-      "sha256": "9ea977bbdbfec89a55c48a2cdcece83d7ead1b8a617270599dc16f6d750cad7b"
+      "sha256": "795ac43c210a166fc7d85310186e846421efff8e8eefbfd2e1698808230cd448"
     },
     {
       "id": "PAGE-02",
@@ -312,7 +320,7 @@
       "action": null,
       "state": "default",
       "file": "PAGE-02.png",
-      "sha256": "00ce77872e0343617b265580fa65f16efec15e5e88c29b99f662dde20cf50ffe"
+      "sha256": "9bea71274b43cf739f11f5645434a7cce1299fcf1fa6a4f375fa662207841ce0"
     },
     {
       "id": "PAGE-02-TAB-1",
@@ -320,7 +328,7 @@
       "action": null,
       "state": "Action (1)",
       "file": "PAGE-02-TAB-1.png",
-      "sha256": "00ce77872e0343617b265580fa65f16efec15e5e88c29b99f662dde20cf50ffe"
+      "sha256": "9bea71274b43cf739f11f5645434a7cce1299fcf1fa6a4f375fa662207841ce0"
     },
     {
       "id": "PAGE-02-TAB-2",
@@ -328,7 +336,7 @@
       "action": null,
       "state": "관계 (3)",
       "file": "PAGE-02-TAB-2.png",
-      "sha256": "bf5bea27e97215a9fbff5b2a30f4f71b9a407b243a2fafe2542940df88adf40f"
+      "sha256": "3be8ec6612132bd85e1dc8c323e1e8901dfd1dd1c99d80131bde0383948aa39b"
     },
     {
       "id": "PAGE-02-TAB-3",
@@ -336,7 +344,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "PAGE-02-TAB-3.png",
-      "sha256": "4e35878ffe45205ecf84557663970c679edcc5bf979abd39b6e65ec2b8eed7df"
+      "sha256": "aa049ae30f16be3ba6cc33c0e8e41052c3db764babdc45bd03679b531b117d46"
     },
     {
       "id": "PAGE-02-TAB-4",
@@ -344,7 +352,7 @@
       "action": null,
       "state": "YAML",
       "file": "PAGE-02-TAB-4.png",
-      "sha256": "83bf22c598fe24e7678d83a5e7211cef2b7368a0e60929b53c0c190213426fc3"
+      "sha256": "c1e1fea160ec7e755833d43c8321d6e1c40502aa5b8ad83b94f7543de4db57ff"
     },
     {
       "id": "SVC-01",
@@ -352,7 +360,7 @@
       "action": null,
       "state": "default",
       "file": "SVC-01.png",
-      "sha256": "ebcace51052f670cab5d3cb7531f5411917f62e1ad923eeb448175ecefb11d59"
+      "sha256": "ce2ca6f700bf4bb269b13e8761e3657ee74fd1e12bc248ae573d63af150ca2e4"
     },
     {
       "id": "SVC-02",
@@ -360,7 +368,7 @@
       "action": null,
       "state": "default",
       "file": "SVC-02.png",
-      "sha256": "658b9982b703b53411424beb8d219a581b041e4c7b575e1fa71ea9681e20fcad"
+      "sha256": "40c3c6fcb41706ad05fa2b6dade204d39d5df9bdd00ffabbc37db64e72f3254b"
     },
     {
       "id": "SVC-02-TAB-1",
@@ -368,7 +376,7 @@
       "action": null,
       "state": "엔드포인트 (1)",
       "file": "SVC-02-TAB-1.png",
-      "sha256": "658b9982b703b53411424beb8d219a581b041e4c7b575e1fa71ea9681e20fcad"
+      "sha256": "40c3c6fcb41706ad05fa2b6dade204d39d5df9bdd00ffabbc37db64e72f3254b"
     },
     {
       "id": "SVC-02-TAB-2",
@@ -376,7 +384,7 @@
       "action": null,
       "state": "관계 (1)",
       "file": "SVC-02-TAB-2.png",
-      "sha256": "ace2d995b402851630f7b9c6f875a8287a233ae2a4d56cdeeac1e6af3f9b1a43"
+      "sha256": "db4c66ee1b257a8fe09612b12f528ba617e224dd7a463a128627ec5cbe5ff0f1"
     },
     {
       "id": "SVC-02-TAB-3",
@@ -384,7 +392,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "SVC-02-TAB-3.png",
-      "sha256": "b90c92ebc48bd98aba991eca89dcde4ba9c83399faf61a4483d0cf9cfe55f271"
+      "sha256": "8c4a2a518776660ac155f78ec4df1b0ad9301667362485784b1acda62c81a69a"
     },
     {
       "id": "SVC-02-TAB-4",
@@ -392,7 +400,7 @@
       "action": null,
       "state": "YAML",
       "file": "SVC-02-TAB-4.png",
-      "sha256": "bf1e20685b958b244a5ac5f9e0f233a429995b29205850a92c92e343d4acd979"
+      "sha256": "33b74ece6195b28adc4af3369e9683fd7c620044bddf5c7fedb34a8738b355bf"
     },
     {
       "id": "EP-01",
@@ -400,7 +408,7 @@
       "action": null,
       "state": "default",
       "file": "EP-01.png",
-      "sha256": "43462ef63da2f98d0123b6da68fb23d1ea6f8de7003d26b28fbe94940adf2fb1"
+      "sha256": "da5b6d107afb587acb6c1d61bdd3a7556eeb7a8fbbb47692ca7500e09febca78"
     },
     {
       "id": "EP-02",
@@ -408,7 +416,7 @@
       "action": null,
       "state": "default",
       "file": "EP-02.png",
-      "sha256": "a6e11646b4e1ab3e01239ed90d961817d838f8b286edc854318de4da64eb16b5"
+      "sha256": "929f95a49480089644f5969cce6f885279db31c9caa3866d72e292a2160966a1"
     },
     {
       "id": "EP-02-TAB-1",
@@ -416,7 +424,7 @@
       "action": null,
       "state": "요청 필드 (1)",
       "file": "EP-02-TAB-1.png",
-      "sha256": "a6e11646b4e1ab3e01239ed90d961817d838f8b286edc854318de4da64eb16b5"
+      "sha256": "929f95a49480089644f5969cce6f885279db31c9caa3866d72e292a2160966a1"
     },
     {
       "id": "EP-02-TAB-2",
@@ -424,7 +432,7 @@
       "action": null,
       "state": "응답 필드 (4)",
       "file": "EP-02-TAB-2.png",
-      "sha256": "8ec8c030acb5d011b1552960f363dad9e88a2731baff0839a9da98fe25e7755c"
+      "sha256": "0c0520de975fea6237e6fdf4fc6e30bec794d316bb0183fcefac99fc57ab2c6d"
     },
     {
       "id": "EP-02-TAB-3",
@@ -432,7 +440,7 @@
       "action": null,
       "state": "관계 (3)",
       "file": "EP-02-TAB-3.png",
-      "sha256": "0a40e4d524a65543a93635a8a9c54bbededeaa71482f44d5ef7c699f52f8fb14"
+      "sha256": "0969174346833acf4c48cc65c8e0435a7a2cccc15470d61a06546269ab9dcc51"
     },
     {
       "id": "EP-02-TAB-4",
@@ -440,7 +448,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "EP-02-TAB-4.png",
-      "sha256": "4f57af599cf31287621f5139004a908666d8cd568a529650a1c2d6c1cc176350"
+      "sha256": "6543bf4a7f9816031e71f4ee2fcdf8968812743528dae90990a5067c5c681ad1"
     },
     {
       "id": "EP-02-TAB-5",
@@ -448,7 +456,7 @@
       "action": null,
       "state": "YAML",
       "file": "EP-02-TAB-5.png",
-      "sha256": "1d9d4170663fa8b557a38b5af8a5733aa5c436507465baef5b9750df8103eb00"
+      "sha256": "958f8743d189c23e5ad3701fbafa894d8478f0944f5a783df8f30edc3e7dac7b"
     },
     {
       "id": "DOMAIN-01",
@@ -456,7 +464,7 @@
       "action": null,
       "state": "default",
       "file": "DOMAIN-01.png",
-      "sha256": "e1e0c2ee90bd2fb898dc52c6f893a73e5e42f9ffc884ddaf1b74c330426e4c3b"
+      "sha256": "e18698970cdf49d3e11e9542aaca709021f746e74bb93aa8d2cdf15c4299645b"
     },
     {
       "id": "DOMAIN-02",
@@ -464,7 +472,7 @@
       "action": null,
       "state": "default",
       "file": "DOMAIN-02.png",
-      "sha256": "8e5fcc379a78fbd89c644b0a0d46a5a4cf8da73666584fee5798c6b50dfec140"
+      "sha256": "0bea575f609d446f6e1d2298b4b703315ed6af3f5bed8d62723d993f14cac430"
     },
     {
       "id": "DOMAIN-02-TAB-1",
@@ -472,7 +480,7 @@
       "action": null,
       "state": "Action (3)",
       "file": "DOMAIN-02-TAB-1.png",
-      "sha256": "8e5fcc379a78fbd89c644b0a0d46a5a4cf8da73666584fee5798c6b50dfec140"
+      "sha256": "0bea575f609d446f6e1d2298b4b703315ed6af3f5bed8d62723d993f14cac430"
     },
     {
       "id": "DOMAIN-02-TAB-2",
@@ -480,7 +488,7 @@
       "action": null,
       "state": "관계 (3)",
       "file": "DOMAIN-02-TAB-2.png",
-      "sha256": "0e57d779abc8795e3d510b0e9e3c26ad34593a4b255952d3530c6825e758ef27"
+      "sha256": "b390cd451ad63eb23585964a570282053de8c4035327faa374ddb1775c44e1e3"
     },
     {
       "id": "DOMAIN-02-TAB-3",
@@ -488,7 +496,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "DOMAIN-02-TAB-3.png",
-      "sha256": "54dbc1390cd3562cd1b16c7848424b936804d1261a6c35de6695073e18a6f1d3"
+      "sha256": "b8ea57de14f7aadf4c3a0e919fe28da301cfe0595b985392c72e9601bd471197"
     },
     {
       "id": "DOMAIN-02-TAB-4",
@@ -496,7 +504,7 @@
       "action": null,
       "state": "YAML",
       "file": "DOMAIN-02-TAB-4.png",
-      "sha256": "b881b4ba751f66d31fa52b15619f394cc37f1d3da1c9f693f112f60d91304b9c"
+      "sha256": "9c64275fabbcbbf2844023c85e0561a3762d8a2e3b3a30f6472731d9ad08c291"
     },
     {
       "id": "ACTION-01",
@@ -504,7 +512,7 @@
       "action": null,
       "state": "default",
       "file": "ACTION-01.png",
-      "sha256": "d0f01cf31006e55eee52de22eb94a96ffbae9f6ff2bb0a22c05071638ba67ecf"
+      "sha256": "45fda3d197160ab33bc09b490bee9994f4acc4f0cba8a079c158c12d7bc91e89"
     },
     {
       "id": "ACTION-02",
@@ -512,7 +520,7 @@
       "action": null,
       "state": "default",
       "file": "ACTION-02.png",
-      "sha256": "8159529d8cc67dc1eec9113929315dde898d7ece100e262bbe3046f2229b2a7b"
+      "sha256": "1f86ce47d50e35ece9593f24f93a348fd1f100077cddc6870458ee04ae50fbaf"
     },
     {
       "id": "ACTION-02-TAB-1",
@@ -520,7 +528,7 @@
       "action": null,
       "state": "정책 (2)",
       "file": "ACTION-02-TAB-1.png",
-      "sha256": "8159529d8cc67dc1eec9113929315dde898d7ece100e262bbe3046f2229b2a7b"
+      "sha256": "1f86ce47d50e35ece9593f24f93a348fd1f100077cddc6870458ee04ae50fbaf"
     },
     {
       "id": "ACTION-02-TAB-2",
@@ -528,7 +536,7 @@
       "action": null,
       "state": "관계 (5)",
       "file": "ACTION-02-TAB-2.png",
-      "sha256": "d14a8a17951b73943dffc53375c2d2d4abb96aad91711d94a04b5a04703e5953"
+      "sha256": "3f1fb61c2869bdcebaa333248a54b30ebfe68571067bf61874d473bb45668436"
     },
     {
       "id": "ACTION-02-TAB-3",
@@ -536,7 +544,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "ACTION-02-TAB-3.png",
-      "sha256": "0c3f2bb3dc4098536e2f098b0120a11c95a6da4092fb11780e57d1ae1be5c2db"
+      "sha256": "f53f370cba20e030dcaee2e0dfdbe3701213456d0cc65c4d147e8187147ad876"
     },
     {
       "id": "ACTION-02-TAB-4",
@@ -544,7 +552,7 @@
       "action": null,
       "state": "YAML",
       "file": "ACTION-02-TAB-4.png",
-      "sha256": "8b057d427aee335c1cdf58138b56e769d45b5501f89631ab6d54d16d386a75bc"
+      "sha256": "44649cc898e21344f2f337cc13ef1013fd6ac579a04b7ccc174fe5dfc477356f"
     },
     {
       "id": "ACTION-02-TAB-5",
@@ -552,7 +560,7 @@
       "action": null,
       "state": "권한 평가",
       "file": "ACTION-02-TAB-5.png",
-      "sha256": "80a47a835871e0cc8379060888145de4a64d54904699e1b6b4040b4995102a73"
+      "sha256": "b901b21cd7908d76ba4bf7a0f9b254f22dba2e8294abc80c4b09a9284a07f422"
     },
     {
       "id": "POL-01",
@@ -560,7 +568,7 @@
       "action": null,
       "state": "default",
       "file": "POL-01.png",
-      "sha256": "432837bd64e68ddbba658b5d1591a200e1c22465bd430266b7fd96736bb094eb"
+      "sha256": "a14fca84957bfee1a50cfbef34efb094b337842b080dcad773f0d800c6d7c940"
     },
     {
       "id": "POL-02",
@@ -568,7 +576,7 @@
       "action": null,
       "state": "default",
       "file": "POL-02.png",
-      "sha256": "91c67e77981baeaac2148656312cfd3d915a4842565a3769543e8ff042328a11"
+      "sha256": "0d701881ec13c5f1f55cb3fb792cda38b5b0492c85da622f1def5fccc9a75b40"
     },
     {
       "id": "POL-02-TAB-1",
@@ -576,7 +584,7 @@
       "action": null,
       "state": "Action (1)",
       "file": "POL-02-TAB-1.png",
-      "sha256": "91c67e77981baeaac2148656312cfd3d915a4842565a3769543e8ff042328a11"
+      "sha256": "0d701881ec13c5f1f55cb3fb792cda38b5b0492c85da622f1def5fccc9a75b40"
     },
     {
       "id": "POL-02-TAB-2",
@@ -584,7 +592,7 @@
       "action": null,
       "state": "관계 (2)",
       "file": "POL-02-TAB-2.png",
-      "sha256": "af0ed66dc9222b238b241fe48f584a6c42a25ed55117e073957db10542547e57"
+      "sha256": "5f79d4d78ad6d5890af796fb52d5a008e54f6c1b883b18d54362d51ef0f06a5c"
     },
     {
       "id": "POL-02-TAB-3",
@@ -592,7 +600,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "POL-02-TAB-3.png",
-      "sha256": "b4ebac214d3b476f6223e0788824b243f7d0626539c311dedb2be91ba70d2787"
+      "sha256": "617dd6df91a042b73f5b6a90030af0d6460022833d436f10f8ba7c35f5ca14f2"
     },
     {
       "id": "POL-02-TAB-4",
@@ -600,7 +608,7 @@
       "action": null,
       "state": "YAML",
       "file": "POL-02-TAB-4.png",
-      "sha256": "781324f145b487342687767e6d44c7a94faab3d6d3b352ce5743bff900c3916b"
+      "sha256": "01d25f6af48ca26e50f58fd31358bf214c0e036f5dab0a7b87f665e93b95dedf"
     },
     {
       "id": "SYNC-01",
@@ -608,7 +616,7 @@
       "action": null,
       "state": "default",
       "file": "SYNC-01.png",
-      "sha256": "68681b2ea99eb2ececabb2e0eb4540d0cc1946540eea221acf4e21b1a8ac5941"
+      "sha256": "1bbb22b6a61fa3ea96100aad48cc1da359b5def52e34e9c8d20b8b9244fed124"
     },
     {
       "id": "KEY-01",
@@ -616,7 +624,7 @@
       "action": null,
       "state": "default",
       "file": "KEY-01.png",
-      "sha256": "d0672286d8acff68f57a9b4f9c3f6d7da39ba83ec641f7934ad43b832e10db73"
+      "sha256": "0bce376368f76713d9d76f3d06ae8eeec3b2870cbc1d7f886ea8f12644d7929f"
     },
     {
       "id": "KEY-02",
@@ -624,7 +632,7 @@
       "action": null,
       "state": "default",
       "file": "KEY-02.png",
-      "sha256": "47d51f5a513cac58a28e128607606d0f7fc2e0e2ba8e3fe0b1154453c1e194db"
+      "sha256": "f3ca5bfa339c19a82199b06dfa22b7398d2b6f8d0073e5dfe6b30a5cea5c4d70"
     },
     {
       "id": "KEY-02-TAB-1",
@@ -632,7 +640,7 @@
       "action": null,
       "state": "결재 이력 (0)",
       "file": "KEY-02-TAB-1.png",
-      "sha256": "47d51f5a513cac58a28e128607606d0f7fc2e0e2ba8e3fe0b1154453c1e194db"
+      "sha256": "f3ca5bfa339c19a82199b06dfa22b7398d2b6f8d0073e5dfe6b30a5cea5c4d70"
     },
     {
       "id": "KEY-02-TAB-2",
@@ -640,7 +648,7 @@
       "action": null,
       "state": "서비스 어카운트 (1)",
       "file": "KEY-02-TAB-2.png",
-      "sha256": "97f2930aaf9cc5510a6bb7df9073e06585851292d851f398427911c8ff785e2d"
+      "sha256": "1822ce8b29fd178604ee08edc9fcfab743a6aa80c1805c563dbee71fd6fa2d21"
     },
     {
       "id": "APR-01",
@@ -648,7 +656,7 @@
       "action": null,
       "state": "default",
       "file": "APR-01.png",
-      "sha256": "8994cbdee442c99ad07919c8a8154d0dd9bc301ec082de37ced0940471af5e42"
+      "sha256": "8319143af702796d9d5cded7ea4cb8fcaa6eb2b348972ca6ef89fc797d359c09"
     },
     {
       "id": "APR-01-TAB-1",
@@ -656,7 +664,7 @@
       "action": null,
       "state": "결재 문서",
       "file": "APR-01-TAB-1.png",
-      "sha256": "8994cbdee442c99ad07919c8a8154d0dd9bc301ec082de37ced0940471af5e42"
+      "sha256": "8319143af702796d9d5cded7ea4cb8fcaa6eb2b348972ca6ef89fc797d359c09"
     },
     {
       "id": "APR-01-TAB-2",
@@ -664,7 +672,7 @@
       "action": null,
       "state": "결재 템플릿",
       "file": "APR-01-TAB-2.png",
-      "sha256": "c9522c21da74d26d3f453d6f2d6ef6bcc48860529434ff517d225fa781e81d16"
+      "sha256": "c03c72bc04bb2e7e6de3b1073a298f5b44cec2f36a9f30623cac4336586bcd2c"
     },
     {
       "id": "APR-02",
@@ -672,7 +680,7 @@
       "action": null,
       "state": "default",
       "file": "APR-02.png",
-      "sha256": "2e245f87807de5cb65c81f30a44e9fcefb837dd79df56b23e0245b1278bcdb9f"
+      "sha256": "5607fff8a6a66a8d3f8c241059c8ecbd0371c6f3fe8f581937b3edbae31dd9d6"
     },
     {
       "id": "APR-03",
@@ -680,7 +688,7 @@
       "action": null,
       "state": "default",
       "file": "APR-03.png",
-      "sha256": "de23d6b9f6b40794f0fe319ddcf10ac859b7c4ed0af24da461bba1bfd847a1bd"
+      "sha256": "7cdbd0909a8047c8cc9593c4cbf970ec713c576709e1a9a5a2270ceb273fe138"
     },
     {
       "id": "APR-03-TAB-1",
@@ -688,7 +696,7 @@
       "action": null,
       "state": "요청 정보",
       "file": "APR-03-TAB-1.png",
-      "sha256": "de23d6b9f6b40794f0fe319ddcf10ac859b7c4ed0af24da461bba1bfd847a1bd"
+      "sha256": "7cdbd0909a8047c8cc9593c4cbf970ec713c576709e1a9a5a2270ceb273fe138"
     },
     {
       "id": "APR-03-TAB-2",
@@ -696,7 +704,7 @@
       "action": null,
       "state": "결재선",
       "file": "APR-03-TAB-2.png",
-      "sha256": "f374cdd1048ac601b7fac95a47ebf7375e66f7ba2e8fff07af086ff334a151e5"
+      "sha256": "4457ccf930f76e9210c0f6336c5b7ee44533d17ee715c283b12b610608dba698"
     },
     {
       "id": "APR-03-TAB-3",
@@ -704,7 +712,7 @@
       "action": null,
       "state": "열람자",
       "file": "APR-03-TAB-3.png",
-      "sha256": "03e4b3c30e3a1a3cf2bb15e17b46c516bf31264365f94a9dd7ec056be4f22c79"
+      "sha256": "b54edfc0a2e7708e5df3e22f3326cb2901b6189eea4176fee412d753e4fb6004"
     },
     {
       "id": "APR-03-TAB-4",
@@ -712,7 +720,7 @@
       "action": null,
       "state": "후속 처리",
       "file": "APR-03-TAB-4.png",
-      "sha256": "4f2a13747708d4cc5a480ec63085ba0b403004ee13f9e79d0a890596dc3ba26d"
+      "sha256": "3e74ce4d571b830f52fdcd8a69b77dc6250e7d90724d109ff9ca25238d27f2ff"
     },
     {
       "id": "TPL-01",
@@ -720,7 +728,7 @@
       "action": null,
       "state": "default",
       "file": "TPL-01.png",
-      "sha256": "c9522c21da74d26d3f453d6f2d6ef6bcc48860529434ff517d225fa781e81d16"
+      "sha256": "c03c72bc04bb2e7e6de3b1073a298f5b44cec2f36a9f30623cac4336586bcd2c"
     },
     {
       "id": "TPL-01-TAB-1",
@@ -728,7 +736,7 @@
       "action": null,
       "state": "결재 문서",
       "file": "TPL-01-TAB-1.png",
-      "sha256": "579c1058fe5787cbb9d761f459e77a7a2075eb3dc2e3529d5a34fe4a5ce79e50"
+      "sha256": "8319143af702796d9d5cded7ea4cb8fcaa6eb2b348972ca6ef89fc797d359c09"
     },
     {
       "id": "TPL-01-TAB-2",
@@ -736,7 +744,7 @@
       "action": null,
       "state": "결재 템플릿",
       "file": "TPL-01-TAB-2.png",
-      "sha256": "9e5aab202ba12e39ffa53ace4e7b591dc6ece858d7c9d961056d18f0dd9504e8"
+      "sha256": "cb5fea6420b4c9c59b6e10670ab9a1889ba6df32e9f7e1d2d4a0c410e37b296a"
     },
     {
       "id": "TPL-02",
@@ -744,7 +752,7 @@
       "action": null,
       "state": "default",
       "file": "TPL-02.png",
-      "sha256": "6c48a53689f3617845f0d9ab3801ead016d85d8156537203b21292fff60aa73d"
+      "sha256": "bf830c00b2734d333a720b9fc646bf874294b2e3c3fa5da959bd3ffacf5dab9b"
     },
     {
       "id": "TPL-02-TAB-1",
@@ -752,7 +760,7 @@
       "action": null,
       "state": "결재선",
       "file": "TPL-02-TAB-1.png",
-      "sha256": "6c48a53689f3617845f0d9ab3801ead016d85d8156537203b21292fff60aa73d"
+      "sha256": "bf830c00b2734d333a720b9fc646bf874294b2e3c3fa5da959bd3ffacf5dab9b"
     },
     {
       "id": "TPL-02-TAB-2",
@@ -760,7 +768,7 @@
       "action": null,
       "state": "입력 필드",
       "file": "TPL-02-TAB-2.png",
-      "sha256": "939c4d5b5e39addca34fa0c57819eb25546f95712f574d8faf35b295459bef16"
+      "sha256": "0a1a779cf57b67865036ba48ce26ea0fdf9c375ee332187c84b2749ff427c80d"
     },
     {
       "id": "TPL-03",
@@ -768,7 +776,7 @@
       "action": null,
       "state": "default",
       "file": "TPL-03.png",
-      "sha256": "1ad3f56653b584abf65b98f8b1b785c5be79e74fcc5ef6d43a7df10bf7c9cb08"
+      "sha256": "1df2724561bbe80221cf6f345db9e5a82a3f2612f66e1598db948297497d9e2e"
     },
     {
       "id": "TPL-03-TAB-1",
@@ -776,7 +784,7 @@
       "action": null,
       "state": "결재선",
       "file": "TPL-03-TAB-1.png",
-      "sha256": "1ad3f56653b584abf65b98f8b1b785c5be79e74fcc5ef6d43a7df10bf7c9cb08"
+      "sha256": "1df2724561bbe80221cf6f345db9e5a82a3f2612f66e1598db948297497d9e2e"
     },
     {
       "id": "TPL-03-TAB-2",
@@ -784,7 +792,7 @@
       "action": null,
       "state": "입력 필드",
       "file": "TPL-03-TAB-2.png",
-      "sha256": "4ecb2f68386446c61c9f795f4ae893a797887d3c768216c5509e2c6333c574b9"
+      "sha256": "015cabd42a6c069c8d440473b6a59797611c55c0e23d832977d7a0d855e0fde6"
     },
     {
       "id": "TPL-04",
@@ -792,7 +800,7 @@
       "action": null,
       "state": "default",
       "file": "TPL-04.png",
-      "sha256": "4b16e9a6147bd0b58cc44f07442c5a05d139f92873365f0f4d0a7df670bd1908"
+      "sha256": "ef6b2bc7cd2c65b558faf88717621d2619e5277b7853c9d85370675ef78ef931"
     },
     {
       "id": "TPL-04-TAB-1",
@@ -800,7 +808,7 @@
       "action": null,
       "state": "결재선",
       "file": "TPL-04-TAB-1.png",
-      "sha256": "4b16e9a6147bd0b58cc44f07442c5a05d139f92873365f0f4d0a7df670bd1908"
+      "sha256": "ef6b2bc7cd2c65b558faf88717621d2619e5277b7853c9d85370675ef78ef931"
     },
     {
       "id": "TPL-04-TAB-2",
@@ -808,7 +816,7 @@
       "action": null,
       "state": "입력 필드",
       "file": "TPL-04-TAB-2.png",
-      "sha256": "0e31b36b4c272fe72c621d79487c076f3ef54d93959b71c9e6a3f4fda43e779c"
+      "sha256": "f4cbe671b35115f43cb6ec40a42bce957429675e9262e9a7b9a4f45254a8b06e"
     },
     {
       "id": "KEY-03",
@@ -816,7 +824,7 @@
       "action": "issuance",
       "state": "default",
       "file": "KEY-03.png",
-      "sha256": "1cd523530843f04af9048d8ac5b660cb908595d51e70f0a9f355abfdd5777485"
+      "sha256": "19486af77471b80489e28b4b184dfa03875d8b4b678f4cc0a0f5aa5283452e20"
     },
     {
       "id": "KEY-03-REVIEW",
@@ -824,7 +832,7 @@
       "action": "issuance-review",
       "state": "default",
       "file": "KEY-03-REVIEW.png",
-      "sha256": "b047a01a8a9f03cc4976efd97ba76bef8893422e4d797527c39215faa94dffa9"
+      "sha256": "ffe2e806002d21226254bbb053e838a5d0f43cb5d11cbcc699e560b7e27b8021"
     },
     {
       "id": "SYNC-REVIEW",
@@ -832,7 +840,7 @@
       "action": "sync-review",
       "state": "default",
       "file": "SYNC-REVIEW.png",
-      "sha256": "24e1b9952dff88aee18af6593f68e44105351ee048483141566bc9b9ad292e4e"
+      "sha256": "1f239a7fe1555d95773ec446ee89cfa4a6218c9b3450269605cc2f03f8c5ce96"
     },
     {
       "id": "SYNC-IMPACT",
@@ -840,8 +848,216 @@
       "action": "sync-impact",
       "state": "default",
       "file": "SYNC-IMPACT.png",
-      "sha256": "3bc185cd0bd94f6341ab8199702c3552f6371e8cfd864b09df12130a0c04dd56"
+      "sha256": "95e21bc95945fd8dac5f7f653ba58cabf30daa63827e0c00e5d419ef7c779a20"
+    },
+    {
+      "id": "PLT-05-MEMBERS",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "default",
+      "file": "PLT-05-MEMBERS.png",
+      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+    },
+    {
+      "id": "PLT-05-MEMBERS-TAB-1",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "멤버 (3)",
+      "file": "PLT-05-MEMBERS-TAB-1.png",
+      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+    },
+    {
+      "id": "PLT-05-MEMBERS-TAB-2",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "워크스페이스 (3)",
+      "file": "PLT-05-MEMBERS-TAB-2.png",
+      "sha256": "79eb9bbdf580f29edc4c92daf1b79b65fa9a019eacfd3a3ab7595fd9f6e62a1e"
+    },
+    {
+      "id": "PLT-05-MEMBERS-TAB-3",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "역할 (5)",
+      "file": "PLT-05-MEMBERS-TAB-3.png",
+      "sha256": "5c002775cde7a67dbfab4f64d728d6fc0658c25ed59715ebaf86d73bcfda090f"
+    },
+    {
+      "id": "PLT-05-MEMBERS-TAB-4",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "인증 설정",
+      "file": "PLT-05-MEMBERS-TAB-4.png",
+      "sha256": "d5dd09f29f2caf4c75b8807d2dfb856b621a1e34165e0d1e542a9b419e06d982"
+    },
+    {
+      "id": "PLT-05-REVIEW",
+      "route": "/platforms/orion?tab=members",
+      "action": "member-review",
+      "state": "default",
+      "file": "PLT-05-REVIEW.png",
+      "sha256": "11f82f4f5ea6c89a77bfdf738fd341156dd8d33d0a720890211fcb81cc10ac70"
+    },
+    {
+      "id": "ROL-05-POLICIES",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "default",
+      "file": "ROL-05-POLICIES.png",
+      "sha256": "af1c8e9807d53ce574c6d11bc58fe8285bb646b272b7887e8d78d27089dfce1f"
+    },
+    {
+      "id": "ROL-05-POLICIES-TAB-1",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "사용자 (1)",
+      "file": "ROL-05-POLICIES-TAB-1.png",
+      "sha256": "463d419c57326425d8773ac57807fdaa4653a6ba2035ca1502d1383c2b444d96"
+    },
+    {
+      "id": "ROL-05-POLICIES-TAB-2",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "조직 (1)",
+      "file": "ROL-05-POLICIES-TAB-2.png",
+      "sha256": "4c02ad5434cf7ea20aa67476e075126659a0fd6fa3c9fad463dd9757b2f8e95f"
+    },
+    {
+      "id": "ROL-05-POLICIES-TAB-3",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "서비스 어카운트 (1)",
+      "file": "ROL-05-POLICIES-TAB-3.png",
+      "sha256": "a124eadd336c6200c56ec31e41b213eb9ae126d0bf0206783624966cbf8bdb49"
+    },
+    {
+      "id": "ROL-05-POLICIES-TAB-4",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "정책 (2)",
+      "file": "ROL-05-POLICIES-TAB-4.png",
+      "sha256": "af1c8e9807d53ce574c6d11bc58fe8285bb646b272b7887e8d78d27089dfce1f"
+    },
+    {
+      "id": "ROL-05-EDITOR",
+      "route": "/roles/role-platform?tab=policies",
+      "action": "role-policy-edit",
+      "state": "default",
+      "file": "ROL-05-EDITOR.png",
+      "sha256": "1473be0ee7b33263525cff9e93cc26ecdba4093c64b4ecdd7b087af222ac57fb"
+    },
+    {
+      "id": "USR-03-ACCESS",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "default",
+      "file": "USR-03-ACCESS.png",
+      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+    },
+    {
+      "id": "USR-03-ACCESS-TAB-1",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "권한 종합",
+      "file": "USR-03-ACCESS-TAB-1.png",
+      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+    },
+    {
+      "id": "USR-03-ACCESS-TAB-2",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "플랫폼 (2)",
+      "file": "USR-03-ACCESS-TAB-2.png",
+      "sha256": "b3fffce411f60b0f2d732b1a60151d135f4cd7b78022e4433f284b87bc5a881c"
+    },
+    {
+      "id": "USR-03-ACCESS-TAB-3",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "소속 조직 (2)",
+      "file": "USR-03-ACCESS-TAB-3.png",
+      "sha256": "871923e0122c00e1fdb6cf79bceaa79a48afb8f2152165a14000ba87a2fd7d94"
+    },
+    {
+      "id": "USR-03-ACCESS-TAB-4",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "역할 (2)",
+      "file": "USR-03-ACCESS-TAB-4.png",
+      "sha256": "a51b9a18de36ff8681b07eabcf05fc0a9ad61eafc96bb3b3c6d1f2440fc02e7d"
+    },
+    {
+      "id": "CHK-01-ALLOW",
+      "route": "/access-check?user=usr-001&platform=orion&action=identity~read-hr",
+      "action": "access-allow",
+      "state": "default",
+      "file": "CHK-01-ALLOW.png",
+      "sha256": "19c6a525e78de9f7eb440c70354f9dfd92b58047745e3f351adb54fcc3dc93cf"
+    },
+    {
+      "id": "CHK-01-DENY",
+      "route": "/access-check?user=usr-006&platform=orion&action=identity~read-hr",
+      "action": "access-deny",
+      "state": "default",
+      "file": "CHK-01-DENY.png",
+      "sha256": "80b75b326763da9c19a05d093a23b9ebd69bf97c3b78797337183948bcac8412"
+    },
+    {
+      "id": "REQ-01-FORM",
+      "route": "/access-requests/new",
+      "action": "request-form",
+      "state": "default",
+      "file": "REQ-01-FORM.png",
+      "sha256": "a33373bd44b5b52561bff00ab793c9d5a183f9ba61fc6e63cd7c1964f0129b17"
+    },
+    {
+      "id": "REQ-01-REVIEW",
+      "route": "/access-requests/new",
+      "action": "request-review",
+      "state": "default",
+      "file": "REQ-01-REVIEW.png",
+      "sha256": "ae8eabb4290c5d52fcdaf56e88fe0855568ebd8776ed73809dfa0a8fe57b3b21"
+    },
+    {
+      "id": "REQ-02-SUBMITTED",
+      "route": "/access-requests/new",
+      "action": "request-submit",
+      "state": "default",
+      "file": "REQ-02-SUBMITTED.png",
+      "sha256": "8ad49604166c757798cc5be855448f292a5164a7eb44977d68e751e4ece610fe"
+    },
+    {
+      "id": "ME-01-ACCESS",
+      "route": "/my-access",
+      "action": null,
+      "state": "default",
+      "file": "ME-01-ACCESS.png",
+      "sha256": "5cdf7232747eff02f42271abfff136876b0d7490c7cc0c97136330f216db615a"
+    },
+    {
+      "id": "ME-01-ACCESS-TAB-1",
+      "route": "/my-access",
+      "action": null,
+      "state": "보유 권한",
+      "file": "ME-01-ACCESS-TAB-1.png",
+      "sha256": "5cdf7232747eff02f42271abfff136876b0d7490c7cc0c97136330f216db615a"
+    },
+    {
+      "id": "ME-01-ACCESS-TAB-2",
+      "route": "/my-access",
+      "action": null,
+      "state": "신청 내역 (0)",
+      "file": "ME-01-ACCESS-TAB-2.png",
+      "sha256": "da6d7ea815167ce4faebff97ce4bb5aecc1386bbbafc5ad986c9cb24ed7d7901"
+    },
+    {
+      "id": "SYNC-OUTCOMES",
+      "route": "/policies/policy-platform",
+      "action": "sync-outcomes",
+      "state": "default",
+      "file": "SYNC-OUTCOMES.png",
+      "sha256": "95e21bc95945fd8dac5f7f653ba58cabf30daa63827e0c00e5d419ef7c779a20"
     }
   ],
-  "archive": "41eca6686be9dad6ed0c613e80410a6d4f10e1e77dec3a1b92af30876e418147"
+  "archive": "14ef16c3032fdb4a92eef87f54db47429fb5a1e02cae7bfec4677c624a380791"
 }

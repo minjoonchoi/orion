@@ -1,0 +1,14 @@
+{
+  "status": "applied",
+  "base": "06d9c9ee8242f4ea649d47fb307fea82abfab662fc15b02148462d227c19088c",
+  "approval": {
+    "evidence": "2026-09-27 15:20 KST 사용자: pr 까지 진행해 — 최종 29a4bf7 검토안 확정 및 제품 반영·PR 요청",
+    "html": "9efba0dd50799227e86137700c101d8eb49240de59883de13e7839b9ac24c964",
+    "at": "2026-09-27T06:20:36.387Z"
+  },
+  "proposal": "66eb823b5a24139b01fcda2c2b1ddfc8e885d1b31abfda802673890af05b450c",
+  "buildInputs": "cc355363cdbb341280740c4ae9d5771e25264d3b5c362d4eb88c784b34f59936",
+  "html": "9efba0dd50799227e86137700c101d8eb49240de59883de13e7839b9ac24c964",
+  "screens": "44c831c27c89ec2862643006a107981408aff0707d8807310b2af234b32ae1e5",
+  "applied": "485a17bf9764d095bf290b2fea7c5625f22f207d84768a5937f3f8c494ab9154"
+}

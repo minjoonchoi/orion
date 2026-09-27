@@ -37,7 +37,7 @@ test("role associations match user and organization links and open policy detail
   await expect(page).toHaveURL(/roles\/role-platform$/);
   await page.getByRole("tab", { name: "사용자 (1)", exact: true }).click();
   await page.getByRole("link", { name: "김가람", exact: true }).click();
-  await expect(page).toHaveURL(/users\/usr-001\?tab=roles$/);
+  await expect(page).toHaveURL(/users\/usr-001\?tab=access$/);
   await page.goto("/roles/role-platform?tab=organizations");
   await page.getByRole("link", { name: "플랫폼개발팀", exact: true }).click();
   await page.getByRole("tab", { name: "역할 (2)", exact: true }).click();
@@ -50,6 +50,11 @@ test("role associations match user and organization links and open policy detail
   await expect(
     page.getByRole("heading", { name: "인사 사용자 상세 조회", exact: true }),
   ).toBeVisible();
+  await page
+    .locator("summary")
+    .filter({ hasText: /^응답 필드$/ })
+    .first()
+    .click();
   await expect(
     page.getByRole("row").filter({ hasText: "/email" }),
   ).toContainText("마스킹");

@@ -1,5 +1,7 @@
 "use client";
 import "./styles.css";
+import { MemberManager, RoleEditor, RoleManager } from "../access-ui/screens";
+import { useAccess } from "../access-ui/store";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -171,7 +173,14 @@ export function ScopedRoles({
     />
   );
 }
-export function PlatformsScreen({ d, id }: { d: Directory; id?: string }) {
+export function PlatformsScreen({
+  d: initial,
+  id,
+}: {
+  d: Directory;
+  id?: string;
+}) {
+  const { directory: d } = useAccess(initial);
   const { t } = useI18n();
   const p = d.platforms.find((p) => p.id === id);
   if (!id)
@@ -239,13 +248,12 @@ export function PlatformsScreen({ d, id }: { d: Directory; id?: string }) {
   if (!p) return <p>{t("항목을 찾을 수 없습니다")}</p>;
   const workspaces = d.workspaces.filter((w) => w.platformId === p.id);
   return (
-    <>
+    <div className="ui-layout-stack">
       <Breadcrumbs
         items={[{ label: t("플랫폼"), href: "/platforms" }, { label: p.name }]}
       />
       <PageHeading title={p.name} description={p.description} />
       <DetailTabs
-        actions={{ members: <RecipientPicker d={d} platformId={p.id} /> }}
         items={[
           {
             value: "info",
@@ -267,7 +275,7 @@ export function PlatformsScreen({ d, id }: { d: Directory; id?: string }) {
           {
             value: "members",
             label: `${t("멤버")} (${d.members.filter((m) => m.platformId === p.id).length})`,
-            content: <Memberships d={d} platformId={p.id} />,
+            content: <MemberManager d={d} platformId={p.id} />,
           },
           {
             value: "workspaces",
@@ -323,7 +331,7 @@ export function PlatformsScreen({ d, id }: { d: Directory; id?: string }) {
           },
         ]}
       />
-    </>
+    </div>
   );
 }
 function RecipientPicker({
@@ -581,7 +589,7 @@ function RecipientPicker({
 }
 
 export function MemberScreen({
-  d,
+  d: initial,
   platformId,
   id,
 }: {
@@ -589,6 +597,7 @@ export function MemberScreen({
   platformId: string;
   id: string;
 }) {
+  const { directory: d } = useAccess(initial);
   const { t } = useI18n();
   const m = d.members.find((m) => m.platformId === platformId && m.id === id)!;
   const p = d.platforms.find((p) => p.id === platformId)!;
@@ -657,7 +666,13 @@ export function MemberScreen({
     </>
   );
 }
-export function ScopedRoleScreen({ d, id }: { d: Directory; id: string }) {
+export function LegacyScopedRoleScreen({
+  d,
+  id,
+}: {
+  d: Directory;
+  id: string;
+}) {
   const { t } = useI18n();
   const r = d.roles.find((r) => r.id === id)!;
   const p = d.platforms.find((p) => p.id === r.platformId)!;
@@ -834,12 +849,14 @@ export function ScopedRoleScreen({ d, id }: { d: Directory; id: string }) {
     </>
   );
 }
-export function RoleCatalog({ d }: { d: Directory }) {
+export function RoleCatalog({ d: initial }: { d: Directory }) {
+  const { directory: d } = useAccess(initial);
   const { t } = useI18n();
   return (
     <>
       <PageHeading
         title={t("역할")}
+        actions={<RoleEditor d={d} />}
         description={t(
           "플랫폼별 역할을 관리합니다. 서비스 어카운트에는 Orion 역할을 부여합니다.",
         )}
@@ -884,4 +901,8 @@ export function UserPlatformRoles({
       />
     </>
   );
+}
+
+export function ScopedRoleScreen({ d, id }: { d: Directory; id: string }) {
+  return <RoleManager d={d} id={id} />;
 }

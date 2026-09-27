@@ -33,6 +33,13 @@ test("policy preview includes dependencies; same two views and consent, scoped a
   page,
 }) => {
   await page.goto("/policies/policy-platform");
+  await page
+    .locator("details")
+    .filter({ has: page.locator("summary", { hasText: /^응답 필드$/ }) })
+    .first()
+    .evaluate((e) => {
+      (e as HTMLDetailsElement).open = true;
+    });
   await expect(
     page.getByRole("row").filter({ hasText: "/phone" }),
   ).toContainText("미포함");
@@ -67,6 +74,13 @@ test("policy preview includes dependencies; same two views and consent, scoped a
     .check();
   await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(dialog).toHaveCount(0);
+  await page
+    .locator("details")
+    .filter({ has: page.locator("summary", { hasText: /^응답 필드$/ }) })
+    .first()
+    .evaluate((e) => {
+      (e as HTMLDetailsElement).open = true;
+    });
   await expect(
     page.getByRole("row").filter({ hasText: "/phone" }),
   ).toContainText("keep-last");
@@ -87,6 +101,13 @@ test("policy preview includes dependencies; same two views and consent, scoped a
   await dialog.getByRole("button", { name: "동기화 적용" }).click();
   await expect(dialog).toHaveCount(0);
   await page.getByRole("tab", { name: /^Action \(/ }).click();
+  await page
+    .locator("details")
+    .filter({ has: page.locator("summary", { hasText: /^응답 필드$/ }) })
+    .first()
+    .evaluate((e) => {
+      (e as HTMLDetailsElement).open = true;
+    });
   await expect(
     page.getByRole("row").filter({ hasText: "/phone" }),
   ).toContainText("미포함");
@@ -146,6 +167,7 @@ test("subject evaluation calls server, masks fields, and no grant for unrelated 
     .selectOption("users:usr-001");
   await page.getByRole("button", { name: "권한 평가", exact: true }).click();
   const panel = page.locator("[role=tabpanel]:visible");
+  await panel.getByText("상세 근거 및 데이터 범위", { exact: true }).click();
   await expect(
     panel.getByRole("row").filter({ hasText: "email" }),
   ).toContainText("마스킹");

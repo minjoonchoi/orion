@@ -126,6 +126,13 @@ test("standalone policy diff, impact and sync use the actual command model", asy
   page,
 }) => {
   await page.goto(html + "#/policies/policy-platform");
+  await page
+    .locator("details")
+    .filter({ has: page.locator("summary", { hasText: /^응답 필드$/ }) })
+    .first()
+    .evaluate((e) => {
+      (e as HTMLDetailsElement).open = true;
+    });
   await expect(
     page.getByRole("row").filter({ hasText: "/phone" }),
   ).toContainText("미포함");
@@ -147,6 +154,13 @@ test("standalone policy diff, impact and sync use the actual command model", asy
     .getByRole("button", { name: "동기화 적용", exact: true })
     .click();
   await expect(dialog).toHaveCount(0);
+  await page
+    .locator("details")
+    .filter({ has: page.locator("summary", { hasText: /^응답 필드$/ }) })
+    .first()
+    .evaluate((e) => {
+      (e as HTMLDetailsElement).open = true;
+    });
   await expect(
     page.getByRole("row").filter({ hasText: "/phone" }),
   ).toContainText("keep-last");

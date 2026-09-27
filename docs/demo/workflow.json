@@ -1,0 +1,14 @@
+{
+  "status": "applied",
+  "base": "796618e4c74cda373a60c13edc9058847f26b5ccdf3fb21761c8fd4e7c0ee1b3",
+  "approval": {
+    "evidence": "2026-09-27 15:20 KST 사용자: pr 까지 진행해. 승인 UI와 제품의 동등성 검증 후 문서의 구현 상태·신규 경로·서버 미완료 범위를 정정. 화면·동작 변경 없음. 최초 확정 HTML 및 픽셀 동등성 근거는 docs/reviews에 보존.",
+    "html": "69fac81839504188636b0b27529c164689cf8b581a66e391aefeeed7b2ad1a5f",
+    "at": "2026-09-27T06:32:54.596Z"
+  },
+  "proposal": "b10df4ae7f75efdd46113e9a5cf789891f1eeccf618e353c4988960cb4c782de",
+  "buildInputs": "7a3001f6578bd6640e865fed5dde0204b7497949dae9e81ec6cfc1cb4dd21d51",
+  "html": "69fac81839504188636b0b27529c164689cf8b581a66e391aefeeed7b2ad1a5f",
+  "screens": "7ee9fb2ba61d131e2dc3296c7ef5635a6d010c4fe66414fd59fcd9cb4eeed6b7",
+  "applied": "db539dc1de971baa5060baa0ec74447b5ae364582c58f20b70bd50cd7d4c3b48"
+}

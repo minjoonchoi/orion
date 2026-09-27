@@ -6,7 +6,7 @@ test("inverse relationships open the correct detail pages", async ({
   const cases = [
     [
       "/roles/role-platform?tab=service-accounts",
-      "서비스 어카운트 목록",
+      "역할 서비스 어카운트",
       "platform-ci",
       "/service-accounts/sa-platform-ci?tab=roles",
     ],
@@ -72,12 +72,12 @@ test("related lists support keyboard navigation, empty state and narrow screens"
   await page.goto("/roles/role-unassigned?tab=service-accounts");
   await expect(
     page
-      .getByRole("region", { name: "서비스 어카운트 목록 조회" })
+      .getByRole("region", { name: "역할 서비스 어카운트 조회" })
       .getByRole("heading", { name: "항목이 없습니다" }),
   ).toBeVisible();
   await page.goto("/roles/role-platform?tab=service-accounts");
   const link = page
-    .getByRole("region", { name: "서비스 어카운트 목록 조회" })
+    .getByRole("region", { name: "역할 서비스 어카운트 조회" })
     .getByRole("link", { name: "platform-ci", exact: true });
   await link.focus();
   await link.press("Enter");

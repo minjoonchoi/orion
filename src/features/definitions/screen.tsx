@@ -29,6 +29,7 @@ import {
   changed,
   dependentPolicies,
   subjects,
+  evaluate,
   type Entity,
   type Kind,
   type Snapshot,
@@ -115,53 +116,56 @@ function FieldRules({
               <p>{t("이 Action의 호출을 거부합니다.")}</p>
             ) : (
               <>
-                <div className="def-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>{t("응답 필드")}</th>
-                        <th>{t("경로")}</th>
-                        <th>{t("타입")}</th>
-                        <th>{t("처리 방식")}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ep &&
-                        Object.entries(fields(ep, "response")).map(
-                          ([id, raw]) => {
-                            const f = selected.find(
-                                (f) => object(f.ref).field === id,
-                              ),
-                              u = unmasks.some(
-                                (f) => object(f.ref).field === id,
-                              ),
-                              mask = f?.masking as Obj | undefined;
-                            const definition = object(raw);
-                            return (
-                              <tr key={id}>
-                                <td>
-                                  <code>{id}</code>
-                                </td>
-                                <td>
-                                  <code>{String(definition.path)}</code>
-                                </td>
-                                <td>{String(definition.type)}</td>
-                                <td>
-                                  {u
-                                    ? t("마스킹 해제 권한")
-                                    : f
-                                      ? mask
-                                        ? `${t("마스킹")} · ${mask.method}${mask.count !== undefined ? ` (${mask.count})` : ""}`
-                                        : t("원문")
-                                      : t("미포함")}
-                                </td>
-                              </tr>
-                            );
-                          },
-                        )}
-                    </tbody>
-                  </table>
-                </div>
+                <details>
+                  <summary>{t("응답 필드")}</summary>
+                  <div className="def-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>{t("응답 필드")}</th>
+                          <th>{t("경로")}</th>
+                          <th>{t("타입")}</th>
+                          <th>{t("처리 방식")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ep &&
+                          Object.entries(fields(ep, "response")).map(
+                            ([id, raw]) => {
+                              const f = selected.find(
+                                  (f) => object(f.ref).field === id,
+                                ),
+                                u = unmasks.some(
+                                  (f) => object(f.ref).field === id,
+                                ),
+                                mask = f?.masking as Obj | undefined;
+                              const definition = object(raw);
+                              return (
+                                <tr key={id}>
+                                  <td>
+                                    <code>{id}</code>
+                                  </td>
+                                  <td>
+                                    <code>{String(definition.path)}</code>
+                                  </td>
+                                  <td>{String(definition.type)}</td>
+                                  <td>
+                                    {u
+                                      ? t("마스킹 해제 권한")
+                                      : f
+                                        ? mask
+                                          ? `${t("마스킹")} · ${mask.method}${mask.count !== undefined ? ` (${mask.count})` : ""}`
+                                          : t("원문")
+                                        : t("미포함")}
+                                  </td>
+                                </tr>
+                              );
+                            },
+                          )}
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
                 {response?.body === "none" && (
                   <p>{t("응답 body를 반환하지 않습니다.")}</p>
                 )}
@@ -303,6 +307,169 @@ function ExposureChanges({ plan }: { plan: Plan }) {
     </div>
   );
 }
+function DefinitionOutcomes({
+  snapshot,
+  plan,
+  affected,
+}: {
+  snapshot: Snapshot;
+  plan: Plan;
+  affected: Entity[];
+}) {
+  const { t } = useI18n();
+  const [now] = useState(() => Date.now());
+  const graph = snapshot.graph;
+  const targets = new Map<
+    string,
+    { id: string; name: string; type: "users" | "service-accounts" }
+  >();
+  for (const subject of subjects(graph, affected, now)) {
+    if (subject.type === "organizations") {
+      for (const id of graph.organizations.find((o) => o.id === subject.id)
+        ?.memberIds ?? [])
+        targets.set("users:" + id, {
+          id,
+          name: graph.users.find((u) => u.id === id)?.name ?? id,
+          type: "users",
+        });
+    } else
+      targets.set(subject.type + ":" + subject.id, {
+        id: subject.id,
+        name: subject.name,
+        type: subject.type,
+      });
+  }
+  const actions = [
+    ...new Set(affected.flatMap((p) => grants(p).map((g) => actionKey(g.ref)))),
+  ];
+  const results = [...targets.values()].flatMap((person) => {
+    const roles = graph.roles.filter((r) =>
+      person.type === "users"
+        ? r.userIds.includes(person.id) ||
+          r.organizationIds.some((id) =>
+            graph.organizations
+              .find((o) => o.id === id)
+              ?.memberIds.includes(person.id),
+          )
+        : graph.serviceAccounts
+            ?.find((a) => a.id === person.id)
+            ?.roleIds.includes(r.id),
+    );
+    const ids = new Set(
+      roles
+        .flatMap((r) => r.bindings)
+        .filter((b) => !b.expiresAt || Date.parse(b.expiresAt) > now)
+        .map((b) => b.policyId),
+    );
+    return actions.map((action) => {
+      const before = evaluate(
+        plan.before,
+        plan.before.filter((e) => e.kind === "policies" && ids.has(e.id)),
+        action,
+      );
+      const after = evaluate(
+        plan.after,
+        plan.after.filter((e) => e.kind === "policies" && ids.has(e.id)),
+        action,
+      );
+      const data = (value: typeof before) =>
+        JSON.stringify(
+          value.rows.map((r) => ({
+            field: r.field,
+            mode: r.mode,
+            rule: r.rule,
+          })),
+        );
+      return {
+        id: person.type + person.id + action,
+        person: person.name,
+        action:
+          plan.after.find((e) => e.key === action)?.name ??
+          plan.before.find((e) => e.key === action)?.name ??
+          action,
+        before,
+        after,
+        change:
+          before.allowed !== after.allowed
+            ? after.allowed
+              ? "접근 확대"
+              : "접근 축소"
+            : data(before) !== data(after)
+              ? "데이터 범위 변경"
+              : "평가 기준 유지",
+      };
+    });
+  });
+  return (
+    <section className="ui-layout-stack">
+      <h3>{t("변경 전후 접근 결과")}</h3>
+      <p>
+        {t(
+          "제공된 조직 구성원과 모든 역할의 정책을 함께 평가합니다. 플랫폼 멤버십·외부 조건은 포함되지 않은 사전 검토 결과입니다.",
+        )}
+      </p>
+      <BrowseTable
+        title={t("대상별 업무 변화")}
+        rows={results}
+        searchText={(r) => r.person + r.action + r.change}
+        sortValue={(r) => r.person}
+        columns={[
+          { key: "person", header: t("대상"), render: (r) => r.person },
+          { key: "action", header: t("업무"), render: (r) => r.action },
+          {
+            key: "before",
+            header: t("변경 전"),
+            render: (r) => t(r.before.allowed ? "허용" : "거부"),
+          },
+          {
+            key: "after",
+            header: t("변경 후"),
+            render: (r) => t(r.after.allowed ? "허용" : "거부"),
+          },
+          {
+            key: "change",
+            header: t("변화"),
+            render: (r) => (
+              <details>
+                <summary>{t(r.change)}</summary>
+                {[r.before, r.after].map((v, i) => (
+                  <div key={i}>
+                    <strong>{t(i ? "변경 후" : "변경 전")}</strong>
+                    <p>
+                      {t(v.allowed ? "허용" : "거부")} · {v.reason}
+                    </p>
+                    {v.rows.map((f) => (
+                      <p key={f.field}>
+                        {f.field}:{" "}
+                        {t(
+                          (
+                            {
+                              plain: "원문",
+                              masked: "마스킹",
+                              unmask: "마스킹 해제",
+                              excluded: "미포함",
+                              conflict: "충돌",
+                            } as Record<string, string>
+                          )[f.mode],
+                        )}
+                        {f.rule ? " · " + JSON.stringify(f.rule) : ""}
+                      </p>
+                    ))}
+                  </div>
+                ))}
+              </details>
+            ),
+          },
+        ]}
+      />
+      <p role="status">
+        {t(
+          "관계 경로는 아래에서 확인합니다. 유지 결과는 평가한 범위에 한하며 미제공 정보까지 영향 없음으로 확정하지 않습니다.",
+        )}
+      </p>
+    </section>
+  );
+}
 function Impact({
   snapshot,
   plan,
@@ -361,6 +528,16 @@ function Impact({
             ...plan,
             changes: plan.changes.filter((c) => keys.includes(c.key)),
           }}
+        />
+      )}
+      {plan && (
+        <DefinitionOutcomes
+          snapshot={snapshot}
+          plan={plan}
+          affected={[
+            ...dependentPolicies(before, keys),
+            ...dependentPolicies(after, keys),
+          ]}
         />
       )}
       <div className="def-counts">
@@ -538,39 +715,42 @@ function Evaluator({
             <strong>{t(result.allowed ? "허용" : "거부")}</strong> ·{" "}
             {result.reason}
           </p>
-          <div className="def-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>{t("응답 필드")}</th>
-                  <th>{t("최종 처리")}</th>
-                  <th>{t("근거 정책")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {result.rows.map((r) => (
-                  <tr key={r.field}>
-                    <td>{r.field}</td>
-                    <td>
-                      {t(
-                        (
-                          {
-                            plain: "원문",
-                            masked: "마스킹",
-                            unmask: "마스킹 해제",
-                            excluded: "미포함",
-                            conflict: "충돌",
-                          } as Record<string, string>
-                        )[r.mode],
-                      )}
-                      {r.rule && ` · ${r.rule.method}`}
-                    </td>
-                    <td>{r.policies.join(", ") || "—"}</td>
+          <details className="ui-panel">
+            <summary>{t("상세 근거 및 데이터 범위")}</summary>
+            <div className="def-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>{t("응답 필드")}</th>
+                    <th>{t("최종 처리")}</th>
+                    <th>{t("근거 정책")}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {result.rows.map((r) => (
+                    <tr key={r.field}>
+                      <td>{r.field}</td>
+                      <td>
+                        {t(
+                          (
+                            {
+                              plain: "원문",
+                              masked: "마스킹",
+                              unmask: "마스킹 해제",
+                              excluded: "미포함",
+                              conflict: "충돌",
+                            } as Record<string, string>
+                          )[r.mode],
+                        )}
+                        {r.rule && ` · ${r.rule.method}`}
+                      </td>
+                      <td>{r.policies.join(", ") || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </details>
         </>
       )}
     </section>
