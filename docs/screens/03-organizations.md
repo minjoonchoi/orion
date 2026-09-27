@@ -1,6 +1,6 @@
 # 조직
 
-구현: M. 소스: `src/features/identity/screens.tsx`. 조직은 사용자 카탈로그의 소속 관계, 서비스 담당 조직, 결재선/열람자 대상으로 활용한다. 조직에 역할이 있다는 사실과 API 키를 소유한다는 사실은 다르다.
+UI 구현: 구현됨. 소스: `src/features/identity/screens.tsx`. 조직은 사용자 카탈로그의 소속 관계, 서비스 담당 조직, 결재선/열람자 대상으로 활용한다. 조직에 역할이 있다는 사실과 API 키를 소유한다는 사실은 다르다.
 
 ## ORG-01 목록 — `/organizations`
 

@@ -109,7 +109,7 @@ request 필드 선택은 Action에 없다. 임의 요청 전처리/응답 변환
 
 화면은 repository/API 응답으로 구성한다. API host는 런타임 환경·리전 설정으로 결정하고 요청 파라미터로 바꾸지 않는다. locale·설정된 세션 쿠키만 전달하고 API 실패를 데모로 대체하지 않는다. YAML에서 환경/리전을 제거한다는 결정은 글로벌 API 배포 설정까지 제거한다는 뜻이 아니다.
 
-현재 master의 `platform-directory`, `definitions`, 이전 authorization graph와 P18 `approval-workflow`는 서로 다른 read model이다. 이들 사이 운영 단일 원천/권한 평가 통합은 완료되지 않았다. UI에서 보이는 숫자가 운영 전체 권한을 입증하지 않는다. 참조 무결성, 조직 멤버십, revision/CAS, 영속 저장, Secret 쓰기·보상 및 감사는 서버 계약에서 보장한다.
+현재 `platform-directory`, `definitions`, 이전 authorization graph와 `approval-workflow`는 서로 다른 read model이다. 이들 사이 운영 단일 원천/권한 평가 통합은 완료되지 않았다. UI에서 보이는 숫자가 운영 전체 권한을 입증하지 않는다. 참조 무결성, 조직 멤버십, revision/CAS, 영속 저장, Secret 쓰기·보상 및 감사는 서버 계약에서 보장한다.
 
 ## 통합 HTML과 테스트 세션
 

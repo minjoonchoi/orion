@@ -2,7 +2,7 @@
 
 ## 경로 대응표
 
-기준 master의 모든 page.tsx 경로와 P18 신규 `/approvals/new`를 대조했다. `[id]`는 실제 라우트 파일 표기이며 기획서의 `{workspaceId}~{pageId}` 등은 그 안에 들어갈 복합 식별자다. 같은 URL의 일반/결재 관리 정책·역할은 변형 화면으로 구분한다.
+현재 page.tsx 경로와 화면 ID의 대응을 관리한다. `[id]`는 실제 라우트 파일 표기이며 기획서의 `{workspaceId}~{pageId}` 등은 그 안에 들어갈 복합 식별자다. 같은 URL의 일반/결재 관리 정책·역할은 변형 화면으로 구분한다.
 
 | URL                                                | 화면 ID              | 기획서                                               |
 | -------------------------------------------------- | -------------------- | ---------------------------------------------------- |
@@ -18,7 +18,7 @@
 | `/approval-templates/[id]`                         | TPL-02               | [12-approval-templates.md](12-approval-templates.md) |
 | `/approvals`                                       | APR-01               | [13-approvals.md](13-approvals.md)                   |
 | `/approvals/[id]`                                  | APR-03               | [13-approvals.md](13-approvals.md)                   |
-| `/approvals/new`                                   | APR-02 (P18)         | [13-approvals.md](13-approvals.md)                   |
+| `/approvals/new`                                   | APR-02               | [13-approvals.md](13-approvals.md)                   |
 | `/audit-logs`                                      | COM-09 (placeholder) | [00-common.md](00-common.md)                         |
 | `/components`                                      | COM-09 (개발용)      | [00-common.md](00-common.md)                         |
 | `/domains`                                         | DOM-01               | [08-domains.md](08-domains.md)                       |
@@ -71,7 +71,7 @@
 
 ## 핵심 시나리오와 완료 조건
 
-각 행의 ‘확인’은 기획의 수용 기준이다. 아래 표가 모두 실제 운영 환경에서 실행되었다는 뜻은 아니다. 이번 문서 PR에서는 경로·문서 링크·명세 대응을 검증한다.
+각 행의 ‘확인’은 기획의 수용 기준이다. 아래 표가 모두 실제 운영 환경에서 실행되었다는 뜻은 아니다.
 
 | 검수 ID | 화면                   | 시나리오 / 기대 결과                                                                                 |
 | ------- | ---------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -94,16 +94,13 @@
 | QA-17   | KEY-06                 | Secret 실패/중복 실행/timeout 후 재시도에서 중복 키·권한 없음. 다른 Secret 필드 보존                 |
 | QA-18   | 전체                   | 한/영, 날짜, 빈 상태, 키보드/모달 포커스, 모바일, ID/hash 넘침, 민감정보 미노출                      |
 
-## 검증 근거와 범위
+## 검증 방법과 범위
 
-- master 소스: `src/config/navigation.ts`, `src/app`, `src/features/identity`, `platforms`, `definitions`, `service-accounts`, 공통 UI.
-- P18 소스: [approval-workflow](https://github.com/minjoonchoi/orion/tree/20f1da401851007852ed8cfe4a0ff602636362d4/src/features/approval-workflow), [캡처 스크립트](https://github.com/minjoonchoi/orion/blob/20f1da401851007852ed8cfe4a0ff602636362d4/scripts/approval-workflow-screens.mjs).
-- 앞선 구현 PR의 테스트 결과는 해당 PR에 기록되어 있다. 이 문서 PR은 기능 코드를 변경하지 않으며 기존 검증을 이번에 재실행한 것처럼 서술하지 않는다.
-- 실제 OIDC·인가·Cloud Config·AWS·분산 실패 복구는 각각 별도 서버 통합 검수가 필요하다. [미완료 표](15-gaps-and-decisions.md)의 항목을 해결한 뒤 운영 완료로 전환한다.
-
-## CI 회귀 정비 — 2026-09-26
-
-[회귀 검증 기록](../ci-regression-2026-09-26.md). 최초 PR #18/#19 CI는 각각 E2E 13건이 실패했다. 플랫폼 개편 전 진입점/표 제목/URL을 최신 요구에 맞추고, 현재 사용자 부여·정의 Sync·API directory 계약을 검증하도록 갱신한다. ROL-04/05의 미완료 편집기와 directory↔definitions 통합은 여전히 GAP-02~04이며 통과한 테스트로 완료를 주장하지 않는다. 만료·정책 해제의 모델 단위 검증은 유지한다.
+- 메뉴·라우트: `src/config/navigation.ts`, `src/app`과 위 대응표를 대조한다.
+- 업무 모델·화면: `src/features/platforms`, `src/features/definitions`, `src/features/approval-workflow` 및 관련 테스트를 확인한다.
+- 검사: `npm run check`, `npm run build`, `npm run test:e2e`, `npm run test:api`, `npm run demo:check`.
+- 실제 실행 결과는 [날짜별 검증 기록](../reviews/README.md)에 대상 revision·환경과 함께 기록한다. 이 검수표 자체는 통과 보고서가 아니다.
+- 조직·정책 편집과 directory↔definitions 통합은 GAP-02~04다. 다른 모델의 단위 테스트 통과로 해당 화면의 구현 완료를 주장하지 않는다.
 
 ## 통합 HTML 수용 기준
 

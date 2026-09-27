@@ -1,6 +1,6 @@
 # 사용자
 
-구현: M. 소스: `src/features/identity/screens.tsx`, `src/features/platforms/screens.tsx`. 사용자 정보는 닉네임·이메일·재직/휴직 상태만을 업무 속성으로 보유한다. ID는 내부 참조키다. API 키·결재를 사용자 소유 목록으로 표시하지 않는다.
+UI 구현: 구현됨. 소스: `src/features/identity/screens.tsx`, `src/features/platforms/screens.tsx`. 사용자 정보는 닉네임·이메일·재직/휴직 상태만을 업무 속성으로 보유한다. ID는 내부 참조키다. API 키·결재를 사용자 소유 목록으로 표시하지 않는다.
 
 ## USR-01 목록 — `/users`
 

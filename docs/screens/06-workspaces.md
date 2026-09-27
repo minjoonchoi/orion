@@ -1,6 +1,6 @@
 # 워크스페이스와 페이지
 
-구현: M. 소스: `src/features/definitions/screen.tsx`, `config/definitions/*.yaml`. 워크스페이스는 플랫폼의 UI 공간, 페이지는 그 하위 화면 정의다. YAML은 workspace 문서에 pages를 포함하지만 조회·Sync·이력은 정규화된 개별 항목 기준이다.
+UI 구현: 구현됨. 소스: `src/features/definitions/screen.tsx`, `config/definitions/*.yaml`. 워크스페이스는 플랫폼의 UI 공간, 페이지는 그 하위 화면 정의다. YAML은 workspace 문서에 pages를 포함하지만 조회·Sync·이력은 정규화된 개별 항목 기준이다.
 
 ## WSP-01 목록 — `/workspaces`
 

@@ -1,6 +1,6 @@
 # 변경 관리: YAML diff·영향도·Sync·롤백
 
-구현: M. `/resources`가 리소스 관리와 Sync를 통합한다. Argo는 동작 예시였으며 제품 의존성/메뉴가 아니다. Git merge 이후 Cloud Config의 변경 정의를 가져오는 서버 파이프라인을 전제로 하되 **명시적 Sync 이전에는 적용하지 않는다**.
+UI 구현: 구현됨. `/resources`가 리소스 관리와 Sync를 통합한다. Argo는 동작 예시였으며 제품 의존성/메뉴가 아니다. Git merge 이후 Cloud Config의 변경 정의를 가져오는 서버 파이프라인을 전제로 하되 **명시적 Sync 이전에는 적용하지 않는다**.
 
 ## CHG-01 통합 목록 — `/resources`
 
