@@ -1,7 +1,23 @@
 export const navigationGroups = [
   {
+    id: "my-access",
+    label: "내 업무",
+    items: [
+      {
+        href: "/my-access",
+        label: "내 접근 권한",
+        description: "보유 권한과 권한 신청을 확인합니다.",
+      },
+      {
+        href: "/approvals",
+        label: "결재",
+        description: "결재 요청 정보와 처리 결과를 조회합니다.",
+      },
+    ],
+  },
+  {
     id: "identity",
-    label: "사용자·조직",
+    label: "플랫폼·계정",
     items: [
       {
         href: "/platforms",
@@ -24,6 +40,11 @@ export const navigationGroups = [
         label: "서비스 어카운트",
         description: "서비스 어카운트 정보와 관련된 역할·API 키를 조회합니다.",
       },
+      {
+        href: "/api-keys",
+        label: "API 키",
+        description: "API 키 정보와 결재 이력을 조회합니다.",
+      },
     ],
   },
   {
@@ -35,11 +56,22 @@ export const navigationGroups = [
         label: "역할",
         description: "역할에 관련된 사용자, 조직과 정책을 조회합니다.",
       },
+      {
+        href: "/policies",
+        label: "정책",
+        description:
+          "정책에 대상 서비스, 엔드포인트와 워크스페이스를 조회합니다.",
+      },
+      {
+        href: "/access-check",
+        label: "접근 확인",
+        description: "사용자와 업무의 접근 가능 여부를 확인합니다.",
+      },
     ],
   },
   {
     id: "resources",
-    label: "리소스",
+    label: "리소스 관리",
     items: [
       {
         href: "/workspaces",
@@ -56,38 +88,16 @@ export const navigationGroups = [
         label: "업무 도메인",
         description: "도메인별 Action과 관계 엔드포인트를 탐색합니다.",
       },
-      {
-        href: "/policies",
-        label: "정책",
-        description:
-          "정책에 대상 서비스, 엔드포인트와 워크스페이스를 조회합니다.",
-      },
+    ],
+  },
+  {
+    id: "operations",
+    label: "설정 운영",
+    items: [
       {
         href: "/resources",
         label: "변경 관리",
         description: "정책과 리소스의 변경사항을 검토하고 적용합니다.",
-      },
-    ],
-  },
-  {
-    id: "api-access",
-    label: "API 접근",
-    items: [
-      {
-        href: "/api-keys",
-        label: "API 키",
-        description: "API 키 정보와 결재 이력을 조회합니다.",
-      },
-    ],
-  },
-  {
-    id: "approvals",
-    label: "결재",
-    items: [
-      {
-        href: "/approvals",
-        label: "결재",
-        description: "결재 요청 정보와 처리 결과를 조회합니다.",
       },
     ],
   },

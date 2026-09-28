@@ -1,4 +1,6 @@
 "use client";
+import { AccessSummary } from "../access-ui/screens";
+import { useAccess } from "../access-ui/store";
 import { Memberships, UserPlatformRoles } from "../platforms/screens";
 import { userRoleIds, type Directory } from "../platforms/model";
 import type { RelatedGroup } from "../relationships/repository";
@@ -274,21 +276,27 @@ function Roles({ rows }: { rows: Role[] }) {
 }
 export function UserScreen({
   data,
-  directory,
+  directory: initial,
 }: {
   data: UserDetail;
   directory: Directory;
 }) {
+  const { directory } = useAccess(initial);
   const { t } = useI18n();
   const { user: u, organizations } = data;
   return (
-    <>
+    <div className="ui-layout-stack">
       <Breadcrumbs
         items={[{ label: t("사용자"), href: "/users" }, { label: u.name }]}
       />
       <PageHeading title={u.name} description={u.email} />
       <DetailTabs
         items={[
+          {
+            value: "access",
+            label: "권한 종합",
+            content: <AccessSummary d={directory} userId={u.id} />,
+          },
           {
             value: "info",
             label: t("기본 정보"),
@@ -358,7 +366,7 @@ export function UserScreen({
           },
         ]}
       />
-    </>
+    </div>
   );
 }
 export function OrganizationScreen({

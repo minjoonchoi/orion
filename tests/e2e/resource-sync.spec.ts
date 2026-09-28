@@ -27,6 +27,13 @@ test("stale definition preview cannot overwrite a concurrent sync", async ({
     "버전이 변경되었습니다",
   );
   await page.reload();
+  await page
+    .locator("details")
+    .filter({ has: page.locator("summary", { hasText: /^응답 필드$/ }) })
+    .first()
+    .evaluate((e) => {
+      (e as HTMLDetailsElement).open = true;
+    });
   await expect(
     page.getByRole("row").filter({ hasText: "/phone" }),
   ).toContainText("미포함");

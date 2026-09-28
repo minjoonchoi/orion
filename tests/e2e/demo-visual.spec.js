@@ -10,6 +10,18 @@ const approved = fs.existsSync("docs/demo/approved.html")
   : "docs/demo/orion.html";
 for (const screen of screens.filter((s) =>
   [
+    "ME-01-ACCESS",
+    "USR-03-ACCESS",
+    "PLT-05-MEMBERS",
+    "PLT-05-REVIEW",
+    "ROL-05-POLICIES",
+    "ROL-05-EDITOR",
+    "CHK-01-ALLOW",
+    "CHK-01-DENY",
+    "REQ-01-FORM",
+    "REQ-01-REVIEW",
+    "REQ-02-SUBMITTED",
+    "SYNC-OUTCOMES",
     "USR-01",
     "USR-02",
     "ORG-02",

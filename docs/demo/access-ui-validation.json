@@ -1,0 +1,73 @@
+{
+  "checks": [
+    "멤버 중지 → 같은 사용자의 접근 거부, 페이지 간 상태 공유",
+    "다른 플랫폼 멤버 상태 보존",
+    "정책 해제 → 접근 결과 갱신",
+    "역할 생성 → 신규 상세 이동",
+    "신청 제출 → 내 신청 내역",
+    "신청만으로 권한 부여되지 않음",
+    "진행 중인 동일 역할 신청 차단",
+    "신청 취소 확인 → 상태 반영",
+    "새로고침 시 검토용 메모리 상태 초기화",
+    "6개 주요 화면 자동 접근성·모바일 가로 넘침 검사"
+  ],
+  "errors": [],
+  "accessibility": [
+    {
+      "route": "/platforms/orion",
+      "violations": []
+    },
+    {
+      "route": "/roles/role-platform?tab=policies",
+      "violations": []
+    },
+    {
+      "route": "/users/usr-001?tab=access",
+      "violations": []
+    },
+    {
+      "route": "/access-check",
+      "violations": []
+    },
+    {
+      "route": "/access-requests/new",
+      "violations": []
+    },
+    {
+      "route": "/my-access",
+      "violations": []
+    }
+  ],
+  "viewports": [
+    {
+      "route": "/platforms/orion",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "route": "/roles/role-platform?tab=policies",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "route": "/users/usr-001?tab=access",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "route": "/access-check",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "route": "/access-requests/new",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "route": "/my-access",
+      "width": 390,
+      "scroll": 390
+    }
+  ]
+}

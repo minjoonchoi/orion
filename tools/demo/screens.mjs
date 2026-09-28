@@ -41,6 +41,28 @@ export const screens = [
   ["KEY-03-REVIEW", "/api-keys", "issuance-review"],
   ["SYNC-REVIEW", "/policies/policy-platform", "sync-review"],
   ["SYNC-IMPACT", "/policies/policy-platform", "sync-impact"],
+  ...[
+    ["PLT-05-MEMBERS", "/platforms/orion?tab=members"],
+    ["PLT-05-REVIEW", "/platforms/orion?tab=members", "member-review"],
+    ["ROL-05-POLICIES", "/roles/role-platform?tab=policies"],
+    ["ROL-05-EDITOR", "/roles/role-platform?tab=policies", "role-policy-edit"],
+    ["USR-03-ACCESS", "/users/usr-001?tab=access"],
+    [
+      "CHK-01-ALLOW",
+      "/access-check?user=usr-001&platform=orion&action=identity~read-hr",
+      "access-allow",
+    ],
+    [
+      "CHK-01-DENY",
+      "/access-check?user=usr-006&platform=orion&action=identity~read-hr",
+      "access-deny",
+    ],
+    ["REQ-01-FORM", "/access-requests/new", "request-form"],
+    ["REQ-01-REVIEW", "/access-requests/new", "request-review"],
+    ["REQ-02-SUBMITTED", "/access-requests/new", "request-submit"],
+    ["ME-01-ACCESS", "/my-access"],
+    ["SYNC-OUTCOMES", "/policies/policy-platform", "sync-outcomes"],
+  ],
 ].map(([id, route, action]) => ({ id, route, action: action ?? null }));
 export const viewport = { width: 1440, height: 1100 };
 export async function prepare(page, screen, base) {
@@ -50,6 +72,50 @@ export async function prepare(page, screen, base) {
   await page
     .getByText("불러오는 중…", { exact: true })
     .waitFor({ state: "hidden" });
+  if (screen.action === "member-review") {
+    await page
+      .getByRole("checkbox", { name: "김다온 선택", exact: true })
+      .check();
+    await page.getByRole("button", { name: "중지", exact: true }).click();
+    await page
+      .getByRole("textbox", { name: "변경 사유", exact: true })
+      .fill("담당 업무 변경에 따른 플랫폼 접근 중지");
+    await page
+      .getByRole("button", { name: "변경 내용 검토", exact: true })
+      .click();
+  }
+  if (screen.action === "role-policy-edit") {
+    await page
+      .getByRole("button", { name: "정책 및 만료 관리", exact: true })
+      .click();
+    await page
+      .getByLabel("인사 사용자 상세 조회 만료일", { exact: true })
+      .fill("2026-12-31");
+  }
+  if (screen.action?.startsWith("access-")) {
+    await page.getByRole("button", { name: "접근 확인", exact: true }).click();
+  }
+  if (screen.action?.startsWith("request-")) {
+    await page
+      .getByRole("combobox", { name: "신청 역할", exact: true })
+      .selectOption("role-security");
+    await page.getByLabel("사용 종료일", { exact: true }).fill("2026-12-31");
+    await page
+      .getByRole("textbox", { name: "신청 사유", exact: true })
+      .fill("4분기 보안 점검 업무를 위해 검토 내역 조회 권한이 필요합니다.");
+    if (screen.action !== "request-form")
+      await page
+        .getByRole("button", { name: "신청 내용 검토", exact: true })
+        .click();
+    if (screen.action === "request-submit") {
+      await page
+        .getByRole("button", { name: "신청 제출", exact: true })
+        .click();
+      await page
+        .getByRole("heading", { name: "내 접근 권한", exact: true })
+        .waitFor();
+    }
+  }
   if (screen.action?.startsWith("issuance")) {
     await page.getByRole("button", { name: "발급 요청", exact: true }).click();
     const dialog = page.getByRole("dialog");
@@ -76,7 +142,11 @@ export async function prepare(page, screen, base) {
     await page
       .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
       .click();
-    if (screen.action === "sync-impact")
+    if (screen.action === "sync-impact" || screen.action === "sync-outcomes")
       await page.getByRole("tab", { name: "영향도", exact: true }).click();
+    if (screen.action === "sync-outcomes")
+      await page
+        .getByRole("heading", { name: "변경 전후 접근 결과", exact: true })
+        .scrollIntoViewIfNeeded();
   }
 }

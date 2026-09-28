@@ -11,24 +11,18 @@ test("role user review preserves membership and allows add/remove from role deta
   );
   await expect(dialog).toContainText("Orion");
   await expect(dialog).toContainText("플랫폼 관리자");
-  await expect(
-    dialog.getByRole("link", { name: "인사 사용자 상세 조회" }),
-  ).toHaveAttribute("href", "/policies/policy-platform");
-  await expect(dialog).toContainText("플랫폼 멤버십은 변경하지 않습니다.");
+  await expect(dialog).toContainText("플랫폼 멤버십은 유지합니다.");
   await dialog.getByRole("button", { name: "이전", exact: true }).click();
-  await expect(dialog.getByRole("checkbox")).toBeChecked();
-  await dialog.getByRole("button", { name: "변경사항 및 영향도 검토" }).click();
+  await expect(
+    dialog.getByRole("checkbox", { name: "송유진", exact: true }),
+  ).toBeChecked();
+  await dialog.getByRole("button", { name: "변경 내용 검토" }).click();
   await applyRoleUser(page);
+  const table = page.getByRole("table", { name: "역할 사용자", exact: true });
+  await expect(table).toContainText("member14@example.test");
   await expect(
-    page.getByRole("table", { name: "사용자 목록", exact: true }),
-  ).toContainText("member14@example.test");
-  await page.goto("/users/usr-014?tab=roles");
-  await expect(
-    page.getByRole("table", { name: "플랫폼 역할 목록", exact: true }),
-  ).toContainText("플랫폼 관리자");
-  await expect(
-    page.getByRole("tab", { name: "플랫폼 (0)", exact: true }),
-  ).toBeVisible();
+    table.getByRole("row").filter({ hasText: "송유진" }),
+  ).toContainText("미가입");
   await selectRoleUser(
     page,
     "role-platform",
@@ -36,26 +30,23 @@ test("role user review preserves membership and allows add/remove from role deta
     "remove",
   );
   await applyRoleUser(page);
-  await page.goto("/users/usr-014?tab=roles");
-  await expect(
-    page.getByRole("heading", { name: "항목이 없습니다" }),
-  ).toBeVisible();
+  await expect(table).not.toContainText("member14@example.test");
+  await expect(table).toContainText("member1@example.test");
 });
-test("scoped organization and policy tabs are read-only until editors are integrated", async ({
+test("scoped organization and policy tabs expose explicit editors", async ({
   page,
 }) => {
-  // ROL-04/05, GAP-04: expiry/model tests remain in authorization/model.test.ts.
   for (const tab of ["organizations", "policies"]) {
     await page.goto(`/roles/role-platform?tab=${tab}`);
     await expect(page.getByRole("tabpanel")).toContainText(
       tab === "policies" ? "인사 사용자 상세 조회" : "플랫폼개발팀",
     );
     await expect(
-      page.getByRole("button", { name: "역할 부여 관리", exact: true }),
-    ).toHaveCount(0);
-    await expect(
-      page.getByRole("button", { name: "사용자 추가", exact: true }),
-    ).toHaveCount(0);
+      page.getByRole("button", {
+        name: tab === "policies" ? "정책 및 만료 관리" : "조직 부여 관리",
+        exact: true,
+      }),
+    ).toBeVisible();
   }
 });
 test("policy definitions are read-only and use common sync review", async ({
@@ -77,16 +68,14 @@ test("logout clears demo session and keeps locale; common denied screen is acces
   page,
   context,
 }) => {
-  await selectRoleUser(page, "role-platform", "member14@example.test");
-  await applyRoleUser(page);
-  await page.goto("/policies/policy-platform");
-  await expect(page.locator(".sync-status")).toHaveText("Out of sync");
-  expect(
-    (await context.cookies()).some((c) => c.name === "orion-platform-demo"),
-  ).toBe(true);
-  expect(
-    (await context.cookies()).some((c) => c.name === "orion-demo-access"),
-  ).toBe(true);
+  await context.addCookies(
+    ["orion-platform-demo", "orion-demo-access"].map((name) => ({
+      name,
+      value: "logout-test",
+      domain: "127.0.0.1",
+      path: "/",
+    })),
+  );
   await page.goto("/forbidden");
   await expect(
     page.getByRole("heading", { name: "접근 권한이 없습니다" }),
@@ -131,9 +120,16 @@ test("role removal review keeps unrelated platform roles and memberships", async
     "member1@example.test",
     "remove",
   );
-  await expect(dialog).toContainText("다른 역할과 플랫폼 멤버십은 유지합니다.");
+  await expect(dialog).toContainText(
+    "다른 역할의 부여와 플랫폼 멤버십은 유지합니다.",
+  );
   await applyRoleUser(page);
-  await page.goto("/users/usr-001?tab=roles");
+  await page
+    .getByRole("navigation", { name: "주 메뉴" })
+    .getByRole("link", { name: "사용자", exact: true })
+    .click();
+  await page.getByRole("link", { name: "김가람", exact: true }).click();
+  await page.getByRole("tab", { name: /^역할 \(/ }).click();
   await expect(
     page.getByRole("tab", { name: "플랫폼 (2)", exact: true }),
   ).toBeVisible();

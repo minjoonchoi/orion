@@ -12,6 +12,7 @@ import {
   type ImpactSubject,
 } from "./subject-impact";
 import "./subject-impact.css";
+import { ImpactOutcomes } from "./impact-outcomes";
 const labels: Record<SubjectKind, string> = {
   users: "사용자",
   organizations: "조직",
@@ -51,6 +52,7 @@ export function SubjectImpact({
   const current = Math.min(page, pages);
   return (
     <section className="subject-impact" aria-label={t("영향받는 대상")}>
+      <ImpactOutcomes before={graph} after={afterGraph} subjects={subjects} />
       <h3>{t(afterGraph ? "변경으로 영향받는 대상" : "영향받는 대상")}</h3>
       <dl className="subject-counts" aria-label={t("영향 대상 요약")}>
         {kinds.map((k) => (

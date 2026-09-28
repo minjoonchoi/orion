@@ -93,7 +93,7 @@ try {
       const file = id + ".png";
       const image = await page.screenshot({
         animations: "disabled",
-        fullPage: !screen.action,
+        fullPage: (await page.getByRole("dialog").count()) === 0,
       });
       const digest = hash(image);
       const old = previous?.screens.find((s) => s.id === id);

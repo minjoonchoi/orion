@@ -1,0 +1,1063 @@
+{
+  "inputs": {
+    "html": "69fac81839504188636b0b27529c164689cf8b581a66e391aefeeed7b2ad1a5f",
+    "registry": "0bb6525d5d9b3ce2f9de87979c8d47f49c1b93ab80a6e26dc77e83b16f294f71",
+    "capture": "fc4c03f653b47be73f0f629345ec6af194219de96f2c3ecdf51d6d21c1f00493",
+    "viewport": {
+      "width": 1440,
+      "height": 1100
+    },
+    "locale": "ko-KR"
+  },
+  "screens": [
+    {
+      "id": "HOME-01",
+      "route": "/",
+      "action": null,
+      "state": "default",
+      "file": "HOME-01.png",
+      "sha256": "3b1385ae4e6764abbfd553eebbca9078696d10526d11324b5268e436bea0ad18"
+    },
+    {
+      "id": "AUTH-01",
+      "route": "/login",
+      "action": null,
+      "state": "default",
+      "file": "AUTH-01.png",
+      "sha256": "bd1231c07d4f4d8e68a338f5ed4758fc95d455313e6eed91d9f1fb19ee2177e3"
+    },
+    {
+      "id": "COM-403",
+      "route": "/forbidden",
+      "action": null,
+      "state": "default",
+      "file": "COM-403.png",
+      "sha256": "042b1ab913e577dab3b88d94b7e83bb5ad820fdeba046e2fc088855af0893e79"
+    },
+    {
+      "id": "PLT-01",
+      "route": "/platforms",
+      "action": null,
+      "state": "default",
+      "file": "PLT-01.png",
+      "sha256": "af7f109671882ff2585e0c2785768dda14aac253d1ab353e5c62658352cc9499"
+    },
+    {
+      "id": "PLT-02",
+      "route": "/platforms/orion",
+      "action": null,
+      "state": "default",
+      "file": "PLT-02.png",
+      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+    },
+    {
+      "id": "PLT-02-TAB-1",
+      "route": "/platforms/orion",
+      "action": null,
+      "state": "멤버 (3)",
+      "file": "PLT-02-TAB-1.png",
+      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+    },
+    {
+      "id": "PLT-02-TAB-2",
+      "route": "/platforms/orion",
+      "action": null,
+      "state": "워크스페이스 (3)",
+      "file": "PLT-02-TAB-2.png",
+      "sha256": "79eb9bbdf580f29edc4c92daf1b79b65fa9a019eacfd3a3ab7595fd9f6e62a1e"
+    },
+    {
+      "id": "PLT-02-TAB-3",
+      "route": "/platforms/orion",
+      "action": null,
+      "state": "역할 (5)",
+      "file": "PLT-02-TAB-3.png",
+      "sha256": "5c002775cde7a67dbfab4f64d728d6fc0658c25ed59715ebaf86d73bcfda090f"
+    },
+    {
+      "id": "PLT-02-TAB-4",
+      "route": "/platforms/orion",
+      "action": null,
+      "state": "인증 설정",
+      "file": "PLT-02-TAB-4.png",
+      "sha256": "d5dd09f29f2caf4c75b8807d2dfb856b621a1e34165e0d1e542a9b419e06d982"
+    },
+    {
+      "id": "USR-01",
+      "route": "/users",
+      "action": null,
+      "state": "default",
+      "file": "USR-01.png",
+      "sha256": "fb5bd67d765f7befb803029f8f9972e3b9d098afd60fbbcb24820d3e073202b2"
+    },
+    {
+      "id": "USR-02",
+      "route": "/users/usr-001",
+      "action": null,
+      "state": "default",
+      "file": "USR-02.png",
+      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+    },
+    {
+      "id": "USR-02-TAB-1",
+      "route": "/users/usr-001",
+      "action": null,
+      "state": "권한 종합",
+      "file": "USR-02-TAB-1.png",
+      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+    },
+    {
+      "id": "USR-02-TAB-2",
+      "route": "/users/usr-001",
+      "action": null,
+      "state": "플랫폼 (2)",
+      "file": "USR-02-TAB-2.png",
+      "sha256": "b3fffce411f60b0f2d732b1a60151d135f4cd7b78022e4433f284b87bc5a881c"
+    },
+    {
+      "id": "USR-02-TAB-3",
+      "route": "/users/usr-001",
+      "action": null,
+      "state": "소속 조직 (2)",
+      "file": "USR-02-TAB-3.png",
+      "sha256": "871923e0122c00e1fdb6cf79bceaa79a48afb8f2152165a14000ba87a2fd7d94"
+    },
+    {
+      "id": "USR-02-TAB-4",
+      "route": "/users/usr-001",
+      "action": null,
+      "state": "역할 (2)",
+      "file": "USR-02-TAB-4.png",
+      "sha256": "a51b9a18de36ff8681b07eabcf05fc0a9ad61eafc96bb3b3c6d1f2440fc02e7d"
+    },
+    {
+      "id": "ORG-01",
+      "route": "/organizations",
+      "action": null,
+      "state": "default",
+      "file": "ORG-01.png",
+      "sha256": "2fab5d3e95ccdea1b4de28c91661b808c5209272e931c1a3ae8c7b676f3e2b34"
+    },
+    {
+      "id": "ORG-02",
+      "route": "/organizations/org-platform",
+      "action": null,
+      "state": "default",
+      "file": "ORG-02.png",
+      "sha256": "5c664842d56c95b601e5dbcfca54abbcdd21bf27a274cf25fc4e02cf4d7919a5"
+    },
+    {
+      "id": "ORG-02-TAB-1",
+      "route": "/organizations/org-platform",
+      "action": null,
+      "state": "멤버 (7)",
+      "file": "ORG-02-TAB-1.png",
+      "sha256": "5c664842d56c95b601e5dbcfca54abbcdd21bf27a274cf25fc4e02cf4d7919a5"
+    },
+    {
+      "id": "ORG-02-TAB-2",
+      "route": "/organizations/org-platform",
+      "action": null,
+      "state": "서비스 어카운트 (2)",
+      "file": "ORG-02-TAB-2.png",
+      "sha256": "8d15c4fa18d2a23e2de8db12bb1711c5c4d5916f83924998822bdaf68c5a8e4b"
+    },
+    {
+      "id": "ORG-02-TAB-3",
+      "route": "/organizations/org-platform",
+      "action": null,
+      "state": "관리 서비스 (2)",
+      "file": "ORG-02-TAB-3.png",
+      "sha256": "c6c9d0e045960da98e6175dec830a3875986f247c03949492161032de5c605be"
+    },
+    {
+      "id": "ORG-02-TAB-4",
+      "route": "/organizations/org-platform",
+      "action": null,
+      "state": "역할 (2)",
+      "file": "ORG-02-TAB-4.png",
+      "sha256": "0bed704360d3cc8aa9e24f6bf89553643cc586bfdd4c977fb4c8dc528fb67a5b"
+    },
+    {
+      "id": "SA-01",
+      "route": "/service-accounts",
+      "action": null,
+      "state": "default",
+      "file": "SA-01.png",
+      "sha256": "9136533dd95f02db711daba5059f4dd03c47b83698457c2825ef8d7ffe56c979"
+    },
+    {
+      "id": "SA-02",
+      "route": "/service-accounts/sa-platform-ci",
+      "action": null,
+      "state": "default",
+      "file": "SA-02.png",
+      "sha256": "a4216d21b3ed41b5e3ba50cb5e49c11731d385087544ce4cf4bf47dbb4a4af0d"
+    },
+    {
+      "id": "SA-02-TAB-1",
+      "route": "/service-accounts/sa-platform-ci",
+      "action": null,
+      "state": "역할 (2)",
+      "file": "SA-02-TAB-1.png",
+      "sha256": "a4216d21b3ed41b5e3ba50cb5e49c11731d385087544ce4cf4bf47dbb4a4af0d"
+    },
+    {
+      "id": "SA-02-TAB-2",
+      "route": "/service-accounts/sa-platform-ci",
+      "action": null,
+      "state": "API 키 (2)",
+      "file": "SA-02-TAB-2.png",
+      "sha256": "b353014ebd0819ab9a77b52b11cf8bcad7ecc40c673f081b512223f1e1d59bd5"
+    },
+    {
+      "id": "ROLE-01",
+      "route": "/roles",
+      "action": null,
+      "state": "default",
+      "file": "ROLE-01.png",
+      "sha256": "ec391caf0f2310fed0764e7ea99a64de399c6f79d775ccfaf4c8d6076d184f93"
+    },
+    {
+      "id": "ROLE-02",
+      "route": "/roles/role-platform",
+      "action": null,
+      "state": "default",
+      "file": "ROLE-02.png",
+      "sha256": "463d419c57326425d8773ac57807fdaa4653a6ba2035ca1502d1383c2b444d96"
+    },
+    {
+      "id": "ROLE-02-TAB-1",
+      "route": "/roles/role-platform",
+      "action": null,
+      "state": "사용자 (1)",
+      "file": "ROLE-02-TAB-1.png",
+      "sha256": "463d419c57326425d8773ac57807fdaa4653a6ba2035ca1502d1383c2b444d96"
+    },
+    {
+      "id": "ROLE-02-TAB-2",
+      "route": "/roles/role-platform",
+      "action": null,
+      "state": "조직 (1)",
+      "file": "ROLE-02-TAB-2.png",
+      "sha256": "40acfb2b192e0e5712460dc6b485897b86f93198226ca33a356bfb617407e7a5"
+    },
+    {
+      "id": "ROLE-02-TAB-3",
+      "route": "/roles/role-platform",
+      "action": null,
+      "state": "서비스 어카운트 (1)",
+      "file": "ROLE-02-TAB-3.png",
+      "sha256": "4ff5881c56f47a18be84a3a010a9d5b3e0ffe4fd052f7c49b12433311a4a6f3d"
+    },
+    {
+      "id": "ROLE-02-TAB-4",
+      "route": "/roles/role-platform",
+      "action": null,
+      "state": "정책 (2)",
+      "file": "ROLE-02-TAB-4.png",
+      "sha256": "af1c8e9807d53ce574c6d11bc58fe8285bb646b272b7887e8d78d27089dfce1f"
+    },
+    {
+      "id": "WS-01",
+      "route": "/workspaces",
+      "action": null,
+      "state": "default",
+      "file": "WS-01.png",
+      "sha256": "e40c2c6c3fc6805fd573f05bb0a0fef8ac5c4e1e8064cd3a79f4daec6fdb5012"
+    },
+    {
+      "id": "WS-02",
+      "route": "/workspaces/platform",
+      "action": null,
+      "state": "default",
+      "file": "WS-02.png",
+      "sha256": "1bbd88d55f9643cbef7283732e6755d9dcd4f52172f82fa6197569866070d8b3"
+    },
+    {
+      "id": "WS-02-TAB-1",
+      "route": "/workspaces/platform",
+      "action": null,
+      "state": "페이지 (2)",
+      "file": "WS-02-TAB-1.png",
+      "sha256": "1bbd88d55f9643cbef7283732e6755d9dcd4f52172f82fa6197569866070d8b3"
+    },
+    {
+      "id": "WS-02-TAB-2",
+      "route": "/workspaces/platform",
+      "action": null,
+      "state": "관계 (2)",
+      "file": "WS-02-TAB-2.png",
+      "sha256": "a1a2ec48a3bae1dda76be4912ac0d2a27b9a3c922be60cef90025edd4bdae15d"
+    },
+    {
+      "id": "WS-02-TAB-3",
+      "route": "/workspaces/platform",
+      "action": null,
+      "state": "동기화 이력 (1)",
+      "file": "WS-02-TAB-3.png",
+      "sha256": "02d5f62dc346dd05dcf925b5c9fa12407da92d12160a6208ad6b8af36c9fe2dc"
+    },
+    {
+      "id": "WS-02-TAB-4",
+      "route": "/workspaces/platform",
+      "action": null,
+      "state": "YAML",
+      "file": "WS-02-TAB-4.png",
+      "sha256": "158cc099e357fc0dbfde3440cfef2c0cd1f8fac1ace03e0f0559cd03efe13945"
+    },
+    {
+      "id": "PAGE-01",
+      "route": "/pages",
+      "action": null,
+      "state": "default",
+      "file": "PAGE-01.png",
+      "sha256": "795ac43c210a166fc7d85310186e846421efff8e8eefbfd2e1698808230cd448"
+    },
+    {
+      "id": "PAGE-02",
+      "route": "/pages/platform~user-detail",
+      "action": null,
+      "state": "default",
+      "file": "PAGE-02.png",
+      "sha256": "9bea71274b43cf739f11f5645434a7cce1299fcf1fa6a4f375fa662207841ce0"
+    },
+    {
+      "id": "PAGE-02-TAB-1",
+      "route": "/pages/platform~user-detail",
+      "action": null,
+      "state": "Action (1)",
+      "file": "PAGE-02-TAB-1.png",
+      "sha256": "9bea71274b43cf739f11f5645434a7cce1299fcf1fa6a4f375fa662207841ce0"
+    },
+    {
+      "id": "PAGE-02-TAB-2",
+      "route": "/pages/platform~user-detail",
+      "action": null,
+      "state": "관계 (3)",
+      "file": "PAGE-02-TAB-2.png",
+      "sha256": "3be8ec6612132bd85e1dc8c323e1e8901dfd1dd1c99d80131bde0383948aa39b"
+    },
+    {
+      "id": "PAGE-02-TAB-3",
+      "route": "/pages/platform~user-detail",
+      "action": null,
+      "state": "동기화 이력 (1)",
+      "file": "PAGE-02-TAB-3.png",
+      "sha256": "aa049ae30f16be3ba6cc33c0e8e41052c3db764babdc45bd03679b531b117d46"
+    },
+    {
+      "id": "PAGE-02-TAB-4",
+      "route": "/pages/platform~user-detail",
+      "action": null,
+      "state": "YAML",
+      "file": "PAGE-02-TAB-4.png",
+      "sha256": "c1e1fea160ec7e755833d43c8321d6e1c40502aa5b8ad83b94f7543de4db57ff"
+    },
+    {
+      "id": "SVC-01",
+      "route": "/services",
+      "action": null,
+      "state": "default",
+      "file": "SVC-01.png",
+      "sha256": "ce2ca6f700bf4bb269b13e8761e3657ee74fd1e12bc248ae573d63af150ca2e4"
+    },
+    {
+      "id": "SVC-02",
+      "route": "/services/identity-api",
+      "action": null,
+      "state": "default",
+      "file": "SVC-02.png",
+      "sha256": "40c3c6fcb41706ad05fa2b6dade204d39d5df9bdd00ffabbc37db64e72f3254b"
+    },
+    {
+      "id": "SVC-02-TAB-1",
+      "route": "/services/identity-api",
+      "action": null,
+      "state": "엔드포인트 (1)",
+      "file": "SVC-02-TAB-1.png",
+      "sha256": "40c3c6fcb41706ad05fa2b6dade204d39d5df9bdd00ffabbc37db64e72f3254b"
+    },
+    {
+      "id": "SVC-02-TAB-2",
+      "route": "/services/identity-api",
+      "action": null,
+      "state": "관계 (1)",
+      "file": "SVC-02-TAB-2.png",
+      "sha256": "db4c66ee1b257a8fe09612b12f528ba617e224dd7a463a128627ec5cbe5ff0f1"
+    },
+    {
+      "id": "SVC-02-TAB-3",
+      "route": "/services/identity-api",
+      "action": null,
+      "state": "동기화 이력 (1)",
+      "file": "SVC-02-TAB-3.png",
+      "sha256": "8c4a2a518776660ac155f78ec4df1b0ad9301667362485784b1acda62c81a69a"
+    },
+    {
+      "id": "SVC-02-TAB-4",
+      "route": "/services/identity-api",
+      "action": null,
+      "state": "YAML",
+      "file": "SVC-02-TAB-4.png",
+      "sha256": "33b74ece6195b28adc4af3369e9683fd7c620044bddf5c7fedb34a8738b355bf"
+    },
+    {
+      "id": "EP-01",
+      "route": "/service-endpoints",
+      "action": null,
+      "state": "default",
+      "file": "EP-01.png",
+      "sha256": "da5b6d107afb587acb6c1d61bdd3a7556eeb7a8fbbb47692ca7500e09febca78"
+    },
+    {
+      "id": "EP-02",
+      "route": "/service-endpoints/identity-api~detail",
+      "action": null,
+      "state": "default",
+      "file": "EP-02.png",
+      "sha256": "929f95a49480089644f5969cce6f885279db31c9caa3866d72e292a2160966a1"
+    },
+    {
+      "id": "EP-02-TAB-1",
+      "route": "/service-endpoints/identity-api~detail",
+      "action": null,
+      "state": "요청 필드 (1)",
+      "file": "EP-02-TAB-1.png",
+      "sha256": "929f95a49480089644f5969cce6f885279db31c9caa3866d72e292a2160966a1"
+    },
+    {
+      "id": "EP-02-TAB-2",
+      "route": "/service-endpoints/identity-api~detail",
+      "action": null,
+      "state": "응답 필드 (4)",
+      "file": "EP-02-TAB-2.png",
+      "sha256": "0c0520de975fea6237e6fdf4fc6e30bec794d316bb0183fcefac99fc57ab2c6d"
+    },
+    {
+      "id": "EP-02-TAB-3",
+      "route": "/service-endpoints/identity-api~detail",
+      "action": null,
+      "state": "관계 (3)",
+      "file": "EP-02-TAB-3.png",
+      "sha256": "0969174346833acf4c48cc65c8e0435a7a2cccc15470d61a06546269ab9dcc51"
+    },
+    {
+      "id": "EP-02-TAB-4",
+      "route": "/service-endpoints/identity-api~detail",
+      "action": null,
+      "state": "동기화 이력 (1)",
+      "file": "EP-02-TAB-4.png",
+      "sha256": "6543bf4a7f9816031e71f4ee2fcdf8968812743528dae90990a5067c5c681ad1"
+    },
+    {
+      "id": "EP-02-TAB-5",
+      "route": "/service-endpoints/identity-api~detail",
+      "action": null,
+      "state": "YAML",
+      "file": "EP-02-TAB-5.png",
+      "sha256": "958f8743d189c23e5ad3701fbafa894d8478f0944f5a783df8f30edc3e7dac7b"
+    },
+    {
+      "id": "DOMAIN-01",
+      "route": "/domains",
+      "action": null,
+      "state": "default",
+      "file": "DOMAIN-01.png",
+      "sha256": "e18698970cdf49d3e11e9542aaca709021f746e74bb93aa8d2cdf15c4299645b"
+    },
+    {
+      "id": "DOMAIN-02",
+      "route": "/domains/identity",
+      "action": null,
+      "state": "default",
+      "file": "DOMAIN-02.png",
+      "sha256": "0bea575f609d446f6e1d2298b4b703315ed6af3f5bed8d62723d993f14cac430"
+    },
+    {
+      "id": "DOMAIN-02-TAB-1",
+      "route": "/domains/identity",
+      "action": null,
+      "state": "Action (3)",
+      "file": "DOMAIN-02-TAB-1.png",
+      "sha256": "0bea575f609d446f6e1d2298b4b703315ed6af3f5bed8d62723d993f14cac430"
+    },
+    {
+      "id": "DOMAIN-02-TAB-2",
+      "route": "/domains/identity",
+      "action": null,
+      "state": "관계 (3)",
+      "file": "DOMAIN-02-TAB-2.png",
+      "sha256": "b390cd451ad63eb23585964a570282053de8c4035327faa374ddb1775c44e1e3"
+    },
+    {
+      "id": "DOMAIN-02-TAB-3",
+      "route": "/domains/identity",
+      "action": null,
+      "state": "동기화 이력 (1)",
+      "file": "DOMAIN-02-TAB-3.png",
+      "sha256": "b8ea57de14f7aadf4c3a0e919fe28da301cfe0595b985392c72e9601bd471197"
+    },
+    {
+      "id": "DOMAIN-02-TAB-4",
+      "route": "/domains/identity",
+      "action": null,
+      "state": "YAML",
+      "file": "DOMAIN-02-TAB-4.png",
+      "sha256": "9c64275fabbcbbf2844023c85e0561a3762d8a2e3b3a30f6472731d9ad08c291"
+    },
+    {
+      "id": "ACTION-01",
+      "route": "/actions",
+      "action": null,
+      "state": "default",
+      "file": "ACTION-01.png",
+      "sha256": "45fda3d197160ab33bc09b490bee9994f4acc4f0cba8a079c158c12d7bc91e89"
+    },
+    {
+      "id": "ACTION-02",
+      "route": "/actions/identity~read-hr",
+      "action": null,
+      "state": "default",
+      "file": "ACTION-02.png",
+      "sha256": "1f86ce47d50e35ece9593f24f93a348fd1f100077cddc6870458ee04ae50fbaf"
+    },
+    {
+      "id": "ACTION-02-TAB-1",
+      "route": "/actions/identity~read-hr",
+      "action": null,
+      "state": "정책 (2)",
+      "file": "ACTION-02-TAB-1.png",
+      "sha256": "1f86ce47d50e35ece9593f24f93a348fd1f100077cddc6870458ee04ae50fbaf"
+    },
+    {
+      "id": "ACTION-02-TAB-2",
+      "route": "/actions/identity~read-hr",
+      "action": null,
+      "state": "관계 (5)",
+      "file": "ACTION-02-TAB-2.png",
+      "sha256": "3f1fb61c2869bdcebaa333248a54b30ebfe68571067bf61874d473bb45668436"
+    },
+    {
+      "id": "ACTION-02-TAB-3",
+      "route": "/actions/identity~read-hr",
+      "action": null,
+      "state": "동기화 이력 (1)",
+      "file": "ACTION-02-TAB-3.png",
+      "sha256": "f53f370cba20e030dcaee2e0dfdbe3701213456d0cc65c4d147e8187147ad876"
+    },
+    {
+      "id": "ACTION-02-TAB-4",
+      "route": "/actions/identity~read-hr",
+      "action": null,
+      "state": "YAML",
+      "file": "ACTION-02-TAB-4.png",
+      "sha256": "44649cc898e21344f2f337cc13ef1013fd6ac579a04b7ccc174fe5dfc477356f"
+    },
+    {
+      "id": "ACTION-02-TAB-5",
+      "route": "/actions/identity~read-hr",
+      "action": null,
+      "state": "권한 평가",
+      "file": "ACTION-02-TAB-5.png",
+      "sha256": "b901b21cd7908d76ba4bf7a0f9b254f22dba2e8294abc80c4b09a9284a07f422"
+    },
+    {
+      "id": "POL-01",
+      "route": "/policies",
+      "action": null,
+      "state": "default",
+      "file": "POL-01.png",
+      "sha256": "a14fca84957bfee1a50cfbef34efb094b337842b080dcad773f0d800c6d7c940"
+    },
+    {
+      "id": "POL-02",
+      "route": "/policies/policy-platform",
+      "action": null,
+      "state": "default",
+      "file": "POL-02.png",
+      "sha256": "0d701881ec13c5f1f55cb3fb792cda38b5b0492c85da622f1def5fccc9a75b40"
+    },
+    {
+      "id": "POL-02-TAB-1",
+      "route": "/policies/policy-platform",
+      "action": null,
+      "state": "Action (1)",
+      "file": "POL-02-TAB-1.png",
+      "sha256": "0d701881ec13c5f1f55cb3fb792cda38b5b0492c85da622f1def5fccc9a75b40"
+    },
+    {
+      "id": "POL-02-TAB-2",
+      "route": "/policies/policy-platform",
+      "action": null,
+      "state": "관계 (2)",
+      "file": "POL-02-TAB-2.png",
+      "sha256": "5f79d4d78ad6d5890af796fb52d5a008e54f6c1b883b18d54362d51ef0f06a5c"
+    },
+    {
+      "id": "POL-02-TAB-3",
+      "route": "/policies/policy-platform",
+      "action": null,
+      "state": "동기화 이력 (1)",
+      "file": "POL-02-TAB-3.png",
+      "sha256": "617dd6df91a042b73f5b6a90030af0d6460022833d436f10f8ba7c35f5ca14f2"
+    },
+    {
+      "id": "POL-02-TAB-4",
+      "route": "/policies/policy-platform",
+      "action": null,
+      "state": "YAML",
+      "file": "POL-02-TAB-4.png",
+      "sha256": "01d25f6af48ca26e50f58fd31358bf214c0e036f5dab0a7b87f665e93b95dedf"
+    },
+    {
+      "id": "SYNC-01",
+      "route": "/resources",
+      "action": null,
+      "state": "default",
+      "file": "SYNC-01.png",
+      "sha256": "1bbb22b6a61fa3ea96100aad48cc1da359b5def52e34e9c8d20b8b9244fed124"
+    },
+    {
+      "id": "KEY-01",
+      "route": "/api-keys",
+      "action": null,
+      "state": "default",
+      "file": "KEY-01.png",
+      "sha256": "0bce376368f76713d9d76f3d06ae8eeec3b2870cbc1d7f886ea8f12644d7929f"
+    },
+    {
+      "id": "KEY-02",
+      "route": "/api-keys/key-directory",
+      "action": null,
+      "state": "default",
+      "file": "KEY-02.png",
+      "sha256": "f3ca5bfa339c19a82199b06dfa22b7398d2b6f8d0073e5dfe6b30a5cea5c4d70"
+    },
+    {
+      "id": "KEY-02-TAB-1",
+      "route": "/api-keys/key-directory",
+      "action": null,
+      "state": "결재 이력 (0)",
+      "file": "KEY-02-TAB-1.png",
+      "sha256": "f3ca5bfa339c19a82199b06dfa22b7398d2b6f8d0073e5dfe6b30a5cea5c4d70"
+    },
+    {
+      "id": "KEY-02-TAB-2",
+      "route": "/api-keys/key-directory",
+      "action": null,
+      "state": "서비스 어카운트 (1)",
+      "file": "KEY-02-TAB-2.png",
+      "sha256": "1822ce8b29fd178604ee08edc9fcfab743a6aa80c1805c563dbee71fd6fa2d21"
+    },
+    {
+      "id": "APR-01",
+      "route": "/approvals",
+      "action": null,
+      "state": "default",
+      "file": "APR-01.png",
+      "sha256": "8319143af702796d9d5cded7ea4cb8fcaa6eb2b348972ca6ef89fc797d359c09"
+    },
+    {
+      "id": "APR-01-TAB-1",
+      "route": "/approvals",
+      "action": null,
+      "state": "결재 문서",
+      "file": "APR-01-TAB-1.png",
+      "sha256": "8319143af702796d9d5cded7ea4cb8fcaa6eb2b348972ca6ef89fc797d359c09"
+    },
+    {
+      "id": "APR-01-TAB-2",
+      "route": "/approvals",
+      "action": null,
+      "state": "결재 템플릿",
+      "file": "APR-01-TAB-2.png",
+      "sha256": "c03c72bc04bb2e7e6de3b1073a298f5b44cec2f36a9f30623cac4336586bcd2c"
+    },
+    {
+      "id": "APR-02",
+      "route": "/approvals/new",
+      "action": null,
+      "state": "default",
+      "file": "APR-02.png",
+      "sha256": "5607fff8a6a66a8d3f8c241059c8ecbd0371c6f3fe8f581937b3edbae31dd9d6"
+    },
+    {
+      "id": "APR-03",
+      "route": "/approvals/approval-demo-001",
+      "action": null,
+      "state": "default",
+      "file": "APR-03.png",
+      "sha256": "7cdbd0909a8047c8cc9593c4cbf970ec713c576709e1a9a5a2270ceb273fe138"
+    },
+    {
+      "id": "APR-03-TAB-1",
+      "route": "/approvals/approval-demo-001",
+      "action": null,
+      "state": "요청 정보",
+      "file": "APR-03-TAB-1.png",
+      "sha256": "7cdbd0909a8047c8cc9593c4cbf970ec713c576709e1a9a5a2270ceb273fe138"
+    },
+    {
+      "id": "APR-03-TAB-2",
+      "route": "/approvals/approval-demo-001",
+      "action": null,
+      "state": "결재선",
+      "file": "APR-03-TAB-2.png",
+      "sha256": "4457ccf930f76e9210c0f6336c5b7ee44533d17ee715c283b12b610608dba698"
+    },
+    {
+      "id": "APR-03-TAB-3",
+      "route": "/approvals/approval-demo-001",
+      "action": null,
+      "state": "열람자",
+      "file": "APR-03-TAB-3.png",
+      "sha256": "b54edfc0a2e7708e5df3e22f3326cb2901b6189eea4176fee412d753e4fb6004"
+    },
+    {
+      "id": "APR-03-TAB-4",
+      "route": "/approvals/approval-demo-001",
+      "action": null,
+      "state": "후속 처리",
+      "file": "APR-03-TAB-4.png",
+      "sha256": "3e74ce4d571b830f52fdcd8a69b77dc6250e7d90724d109ff9ca25238d27f2ff"
+    },
+    {
+      "id": "TPL-01",
+      "route": "/approvals?tab=templates",
+      "action": null,
+      "state": "default",
+      "file": "TPL-01.png",
+      "sha256": "c03c72bc04bb2e7e6de3b1073a298f5b44cec2f36a9f30623cac4336586bcd2c"
+    },
+    {
+      "id": "TPL-01-TAB-1",
+      "route": "/approvals?tab=templates",
+      "action": null,
+      "state": "결재 문서",
+      "file": "TPL-01-TAB-1.png",
+      "sha256": "8319143af702796d9d5cded7ea4cb8fcaa6eb2b348972ca6ef89fc797d359c09"
+    },
+    {
+      "id": "TPL-01-TAB-2",
+      "route": "/approvals?tab=templates",
+      "action": null,
+      "state": "결재 템플릿",
+      "file": "TPL-01-TAB-2.png",
+      "sha256": "cb5fea6420b4c9c59b6e10670ab9a1889ba6df32e9f7e1d2d4a0c410e37b296a"
+    },
+    {
+      "id": "TPL-02",
+      "route": "/approval-templates/api-key-issue",
+      "action": null,
+      "state": "default",
+      "file": "TPL-02.png",
+      "sha256": "bf830c00b2734d333a720b9fc646bf874294b2e3c3fa5da959bd3ffacf5dab9b"
+    },
+    {
+      "id": "TPL-02-TAB-1",
+      "route": "/approval-templates/api-key-issue",
+      "action": null,
+      "state": "결재선",
+      "file": "TPL-02-TAB-1.png",
+      "sha256": "bf830c00b2734d333a720b9fc646bf874294b2e3c3fa5da959bd3ffacf5dab9b"
+    },
+    {
+      "id": "TPL-02-TAB-2",
+      "route": "/approval-templates/api-key-issue",
+      "action": null,
+      "state": "입력 필드",
+      "file": "TPL-02-TAB-2.png",
+      "sha256": "0a1a779cf57b67865036ba48ce26ea0fdf9c375ee332187c84b2749ff427c80d"
+    },
+    {
+      "id": "TPL-03",
+      "route": "/approval-templates/new",
+      "action": null,
+      "state": "default",
+      "file": "TPL-03.png",
+      "sha256": "1df2724561bbe80221cf6f345db9e5a82a3f2612f66e1598db948297497d9e2e"
+    },
+    {
+      "id": "TPL-03-TAB-1",
+      "route": "/approval-templates/new",
+      "action": null,
+      "state": "결재선",
+      "file": "TPL-03-TAB-1.png",
+      "sha256": "1df2724561bbe80221cf6f345db9e5a82a3f2612f66e1598db948297497d9e2e"
+    },
+    {
+      "id": "TPL-03-TAB-2",
+      "route": "/approval-templates/new",
+      "action": null,
+      "state": "입력 필드",
+      "file": "TPL-03-TAB-2.png",
+      "sha256": "015cabd42a6c069c8d440473b6a59797611c55c0e23d832977d7a0d855e0fde6"
+    },
+    {
+      "id": "TPL-04",
+      "route": "/approval-templates/api-key-issue/edit",
+      "action": null,
+      "state": "default",
+      "file": "TPL-04.png",
+      "sha256": "ef6b2bc7cd2c65b558faf88717621d2619e5277b7853c9d85370675ef78ef931"
+    },
+    {
+      "id": "TPL-04-TAB-1",
+      "route": "/approval-templates/api-key-issue/edit",
+      "action": null,
+      "state": "결재선",
+      "file": "TPL-04-TAB-1.png",
+      "sha256": "ef6b2bc7cd2c65b558faf88717621d2619e5277b7853c9d85370675ef78ef931"
+    },
+    {
+      "id": "TPL-04-TAB-2",
+      "route": "/approval-templates/api-key-issue/edit",
+      "action": null,
+      "state": "입력 필드",
+      "file": "TPL-04-TAB-2.png",
+      "sha256": "f4cbe671b35115f43cb6ec40a42bce957429675e9262e9a7b9a4f45254a8b06e"
+    },
+    {
+      "id": "KEY-03",
+      "route": "/api-keys",
+      "action": "issuance",
+      "state": "default",
+      "file": "KEY-03.png",
+      "sha256": "aa7000c13ea1045c19d9c7c6453e4224c13acf7218bdcfed83cfad1a29832088"
+    },
+    {
+      "id": "KEY-03-REVIEW",
+      "route": "/api-keys",
+      "action": "issuance-review",
+      "state": "default",
+      "file": "KEY-03-REVIEW.png",
+      "sha256": "ffe2e806002d21226254bbb053e838a5d0f43cb5d11cbcc699e560b7e27b8021"
+    },
+    {
+      "id": "SYNC-REVIEW",
+      "route": "/policies/policy-platform",
+      "action": "sync-review",
+      "state": "default",
+      "file": "SYNC-REVIEW.png",
+      "sha256": "5c5b1fafcabcb3baeacc87d34bd5be1e15da8d26f363c811537315d63ed46822"
+    },
+    {
+      "id": "SYNC-IMPACT",
+      "route": "/policies/policy-platform",
+      "action": "sync-impact",
+      "state": "default",
+      "file": "SYNC-IMPACT.png",
+      "sha256": "45aea4bce53a0a6d8eed6a20d538602c2a50d5ebf9a069fa27f8b9758a4f92b7"
+    },
+    {
+      "id": "PLT-05-MEMBERS",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "default",
+      "file": "PLT-05-MEMBERS.png",
+      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+    },
+    {
+      "id": "PLT-05-MEMBERS-TAB-1",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "멤버 (3)",
+      "file": "PLT-05-MEMBERS-TAB-1.png",
+      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+    },
+    {
+      "id": "PLT-05-MEMBERS-TAB-2",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "워크스페이스 (3)",
+      "file": "PLT-05-MEMBERS-TAB-2.png",
+      "sha256": "79eb9bbdf580f29edc4c92daf1b79b65fa9a019eacfd3a3ab7595fd9f6e62a1e"
+    },
+    {
+      "id": "PLT-05-MEMBERS-TAB-3",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "역할 (5)",
+      "file": "PLT-05-MEMBERS-TAB-3.png",
+      "sha256": "5c002775cde7a67dbfab4f64d728d6fc0658c25ed59715ebaf86d73bcfda090f"
+    },
+    {
+      "id": "PLT-05-MEMBERS-TAB-4",
+      "route": "/platforms/orion?tab=members",
+      "action": null,
+      "state": "인증 설정",
+      "file": "PLT-05-MEMBERS-TAB-4.png",
+      "sha256": "d5dd09f29f2caf4c75b8807d2dfb856b621a1e34165e0d1e542a9b419e06d982"
+    },
+    {
+      "id": "PLT-05-REVIEW",
+      "route": "/platforms/orion?tab=members",
+      "action": "member-review",
+      "state": "default",
+      "file": "PLT-05-REVIEW.png",
+      "sha256": "11f82f4f5ea6c89a77bfdf738fd341156dd8d33d0a720890211fcb81cc10ac70"
+    },
+    {
+      "id": "ROL-05-POLICIES",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "default",
+      "file": "ROL-05-POLICIES.png",
+      "sha256": "af1c8e9807d53ce574c6d11bc58fe8285bb646b272b7887e8d78d27089dfce1f"
+    },
+    {
+      "id": "ROL-05-POLICIES-TAB-1",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "사용자 (1)",
+      "file": "ROL-05-POLICIES-TAB-1.png",
+      "sha256": "463d419c57326425d8773ac57807fdaa4653a6ba2035ca1502d1383c2b444d96"
+    },
+    {
+      "id": "ROL-05-POLICIES-TAB-2",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "조직 (1)",
+      "file": "ROL-05-POLICIES-TAB-2.png",
+      "sha256": "4c02ad5434cf7ea20aa67476e075126659a0fd6fa3c9fad463dd9757b2f8e95f"
+    },
+    {
+      "id": "ROL-05-POLICIES-TAB-3",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "서비스 어카운트 (1)",
+      "file": "ROL-05-POLICIES-TAB-3.png",
+      "sha256": "a124eadd336c6200c56ec31e41b213eb9ae126d0bf0206783624966cbf8bdb49"
+    },
+    {
+      "id": "ROL-05-POLICIES-TAB-4",
+      "route": "/roles/role-platform?tab=policies",
+      "action": null,
+      "state": "정책 (2)",
+      "file": "ROL-05-POLICIES-TAB-4.png",
+      "sha256": "af1c8e9807d53ce574c6d11bc58fe8285bb646b272b7887e8d78d27089dfce1f"
+    },
+    {
+      "id": "ROL-05-EDITOR",
+      "route": "/roles/role-platform?tab=policies",
+      "action": "role-policy-edit",
+      "state": "default",
+      "file": "ROL-05-EDITOR.png",
+      "sha256": "1473be0ee7b33263525cff9e93cc26ecdba4093c64b4ecdd7b087af222ac57fb"
+    },
+    {
+      "id": "USR-03-ACCESS",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "default",
+      "file": "USR-03-ACCESS.png",
+      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+    },
+    {
+      "id": "USR-03-ACCESS-TAB-1",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "권한 종합",
+      "file": "USR-03-ACCESS-TAB-1.png",
+      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+    },
+    {
+      "id": "USR-03-ACCESS-TAB-2",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "플랫폼 (2)",
+      "file": "USR-03-ACCESS-TAB-2.png",
+      "sha256": "b3fffce411f60b0f2d732b1a60151d135f4cd7b78022e4433f284b87bc5a881c"
+    },
+    {
+      "id": "USR-03-ACCESS-TAB-3",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "소속 조직 (2)",
+      "file": "USR-03-ACCESS-TAB-3.png",
+      "sha256": "a43f07fbd3b160aea172dc635322d27640ecb83a4813bcb3ec86218a02c21228"
+    },
+    {
+      "id": "USR-03-ACCESS-TAB-4",
+      "route": "/users/usr-001?tab=access",
+      "action": null,
+      "state": "역할 (2)",
+      "file": "USR-03-ACCESS-TAB-4.png",
+      "sha256": "a51b9a18de36ff8681b07eabcf05fc0a9ad61eafc96bb3b3c6d1f2440fc02e7d"
+    },
+    {
+      "id": "CHK-01-ALLOW",
+      "route": "/access-check?user=usr-001&platform=orion&action=identity~read-hr",
+      "action": "access-allow",
+      "state": "default",
+      "file": "CHK-01-ALLOW.png",
+      "sha256": "19c6a525e78de9f7eb440c70354f9dfd92b58047745e3f351adb54fcc3dc93cf"
+    },
+    {
+      "id": "CHK-01-DENY",
+      "route": "/access-check?user=usr-006&platform=orion&action=identity~read-hr",
+      "action": "access-deny",
+      "state": "default",
+      "file": "CHK-01-DENY.png",
+      "sha256": "80b75b326763da9c19a05d093a23b9ebd69bf97c3b78797337183948bcac8412"
+    },
+    {
+      "id": "REQ-01-FORM",
+      "route": "/access-requests/new",
+      "action": "request-form",
+      "state": "default",
+      "file": "REQ-01-FORM.png",
+      "sha256": "a33373bd44b5b52561bff00ab793c9d5a183f9ba61fc6e63cd7c1964f0129b17"
+    },
+    {
+      "id": "REQ-01-REVIEW",
+      "route": "/access-requests/new",
+      "action": "request-review",
+      "state": "default",
+      "file": "REQ-01-REVIEW.png",
+      "sha256": "ae8eabb4290c5d52fcdaf56e88fe0855568ebd8776ed73809dfa0a8fe57b3b21"
+    },
+    {
+      "id": "REQ-02-SUBMITTED",
+      "route": "/access-requests/new",
+      "action": "request-submit",
+      "state": "default",
+      "file": "REQ-02-SUBMITTED.png",
+      "sha256": "8ad49604166c757798cc5be855448f292a5164a7eb44977d68e751e4ece610fe"
+    },
+    {
+      "id": "ME-01-ACCESS",
+      "route": "/my-access",
+      "action": null,
+      "state": "default",
+      "file": "ME-01-ACCESS.png",
+      "sha256": "5cdf7232747eff02f42271abfff136876b0d7490c7cc0c97136330f216db615a"
+    },
+    {
+      "id": "ME-01-ACCESS-TAB-1",
+      "route": "/my-access",
+      "action": null,
+      "state": "보유 권한",
+      "file": "ME-01-ACCESS-TAB-1.png",
+      "sha256": "5cdf7232747eff02f42271abfff136876b0d7490c7cc0c97136330f216db615a"
+    },
+    {
+      "id": "ME-01-ACCESS-TAB-2",
+      "route": "/my-access",
+      "action": null,
+      "state": "신청 내역 (0)",
+      "file": "ME-01-ACCESS-TAB-2.png",
+      "sha256": "da6d7ea815167ce4faebff97ce4bb5aecc1386bbbafc5ad986c9cb24ed7d7901"
+    },
+    {
+      "id": "SYNC-OUTCOMES",
+      "route": "/policies/policy-platform",
+      "action": "sync-outcomes",
+      "state": "default",
+      "file": "SYNC-OUTCOMES.png",
+      "sha256": "45aea4bce53a0a6d8eed6a20d538602c2a50d5ebf9a069fa27f8b9758a4f92b7"
+    }
+  ],
+  "archive": "59ef259733e6bdbd868fb397bd898904c5cf0c0c1ebd4f179954d5d430c1bfcd"
+}

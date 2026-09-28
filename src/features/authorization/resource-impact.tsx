@@ -15,8 +15,10 @@ const kindLabels = {
 export function ResourceImpact({
   graph,
   resources,
+  afterGraph,
 }: {
   graph: Graph;
+  afterGraph?: Graph;
   resources: ResourceRef[];
 }) {
   const { t } = useI18n();
@@ -73,7 +75,12 @@ export function ResourceImpact({
           </select>
         </label>
       )}
-      <SubjectImpact key={focus} graph={graph} scope={{ resources: scoped }} />
+      <SubjectImpact
+        afterGraph={afterGraph}
+        key={focus}
+        graph={graph}
+        scope={{ resources: scoped }}
+      />
       <p className="muted">
         {t(
           "사용자 수는 중복을 제외합니다. 서비스·워크스페이스의 하위 리소스 권한을 자동으로 포함하지 않습니다.",

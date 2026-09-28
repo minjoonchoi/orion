@@ -5,24 +5,26 @@ export async function selectRoleUser(
   user: string,
   operation: "add" | "remove" = "add",
 ) {
-  await page.goto(`/roles/${roleId}?tab=users`);
+  if (!page.url().includes(`/roles/${roleId}`))
+    await page.goto(`/roles/${roleId}?tab=users`);
   await page
-    .getByRole("button", {
-      name: operation === "add" ? "사용자 추가" : "사용자 해제",
-      exact: true,
-    })
+    .getByRole("button", { name: "사용자 부여 관리", exact: true })
     .click();
   const dialog = page.getByRole("dialog");
-  await dialog.getByLabel("사용자 검색", { exact: true }).fill(user);
-  await dialog.getByRole("checkbox").check();
+  const name = user === "member14@example.test" ? "송유진" : "김가람";
   await dialog
-    .getByRole("button", { name: "변경사항 및 영향도 검토", exact: true })
+    .getByRole("checkbox", { name, exact: true })
+    .setChecked(operation === "add");
+  await dialog
+    .getByRole("button", { name: "변경 내용 검토", exact: true })
     .click();
-  await expect(dialog).toContainText(user);
+  await expect(dialog).toContainText(name);
   return dialog;
 }
 export async function applyRoleUser(page: Page) {
   const dialog = page.getByRole("dialog");
-  await dialog.getByRole("button", { name: "변경 적용", exact: true }).click();
+  await dialog
+    .getByRole("button", { name: "확인 후 적용", exact: true })
+    .click();
   await expect(dialog).toHaveCount(0);
 }
