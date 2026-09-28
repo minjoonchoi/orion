@@ -1,0 +1,22 @@
+masking-rules:
+  email:
+    description: 이메일 아이디 첫 글자와 도메인 표시
+    method: email
+    local-part: { keep-start: 1, keep-end: 0 }
+    domain: preserve
+    replacement: "*"
+    replacement-length: 3
+    on-short: redact
+    on-invalid: redact
+  name:
+    description: 첫 글자만 표시
+    method: partial
+    keep-start: 1
+    keep-end: 0
+    replacement: "*"
+    replacement-length: 2
+    on-short: redact
+  redact:
+    description: 전체 값 대체
+    method: redact
+    replacement: "[REDACTED]"

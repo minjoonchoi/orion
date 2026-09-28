@@ -1,14 +1,14 @@
 {
   "status": "applied",
-  "base": "796618e4c74cda373a60c13edc9058847f26b5ccdf3fb21761c8fd4e7c0ee1b3",
+  "base": "6533009379e595ede813b330c82c7f9e100fb578c727ccb86a66150a8c1c068b",
   "approval": {
-    "evidence": "2026-09-27 15:20 KST 사용자: pr 까지 진행해. 승인 UI와 제품의 동등성 검증 후 문서의 구현 상태·신규 경로·서버 미완료 범위를 정정. 화면·동작 변경 없음. 최초 확정 HTML 및 픽셀 동등성 근거는 docs/reviews에 보존.",
-    "html": "69fac81839504188636b0b27529c164689cf8b581a66e391aefeeed7b2ad1a5f",
-    "at": "2026-09-27T06:32:54.596Z"
+    "evidence": "2026-09-28 12:52 KST 사용자: PR 까지. 승인된 기능의 제품 적용·PR 진행에 따라 기존 조직 연결/API 정책 조회 호환성 회귀를 수정하고 문서 구현 상태를 확정함. 최초 승인본은 docs/reviews/2026-09-28-initial-user-approved.html에 보존.",
+    "html": "a6de3faa4dfaa7a1573804824f84dcc1094c6c084c3b6b1b4331f16da49e0c2c",
+    "at": "2026-09-28T04:02:25.335Z"
   },
-  "proposal": "b10df4ae7f75efdd46113e9a5cf789891f1eeccf618e353c4988960cb4c782de",
-  "buildInputs": "7a3001f6578bd6640e865fed5dde0204b7497949dae9e81ec6cfc1cb4dd21d51",
-  "html": "69fac81839504188636b0b27529c164689cf8b581a66e391aefeeed7b2ad1a5f",
-  "screens": "7ee9fb2ba61d131e2dc3296c7ef5635a6d010c4fe66414fd59fcd9cb4eeed6b7",
-  "applied": "db539dc1de971baa5060baa0ec74447b5ae364582c58f20b70bd50cd7d4c3b48"
+  "proposal": "565957e3d9b4e19f31085338ad3d7850f6237e79d31026ec01c6b7504a367761",
+  "buildInputs": "3ac00b929193fdbbf3b11e08c73a63cd9f8604015f86fa98dff7b83ef5ba3b11",
+  "html": "a6de3faa4dfaa7a1573804824f84dcc1094c6c084c3b6b1b4331f16da49e0c2c",
+  "screens": "ac7c1edc213c8c4c7f50c14dd26bfa74a26a1a7fa413107fba5840b36ec75cad",
+  "applied": "32819b1e3add58a4d000957aacc221b18c1f83c1574187e585d1751f92364404"
 }

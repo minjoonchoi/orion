@@ -1,0 +1,33 @@
+{
+  "html": "66346b18d974f66b06cf4f44f33a27609fac46bf7aa537f920496b726f27fdd3",
+  "screens": [
+    {
+      "file": "account-policies.png",
+      "sha256": "149a03dcefbf6bffb5954d50b9bd27370aa607a6a1bac89863d81e7e8180fd99"
+    },
+    {
+      "file": "account-validation.png",
+      "sha256": "07cf2155f7aa9a27c38129bda66cc3686e8a050c62210f1f563994a4283730a7"
+    },
+    {
+      "file": "english-mobile.png",
+      "sha256": "ac71098c45cf0d81d3cdf9de2f82bc74f56d7d61574563a70f4e8341b4354bfe"
+    },
+    {
+      "file": "mobile.png",
+      "sha256": "0d463aa92354359a8216b5eb1ece8facd1cdbb97f8002f41085c32e6af318c06"
+    },
+    {
+      "file": "policies.png",
+      "sha256": "7a10532d4ce2625442090b2c04c44dbf338c90bde322d3ad5bd0d3094a3aa335"
+    },
+    {
+      "file": "role-review.png",
+      "sha256": "628a1704301fb3c00f4dd64f23809a02b8100c1342b2d1fef3e20382ea00de06"
+    },
+    {
+      "file": "service-policy.png",
+      "sha256": "6f2f0e6ea5b2fb2777756c61c4dee4533d3fea4b40f55d538326eaf33965cf68"
+    }
+  ]
+}

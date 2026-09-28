@@ -3,7 +3,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 // Both surfaces execute the same user interactions; SPA links preserve the UI adapter.
 for (const surface of ["app", "html"] as const) {
-  test(`${surface}: request review, no implicit grant, cancellation and reload reset`, async ({
+  test(`${surface}: request review, no implicit grant, cancellation and surface persistence`, async ({
     page,
   }) => {
     await page.goto(
@@ -30,19 +30,18 @@ for (const surface of ["app", "html"] as const) {
       .getByRole("button", { name: "신청 내용 검토", exact: true })
       .click();
     await page.getByRole("button", { name: "신청 제출", exact: true }).click();
-    await expect(page.locator("main")).toContainText("검토 대기");
+    await expect(page.locator("main")).toContainText("결재 진행");
     await page.getByRole("tab", { name: "보유 권한", exact: true }).click();
     await expect(
       page.getByRole("table", { name: "가능한 업무", exact: true }),
     ).not.toContainText("보안 검토");
     await page.getByRole("tab", { name: /신청 내역/ }).click();
-    await page.getByRole("button", { name: /REQ-/ }).click();
     await page.getByRole("button", { name: "신청 취소", exact: true }).click();
     await page.getByRole("button", { name: "취소 확정", exact: true }).click();
     await expect(page.locator("main")).toContainText("신청 취소");
     await page.reload();
     await expect(page.locator("main")).toContainText(
-      "아직 신청한 권한이 없습니다",
+      surface === "app" ? "신청 취소" : "아직 신청한 권한이 없습니다",
     );
   });
   test(`${surface}: impact compares field exposure while preserving relationship paths`, async ({

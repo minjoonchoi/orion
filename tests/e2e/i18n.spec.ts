@@ -49,8 +49,10 @@ test("English metadata, headings, and navigation cover every resource", async ({
     "service-accounts",
   ]) {
     await page.goto("/" + route);
-    await expect(page.locator("main h1")).toBeVisible();
-    expect(await page.locator("main h1").innerText()).not.toMatch(/[가-힣]/);
+    await expect(page.locator("main h1").first()).toBeVisible();
+    expect(await page.locator("main h1").first().innerText()).not.toMatch(
+      /[가-힣]/,
+    );
     expect(await page.title()).not.toMatch(/[가-힣]/);
     expect(
       await page.locator('nav[aria-label="Main navigation"]').innerText(),

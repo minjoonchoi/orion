@@ -1,0 +1,56 @@
+service: employee-api
+endpoints:
+  - id: search
+    name: 직원 검색
+    method: POST
+    path: /employees/search
+    request:
+      fields:
+        keyword:
+          { location: body, path: /keyword, type: string, privacy: false }
+        region_codes:
+          location: body
+          path: /filter/region_codes
+          type: array
+          items: { type: string }
+          required: true
+          privacy: false
+        requester_email:
+          location: body
+          path: /requester_email
+          type: string
+          required: false
+          privacy: true
+          masking: email
+        internal_option:
+          {
+            location: body,
+            path: /internal_option,
+            type: boolean,
+            privacy: false,
+          }
+    response:
+      fields:
+        employee_name:
+          {
+            path: /items/*/employee_name,
+            type: string,
+            privacy: true,
+            masking: name,
+          }
+        email_address:
+          {
+            path: /items/*/email_address,
+            type: string,
+            privacy: true,
+            masking: email,
+          }
+        region_code:
+          { path: /items/*/region_code, type: string, privacy: false }
+        internal_note:
+          {
+            path: /items/*/internal_note,
+            type: string,
+            privacy: true,
+            masking: redact,
+          }

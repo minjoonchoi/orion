@@ -1,0 +1,11 @@
+workspace:
+  id: sales-console
+  platform: sales-platform
+  name: 영업 관리
+  pages:
+    - id: regional-employees
+      name: 담당 지역 직원
+      path: /employees/regional
+      actions:
+        - { domain: employee, action: read-regional-employees }
+        - { domain: employee, action: read-regional-contacts }

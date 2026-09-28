@@ -21,7 +21,7 @@ test("approval workflow loads via API and request commands create snapshots", as
   await page
     .getByLabel("관리 서비스", { exact: true })
     .selectOption("svc-orion");
-  await page.getByRole("checkbox").first().check();
+  await page.locator("tbody").getByRole("checkbox").first().check();
   await page
     .getByLabel("Secret name", { exact: true })
     .fill("orion/api-contract/test");
@@ -61,18 +61,22 @@ test("endpoint selections survive pagination and service changes clear them", as
   await page
     .getByLabel("관리 서비스", { exact: true })
     .selectOption("svc-orion");
-  await page.getByRole("checkbox").first().check();
+  await page.locator("tbody").getByRole("checkbox").first().check();
   await page
     .getByRole("navigation", { name: "엔드포인트 페이지 이동", exact: true })
     .getByRole("button", { name: "다음", exact: true })
     .click();
-  await page.getByRole("checkbox").first().check();
+  await page.locator("tbody").getByRole("checkbox").first().check();
   await page
     .getByRole("button", { name: "선택만 보기 (2)", exact: true })
     .click();
-  await expect(page.getByRole("checkbox")).toHaveCount(2);
-  await expect(page.getByRole("checkbox").first()).toBeChecked();
-  await expect(page.getByRole("checkbox").last()).toBeChecked();
+  await expect(page.locator("tbody").getByRole("checkbox")).toHaveCount(2);
+  await expect(
+    page.locator("tbody").getByRole("checkbox").first(),
+  ).toBeChecked();
+  await expect(
+    page.locator("tbody").getByRole("checkbox").last(),
+  ).toBeChecked();
   await page
     .getByLabel("관리 서비스", { exact: true })
     .selectOption("svc-directory");

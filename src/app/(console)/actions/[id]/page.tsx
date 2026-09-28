@@ -1,3 +1,4 @@
+import { ContractDetail } from "@/features/definition-contract/catalog";
 import { Suspense } from "react";
 import { DefinitionsScreen } from "@/features/definitions/screen";
 export default async function Page({
@@ -8,7 +9,9 @@ export default async function Page({
   const { id } = await params;
   return (
     <Suspense>
-      <DefinitionsScreen kind="actions" id={id} />
+      <ContractDetail kind="action" id={id}>
+        <DefinitionsScreen kind="actions" id={id} />
+      </ContractDetail>
     </Suspense>
   );
 }

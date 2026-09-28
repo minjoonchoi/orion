@@ -1,3 +1,4 @@
+import { ContractCatalog } from "@/features/definition-contract/catalog";
 import type { Metadata } from "next";
 import { getT } from "@/i18n/server";
 import { OrganizationsList } from "@/features/identity/screens";
@@ -8,6 +9,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 export default async function Page() {
   return (
-    <OrganizationsList rows={await identityRepository.listOrganizations()} />
+    <>
+      <ContractCatalog kind="organization" />
+      <OrganizationsList rows={await identityRepository.listOrganizations()} />
+    </>
   );
 }

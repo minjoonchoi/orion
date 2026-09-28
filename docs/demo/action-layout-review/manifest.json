@@ -1,0 +1,34 @@
+{
+  "html": "66346b18d974f66b06cf4f44f33a27609fac46bf7aa537f920496b726f27fdd3",
+  "measurements": {
+    "gap": 24,
+    "token": 24,
+    "top": 24
+  },
+  "screens": [
+    {
+      "file": "access-detail-spacing.png",
+      "sha256": "2e198a767ac4e56c6211d5d7b3c25dea6084abb22591f37d46c1cb146a26d2e0"
+    },
+    {
+      "file": "access-mobile.png",
+      "sha256": "f18c8bee4cc3eb3e70151d69441daba1e84091d78beae96029628d13ed147a79"
+    },
+    {
+      "file": "api-keys.png",
+      "sha256": "5cb7f3a2d05e76cffceda5fbf022309f79c9d007837dc9da30049d3500007e48"
+    },
+    {
+      "file": "request-comparison.png",
+      "sha256": "3e83183e637945b6d376b73d0d42ae39e26fed8e86c8f87d8b3dd4ca7838a809"
+    },
+    {
+      "file": "request-mobile.png",
+      "sha256": "75e6a9948307380e07e6e88fabe8b84e7de7dc311c0cdeed804dd87907a1082b"
+    },
+    {
+      "file": "response-comparison.png",
+      "sha256": "6e98a4d17e8ea7fc8f3e7553523f8090032000dcb9a3ace9166827d100258069"
+    }
+  ]
+}

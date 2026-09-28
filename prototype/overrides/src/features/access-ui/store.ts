@@ -1,22 +1,13 @@
 "use client";
+import type { State } from "../approval-workflow/model";
+import { activeAccess } from "../approval-workflow/access";
 import { useMemo, useSyncExternalStore } from "react";
 import type { Directory } from "../platforms/model";
 import { memberships } from "../identity/fixtures";
 export type Binding = { roleId: string; policyId: string; expiresAt: string };
-export type Request = {
-  id: string;
-  userId: string;
-  platformId: string;
-  roleId: string;
-  reason: string;
-  expiresAt: string;
-  status: "pending" | "cancelled";
-  at: string;
-};
 export type AccessState = {
   directory: Directory;
   bindings: Binding[];
-  requests: Request[];
   revision: number;
 };
 let current: AccessState | undefined;
@@ -31,14 +22,13 @@ function init(d: Directory): AccessState {
         expiresAt: "",
       })),
     ),
-    requests: [],
     revision: 0,
   };
 }
-export function useAccess(d: Directory) {
+export function useAccess(d: Directory, workflow?: State) {
   const initial = useMemo(() => init(d), [d]);
   const get = () => (current ??= initial);
-  return useSyncExternalStore(
+  const snapshot = useSyncExternalStore(
     (cb) => {
       listeners.add(cb);
       return () => {
@@ -48,6 +38,26 @@ export function useAccess(d: Directory) {
     get,
     () => initial,
   );
+  return useMemo(() => {
+    if (!workflow) return snapshot;
+    const next = structuredClone(snapshot);
+    for (const doc of activeAccess(workflow)) {
+      const a = doc.access!;
+      let row = next.directory.userRoles.find(
+        (r) => r.userId === doc.requesterId && r.platformId === a.platformId,
+      );
+      if (!row) {
+        row = {
+          userId: doc.requesterId,
+          platformId: a.platformId,
+          roleIds: [],
+        };
+        next.directory.userRoles.push(row);
+      }
+      if (!row.roleIds.includes(a.roleId)) row.roleIds.push(a.roleId);
+    }
+    return next;
+  }, [snapshot, workflow]);
 }
 // Review-only state adapter. API transport and durable writes are not part of this UI proposal.
 export function change(expected: number, edit: (next: AccessState) => void) {

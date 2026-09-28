@@ -33,7 +33,7 @@ Okta 로그인은 화면 이동만 시연합니다. 실제 Orion API·AWS Secret
 - 현재 제품: `docs/demo/screenshots/`
 - 검토 중 시안: `docs/demo/preview-screenshots/`
 - `manifest.json`: HTML 해시, 화면 ID/경로/상태, PNG 파일명/해시
-- `screens.zip`: 화면별 PNG 원본. 도구가 필요할 때 추출/검증한다. 이전 버전은 Git에서 복원한다.
+- `screens.zip.part000` 등: 화면별 PNG 원본 ZIP을 7,500,000바이트 단위로 무손실 분할한 저장 파일. 도구가 순서와 전체 SHA-256을 검증한 뒤 로컬 `screens.zip`으로 자동 복원한다. PNG별 해시도 검증하며 이전 단일 ZIP 형식도 읽을 수 있다.
 
 이미지를 요청받을 때 재생성부터 하지 않고 manifest와 저장된 PNG를 먼저 사용한다. HTML이 바뀌면 한 번 갱신하고 이후 요청은 캐시를 사용한다. 빠진 화면/상태는 등록표에 추가해야 하며 전체 기능의 모든 조합을 자동 보장한다고 주장하지 않는다.
 

@@ -1,0 +1,173 @@
+.contract {
+  min-width: 0;
+}
+.contract h1,
+.contract h2,
+.contract h3,
+.contract p {
+  margin: 0;
+}
+.contract h2 {
+  font-size: var(--ui-font-lg, 18px);
+}
+.contract-muted,
+.contract small {
+  color: var(--muted);
+}
+.contract small {
+  display: block;
+  margin-top: var(--ui-space-2);
+  overflow-wrap: anywhere;
+}
+.contract-toolbar,
+.contract-heading,
+.contract-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-action-gap);
+  flex-wrap: wrap;
+}
+.contract-heading {
+  justify-content: space-between;
+}
+.contract-toolbar {
+  align-items: end;
+  gap: var(--ui-field-gap);
+}
+.contract label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-2);
+  font-weight: 600;
+}
+.contract input:not([type="checkbox"]),
+.contract select {
+  min-height: 40px;
+  padding: var(--ui-space-2);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  max-width: 100%;
+}
+.contract-toolbar label {
+  flex: 1;
+  min-width: min(240px, 100%);
+}
+.contract-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ui-field-gap);
+}
+.contract-metric {
+  flex: 1;
+  min-width: min(200px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-2);
+}
+.contract-metric span {
+  color: var(--muted);
+  font-size: 13px;
+}
+.contract-metric strong {
+  overflow-wrap: anywhere;
+}
+.contract-table {
+  overflow-x: auto;
+}
+.contract table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.contract th {
+  background: var(--surface-subtle);
+  color: var(--muted);
+  text-align: left;
+  font-weight: 600;
+}
+.contract td,
+.contract th {
+  padding: var(--ui-space-3);
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.contract td {
+  overflow-wrap: anywhere;
+}
+.contract-link {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+.contract details {
+  border-top: 1px solid var(--line);
+  padding-top: var(--ui-field-gap);
+}
+.contract summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.contract pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--surface-subtle);
+  padding: var(--ui-field-gap);
+  font-size: 12px;
+  border-radius: var(--ui-radius);
+  max-height: 360px;
+  overflow-y: auto;
+}
+.contract-warning {
+  color: var(--tone-warning-fg);
+  background: var(--tone-warning-bg);
+  padding: var(--ui-space-2);
+  border-radius: var(--ui-radius);
+}
+.contract-diff {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ui-field-gap);
+}
+.contract .contract-check {
+  flex-direction: row;
+  align-items: center;
+}
+.contract-actions {
+  justify-content: flex-end;
+}
+@media (max-width: 640px) {
+  .contract-diff {
+    grid-template-columns: 1fr;
+  }
+  .contract-table table {
+    min-width: 520px;
+  }
+}
+
+.contract .policy-choice {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--ui-space-2);
+}
+.policy-code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: var(--ui-panel-padding);
+  background: var(--surface);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+}
+
+.contract-diff > .ui-layout-stack {
+  grid-template-rows: auto 1fr;
+  align-content: start;
+}

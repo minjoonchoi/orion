@@ -151,3 +151,7 @@ test-results/
 # Per-screen PNGs are stored losslessly in screens.zip and restored on demand.
 /docs/demo/screenshots/*.png
 /docs/demo/preview-screenshots/*.png
+
+# Split PNG archives are tracked; the assembled ZIP is a local cache.
+/docs/demo/screenshots/screens.zip
+/docs/demo/preview-screenshots/screens.zip

@@ -8,7 +8,7 @@ test("templates describe issuance and replacement lines and allow catalog editin
     name: "결재 템플릿 목록",
     exact: true,
   });
-  await expect(table.locator("tbody tr")).toHaveCount(3);
+  await expect(table.locator("tbody tr")).toHaveCount(4);
   await table.getByRole("link", { name: "API 키 발급", exact: true }).click();
   await expect(page.getByText("보안팀 합의", { exact: true })).toBeVisible();
   await page.getByRole("link", { name: "템플릿 수정", exact: true }).click();

@@ -64,14 +64,104 @@ export const screens = [
     ["SYNC-OUTCOMES", "/policies/policy-platform", "sync-outcomes"],
   ],
 ].map(([id, route, action]) => ({ id, route, action: action ?? null }));
+// Review-only routes are captured only when building the new contract proposal.
+export const contractScreens = [
+  ["YAML-02-ACTION", "actions", null],
+  ["YAML-03-SCOPE", "scopes", null],
+  ["YAML-04-MASKING", "masking", null],
+  ["YAML-05-SYNC", "sync", null],
+  ["YAML-05-REVIEW", "sync", "contract-review"],
+  ["YAML-06-RESULT", "sync", "contract-apply"],
+  ["YAML-01-DEFINITIONS", "definitions", null],
+].map(([id, view, action]) => ({
+  id,
+  route: `/definition-contract?view=${view}`,
+  action,
+}));
+contractScreens.push(
+  { id: "YAML-DOMAIN", route: "/domains/employee", action: null },
+  {
+    id: "YAML-ACTION-DETAIL",
+    route: "/actions/employee~read-regional-employees",
+    action: null,
+  },
+  {
+    id: "YAML-POLICY",
+    route: "/policies/employee~regional-reader",
+    action: null,
+  },
+  {
+    id: "YAML-ENDPOINT",
+    route: "/service-endpoints/employee-api~search",
+    action: null,
+  },
+  { id: "YAML-SERVICE", route: "/services/employee-api", action: null },
+  {
+    id: "YAML-PAGE",
+    route: "/pages/sales-platform~sales-console~regional-employees",
+    action: null,
+  },
+  {
+    id: "YAML-SCOPE-DETAIL",
+    route: "/scopes/employee~sales-region",
+    action: null,
+  },
+  { id: "YAML-MASKING-MENU", route: "/masking-rules", action: null },
+  { id: "YAML-SYNC-PAGE", route: "/definition-sync", action: null },
+);
+contractScreens.push(
+  ...[
+    ["REQ-APPROVAL-REQUEST", "request-document"],
+    ["REQ-APPROVAL-LINE", "request-line"],
+    ["REQ-APPROVAL-CANCEL-REVIEW", "request-cancel-review"],
+    ["REQ-APPROVAL-CANCELLED", "request-cancelled"],
+    ["REQ-APPROVAL-REJECTED", "request-rejected"],
+    ["REQ-APPROVAL-READY", "request-ready"],
+    ["REQ-APPROVAL-GRANT-REVIEW", "request-grant-review"],
+    ["REQ-APPROVAL-COMPLETED", "request-completed"],
+  ].map(([id, action]) => ({ id, route: "/access-requests/new", action })),
+);
 export const viewport = { width: 1440, height: 1100 };
 export async function prepare(page, screen, base) {
   await page.goto(base + screen.route);
-  await page.locator("main h1").waitFor();
+  await page.locator("main h1").first().waitFor();
   await page.evaluate(() => document.fonts.ready);
   await page
     .getByText("불러오는 중…", { exact: true })
     .waitFor({ state: "hidden" });
+  if (screen.action?.startsWith("access-"))
+    await page.getByText("기존 사용자 접근 확인", { exact: true }).click();
+  if (screen.action === "policy-select" || screen.action === "policy-review") {
+    await page.getByRole("button", { name: "정책 변경", exact: true }).click();
+    if (screen.action === "policy-review") {
+      await page
+        .getByRole("checkbox", { name: "직원 기본 조회", exact: true })
+        .uncheck();
+      await page
+        .getByRole("button", { name: "변경 검토", exact: true })
+        .click();
+    }
+  }
+  if (
+    screen.action === "contract-review" ||
+    screen.action === "contract-apply"
+  ) {
+    await page.getByRole("button", { name: /동기화 검토/ }).click();
+    await page
+      .getByRole("button", { name: "변경사항 검토", exact: true })
+      .click();
+    if (screen.action === "contract-apply") {
+      await page
+        .getByRole("checkbox", {
+          name: "변경사항과 조회 범위 영향을 확인했습니다.",
+        })
+        .check();
+      await page
+        .getByRole("button", { name: "동기화 적용", exact: true })
+        .click();
+      await page.getByRole("status").waitFor();
+    }
+  }
   if (screen.action === "member-review") {
     await page
       .getByRole("checkbox", { name: "김다온 선택", exact: true })
@@ -95,6 +185,10 @@ export async function prepare(page, screen, base) {
   if (screen.action?.startsWith("access-")) {
     await page.getByRole("button", { name: "접근 확인", exact: true }).click();
   }
+  if (screen.action === "access-spacing") {
+    await page.getByRole("button", { name: "접근 확인", exact: true }).click();
+    await page.getByText("상세 근거 및 데이터 범위", { exact: true }).click();
+  }
   if (screen.action?.startsWith("request-")) {
     await page
       .getByRole("combobox", { name: "신청 역할", exact: true })
@@ -107,13 +201,93 @@ export async function prepare(page, screen, base) {
       await page
         .getByRole("button", { name: "신청 내용 검토", exact: true })
         .click();
-    if (screen.action === "request-submit") {
+    if (
+      screen.action !== "request-form" &&
+      screen.action !== "request-review"
+    ) {
       await page
         .getByRole("button", { name: "신청 제출", exact: true })
         .click();
       await page
         .getByRole("heading", { name: "내 접근 권한", exact: true })
         .waitFor();
+      if (screen.action !== "request-submit") {
+        const table = page.getByRole("table", {
+          name: "내 권한 신청",
+          exact: true,
+        });
+        if (screen.action.startsWith("request-cancel")) {
+          await table
+            .getByRole("button", { name: "신청 취소", exact: true })
+            .click();
+          if (screen.action === "request-cancelled") {
+            await page
+              .getByRole("dialog")
+              .getByRole("button", { name: "취소 확정", exact: true })
+              .click();
+            await page.getByRole("dialog").waitFor({ state: "hidden" });
+          }
+          return;
+        }
+        const link = table.getByRole("link", {
+          name: "보안 검토자",
+          exact: true,
+        });
+        const href = (await link.getAttribute("href")).replace(/^#/, "");
+        await link.click();
+        const tab = async (name) =>
+          page.getByRole("tab", { name, exact: true }).click();
+        if (screen.action === "request-document") {
+          await tab("요청 정보");
+          return;
+        }
+        await tab("결재선");
+        if (screen.action === "request-line") return;
+        // Test-only session fixtures; there is no actor switcher in the product UI.
+        const actor = async (id) => {
+          await page.evaluate((id) => {
+            for (const v of globalThis.orionApprovalSessions.values())
+              v.state.actorId = id;
+          }, id);
+          await page.goto(base + "/approvals");
+          await page
+            .getByRole("heading", { name: "결재", exact: true })
+            .waitFor();
+          await page.goto(base + href);
+          await page.locator("main h1").waitFor();
+          await tab("결재선");
+        };
+        const decide = async (label) => {
+          await page.getByRole("button", { name: label, exact: true }).click();
+          await page
+            .getByRole("dialog")
+            .getByRole("button", {
+              name: label === "반려" ? "반려 확정" : "승인·합의 확정",
+              exact: true,
+            })
+            .click();
+          await page.getByRole("dialog").waitFor({ state: "hidden" });
+        };
+        await actor("usr-002");
+        if (screen.action === "request-rejected") {
+          await decide("반려");
+          return;
+        }
+        await decide("승인");
+        await actor("usr-003");
+        await decide("합의");
+        await tab("후속 처리");
+        if (screen.action === "request-ready") return;
+        await page
+          .getByRole("button", { name: "권한 반영 검토", exact: true })
+          .click();
+        if (screen.action === "request-grant-review") return;
+        await page
+          .getByRole("dialog")
+          .getByRole("button", { name: "권한 반영", exact: true })
+          .click();
+        await page.getByRole("dialog").waitFor({ state: "hidden" });
+      }
     }
   }
   if (screen.action?.startsWith("issuance")) {
@@ -150,3 +324,43 @@ export async function prepare(page, screen, base) {
         .scrollIntoViewIfNeeded();
   }
 }
+
+contractScreens.push(
+  { id: "POL-V2-LIST", route: "/policies", action: null },
+  {
+    id: "POL-V2-PAGE",
+    route: "/policies/regional-contact-reader",
+    action: null,
+  },
+  {
+    id: "POL-V2-DIRECT",
+    route: "/policies/service-employee-reader",
+    action: null,
+  },
+  { id: "ROL-V2-POLICIES", route: "/roles/role-sales-manager", action: null },
+  {
+    id: "SA-V2-POLICIES",
+    route: "/service-accounts/sa-platform-ci?tab=policies",
+    action: null,
+  },
+  { id: "CHK-V2", route: "/access-check", action: null },
+);
+
+contractScreens.push(
+  {
+    id: "ROL-V2-SELECT",
+    route: "/roles/role-sales-manager",
+    action: "policy-select",
+  },
+  {
+    id: "ROL-V2-REVIEW",
+    route: "/roles/role-sales-manager",
+    action: "policy-review",
+  },
+);
+
+contractScreens.push({
+  id: "CHK-SPACING",
+  route: "/access-check?user=usr-001&platform=orion&action=identity~read-hr",
+  action: "access-spacing",
+});

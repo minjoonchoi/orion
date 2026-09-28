@@ -1,0 +1,16 @@
+organization:
+  id: sales
+  name: 영업본부
+---
+organization:
+  id: sales-team-1
+  name: 영업1팀
+  parent: sales
+---
+organization:
+  id: identity-team
+  name: Identity 관리팀
+---
+organization:
+  id: org-platform
+  name: 플랫폼개발팀

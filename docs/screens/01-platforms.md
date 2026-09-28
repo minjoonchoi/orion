@@ -54,3 +54,7 @@
 ## API·운영 의존
 
 `GET /platform-directory`, `POST /platforms/{id}/members`. 서버는 현재 운영자의 플랫폼 관리 권한과 revision을 검증한다. 카탈로그·워크스페이스 소속·역할의 조회 원천이 일치해야 한다. 현재 OIDC 설정 편집, 멤버십 상태 관리, 조직 역할 상속의 실제 로그인 게이트는 [미완료 표](15-gaps-and-decisions.md)에 따른다.
+
+## 신규 YAML UI 연계
+
+메뉴는 전사 조직·계정 / 플랫폼·접근 관리 / 제품·화면 정의 / API·정보 보호 / 검증·운영 / 내 업무로 구성한다. 조직은 전사 공통이고 workspace/page는 플랫폼 소속이다. 도메인은 독립 제품 요건이다. 신규 정의의 탐색·상세는 [신규 YAML UI](18-yaml-gitops-contract.md)를 따른다. 기존 사용자/조직 소속/플랫폼 역할 부여 API는 유지하며 신규 정책의 역할 부여와 운영 DB/Gateway 연동은 미완료다.

@@ -1,3 +1,5 @@
+import { contractSources } from "@/features/definition-contract/server";
+import { ContractProvider } from "@/features/definition-contract/state";
 import { LogoutButton } from "@/features/auth/logout-button";
 import { getT } from "@/i18n/server";
 import { LanguageSelect, DeploymentLabel } from "@/i18n/provider";
@@ -29,7 +31,9 @@ export default async function ConsoleLayout({
           <LogoutButton />
         </header>
         <main id="main" tabIndex={-1}>
-          {children}
+          <ContractProvider sources={await contractSources()}>
+            {children}
+          </ContractProvider>
         </main>
       </div>
     </div>
