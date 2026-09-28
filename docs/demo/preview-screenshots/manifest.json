@@ -1,8 +1,8 @@
 {
   "inputs": {
-    "html": "69fac81839504188636b0b27529c164689cf8b581a66e391aefeeed7b2ad1a5f",
-    "registry": "0bb6525d5d9b3ce2f9de87979c8d47f49c1b93ab80a6e26dc77e83b16f294f71",
-    "capture": "fc4c03f653b47be73f0f629345ec6af194219de96f2c3ecdf51d6d21c1f00493",
+    "html": "a6de3faa4dfaa7a1573804824f84dcc1094c6c084c3b6b1b4331f16da49e0c2c",
+    "registry": "dbc8a9d3f5918274a1433e939d8ad6ee7edebdf9261389a1bd5b9d46af0b6957",
+    "capture": "01c55eed079be16a3abd66a8b23b160f07fa48c06236215a68a2fb0a07d92607",
     "viewport": {
       "width": 1440,
       "height": 1100
@@ -16,7 +16,7 @@
       "action": null,
       "state": "default",
       "file": "HOME-01.png",
-      "sha256": "3b1385ae4e6764abbfd553eebbca9078696d10526d11324b5268e436bea0ad18"
+      "sha256": "72c10dd6be314f93ad16ca10da766d62593405c37e02f99d6a3c02d8fe862c42"
     },
     {
       "id": "AUTH-01",
@@ -32,7 +32,7 @@
       "action": null,
       "state": "default",
       "file": "COM-403.png",
-      "sha256": "042b1ab913e577dab3b88d94b7e83bb5ad820fdeba046e2fc088855af0893e79"
+      "sha256": "cf633ba39fa348672db0ed3b0444d7036c2bdf0206beda8cc23b53f617e1adbe"
     },
     {
       "id": "PLT-01",
@@ -40,7 +40,7 @@
       "action": null,
       "state": "default",
       "file": "PLT-01.png",
-      "sha256": "af7f109671882ff2585e0c2785768dda14aac253d1ab353e5c62658352cc9499"
+      "sha256": "f226a94bbb2fc188e2bcc324cee58a3f58520c0d7b5c09a373998954e88920b7"
     },
     {
       "id": "PLT-02",
@@ -48,7 +48,7 @@
       "action": null,
       "state": "default",
       "file": "PLT-02.png",
-      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+      "sha256": "bb265cb1114aa03fb9390f07e0525ef177ce07f514547ee22da446038309f010"
     },
     {
       "id": "PLT-02-TAB-1",
@@ -56,7 +56,7 @@
       "action": null,
       "state": "멤버 (3)",
       "file": "PLT-02-TAB-1.png",
-      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+      "sha256": "bb265cb1114aa03fb9390f07e0525ef177ce07f514547ee22da446038309f010"
     },
     {
       "id": "PLT-02-TAB-2",
@@ -64,7 +64,7 @@
       "action": null,
       "state": "워크스페이스 (3)",
       "file": "PLT-02-TAB-2.png",
-      "sha256": "79eb9bbdf580f29edc4c92daf1b79b65fa9a019eacfd3a3ab7595fd9f6e62a1e"
+      "sha256": "1dbc0f20e14ec653ff2571c662c3233ecf3d964886c9c8a60783cf44c9cd4d57"
     },
     {
       "id": "PLT-02-TAB-3",
@@ -72,7 +72,7 @@
       "action": null,
       "state": "역할 (5)",
       "file": "PLT-02-TAB-3.png",
-      "sha256": "5c002775cde7a67dbfab4f64d728d6fc0658c25ed59715ebaf86d73bcfda090f"
+      "sha256": "aa6949cb0029d8efa9a2ae97c87c80e44b28791bf608d6b7e3602a820f7829c9"
     },
     {
       "id": "PLT-02-TAB-4",
@@ -80,7 +80,7 @@
       "action": null,
       "state": "인증 설정",
       "file": "PLT-02-TAB-4.png",
-      "sha256": "d5dd09f29f2caf4c75b8807d2dfb856b621a1e34165e0d1e542a9b419e06d982"
+      "sha256": "f0cb70a79ada9f899c9dc6d5beab694fd3e2e8315e4ef764bb638a81d3268eab"
     },
     {
       "id": "USR-01",
@@ -88,7 +88,7 @@
       "action": null,
       "state": "default",
       "file": "USR-01.png",
-      "sha256": "fb5bd67d765f7befb803029f8f9972e3b9d098afd60fbbcb24820d3e073202b2"
+      "sha256": "d230ad05cf717816cf10e8c750e259bf72a8d8eec1343658165d9c429b75e72b"
     },
     {
       "id": "USR-02",
@@ -96,7 +96,7 @@
       "action": null,
       "state": "default",
       "file": "USR-02.png",
-      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+      "sha256": "ff74592b418c95eded3c287e93a975708875daafab0ea65f6bb3abb113fb7b5f"
     },
     {
       "id": "USR-02-TAB-1",
@@ -104,7 +104,7 @@
       "action": null,
       "state": "권한 종합",
       "file": "USR-02-TAB-1.png",
-      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+      "sha256": "b61397b662aec5125e417aaf7057940bae3fcffe5076ed00e24d950650798270"
     },
     {
       "id": "USR-02-TAB-2",
@@ -112,7 +112,7 @@
       "action": null,
       "state": "플랫폼 (2)",
       "file": "USR-02-TAB-2.png",
-      "sha256": "b3fffce411f60b0f2d732b1a60151d135f4cd7b78022e4433f284b87bc5a881c"
+      "sha256": "a33aebfe76bc73848faff80e8e91e574570af5fee17c08ca784f97d546b8ddfd"
     },
     {
       "id": "USR-02-TAB-3",
@@ -120,7 +120,7 @@
       "action": null,
       "state": "소속 조직 (2)",
       "file": "USR-02-TAB-3.png",
-      "sha256": "871923e0122c00e1fdb6cf79bceaa79a48afb8f2152165a14000ba87a2fd7d94"
+      "sha256": "30d4d6c2d848c964cdf23aca5d7fde4508da76ddd905e87d689e4bad6c5ec3d9"
     },
     {
       "id": "USR-02-TAB-4",
@@ -128,7 +128,7 @@
       "action": null,
       "state": "역할 (2)",
       "file": "USR-02-TAB-4.png",
-      "sha256": "a51b9a18de36ff8681b07eabcf05fc0a9ad61eafc96bb3b3c6d1f2440fc02e7d"
+      "sha256": "e7e63f19cc3b0907abdc06e57230bffb82fb73d0fd8cec330f45f3ddc2811a9c"
     },
     {
       "id": "ORG-01",
@@ -136,7 +136,7 @@
       "action": null,
       "state": "default",
       "file": "ORG-01.png",
-      "sha256": "2fab5d3e95ccdea1b4de28c91661b808c5209272e931c1a3ae8c7b676f3e2b34"
+      "sha256": "1f888dcc154c8b7dc3317675d0078758e59126adb858baf1b4f2f6b327c0a42d"
     },
     {
       "id": "ORG-02",
@@ -144,7 +144,7 @@
       "action": null,
       "state": "default",
       "file": "ORG-02.png",
-      "sha256": "5c664842d56c95b601e5dbcfca54abbcdd21bf27a274cf25fc4e02cf4d7919a5"
+      "sha256": "09a1651e1ce9eb0ef330ae01f89e593d73c2faea3ee322e4007e8705b5554f99"
     },
     {
       "id": "ORG-02-TAB-1",
@@ -152,7 +152,7 @@
       "action": null,
       "state": "멤버 (7)",
       "file": "ORG-02-TAB-1.png",
-      "sha256": "5c664842d56c95b601e5dbcfca54abbcdd21bf27a274cf25fc4e02cf4d7919a5"
+      "sha256": "09a1651e1ce9eb0ef330ae01f89e593d73c2faea3ee322e4007e8705b5554f99"
     },
     {
       "id": "ORG-02-TAB-2",
@@ -160,7 +160,7 @@
       "action": null,
       "state": "서비스 어카운트 (2)",
       "file": "ORG-02-TAB-2.png",
-      "sha256": "8d15c4fa18d2a23e2de8db12bb1711c5c4d5916f83924998822bdaf68c5a8e4b"
+      "sha256": "f479d1d5a1fd8a0b4ae3613b3ad63236aec7c0c2194a872bfcac108bb34287b2"
     },
     {
       "id": "ORG-02-TAB-3",
@@ -168,7 +168,7 @@
       "action": null,
       "state": "관리 서비스 (2)",
       "file": "ORG-02-TAB-3.png",
-      "sha256": "c6c9d0e045960da98e6175dec830a3875986f247c03949492161032de5c605be"
+      "sha256": "a3a1709d24c05b849b85ca037aa2beb5d20ae15ba3b9d74e474d36803ac18672"
     },
     {
       "id": "ORG-02-TAB-4",
@@ -176,7 +176,7 @@
       "action": null,
       "state": "역할 (2)",
       "file": "ORG-02-TAB-4.png",
-      "sha256": "0bed704360d3cc8aa9e24f6bf89553643cc586bfdd4c977fb4c8dc528fb67a5b"
+      "sha256": "f651dae7171cb41b22f194dd2144c65bb6765b774878c819d6b6ae34e4f0f711"
     },
     {
       "id": "SA-01",
@@ -184,7 +184,7 @@
       "action": null,
       "state": "default",
       "file": "SA-01.png",
-      "sha256": "9136533dd95f02db711daba5059f4dd03c47b83698457c2825ef8d7ffe56c979"
+      "sha256": "1a6a893a96ccb6bea09f08cb94035387f44792dce511e8d2ba0302330ef1e54a"
     },
     {
       "id": "SA-02",
@@ -192,23 +192,31 @@
       "action": null,
       "state": "default",
       "file": "SA-02.png",
-      "sha256": "a4216d21b3ed41b5e3ba50cb5e49c11731d385087544ce4cf4bf47dbb4a4af0d"
+      "sha256": "149a03dcefbf6bffb5954d50b9bd27370aa607a6a1bac89863d81e7e8180fd99"
     },
     {
       "id": "SA-02-TAB-1",
       "route": "/service-accounts/sa-platform-ci",
       "action": null,
-      "state": "역할 (2)",
+      "state": "정책",
       "file": "SA-02-TAB-1.png",
-      "sha256": "a4216d21b3ed41b5e3ba50cb5e49c11731d385087544ce4cf4bf47dbb4a4af0d"
+      "sha256": "149a03dcefbf6bffb5954d50b9bd27370aa607a6a1bac89863d81e7e8180fd99"
     },
     {
       "id": "SA-02-TAB-2",
       "route": "/service-accounts/sa-platform-ci",
       "action": null,
-      "state": "API 키 (2)",
+      "state": "기존 역할 · 이관 대상 (2)",
       "file": "SA-02-TAB-2.png",
-      "sha256": "b353014ebd0819ab9a77b52b11cf8bcad7ecc40c673f081b512223f1e1d59bd5"
+      "sha256": "fdb9f39851dcebc6f6ca13d6ce50926a26451a557370deb3d942f889791dbe50"
+    },
+    {
+      "id": "SA-02-TAB-3",
+      "route": "/service-accounts/sa-platform-ci",
+      "action": null,
+      "state": "API 키 (2)",
+      "file": "SA-02-TAB-3.png",
+      "sha256": "87f1b46cd310869d30bc6057f730205f5069696e177ad7161173fa174d8dbc88"
     },
     {
       "id": "ROLE-01",
@@ -216,7 +224,7 @@
       "action": null,
       "state": "default",
       "file": "ROLE-01.png",
-      "sha256": "ec391caf0f2310fed0764e7ea99a64de399c6f79d775ccfaf4c8d6076d184f93"
+      "sha256": "5f2032c80b1e2d2f54e265749d7af93600d05029bf51a153c2f2978b79b308e2"
     },
     {
       "id": "ROLE-02",
@@ -224,7 +232,7 @@
       "action": null,
       "state": "default",
       "file": "ROLE-02.png",
-      "sha256": "463d419c57326425d8773ac57807fdaa4653a6ba2035ca1502d1383c2b444d96"
+      "sha256": "78a8fbb3571cc35f6e005bc840e97516335735cfad5fc5e2093b8c002ee5a3e9"
     },
     {
       "id": "ROLE-02-TAB-1",
@@ -232,7 +240,7 @@
       "action": null,
       "state": "사용자 (1)",
       "file": "ROLE-02-TAB-1.png",
-      "sha256": "463d419c57326425d8773ac57807fdaa4653a6ba2035ca1502d1383c2b444d96"
+      "sha256": "78a8fbb3571cc35f6e005bc840e97516335735cfad5fc5e2093b8c002ee5a3e9"
     },
     {
       "id": "ROLE-02-TAB-2",
@@ -240,7 +248,7 @@
       "action": null,
       "state": "조직 (1)",
       "file": "ROLE-02-TAB-2.png",
-      "sha256": "40acfb2b192e0e5712460dc6b485897b86f93198226ca33a356bfb617407e7a5"
+      "sha256": "2f1c62669529a71342eace2fdda2e723d61ea85b205cec0b14ed5b5aff6985cc"
     },
     {
       "id": "ROLE-02-TAB-3",
@@ -248,7 +256,7 @@
       "action": null,
       "state": "서비스 어카운트 (1)",
       "file": "ROLE-02-TAB-3.png",
-      "sha256": "4ff5881c56f47a18be84a3a010a9d5b3e0ffe4fd052f7c49b12433311a4a6f3d"
+      "sha256": "273c3c10869f1a603c2f8615386530e8e902b07f11e7b3e154e7a8fee310dbd4"
     },
     {
       "id": "ROLE-02-TAB-4",
@@ -256,7 +264,7 @@
       "action": null,
       "state": "정책 (2)",
       "file": "ROLE-02-TAB-4.png",
-      "sha256": "af1c8e9807d53ce574c6d11bc58fe8285bb646b272b7887e8d78d27089dfce1f"
+      "sha256": "eb220e2fd977dd3a928194086f8ae2bf088c5698d007d4d109029d582c87044d"
     },
     {
       "id": "WS-01",
@@ -264,7 +272,7 @@
       "action": null,
       "state": "default",
       "file": "WS-01.png",
-      "sha256": "e40c2c6c3fc6805fd573f05bb0a0fef8ac5c4e1e8064cd3a79f4daec6fdb5012"
+      "sha256": "a39796cc3a59b0db9d1fe898d604c14d3c8c4cde46e2d7195e07c8f51f4f1ee9"
     },
     {
       "id": "WS-02",
@@ -272,7 +280,7 @@
       "action": null,
       "state": "default",
       "file": "WS-02.png",
-      "sha256": "1bbd88d55f9643cbef7283732e6755d9dcd4f52172f82fa6197569866070d8b3"
+      "sha256": "efe2308946151155ec8dd90e9214f03b95ed25b898f389d429cacab958d67e74"
     },
     {
       "id": "WS-02-TAB-1",
@@ -280,7 +288,7 @@
       "action": null,
       "state": "페이지 (2)",
       "file": "WS-02-TAB-1.png",
-      "sha256": "1bbd88d55f9643cbef7283732e6755d9dcd4f52172f82fa6197569866070d8b3"
+      "sha256": "efe2308946151155ec8dd90e9214f03b95ed25b898f389d429cacab958d67e74"
     },
     {
       "id": "WS-02-TAB-2",
@@ -288,7 +296,7 @@
       "action": null,
       "state": "관계 (2)",
       "file": "WS-02-TAB-2.png",
-      "sha256": "a1a2ec48a3bae1dda76be4912ac0d2a27b9a3c922be60cef90025edd4bdae15d"
+      "sha256": "095d80aa1ee16a5b36cb1bbfa672c30c90898f5ec2bb03e021452eded7f8ab30"
     },
     {
       "id": "WS-02-TAB-3",
@@ -296,7 +304,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "WS-02-TAB-3.png",
-      "sha256": "02d5f62dc346dd05dcf925b5c9fa12407da92d12160a6208ad6b8af36c9fe2dc"
+      "sha256": "2e012bff9a2230b013f6b2b1822667c37c4434a2f36928a8205eba314ec6684a"
     },
     {
       "id": "WS-02-TAB-4",
@@ -304,7 +312,7 @@
       "action": null,
       "state": "YAML",
       "file": "WS-02-TAB-4.png",
-      "sha256": "158cc099e357fc0dbfde3440cfef2c0cd1f8fac1ace03e0f0559cd03efe13945"
+      "sha256": "69439ce26099f88eef593764b93066708f692f2e6e5d1648d3050cbcdca14b8e"
     },
     {
       "id": "PAGE-01",
@@ -312,7 +320,7 @@
       "action": null,
       "state": "default",
       "file": "PAGE-01.png",
-      "sha256": "795ac43c210a166fc7d85310186e846421efff8e8eefbfd2e1698808230cd448"
+      "sha256": "1e55a837584285a38b45936e13d947c4481f3380df7987b5b6deacb27ec9c7a1"
     },
     {
       "id": "PAGE-02",
@@ -320,7 +328,7 @@
       "action": null,
       "state": "default",
       "file": "PAGE-02.png",
-      "sha256": "9bea71274b43cf739f11f5645434a7cce1299fcf1fa6a4f375fa662207841ce0"
+      "sha256": "c33555c78d0256935567a5cc7948c742991c9c2ddfe72b9981afb9fb100d6755"
     },
     {
       "id": "PAGE-02-TAB-1",
@@ -328,7 +336,7 @@
       "action": null,
       "state": "Action (1)",
       "file": "PAGE-02-TAB-1.png",
-      "sha256": "9bea71274b43cf739f11f5645434a7cce1299fcf1fa6a4f375fa662207841ce0"
+      "sha256": "c33555c78d0256935567a5cc7948c742991c9c2ddfe72b9981afb9fb100d6755"
     },
     {
       "id": "PAGE-02-TAB-2",
@@ -336,7 +344,7 @@
       "action": null,
       "state": "관계 (3)",
       "file": "PAGE-02-TAB-2.png",
-      "sha256": "3be8ec6612132bd85e1dc8c323e1e8901dfd1dd1c99d80131bde0383948aa39b"
+      "sha256": "2e26573d889d1bfd990492a5efe074011f3bc8810a7ffff4255dd7ac8593660e"
     },
     {
       "id": "PAGE-02-TAB-3",
@@ -344,7 +352,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "PAGE-02-TAB-3.png",
-      "sha256": "aa049ae30f16be3ba6cc33c0e8e41052c3db764babdc45bd03679b531b117d46"
+      "sha256": "de0272c9b840443f7675462981776be13878bb63962cbc18e2745862e68573c4"
     },
     {
       "id": "PAGE-02-TAB-4",
@@ -352,7 +360,7 @@
       "action": null,
       "state": "YAML",
       "file": "PAGE-02-TAB-4.png",
-      "sha256": "c1e1fea160ec7e755833d43c8321d6e1c40502aa5b8ad83b94f7543de4db57ff"
+      "sha256": "86398d9d6d8a2318e887dced9fc1dde64cd8af76421cacde353bafe70e7301cb"
     },
     {
       "id": "SVC-01",
@@ -360,7 +368,7 @@
       "action": null,
       "state": "default",
       "file": "SVC-01.png",
-      "sha256": "ce2ca6f700bf4bb269b13e8761e3657ee74fd1e12bc248ae573d63af150ca2e4"
+      "sha256": "d0f4c2b7473bcad1c5f78454aa05364b42a7833f7d4c212ba9ede2cf6af689d3"
     },
     {
       "id": "SVC-02",
@@ -368,7 +376,7 @@
       "action": null,
       "state": "default",
       "file": "SVC-02.png",
-      "sha256": "40c3c6fcb41706ad05fa2b6dade204d39d5df9bdd00ffabbc37db64e72f3254b"
+      "sha256": "35e7aa8a2b1ddcfa8678e3c41b70cc51e56019db7ed93439c891e35156352436"
     },
     {
       "id": "SVC-02-TAB-1",
@@ -376,7 +384,7 @@
       "action": null,
       "state": "엔드포인트 (1)",
       "file": "SVC-02-TAB-1.png",
-      "sha256": "40c3c6fcb41706ad05fa2b6dade204d39d5df9bdd00ffabbc37db64e72f3254b"
+      "sha256": "35e7aa8a2b1ddcfa8678e3c41b70cc51e56019db7ed93439c891e35156352436"
     },
     {
       "id": "SVC-02-TAB-2",
@@ -384,7 +392,7 @@
       "action": null,
       "state": "관계 (1)",
       "file": "SVC-02-TAB-2.png",
-      "sha256": "db4c66ee1b257a8fe09612b12f528ba617e224dd7a463a128627ec5cbe5ff0f1"
+      "sha256": "9de61e8e1e5c5c4d8506b72744ba9ef0af4d621533302e03109dea329b6772cc"
     },
     {
       "id": "SVC-02-TAB-3",
@@ -392,7 +400,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "SVC-02-TAB-3.png",
-      "sha256": "8c4a2a518776660ac155f78ec4df1b0ad9301667362485784b1acda62c81a69a"
+      "sha256": "0752430e2acbec1d969c605ffb8673cdb56499fb70e73f3088c7c105b28c3957"
     },
     {
       "id": "SVC-02-TAB-4",
@@ -400,7 +408,7 @@
       "action": null,
       "state": "YAML",
       "file": "SVC-02-TAB-4.png",
-      "sha256": "33b74ece6195b28adc4af3369e9683fd7c620044bddf5c7fedb34a8738b355bf"
+      "sha256": "8f35d5a987fc1baf079d8548d1bc342bc7a26b3ab32ae1c62678359b9aebf516"
     },
     {
       "id": "EP-01",
@@ -408,7 +416,7 @@
       "action": null,
       "state": "default",
       "file": "EP-01.png",
-      "sha256": "da5b6d107afb587acb6c1d61bdd3a7556eeb7a8fbbb47692ca7500e09febca78"
+      "sha256": "29097f2a0da2152d124d7535a4155ccdb09b1fa8f7e888595409ad23d368cc2b"
     },
     {
       "id": "EP-02",
@@ -416,7 +424,7 @@
       "action": null,
       "state": "default",
       "file": "EP-02.png",
-      "sha256": "929f95a49480089644f5969cce6f885279db31c9caa3866d72e292a2160966a1"
+      "sha256": "006b19e26406af365c9bda50cfbff95559eb12b624c65948b1ccf0d9035aadb7"
     },
     {
       "id": "EP-02-TAB-1",
@@ -424,7 +432,7 @@
       "action": null,
       "state": "요청 필드 (1)",
       "file": "EP-02-TAB-1.png",
-      "sha256": "929f95a49480089644f5969cce6f885279db31c9caa3866d72e292a2160966a1"
+      "sha256": "006b19e26406af365c9bda50cfbff95559eb12b624c65948b1ccf0d9035aadb7"
     },
     {
       "id": "EP-02-TAB-2",
@@ -432,7 +440,7 @@
       "action": null,
       "state": "응답 필드 (4)",
       "file": "EP-02-TAB-2.png",
-      "sha256": "0c0520de975fea6237e6fdf4fc6e30bec794d316bb0183fcefac99fc57ab2c6d"
+      "sha256": "d49196ac51cad5cc6caf049aa7244a309b0519197d9171e28ed581660cf42a6d"
     },
     {
       "id": "EP-02-TAB-3",
@@ -440,7 +448,7 @@
       "action": null,
       "state": "관계 (3)",
       "file": "EP-02-TAB-3.png",
-      "sha256": "0969174346833acf4c48cc65c8e0435a7a2cccc15470d61a06546269ab9dcc51"
+      "sha256": "66bf34c1a9e52b1ef0164716ba9e6f44ad209e1d0ffc18da895d298d7062260b"
     },
     {
       "id": "EP-02-TAB-4",
@@ -448,7 +456,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "EP-02-TAB-4.png",
-      "sha256": "6543bf4a7f9816031e71f4ee2fcdf8968812743528dae90990a5067c5c681ad1"
+      "sha256": "9570a12d0e415e5c9ab6643f3620622ce68f4a7bacce2481a06ca674f9ee22d0"
     },
     {
       "id": "EP-02-TAB-5",
@@ -456,7 +464,7 @@
       "action": null,
       "state": "YAML",
       "file": "EP-02-TAB-5.png",
-      "sha256": "958f8743d189c23e5ad3701fbafa894d8478f0944f5a783df8f30edc3e7dac7b"
+      "sha256": "36f69088dd3fa7829a16b3db8cec9aa2fd584fe9a865f90d30654783f2f9fdcb"
     },
     {
       "id": "DOMAIN-01",
@@ -464,7 +472,7 @@
       "action": null,
       "state": "default",
       "file": "DOMAIN-01.png",
-      "sha256": "e18698970cdf49d3e11e9542aaca709021f746e74bb93aa8d2cdf15c4299645b"
+      "sha256": "9af5b70a57d772389495277db41503a7e5f220f7973d984c02731c873453e0da"
     },
     {
       "id": "DOMAIN-02",
@@ -472,7 +480,7 @@
       "action": null,
       "state": "default",
       "file": "DOMAIN-02.png",
-      "sha256": "0bea575f609d446f6e1d2298b4b703315ed6af3f5bed8d62723d993f14cac430"
+      "sha256": "558eaf525d6ceaa288379782983c12c5cd4a015c145a841e55feffd8444c732f"
     },
     {
       "id": "DOMAIN-02-TAB-1",
@@ -480,7 +488,7 @@
       "action": null,
       "state": "Action (3)",
       "file": "DOMAIN-02-TAB-1.png",
-      "sha256": "0bea575f609d446f6e1d2298b4b703315ed6af3f5bed8d62723d993f14cac430"
+      "sha256": "558eaf525d6ceaa288379782983c12c5cd4a015c145a841e55feffd8444c732f"
     },
     {
       "id": "DOMAIN-02-TAB-2",
@@ -488,7 +496,7 @@
       "action": null,
       "state": "관계 (3)",
       "file": "DOMAIN-02-TAB-2.png",
-      "sha256": "b390cd451ad63eb23585964a570282053de8c4035327faa374ddb1775c44e1e3"
+      "sha256": "49519f8f9b60f4feb541343697618d267eb7a7f2e129ad4be56db12aaa92c070"
     },
     {
       "id": "DOMAIN-02-TAB-3",
@@ -496,7 +504,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "DOMAIN-02-TAB-3.png",
-      "sha256": "b8ea57de14f7aadf4c3a0e919fe28da301cfe0595b985392c72e9601bd471197"
+      "sha256": "5eae1576a93de8c57558f93a377902e22fc1f6fd0beb863aa5322722043ef040"
     },
     {
       "id": "DOMAIN-02-TAB-4",
@@ -504,7 +512,7 @@
       "action": null,
       "state": "YAML",
       "file": "DOMAIN-02-TAB-4.png",
-      "sha256": "9c64275fabbcbbf2844023c85e0561a3762d8a2e3b3a30f6472731d9ad08c291"
+      "sha256": "a42a7ff013b3733f95f1e69fc942f725c425d12935fc11a0a448339b780a00c6"
     },
     {
       "id": "ACTION-01",
@@ -512,7 +520,7 @@
       "action": null,
       "state": "default",
       "file": "ACTION-01.png",
-      "sha256": "45fda3d197160ab33bc09b490bee9994f4acc4f0cba8a079c158c12d7bc91e89"
+      "sha256": "fb1987345379221676c6e0c15606b590af7e993b4dec99ea86ecbe4d3e2dc734"
     },
     {
       "id": "ACTION-02",
@@ -520,7 +528,7 @@
       "action": null,
       "state": "default",
       "file": "ACTION-02.png",
-      "sha256": "1f86ce47d50e35ece9593f24f93a348fd1f100077cddc6870458ee04ae50fbaf"
+      "sha256": "9ae3bc68fd7218c2ed134b9f00c50c00504fb54d9d26e832c17cb339ff40b0bd"
     },
     {
       "id": "ACTION-02-TAB-1",
@@ -528,7 +536,7 @@
       "action": null,
       "state": "정책 (2)",
       "file": "ACTION-02-TAB-1.png",
-      "sha256": "1f86ce47d50e35ece9593f24f93a348fd1f100077cddc6870458ee04ae50fbaf"
+      "sha256": "9ae3bc68fd7218c2ed134b9f00c50c00504fb54d9d26e832c17cb339ff40b0bd"
     },
     {
       "id": "ACTION-02-TAB-2",
@@ -536,7 +544,7 @@
       "action": null,
       "state": "관계 (5)",
       "file": "ACTION-02-TAB-2.png",
-      "sha256": "3f1fb61c2869bdcebaa333248a54b30ebfe68571067bf61874d473bb45668436"
+      "sha256": "2e0942a8773261b8b046cdbc8308f0962b15260f32f5b7fa51e386d3f4b91c3c"
     },
     {
       "id": "ACTION-02-TAB-3",
@@ -544,7 +552,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "ACTION-02-TAB-3.png",
-      "sha256": "f53f370cba20e030dcaee2e0dfdbe3701213456d0cc65c4d147e8187147ad876"
+      "sha256": "6f3ca998b9370f7a4a9dc39b7fc5769efa127f460565431b3c38940154e57e2f"
     },
     {
       "id": "ACTION-02-TAB-4",
@@ -552,7 +560,7 @@
       "action": null,
       "state": "YAML",
       "file": "ACTION-02-TAB-4.png",
-      "sha256": "44649cc898e21344f2f337cc13ef1013fd6ac579a04b7ccc174fe5dfc477356f"
+      "sha256": "e58c8d7ba1e5d145984766b9823ddc349ac80c0767aed6be2dfcdce76dfefad7"
     },
     {
       "id": "ACTION-02-TAB-5",
@@ -560,7 +568,7 @@
       "action": null,
       "state": "권한 평가",
       "file": "ACTION-02-TAB-5.png",
-      "sha256": "b901b21cd7908d76ba4bf7a0f9b254f22dba2e8294abc80c4b09a9284a07f422"
+      "sha256": "418930887db2784deecae3bdc4b5917d32f382a578b97a6eaf3edda5e6358ddc"
     },
     {
       "id": "POL-01",
@@ -568,7 +576,7 @@
       "action": null,
       "state": "default",
       "file": "POL-01.png",
-      "sha256": "a14fca84957bfee1a50cfbef34efb094b337842b080dcad773f0d800c6d7c940"
+      "sha256": "7a10532d4ce2625442090b2c04c44dbf338c90bde322d3ad5bd0d3094a3aa335"
     },
     {
       "id": "POL-02",
@@ -576,7 +584,7 @@
       "action": null,
       "state": "default",
       "file": "POL-02.png",
-      "sha256": "0d701881ec13c5f1f55cb3fb792cda38b5b0492c85da622f1def5fccc9a75b40"
+      "sha256": "6bd9a776b5118ce835fba5ba348c37d5d576dd57f8bbcdddae6f19b0a9e5777c"
     },
     {
       "id": "POL-02-TAB-1",
@@ -584,7 +592,7 @@
       "action": null,
       "state": "Action (1)",
       "file": "POL-02-TAB-1.png",
-      "sha256": "0d701881ec13c5f1f55cb3fb792cda38b5b0492c85da622f1def5fccc9a75b40"
+      "sha256": "6bd9a776b5118ce835fba5ba348c37d5d576dd57f8bbcdddae6f19b0a9e5777c"
     },
     {
       "id": "POL-02-TAB-2",
@@ -592,7 +600,7 @@
       "action": null,
       "state": "관계 (2)",
       "file": "POL-02-TAB-2.png",
-      "sha256": "5f79d4d78ad6d5890af796fb52d5a008e54f6c1b883b18d54362d51ef0f06a5c"
+      "sha256": "c98a3c97f3e048e44e697ffd60c07dc9c2d6db75c16056b13c09a087e444fe9e"
     },
     {
       "id": "POL-02-TAB-3",
@@ -600,7 +608,7 @@
       "action": null,
       "state": "동기화 이력 (1)",
       "file": "POL-02-TAB-3.png",
-      "sha256": "617dd6df91a042b73f5b6a90030af0d6460022833d436f10f8ba7c35f5ca14f2"
+      "sha256": "1409f98b70367d622c223b9452aa996d28501dc014af1a9444f5c487c3f8608e"
     },
     {
       "id": "POL-02-TAB-4",
@@ -608,7 +616,7 @@
       "action": null,
       "state": "YAML",
       "file": "POL-02-TAB-4.png",
-      "sha256": "01d25f6af48ca26e50f58fd31358bf214c0e036f5dab0a7b87f665e93b95dedf"
+      "sha256": "8fe8d619df922840ae0175e300660c9071d1d33cf39aaa402720440343687689"
     },
     {
       "id": "SYNC-01",
@@ -616,7 +624,7 @@
       "action": null,
       "state": "default",
       "file": "SYNC-01.png",
-      "sha256": "1bbb22b6a61fa3ea96100aad48cc1da359b5def52e34e9c8d20b8b9244fed124"
+      "sha256": "0dca85de9ff0d04951c87cb68c774b4c10e73f8c5333b425f79c0469b1c966b3"
     },
     {
       "id": "KEY-01",
@@ -624,7 +632,7 @@
       "action": null,
       "state": "default",
       "file": "KEY-01.png",
-      "sha256": "0bce376368f76713d9d76f3d06ae8eeec3b2870cbc1d7f886ea8f12644d7929f"
+      "sha256": "5cb7f3a2d05e76cffceda5fbf022309f79c9d007837dc9da30049d3500007e48"
     },
     {
       "id": "KEY-02",
@@ -632,7 +640,7 @@
       "action": null,
       "state": "default",
       "file": "KEY-02.png",
-      "sha256": "f3ca5bfa339c19a82199b06dfa22b7398d2b6f8d0073e5dfe6b30a5cea5c4d70"
+      "sha256": "4197c8996f5f82ac7e666ba120481c9f1fcfa9df2923747050ac9e772317e00c"
     },
     {
       "id": "KEY-02-TAB-1",
@@ -640,7 +648,7 @@
       "action": null,
       "state": "결재 이력 (0)",
       "file": "KEY-02-TAB-1.png",
-      "sha256": "f3ca5bfa339c19a82199b06dfa22b7398d2b6f8d0073e5dfe6b30a5cea5c4d70"
+      "sha256": "4197c8996f5f82ac7e666ba120481c9f1fcfa9df2923747050ac9e772317e00c"
     },
     {
       "id": "KEY-02-TAB-2",
@@ -648,7 +656,7 @@
       "action": null,
       "state": "서비스 어카운트 (1)",
       "file": "KEY-02-TAB-2.png",
-      "sha256": "1822ce8b29fd178604ee08edc9fcfab743a6aa80c1805c563dbee71fd6fa2d21"
+      "sha256": "a0019f2f3bd05665b89a89bc0fcc67d03a569d21f2e679a5aed9336e6298fbef"
     },
     {
       "id": "APR-01",
@@ -656,7 +664,7 @@
       "action": null,
       "state": "default",
       "file": "APR-01.png",
-      "sha256": "8319143af702796d9d5cded7ea4cb8fcaa6eb2b348972ca6ef89fc797d359c09"
+      "sha256": "80b3581aac415225e3a73a352ced55c0073e0db4bc34d338733755b9052f3b36"
     },
     {
       "id": "APR-01-TAB-1",
@@ -664,7 +672,7 @@
       "action": null,
       "state": "결재 문서",
       "file": "APR-01-TAB-1.png",
-      "sha256": "8319143af702796d9d5cded7ea4cb8fcaa6eb2b348972ca6ef89fc797d359c09"
+      "sha256": "80b3581aac415225e3a73a352ced55c0073e0db4bc34d338733755b9052f3b36"
     },
     {
       "id": "APR-01-TAB-2",
@@ -672,7 +680,7 @@
       "action": null,
       "state": "결재 템플릿",
       "file": "APR-01-TAB-2.png",
-      "sha256": "c03c72bc04bb2e7e6de3b1073a298f5b44cec2f36a9f30623cac4336586bcd2c"
+      "sha256": "3f04335443728e9142e86fd4deb6bbdb4db7b0679899b05e71d33bdb38bf30f7"
     },
     {
       "id": "APR-02",
@@ -680,7 +688,7 @@
       "action": null,
       "state": "default",
       "file": "APR-02.png",
-      "sha256": "5607fff8a6a66a8d3f8c241059c8ecbd0371c6f3fe8f581937b3edbae31dd9d6"
+      "sha256": "69ff944fa6fd4eb9e51194783cd732fbb0443ea48e28b7ccb5c72c224fce12f1"
     },
     {
       "id": "APR-03",
@@ -688,7 +696,7 @@
       "action": null,
       "state": "default",
       "file": "APR-03.png",
-      "sha256": "7cdbd0909a8047c8cc9593c4cbf970ec713c576709e1a9a5a2270ceb273fe138"
+      "sha256": "0e1b116e2e4fc18b012ecaaac9fa50d8c000dfd2f488176425af04fbf6c936fd"
     },
     {
       "id": "APR-03-TAB-1",
@@ -696,7 +704,7 @@
       "action": null,
       "state": "요청 정보",
       "file": "APR-03-TAB-1.png",
-      "sha256": "7cdbd0909a8047c8cc9593c4cbf970ec713c576709e1a9a5a2270ceb273fe138"
+      "sha256": "0e1b116e2e4fc18b012ecaaac9fa50d8c000dfd2f488176425af04fbf6c936fd"
     },
     {
       "id": "APR-03-TAB-2",
@@ -704,7 +712,7 @@
       "action": null,
       "state": "결재선",
       "file": "APR-03-TAB-2.png",
-      "sha256": "4457ccf930f76e9210c0f6336c5b7ee44533d17ee715c283b12b610608dba698"
+      "sha256": "fd0749e357438b13280e5c232cae2d0639c22e9bb677c9e8d0f22d57801dedd8"
     },
     {
       "id": "APR-03-TAB-3",
@@ -712,7 +720,7 @@
       "action": null,
       "state": "열람자",
       "file": "APR-03-TAB-3.png",
-      "sha256": "b54edfc0a2e7708e5df3e22f3326cb2901b6189eea4176fee412d753e4fb6004"
+      "sha256": "11fa3de43eff3b09eb294d5d7da203fd2b6c1d970ff7b2cb4f42bd12c5d3cb37"
     },
     {
       "id": "APR-03-TAB-4",
@@ -720,7 +728,7 @@
       "action": null,
       "state": "후속 처리",
       "file": "APR-03-TAB-4.png",
-      "sha256": "3e74ce4d571b830f52fdcd8a69b77dc6250e7d90724d109ff9ca25238d27f2ff"
+      "sha256": "50e14d55f092db89b773c0cb01bd9949b5599fb9ab5f539ee8d5bd4c36e36be3"
     },
     {
       "id": "TPL-01",
@@ -728,7 +736,7 @@
       "action": null,
       "state": "default",
       "file": "TPL-01.png",
-      "sha256": "c03c72bc04bb2e7e6de3b1073a298f5b44cec2f36a9f30623cac4336586bcd2c"
+      "sha256": "3f04335443728e9142e86fd4deb6bbdb4db7b0679899b05e71d33bdb38bf30f7"
     },
     {
       "id": "TPL-01-TAB-1",
@@ -736,7 +744,7 @@
       "action": null,
       "state": "결재 문서",
       "file": "TPL-01-TAB-1.png",
-      "sha256": "8319143af702796d9d5cded7ea4cb8fcaa6eb2b348972ca6ef89fc797d359c09"
+      "sha256": "f2e8662f7e33cffd41c958e4b328973c0ae95543f860f175d1278edf0716b00a"
     },
     {
       "id": "TPL-01-TAB-2",
@@ -744,7 +752,7 @@
       "action": null,
       "state": "결재 템플릿",
       "file": "TPL-01-TAB-2.png",
-      "sha256": "cb5fea6420b4c9c59b6e10670ab9a1889ba6df32e9f7e1d2d4a0c410e37b296a"
+      "sha256": "6931e9449e9c6f83b774abc14d96e793ee5f7e34f58d80ec5aa0c34bab4726fd"
     },
     {
       "id": "TPL-02",
@@ -752,7 +760,7 @@
       "action": null,
       "state": "default",
       "file": "TPL-02.png",
-      "sha256": "bf830c00b2734d333a720b9fc646bf874294b2e3c3fa5da959bd3ffacf5dab9b"
+      "sha256": "a369fe3301ab5379ea35e2885be5f086f283d5a198c4fad37fa43e7d2cf64cc8"
     },
     {
       "id": "TPL-02-TAB-1",
@@ -760,7 +768,7 @@
       "action": null,
       "state": "결재선",
       "file": "TPL-02-TAB-1.png",
-      "sha256": "bf830c00b2734d333a720b9fc646bf874294b2e3c3fa5da959bd3ffacf5dab9b"
+      "sha256": "a369fe3301ab5379ea35e2885be5f086f283d5a198c4fad37fa43e7d2cf64cc8"
     },
     {
       "id": "TPL-02-TAB-2",
@@ -768,7 +776,7 @@
       "action": null,
       "state": "입력 필드",
       "file": "TPL-02-TAB-2.png",
-      "sha256": "0a1a779cf57b67865036ba48ce26ea0fdf9c375ee332187c84b2749ff427c80d"
+      "sha256": "8bab020071a6c9df6b1c88d391a258741d76bacd5ca24030dfc639abeecaa5d1"
     },
     {
       "id": "TPL-03",
@@ -776,7 +784,7 @@
       "action": null,
       "state": "default",
       "file": "TPL-03.png",
-      "sha256": "1df2724561bbe80221cf6f345db9e5a82a3f2612f66e1598db948297497d9e2e"
+      "sha256": "0e3eb04c07b07e1ff02468fc075f87c582771ef2212a85947560b33accfe3649"
     },
     {
       "id": "TPL-03-TAB-1",
@@ -784,7 +792,7 @@
       "action": null,
       "state": "결재선",
       "file": "TPL-03-TAB-1.png",
-      "sha256": "1df2724561bbe80221cf6f345db9e5a82a3f2612f66e1598db948297497d9e2e"
+      "sha256": "0e3eb04c07b07e1ff02468fc075f87c582771ef2212a85947560b33accfe3649"
     },
     {
       "id": "TPL-03-TAB-2",
@@ -792,7 +800,7 @@
       "action": null,
       "state": "입력 필드",
       "file": "TPL-03-TAB-2.png",
-      "sha256": "015cabd42a6c069c8d440473b6a59797611c55c0e23d832977d7a0d855e0fde6"
+      "sha256": "b2be8fcc8a2d503c41f83fdc8f09afe73629646076885c25f31da512a1488718"
     },
     {
       "id": "TPL-04",
@@ -800,7 +808,7 @@
       "action": null,
       "state": "default",
       "file": "TPL-04.png",
-      "sha256": "ef6b2bc7cd2c65b558faf88717621d2619e5277b7853c9d85370675ef78ef931"
+      "sha256": "3c37cabc3df391239cab9d818e8f0be01ea26b9d60b629d7542cb68b07a86031"
     },
     {
       "id": "TPL-04-TAB-1",
@@ -808,7 +816,7 @@
       "action": null,
       "state": "결재선",
       "file": "TPL-04-TAB-1.png",
-      "sha256": "ef6b2bc7cd2c65b558faf88717621d2619e5277b7853c9d85370675ef78ef931"
+      "sha256": "3c37cabc3df391239cab9d818e8f0be01ea26b9d60b629d7542cb68b07a86031"
     },
     {
       "id": "TPL-04-TAB-2",
@@ -816,7 +824,7 @@
       "action": null,
       "state": "입력 필드",
       "file": "TPL-04-TAB-2.png",
-      "sha256": "f4cbe671b35115f43cb6ec40a42bce957429675e9262e9a7b9a4f45254a8b06e"
+      "sha256": "508adc6930e116bbd56708c95944e9061166101036d711f372123a933602f79b"
     },
     {
       "id": "KEY-03",
@@ -824,7 +832,7 @@
       "action": "issuance",
       "state": "default",
       "file": "KEY-03.png",
-      "sha256": "aa7000c13ea1045c19d9c7c6453e4224c13acf7218bdcfed83cfad1a29832088"
+      "sha256": "52aadd894189a9959eba0d548af1c21d85af315b66dfd6d1c1b2e7d45742bf6f"
     },
     {
       "id": "KEY-03-REVIEW",
@@ -832,7 +840,7 @@
       "action": "issuance-review",
       "state": "default",
       "file": "KEY-03-REVIEW.png",
-      "sha256": "ffe2e806002d21226254bbb053e838a5d0f43cb5d11cbcc699e560b7e27b8021"
+      "sha256": "4f2a50b65afc238de3877421babdb656e26715b889bc9f640dfb21b03c5dac62"
     },
     {
       "id": "SYNC-REVIEW",
@@ -840,7 +848,7 @@
       "action": "sync-review",
       "state": "default",
       "file": "SYNC-REVIEW.png",
-      "sha256": "5c5b1fafcabcb3baeacc87d34bd5be1e15da8d26f363c811537315d63ed46822"
+      "sha256": "6cc339becaf6d9001faf361624b9562b14d44f62e8687d9ce8d966d678bb7f0a"
     },
     {
       "id": "SYNC-IMPACT",
@@ -848,7 +856,7 @@
       "action": "sync-impact",
       "state": "default",
       "file": "SYNC-IMPACT.png",
-      "sha256": "45aea4bce53a0a6d8eed6a20d538602c2a50d5ebf9a069fa27f8b9758a4f92b7"
+      "sha256": "0ec570a096d8742d7a8ec17f050a99819812313d69e45525144886db941136c8"
     },
     {
       "id": "PLT-05-MEMBERS",
@@ -856,7 +864,7 @@
       "action": null,
       "state": "default",
       "file": "PLT-05-MEMBERS.png",
-      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+      "sha256": "bb265cb1114aa03fb9390f07e0525ef177ce07f514547ee22da446038309f010"
     },
     {
       "id": "PLT-05-MEMBERS-TAB-1",
@@ -864,7 +872,7 @@
       "action": null,
       "state": "멤버 (3)",
       "file": "PLT-05-MEMBERS-TAB-1.png",
-      "sha256": "e39c75b6541558a84c1471a3f244d3a52cbd8fffb704a081cbc68219b8fa0f21"
+      "sha256": "bb265cb1114aa03fb9390f07e0525ef177ce07f514547ee22da446038309f010"
     },
     {
       "id": "PLT-05-MEMBERS-TAB-2",
@@ -872,7 +880,7 @@
       "action": null,
       "state": "워크스페이스 (3)",
       "file": "PLT-05-MEMBERS-TAB-2.png",
-      "sha256": "79eb9bbdf580f29edc4c92daf1b79b65fa9a019eacfd3a3ab7595fd9f6e62a1e"
+      "sha256": "1dbc0f20e14ec653ff2571c662c3233ecf3d964886c9c8a60783cf44c9cd4d57"
     },
     {
       "id": "PLT-05-MEMBERS-TAB-3",
@@ -880,7 +888,7 @@
       "action": null,
       "state": "역할 (5)",
       "file": "PLT-05-MEMBERS-TAB-3.png",
-      "sha256": "5c002775cde7a67dbfab4f64d728d6fc0658c25ed59715ebaf86d73bcfda090f"
+      "sha256": "aa6949cb0029d8efa9a2ae97c87c80e44b28791bf608d6b7e3602a820f7829c9"
     },
     {
       "id": "PLT-05-MEMBERS-TAB-4",
@@ -888,7 +896,7 @@
       "action": null,
       "state": "인증 설정",
       "file": "PLT-05-MEMBERS-TAB-4.png",
-      "sha256": "d5dd09f29f2caf4c75b8807d2dfb856b621a1e34165e0d1e542a9b419e06d982"
+      "sha256": "f0cb70a79ada9f899c9dc6d5beab694fd3e2e8315e4ef764bb638a81d3268eab"
     },
     {
       "id": "PLT-05-REVIEW",
@@ -896,7 +904,7 @@
       "action": "member-review",
       "state": "default",
       "file": "PLT-05-REVIEW.png",
-      "sha256": "11f82f4f5ea6c89a77bfdf738fd341156dd8d33d0a720890211fcb81cc10ac70"
+      "sha256": "d070d01a9b35795a0f65a7a5c435d020da3c29c3ac6dcff732f34b505f18f2be"
     },
     {
       "id": "ROL-05-POLICIES",
@@ -904,7 +912,7 @@
       "action": null,
       "state": "default",
       "file": "ROL-05-POLICIES.png",
-      "sha256": "af1c8e9807d53ce574c6d11bc58fe8285bb646b272b7887e8d78d27089dfce1f"
+      "sha256": "eb220e2fd977dd3a928194086f8ae2bf088c5698d007d4d109029d582c87044d"
     },
     {
       "id": "ROL-05-POLICIES-TAB-1",
@@ -912,7 +920,7 @@
       "action": null,
       "state": "사용자 (1)",
       "file": "ROL-05-POLICIES-TAB-1.png",
-      "sha256": "463d419c57326425d8773ac57807fdaa4653a6ba2035ca1502d1383c2b444d96"
+      "sha256": "78a356c7067a78724f77d7db72eef91517c39ab2079c43c24a44075ca211d5e8"
     },
     {
       "id": "ROL-05-POLICIES-TAB-2",
@@ -920,7 +928,7 @@
       "action": null,
       "state": "조직 (1)",
       "file": "ROL-05-POLICIES-TAB-2.png",
-      "sha256": "4c02ad5434cf7ea20aa67476e075126659a0fd6fa3c9fad463dd9757b2f8e95f"
+      "sha256": "65f4866bd0e3390025d63b13c2b965710fc0dfa971492c46eb312f680a17d3f2"
     },
     {
       "id": "ROL-05-POLICIES-TAB-3",
@@ -928,7 +936,7 @@
       "action": null,
       "state": "서비스 어카운트 (1)",
       "file": "ROL-05-POLICIES-TAB-3.png",
-      "sha256": "a124eadd336c6200c56ec31e41b213eb9ae126d0bf0206783624966cbf8bdb49"
+      "sha256": "a71e6e8b674dd28ef21c2c7c7ec7da2289c8e526f3fc052f0a30497516c830e1"
     },
     {
       "id": "ROL-05-POLICIES-TAB-4",
@@ -936,7 +944,7 @@
       "action": null,
       "state": "정책 (2)",
       "file": "ROL-05-POLICIES-TAB-4.png",
-      "sha256": "af1c8e9807d53ce574c6d11bc58fe8285bb646b272b7887e8d78d27089dfce1f"
+      "sha256": "eb220e2fd977dd3a928194086f8ae2bf088c5698d007d4d109029d582c87044d"
     },
     {
       "id": "ROL-05-EDITOR",
@@ -944,7 +952,7 @@
       "action": "role-policy-edit",
       "state": "default",
       "file": "ROL-05-EDITOR.png",
-      "sha256": "1473be0ee7b33263525cff9e93cc26ecdba4093c64b4ecdd7b087af222ac57fb"
+      "sha256": "983edfecb3a4d9de09be67382a5f2bce980724c56997d6dd74190e31fd90f591"
     },
     {
       "id": "USR-03-ACCESS",
@@ -952,7 +960,7 @@
       "action": null,
       "state": "default",
       "file": "USR-03-ACCESS.png",
-      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+      "sha256": "ff74592b418c95eded3c287e93a975708875daafab0ea65f6bb3abb113fb7b5f"
     },
     {
       "id": "USR-03-ACCESS-TAB-1",
@@ -960,7 +968,7 @@
       "action": null,
       "state": "권한 종합",
       "file": "USR-03-ACCESS-TAB-1.png",
-      "sha256": "5f1f72f078c6d89fba14089616ed7879027078350e97ba5fd6c4877fa6a62236"
+      "sha256": "b61397b662aec5125e417aaf7057940bae3fcffe5076ed00e24d950650798270"
     },
     {
       "id": "USR-03-ACCESS-TAB-2",
@@ -968,7 +976,7 @@
       "action": null,
       "state": "플랫폼 (2)",
       "file": "USR-03-ACCESS-TAB-2.png",
-      "sha256": "b3fffce411f60b0f2d732b1a60151d135f4cd7b78022e4433f284b87bc5a881c"
+      "sha256": "a33aebfe76bc73848faff80e8e91e574570af5fee17c08ca784f97d546b8ddfd"
     },
     {
       "id": "USR-03-ACCESS-TAB-3",
@@ -976,7 +984,7 @@
       "action": null,
       "state": "소속 조직 (2)",
       "file": "USR-03-ACCESS-TAB-3.png",
-      "sha256": "a43f07fbd3b160aea172dc635322d27640ecb83a4813bcb3ec86218a02c21228"
+      "sha256": "30d4d6c2d848c964cdf23aca5d7fde4508da76ddd905e87d689e4bad6c5ec3d9"
     },
     {
       "id": "USR-03-ACCESS-TAB-4",
@@ -984,7 +992,7 @@
       "action": null,
       "state": "역할 (2)",
       "file": "USR-03-ACCESS-TAB-4.png",
-      "sha256": "a51b9a18de36ff8681b07eabcf05fc0a9ad61eafc96bb3b3c6d1f2440fc02e7d"
+      "sha256": "e7e63f19cc3b0907abdc06e57230bffb82fb73d0fd8cec330f45f3ddc2811a9c"
     },
     {
       "id": "CHK-01-ALLOW",
@@ -992,7 +1000,7 @@
       "action": "access-allow",
       "state": "default",
       "file": "CHK-01-ALLOW.png",
-      "sha256": "19c6a525e78de9f7eb440c70354f9dfd92b58047745e3f351adb54fcc3dc93cf"
+      "sha256": "f4038950935b7046925be0600f11a1ace9e033ab85361d2add7f057d8d2d7bf0"
     },
     {
       "id": "CHK-01-DENY",
@@ -1000,7 +1008,7 @@
       "action": "access-deny",
       "state": "default",
       "file": "CHK-01-DENY.png",
-      "sha256": "80b75b326763da9c19a05d093a23b9ebd69bf97c3b78797337183948bcac8412"
+      "sha256": "db47d269e73c07de2544130eb05e6feb9e61ee16ad8d56bc32779e135c11c07f"
     },
     {
       "id": "REQ-01-FORM",
@@ -1008,7 +1016,7 @@
       "action": "request-form",
       "state": "default",
       "file": "REQ-01-FORM.png",
-      "sha256": "a33373bd44b5b52561bff00ab793c9d5a183f9ba61fc6e63cd7c1964f0129b17"
+      "sha256": "f9f3689bbb252d3df4cafc710b51e586dcc6154e4559999fb9bf1cbbb8635f5d"
     },
     {
       "id": "REQ-01-REVIEW",
@@ -1016,7 +1024,7 @@
       "action": "request-review",
       "state": "default",
       "file": "REQ-01-REVIEW.png",
-      "sha256": "ae8eabb4290c5d52fcdaf56e88fe0855568ebd8776ed73809dfa0a8fe57b3b21"
+      "sha256": "f739d40de9da25ef1cffa17312ce81c1302416f9efec2ded88487997dd084d0d"
     },
     {
       "id": "REQ-02-SUBMITTED",
@@ -1024,7 +1032,7 @@
       "action": "request-submit",
       "state": "default",
       "file": "REQ-02-SUBMITTED.png",
-      "sha256": "8ad49604166c757798cc5be855448f292a5164a7eb44977d68e751e4ece610fe"
+      "sha256": "66cde31c3a3afc92001cae16e749b6f98d85979c5490f8199728f8e7a6f9d0ed"
     },
     {
       "id": "ME-01-ACCESS",
@@ -1032,7 +1040,7 @@
       "action": null,
       "state": "default",
       "file": "ME-01-ACCESS.png",
-      "sha256": "5cdf7232747eff02f42271abfff136876b0d7490c7cc0c97136330f216db615a"
+      "sha256": "9b3e85c0be7b3fc0258b122cca6c8db6257a0dd7a22f05a326e761ce5b3979dc"
     },
     {
       "id": "ME-01-ACCESS-TAB-1",
@@ -1040,7 +1048,7 @@
       "action": null,
       "state": "보유 권한",
       "file": "ME-01-ACCESS-TAB-1.png",
-      "sha256": "5cdf7232747eff02f42271abfff136876b0d7490c7cc0c97136330f216db615a"
+      "sha256": "9b3e85c0be7b3fc0258b122cca6c8db6257a0dd7a22f05a326e761ce5b3979dc"
     },
     {
       "id": "ME-01-ACCESS-TAB-2",
@@ -1048,7 +1056,7 @@
       "action": null,
       "state": "신청 내역 (0)",
       "file": "ME-01-ACCESS-TAB-2.png",
-      "sha256": "da6d7ea815167ce4faebff97ce4bb5aecc1386bbbafc5ad986c9cb24ed7d7901"
+      "sha256": "b3f1b036c5cf458ec8c20a0fa5e687934332f4499990602eb2f2c0bbd9db1757"
     },
     {
       "id": "SYNC-OUTCOMES",
@@ -1056,8 +1064,808 @@
       "action": "sync-outcomes",
       "state": "default",
       "file": "SYNC-OUTCOMES.png",
-      "sha256": "45aea4bce53a0a6d8eed6a20d538602c2a50d5ebf9a069fa27f8b9758a4f92b7"
+      "sha256": "689fc63f6475ae93ab3251130722cd4416fc02de003f9f7227338e2cbe6a6035"
+    },
+    {
+      "id": "YAML-02-ACTION",
+      "route": "/definition-contract?view=actions",
+      "action": null,
+      "state": "default",
+      "file": "YAML-02-ACTION.png",
+      "sha256": "345746aa168b4b9a483c85c5515fe3ff40098a1a419a6e675cf7f1844edb74ad"
+    },
+    {
+      "id": "YAML-02-ACTION-TAB-1",
+      "route": "/definition-contract?view=actions",
+      "action": null,
+      "state": "Action 계약",
+      "file": "YAML-02-ACTION-TAB-1.png",
+      "sha256": "345746aa168b4b9a483c85c5515fe3ff40098a1a419a6e675cf7f1844edb74ad"
+    },
+    {
+      "id": "YAML-02-ACTION-TAB-2",
+      "route": "/definition-contract?view=actions",
+      "action": null,
+      "state": "조회 범위",
+      "file": "YAML-02-ACTION-TAB-2.png",
+      "sha256": "f813348e46df28fc9300dffa4deb5768a5a367468b0fb9f9d4999ceb08bf9292"
+    },
+    {
+      "id": "YAML-02-ACTION-TAB-3",
+      "route": "/definition-contract?view=actions",
+      "action": null,
+      "state": "마스킹",
+      "file": "YAML-02-ACTION-TAB-3.png",
+      "sha256": "b6957b356e5453e2b0b97822f8a8b55e091368fe64e8526416fef6a657ee99f9"
+    },
+    {
+      "id": "YAML-02-ACTION-TAB-4",
+      "route": "/definition-contract?view=actions",
+      "action": null,
+      "state": "GitOps 동기화",
+      "file": "YAML-02-ACTION-TAB-4.png",
+      "sha256": "53451183ac59f26a6eff42c1d0a24f6ee7742cf01ce2ae28bf784154127ad9ea"
+    },
+    {
+      "id": "YAML-02-ACTION-TAB-5",
+      "route": "/definition-contract?view=actions",
+      "action": null,
+      "state": "전체 정의",
+      "file": "YAML-02-ACTION-TAB-5.png",
+      "sha256": "6bcf3c17ddcb9b1a615156c113a1c5ac19e52357c73351816de7f938e1e6df76"
+    },
+    {
+      "id": "YAML-03-SCOPE",
+      "route": "/definition-contract?view=scopes",
+      "action": null,
+      "state": "default",
+      "file": "YAML-03-SCOPE.png",
+      "sha256": "f813348e46df28fc9300dffa4deb5768a5a367468b0fb9f9d4999ceb08bf9292"
+    },
+    {
+      "id": "YAML-03-SCOPE-TAB-1",
+      "route": "/definition-contract?view=scopes",
+      "action": null,
+      "state": "Action 계약",
+      "file": "YAML-03-SCOPE-TAB-1.png",
+      "sha256": "345746aa168b4b9a483c85c5515fe3ff40098a1a419a6e675cf7f1844edb74ad"
+    },
+    {
+      "id": "YAML-03-SCOPE-TAB-2",
+      "route": "/definition-contract?view=scopes",
+      "action": null,
+      "state": "조회 범위",
+      "file": "YAML-03-SCOPE-TAB-2.png",
+      "sha256": "f813348e46df28fc9300dffa4deb5768a5a367468b0fb9f9d4999ceb08bf9292"
+    },
+    {
+      "id": "YAML-03-SCOPE-TAB-3",
+      "route": "/definition-contract?view=scopes",
+      "action": null,
+      "state": "마스킹",
+      "file": "YAML-03-SCOPE-TAB-3.png",
+      "sha256": "b6957b356e5453e2b0b97822f8a8b55e091368fe64e8526416fef6a657ee99f9"
+    },
+    {
+      "id": "YAML-03-SCOPE-TAB-4",
+      "route": "/definition-contract?view=scopes",
+      "action": null,
+      "state": "GitOps 동기화",
+      "file": "YAML-03-SCOPE-TAB-4.png",
+      "sha256": "53451183ac59f26a6eff42c1d0a24f6ee7742cf01ce2ae28bf784154127ad9ea"
+    },
+    {
+      "id": "YAML-03-SCOPE-TAB-5",
+      "route": "/definition-contract?view=scopes",
+      "action": null,
+      "state": "전체 정의",
+      "file": "YAML-03-SCOPE-TAB-5.png",
+      "sha256": "6bcf3c17ddcb9b1a615156c113a1c5ac19e52357c73351816de7f938e1e6df76"
+    },
+    {
+      "id": "YAML-04-MASKING",
+      "route": "/definition-contract?view=masking",
+      "action": null,
+      "state": "default",
+      "file": "YAML-04-MASKING.png",
+      "sha256": "b6957b356e5453e2b0b97822f8a8b55e091368fe64e8526416fef6a657ee99f9"
+    },
+    {
+      "id": "YAML-04-MASKING-TAB-1",
+      "route": "/definition-contract?view=masking",
+      "action": null,
+      "state": "Action 계약",
+      "file": "YAML-04-MASKING-TAB-1.png",
+      "sha256": "345746aa168b4b9a483c85c5515fe3ff40098a1a419a6e675cf7f1844edb74ad"
+    },
+    {
+      "id": "YAML-04-MASKING-TAB-2",
+      "route": "/definition-contract?view=masking",
+      "action": null,
+      "state": "조회 범위",
+      "file": "YAML-04-MASKING-TAB-2.png",
+      "sha256": "f813348e46df28fc9300dffa4deb5768a5a367468b0fb9f9d4999ceb08bf9292"
+    },
+    {
+      "id": "YAML-04-MASKING-TAB-3",
+      "route": "/definition-contract?view=masking",
+      "action": null,
+      "state": "마스킹",
+      "file": "YAML-04-MASKING-TAB-3.png",
+      "sha256": "b6957b356e5453e2b0b97822f8a8b55e091368fe64e8526416fef6a657ee99f9"
+    },
+    {
+      "id": "YAML-04-MASKING-TAB-4",
+      "route": "/definition-contract?view=masking",
+      "action": null,
+      "state": "GitOps 동기화",
+      "file": "YAML-04-MASKING-TAB-4.png",
+      "sha256": "53451183ac59f26a6eff42c1d0a24f6ee7742cf01ce2ae28bf784154127ad9ea"
+    },
+    {
+      "id": "YAML-04-MASKING-TAB-5",
+      "route": "/definition-contract?view=masking",
+      "action": null,
+      "state": "전체 정의",
+      "file": "YAML-04-MASKING-TAB-5.png",
+      "sha256": "6bcf3c17ddcb9b1a615156c113a1c5ac19e52357c73351816de7f938e1e6df76"
+    },
+    {
+      "id": "YAML-05-SYNC",
+      "route": "/definition-contract?view=sync",
+      "action": null,
+      "state": "default",
+      "file": "YAML-05-SYNC.png",
+      "sha256": "fc981d32751a8d918be2100bd5dc56e862862468fa231ea493230ddee710e8a9"
+    },
+    {
+      "id": "YAML-05-SYNC-TAB-1",
+      "route": "/definition-contract?view=sync",
+      "action": null,
+      "state": "Action 계약",
+      "file": "YAML-05-SYNC-TAB-1.png",
+      "sha256": "345746aa168b4b9a483c85c5515fe3ff40098a1a419a6e675cf7f1844edb74ad"
+    },
+    {
+      "id": "YAML-05-SYNC-TAB-2",
+      "route": "/definition-contract?view=sync",
+      "action": null,
+      "state": "조회 범위",
+      "file": "YAML-05-SYNC-TAB-2.png",
+      "sha256": "f813348e46df28fc9300dffa4deb5768a5a367468b0fb9f9d4999ceb08bf9292"
+    },
+    {
+      "id": "YAML-05-SYNC-TAB-3",
+      "route": "/definition-contract?view=sync",
+      "action": null,
+      "state": "마스킹",
+      "file": "YAML-05-SYNC-TAB-3.png",
+      "sha256": "b6957b356e5453e2b0b97822f8a8b55e091368fe64e8526416fef6a657ee99f9"
+    },
+    {
+      "id": "YAML-05-SYNC-TAB-4",
+      "route": "/definition-contract?view=sync",
+      "action": null,
+      "state": "GitOps 동기화",
+      "file": "YAML-05-SYNC-TAB-4.png",
+      "sha256": "53451183ac59f26a6eff42c1d0a24f6ee7742cf01ce2ae28bf784154127ad9ea"
+    },
+    {
+      "id": "YAML-05-SYNC-TAB-5",
+      "route": "/definition-contract?view=sync",
+      "action": null,
+      "state": "전체 정의",
+      "file": "YAML-05-SYNC-TAB-5.png",
+      "sha256": "6bcf3c17ddcb9b1a615156c113a1c5ac19e52357c73351816de7f938e1e6df76"
+    },
+    {
+      "id": "YAML-05-REVIEW",
+      "route": "/definition-contract?view=sync",
+      "action": "contract-review",
+      "state": "default",
+      "file": "YAML-05-REVIEW.png",
+      "sha256": "4b4630dc8a71ea34e2e4122529e6ef15048a0249132ed58a731b90203e759730"
+    },
+    {
+      "id": "YAML-06-RESULT",
+      "route": "/definition-contract?view=sync",
+      "action": "contract-apply",
+      "state": "default",
+      "file": "YAML-06-RESULT.png",
+      "sha256": "6da8b9a2ec9b92de8cd1aa91e7703cbf6671a14806c82a8a85d9099b0ec11909"
+    },
+    {
+      "id": "YAML-01-DEFINITIONS",
+      "route": "/definition-contract?view=definitions",
+      "action": null,
+      "state": "default",
+      "file": "YAML-01-DEFINITIONS.png",
+      "sha256": "6bcf3c17ddcb9b1a615156c113a1c5ac19e52357c73351816de7f938e1e6df76"
+    },
+    {
+      "id": "YAML-01-DEFINITIONS-TAB-1",
+      "route": "/definition-contract?view=definitions",
+      "action": null,
+      "state": "Action 계약",
+      "file": "YAML-01-DEFINITIONS-TAB-1.png",
+      "sha256": "345746aa168b4b9a483c85c5515fe3ff40098a1a419a6e675cf7f1844edb74ad"
+    },
+    {
+      "id": "YAML-01-DEFINITIONS-TAB-2",
+      "route": "/definition-contract?view=definitions",
+      "action": null,
+      "state": "조회 범위",
+      "file": "YAML-01-DEFINITIONS-TAB-2.png",
+      "sha256": "f813348e46df28fc9300dffa4deb5768a5a367468b0fb9f9d4999ceb08bf9292"
+    },
+    {
+      "id": "YAML-01-DEFINITIONS-TAB-3",
+      "route": "/definition-contract?view=definitions",
+      "action": null,
+      "state": "마스킹",
+      "file": "YAML-01-DEFINITIONS-TAB-3.png",
+      "sha256": "b6957b356e5453e2b0b97822f8a8b55e091368fe64e8526416fef6a657ee99f9"
+    },
+    {
+      "id": "YAML-01-DEFINITIONS-TAB-4",
+      "route": "/definition-contract?view=definitions",
+      "action": null,
+      "state": "GitOps 동기화",
+      "file": "YAML-01-DEFINITIONS-TAB-4.png",
+      "sha256": "53451183ac59f26a6eff42c1d0a24f6ee7742cf01ce2ae28bf784154127ad9ea"
+    },
+    {
+      "id": "YAML-01-DEFINITIONS-TAB-5",
+      "route": "/definition-contract?view=definitions",
+      "action": null,
+      "state": "전체 정의",
+      "file": "YAML-01-DEFINITIONS-TAB-5.png",
+      "sha256": "6bcf3c17ddcb9b1a615156c113a1c5ac19e52357c73351816de7f938e1e6df76"
+    },
+    {
+      "id": "YAML-DOMAIN",
+      "route": "/domains/employee",
+      "action": null,
+      "state": "default",
+      "file": "YAML-DOMAIN.png",
+      "sha256": "5c667d835a1e003f7d37b7021da66b443850ea35ac0eb9b59da1f668058b56f9"
+    },
+    {
+      "id": "YAML-DOMAIN-TAB-1",
+      "route": "/domains/employee",
+      "action": null,
+      "state": "Action",
+      "file": "YAML-DOMAIN-TAB-1.png",
+      "sha256": "5c667d835a1e003f7d37b7021da66b443850ea35ac0eb9b59da1f668058b56f9"
+    },
+    {
+      "id": "YAML-DOMAIN-TAB-2",
+      "route": "/domains/employee",
+      "action": null,
+      "state": "관련 정책",
+      "file": "YAML-DOMAIN-TAB-2.png",
+      "sha256": "19b822102b0f743d78b48dc2055f173bf11a82d2392e5deb7f466ec5c981ff2e"
+    },
+    {
+      "id": "YAML-DOMAIN-TAB-3",
+      "route": "/domains/employee",
+      "action": null,
+      "state": "조회 범위",
+      "file": "YAML-DOMAIN-TAB-3.png",
+      "sha256": "d92a60ff0c01830e6fc69f7da5df6df92e7422dc05f0451a591e8d23089e0a5c"
+    },
+    {
+      "id": "YAML-DOMAIN-TAB-4",
+      "route": "/domains/employee",
+      "action": null,
+      "state": "사용 페이지",
+      "file": "YAML-DOMAIN-TAB-4.png",
+      "sha256": "e230e12892258c28a1bc448a284e21248d622d1d34c126bcbecbcde2e96a3060"
+    },
+    {
+      "id": "YAML-DOMAIN-TAB-5",
+      "route": "/domains/employee",
+      "action": null,
+      "state": "관계",
+      "file": "YAML-DOMAIN-TAB-5.png",
+      "sha256": "8acdd9a610fbffaad2bd5a44386b5516eb958536b850b0c347137679637b0f6e"
+    },
+    {
+      "id": "YAML-DOMAIN-TAB-6",
+      "route": "/domains/employee",
+      "action": null,
+      "state": "동기화 이력",
+      "file": "YAML-DOMAIN-TAB-6.png",
+      "sha256": "28edc55d4a358937cfea06d6b6b77976aac01965a53286cfb614075af4fc48ee"
+    },
+    {
+      "id": "YAML-DOMAIN-TAB-7",
+      "route": "/domains/employee",
+      "action": null,
+      "state": "YAML",
+      "file": "YAML-DOMAIN-TAB-7.png",
+      "sha256": "efa1bf29fc39a4d59a66c6c40fb9220ccee3d47405ea6e99cdf843dd4ad09cd2"
+    },
+    {
+      "id": "YAML-ACTION-DETAIL",
+      "route": "/actions/employee~read-regional-employees",
+      "action": null,
+      "state": "default",
+      "file": "YAML-ACTION-DETAIL.png",
+      "sha256": "d84a726a9597a59c2aea5d24d8ad27328d54c3014f9a322c8a4b378217abba0c"
+    },
+    {
+      "id": "YAML-POLICY",
+      "route": "/policies/employee~regional-reader",
+      "action": null,
+      "state": "default",
+      "file": "YAML-POLICY.png",
+      "sha256": "da1227739199da520fa6c18715525cd29fb03de1d7e3d83ab1f71353c9b20d9e"
+    },
+    {
+      "id": "YAML-POLICY-TAB-1",
+      "route": "/policies/employee~regional-reader",
+      "action": null,
+      "state": "실행 권한",
+      "file": "YAML-POLICY-TAB-1.png",
+      "sha256": "da1227739199da520fa6c18715525cd29fb03de1d7e3d83ab1f71353c9b20d9e"
+    },
+    {
+      "id": "YAML-POLICY-TAB-2",
+      "route": "/policies/employee~regional-reader",
+      "action": null,
+      "state": "관계",
+      "file": "YAML-POLICY-TAB-2.png",
+      "sha256": "ed9452f983e7d9be0dca12f36808afc2a579f6ba588458ec53157ed5d6d91f24"
+    },
+    {
+      "id": "YAML-POLICY-TAB-3",
+      "route": "/policies/employee~regional-reader",
+      "action": null,
+      "state": "동기화 이력",
+      "file": "YAML-POLICY-TAB-3.png",
+      "sha256": "1cee2eaa088a5ecc2649226fca2ec092facbaf3deb6c67888f0dc26d6a19ab7e"
+    },
+    {
+      "id": "YAML-POLICY-TAB-4",
+      "route": "/policies/employee~regional-reader",
+      "action": null,
+      "state": "YAML",
+      "file": "YAML-POLICY-TAB-4.png",
+      "sha256": "1a84fa7c77252f3bd1090537bab65abed64ffd1c2f1fb7f37b12655f60c6f6b5"
+    },
+    {
+      "id": "YAML-ENDPOINT",
+      "route": "/service-endpoints/employee-api~search",
+      "action": null,
+      "state": "default",
+      "file": "YAML-ENDPOINT.png",
+      "sha256": "707b67035c494193cb8e3daff47e79eb4a44d67b0a92734494ff4eff9bc843f5"
+    },
+    {
+      "id": "YAML-ENDPOINT-TAB-1",
+      "route": "/service-endpoints/employee-api~search",
+      "action": null,
+      "state": "필드 명세",
+      "file": "YAML-ENDPOINT-TAB-1.png",
+      "sha256": "707b67035c494193cb8e3daff47e79eb4a44d67b0a92734494ff4eff9bc843f5"
+    },
+    {
+      "id": "YAML-ENDPOINT-TAB-2",
+      "route": "/service-endpoints/employee-api~search",
+      "action": null,
+      "state": "사용 Action",
+      "file": "YAML-ENDPOINT-TAB-2.png",
+      "sha256": "94cff4e58c73e069a7756e978bb12c90ebbae6d1566759255d9f06ca0478fddd"
+    },
+    {
+      "id": "YAML-ENDPOINT-TAB-3",
+      "route": "/service-endpoints/employee-api~search",
+      "action": null,
+      "state": "관계",
+      "file": "YAML-ENDPOINT-TAB-3.png",
+      "sha256": "01d789f4d1fb0c012198b4ba7bed0b925e9042d29ba95fda0f54169c16827de6"
+    },
+    {
+      "id": "YAML-ENDPOINT-TAB-4",
+      "route": "/service-endpoints/employee-api~search",
+      "action": null,
+      "state": "동기화 이력",
+      "file": "YAML-ENDPOINT-TAB-4.png",
+      "sha256": "a3539fda8da8d50d2cad9f04f9c6af5c940a90a517b3bf4f2f266d584cc7137c"
+    },
+    {
+      "id": "YAML-ENDPOINT-TAB-5",
+      "route": "/service-endpoints/employee-api~search",
+      "action": null,
+      "state": "YAML",
+      "file": "YAML-ENDPOINT-TAB-5.png",
+      "sha256": "a9216f65c4c9e32af7e8bdf32751c4923ec775aaa1e925196e3a43dbd0402f39"
+    },
+    {
+      "id": "YAML-SERVICE",
+      "route": "/services/employee-api",
+      "action": null,
+      "state": "default",
+      "file": "YAML-SERVICE.png",
+      "sha256": "045512e14f13fa9b8459f121f62a8e5bd3372fa8bc5a8fb7e8960126bdc31104"
+    },
+    {
+      "id": "YAML-SERVICE-TAB-1",
+      "route": "/services/employee-api",
+      "action": null,
+      "state": "엔드포인트",
+      "file": "YAML-SERVICE-TAB-1.png",
+      "sha256": "045512e14f13fa9b8459f121f62a8e5bd3372fa8bc5a8fb7e8960126bdc31104"
+    },
+    {
+      "id": "YAML-SERVICE-TAB-2",
+      "route": "/services/employee-api",
+      "action": null,
+      "state": "관계",
+      "file": "YAML-SERVICE-TAB-2.png",
+      "sha256": "51c29a358e4b585910beb45c801477582c4004571af86118d16f3c94fa9c0067"
+    },
+    {
+      "id": "YAML-SERVICE-TAB-3",
+      "route": "/services/employee-api",
+      "action": null,
+      "state": "동기화 이력",
+      "file": "YAML-SERVICE-TAB-3.png",
+      "sha256": "7b7cf1ec9600ab143c1d7119ae222e3e3705f3500f2e9cd70b3f8d777e1f1a1b"
+    },
+    {
+      "id": "YAML-SERVICE-TAB-4",
+      "route": "/services/employee-api",
+      "action": null,
+      "state": "YAML",
+      "file": "YAML-SERVICE-TAB-4.png",
+      "sha256": "03cd0d22a52c6dbea8b5c96469eb55d9d669f7c65d0fc26e36953b24c9c5c142"
+    },
+    {
+      "id": "YAML-PAGE",
+      "route": "/pages/sales-platform~sales-console~regional-employees",
+      "action": null,
+      "state": "default",
+      "file": "YAML-PAGE.png",
+      "sha256": "7b3a191e3d7282b23c96619ecd84987ec7bb43093d33ffe2fb7d67dd3ac3aac8"
+    },
+    {
+      "id": "YAML-PAGE-TAB-1",
+      "route": "/pages/sales-platform~sales-console~regional-employees",
+      "action": null,
+      "state": "사용 Action",
+      "file": "YAML-PAGE-TAB-1.png",
+      "sha256": "7b3a191e3d7282b23c96619ecd84987ec7bb43093d33ffe2fb7d67dd3ac3aac8"
+    },
+    {
+      "id": "YAML-PAGE-TAB-2",
+      "route": "/pages/sales-platform~sales-console~regional-employees",
+      "action": null,
+      "state": "관계",
+      "file": "YAML-PAGE-TAB-2.png",
+      "sha256": "6c6a88c4d79fad2216a847f972693f75260009f80f6c9557e02394e31c2e097c"
+    },
+    {
+      "id": "YAML-PAGE-TAB-3",
+      "route": "/pages/sales-platform~sales-console~regional-employees",
+      "action": null,
+      "state": "동기화 이력",
+      "file": "YAML-PAGE-TAB-3.png",
+      "sha256": "bb177feb8765d1bd1e551cfe3e02d9af8dbeacbd4aa6d0de5839e6136e410abf"
+    },
+    {
+      "id": "YAML-PAGE-TAB-4",
+      "route": "/pages/sales-platform~sales-console~regional-employees",
+      "action": null,
+      "state": "YAML",
+      "file": "YAML-PAGE-TAB-4.png",
+      "sha256": "6616cfe9d7211c81873a0d031b58319824250a73220773a8071c8c3dc093f0e0"
+    },
+    {
+      "id": "YAML-SCOPE-DETAIL",
+      "route": "/scopes/employee~sales-region",
+      "action": null,
+      "state": "default",
+      "file": "YAML-SCOPE-DETAIL.png",
+      "sha256": "4d3ea5783562d82e0b8218ef7d42e76c0f237a6181d7de3c91cdc498d7f8977a"
+    },
+    {
+      "id": "YAML-SCOPE-DETAIL-TAB-1",
+      "route": "/scopes/employee~sales-region",
+      "action": null,
+      "state": "조직 매핑",
+      "file": "YAML-SCOPE-DETAIL-TAB-1.png",
+      "sha256": "4d3ea5783562d82e0b8218ef7d42e76c0f237a6181d7de3c91cdc498d7f8977a"
+    },
+    {
+      "id": "YAML-SCOPE-DETAIL-TAB-2",
+      "route": "/scopes/employee~sales-region",
+      "action": null,
+      "state": "사용 Action",
+      "file": "YAML-SCOPE-DETAIL-TAB-2.png",
+      "sha256": "54cc514511fa44515b816c3567c47dc37c63c88633b845effcdaeaca8845cbdf"
+    },
+    {
+      "id": "YAML-SCOPE-DETAIL-TAB-3",
+      "route": "/scopes/employee~sales-region",
+      "action": null,
+      "state": "관계",
+      "file": "YAML-SCOPE-DETAIL-TAB-3.png",
+      "sha256": "d5297f1c64992338e92a76c9f0f98526c46972444f98c926ee5fb3f2d19f7e7c"
+    },
+    {
+      "id": "YAML-SCOPE-DETAIL-TAB-4",
+      "route": "/scopes/employee~sales-region",
+      "action": null,
+      "state": "동기화 이력",
+      "file": "YAML-SCOPE-DETAIL-TAB-4.png",
+      "sha256": "103265e98ecbd40f09e8654987b060b51aa83412a8563982c09aeb983ec43a51"
+    },
+    {
+      "id": "YAML-SCOPE-DETAIL-TAB-5",
+      "route": "/scopes/employee~sales-region",
+      "action": null,
+      "state": "YAML",
+      "file": "YAML-SCOPE-DETAIL-TAB-5.png",
+      "sha256": "de26c6c799c75eae383ab7a63da25edfabfdbb53248d7a62d37f73b97084dc08"
+    },
+    {
+      "id": "YAML-MASKING-MENU",
+      "route": "/masking-rules",
+      "action": null,
+      "state": "default",
+      "file": "YAML-MASKING-MENU.png",
+      "sha256": "742e3120b36942bf8173ef3a66108ec13b0d5e2f741c6dcc7c353bb534ecb751"
+    },
+    {
+      "id": "YAML-SYNC-PAGE",
+      "route": "/definition-sync",
+      "action": null,
+      "state": "default",
+      "file": "YAML-SYNC-PAGE.png",
+      "sha256": "d303b78191b50406a6cd3136871723b4c7f7e7373d63b9a4fe0d64c13fc2e285"
+    },
+    {
+      "id": "REQ-APPROVAL-REQUEST",
+      "route": "/access-requests/new",
+      "action": "request-document",
+      "state": "default",
+      "file": "REQ-APPROVAL-REQUEST.png",
+      "sha256": "618965e80b630471deb4d8facfca694bb4743dffaaf44eec7c749cfe90ad8e82"
+    },
+    {
+      "id": "REQ-APPROVAL-LINE",
+      "route": "/access-requests/new",
+      "action": "request-line",
+      "state": "default",
+      "file": "REQ-APPROVAL-LINE.png",
+      "sha256": "7d00e6ade92f679e40bf7eb35fc6aa220c1584919ab5578bd1f64daf9d09beaa"
+    },
+    {
+      "id": "REQ-APPROVAL-CANCEL-REVIEW",
+      "route": "/access-requests/new",
+      "action": "request-cancel-review",
+      "state": "default",
+      "file": "REQ-APPROVAL-CANCEL-REVIEW.png",
+      "sha256": "a6c4ba993c34ca780751fee9d210ee8b0f63a847bb82f0f6475d235eda221700"
+    },
+    {
+      "id": "REQ-APPROVAL-CANCELLED",
+      "route": "/access-requests/new",
+      "action": "request-cancelled",
+      "state": "default",
+      "file": "REQ-APPROVAL-CANCELLED.png",
+      "sha256": "328be8c09782174b4268ea035cf42ed5ec0bf28edb5164c6e00af7ce7acbe1c9"
+    },
+    {
+      "id": "REQ-APPROVAL-REJECTED",
+      "route": "/access-requests/new",
+      "action": "request-rejected",
+      "state": "default",
+      "file": "REQ-APPROVAL-REJECTED.png",
+      "sha256": "27380e69b7302741da081c81da7d320c6b033237a2d835625e2e7e7eef8b6158"
+    },
+    {
+      "id": "REQ-APPROVAL-READY",
+      "route": "/access-requests/new",
+      "action": "request-ready",
+      "state": "default",
+      "file": "REQ-APPROVAL-READY.png",
+      "sha256": "29cc585a7307ef7a98c8033361bd4388fab011839f4328e581f2d2482aa0d65b"
+    },
+    {
+      "id": "REQ-APPROVAL-GRANT-REVIEW",
+      "route": "/access-requests/new",
+      "action": "request-grant-review",
+      "state": "default",
+      "file": "REQ-APPROVAL-GRANT-REVIEW.png",
+      "sha256": "58c587c355a6e16d5b068edd90aba95d20dac98c2dedd3b62aa6fdf89e00fbf6"
+    },
+    {
+      "id": "REQ-APPROVAL-COMPLETED",
+      "route": "/access-requests/new",
+      "action": "request-completed",
+      "state": "default",
+      "file": "REQ-APPROVAL-COMPLETED.png",
+      "sha256": "52d2692eb922ed63136ccae8be43aacc5c27a9a151bc509e6ca4ba47f19dd268"
+    },
+    {
+      "id": "POL-V2-LIST",
+      "route": "/policies",
+      "action": null,
+      "state": "default",
+      "file": "POL-V2-LIST.png",
+      "sha256": "7a10532d4ce2625442090b2c04c44dbf338c90bde322d3ad5bd0d3094a3aa335"
+    },
+    {
+      "id": "POL-V2-PAGE",
+      "route": "/policies/regional-contact-reader",
+      "action": null,
+      "state": "default",
+      "file": "POL-V2-PAGE.png",
+      "sha256": "00f159e3ceef4b79ec498c0a53db6ade02732621ea023de6776a4527b5cdd920"
+    },
+    {
+      "id": "POL-V2-PAGE-TAB-1",
+      "route": "/policies/regional-contact-reader",
+      "action": null,
+      "state": "실행 권한",
+      "file": "POL-V2-PAGE-TAB-1.png",
+      "sha256": "00f159e3ceef4b79ec498c0a53db6ade02732621ea023de6776a4527b5cdd920"
+    },
+    {
+      "id": "POL-V2-PAGE-TAB-2",
+      "route": "/policies/regional-contact-reader",
+      "action": null,
+      "state": "관계",
+      "file": "POL-V2-PAGE-TAB-2.png",
+      "sha256": "9f26cbdefccb63c66b6cd3fcd6af279231628f3591873b37cb96b3ad4352a3f3"
+    },
+    {
+      "id": "POL-V2-PAGE-TAB-3",
+      "route": "/policies/regional-contact-reader",
+      "action": null,
+      "state": "동기화 이력",
+      "file": "POL-V2-PAGE-TAB-3.png",
+      "sha256": "a6df7a547f3c2b21aa89af5596cebb3a10482ebb0f9a09f91e486701ad9d4c9f"
+    },
+    {
+      "id": "POL-V2-PAGE-TAB-4",
+      "route": "/policies/regional-contact-reader",
+      "action": null,
+      "state": "YAML",
+      "file": "POL-V2-PAGE-TAB-4.png",
+      "sha256": "1f68bf6c6dc0128f9ce239dcd71b191bdf7021da33bbb984173283c369ab885d"
+    },
+    {
+      "id": "POL-V2-DIRECT",
+      "route": "/policies/service-employee-reader",
+      "action": null,
+      "state": "default",
+      "file": "POL-V2-DIRECT.png",
+      "sha256": "6f2f0e6ea5b2fb2777756c61c4dee4533d3fea4b40f55d538326eaf33965cf68"
+    },
+    {
+      "id": "POL-V2-DIRECT-TAB-1",
+      "route": "/policies/service-employee-reader",
+      "action": null,
+      "state": "실행 권한",
+      "file": "POL-V2-DIRECT-TAB-1.png",
+      "sha256": "6f2f0e6ea5b2fb2777756c61c4dee4533d3fea4b40f55d538326eaf33965cf68"
+    },
+    {
+      "id": "POL-V2-DIRECT-TAB-2",
+      "route": "/policies/service-employee-reader",
+      "action": null,
+      "state": "관계",
+      "file": "POL-V2-DIRECT-TAB-2.png",
+      "sha256": "7a0be6db073a358a0e69f7fafb2b80d984908e5c7c44bcf51fc4f3e82fd369f5"
+    },
+    {
+      "id": "POL-V2-DIRECT-TAB-3",
+      "route": "/policies/service-employee-reader",
+      "action": null,
+      "state": "동기화 이력",
+      "file": "POL-V2-DIRECT-TAB-3.png",
+      "sha256": "eea99217fbe593ceb573aeadc1adda1202e5fa222021b065ef49588fa8b57125"
+    },
+    {
+      "id": "POL-V2-DIRECT-TAB-4",
+      "route": "/policies/service-employee-reader",
+      "action": null,
+      "state": "YAML",
+      "file": "POL-V2-DIRECT-TAB-4.png",
+      "sha256": "0bb2e4ed2d4e36ee374eff1da1f2d2e919cdc6c181561cee785fb83e1c1945be"
+    },
+    {
+      "id": "ROL-V2-POLICIES",
+      "route": "/roles/role-sales-manager",
+      "action": null,
+      "state": "default",
+      "file": "ROL-V2-POLICIES.png",
+      "sha256": "2ecfc1493756a7b6bf4fc8dbbb7ddf93170b9f1fa442bb865509563ba842fe19"
+    },
+    {
+      "id": "ROL-V2-POLICIES-TAB-1",
+      "route": "/roles/role-sales-manager",
+      "action": null,
+      "state": "정책",
+      "file": "ROL-V2-POLICIES-TAB-1.png",
+      "sha256": "2ecfc1493756a7b6bf4fc8dbbb7ddf93170b9f1fa442bb865509563ba842fe19"
+    },
+    {
+      "id": "ROL-V2-POLICIES-TAB-2",
+      "route": "/roles/role-sales-manager",
+      "action": null,
+      "state": "부여 대상",
+      "file": "ROL-V2-POLICIES-TAB-2.png",
+      "sha256": "795480feceb45f793168cbe61872eeedd8523a22774a98268ae5fe1164258a5b"
+    },
+    {
+      "id": "SA-V2-POLICIES",
+      "route": "/service-accounts/sa-platform-ci?tab=policies",
+      "action": null,
+      "state": "default",
+      "file": "SA-V2-POLICIES.png",
+      "sha256": "149a03dcefbf6bffb5954d50b9bd27370aa607a6a1bac89863d81e7e8180fd99"
+    },
+    {
+      "id": "SA-V2-POLICIES-TAB-1",
+      "route": "/service-accounts/sa-platform-ci?tab=policies",
+      "action": null,
+      "state": "정책",
+      "file": "SA-V2-POLICIES-TAB-1.png",
+      "sha256": "149a03dcefbf6bffb5954d50b9bd27370aa607a6a1bac89863d81e7e8180fd99"
+    },
+    {
+      "id": "SA-V2-POLICIES-TAB-2",
+      "route": "/service-accounts/sa-platform-ci?tab=policies",
+      "action": null,
+      "state": "기존 역할 · 이관 대상 (2)",
+      "file": "SA-V2-POLICIES-TAB-2.png",
+      "sha256": "fdb9f39851dcebc6f6ca13d6ce50926a26451a557370deb3d942f889791dbe50"
+    },
+    {
+      "id": "SA-V2-POLICIES-TAB-3",
+      "route": "/service-accounts/sa-platform-ci?tab=policies",
+      "action": null,
+      "state": "API 키 (2)",
+      "file": "SA-V2-POLICIES-TAB-3.png",
+      "sha256": "87f1b46cd310869d30bc6057f730205f5069696e177ad7161173fa174d8dbc88"
+    },
+    {
+      "id": "CHK-V2",
+      "route": "/access-check",
+      "action": null,
+      "state": "default",
+      "file": "CHK-V2.png",
+      "sha256": "f2aede4bbfd8f363ecb3321affbeab8c919165709afa697e86d674068565e79b"
+    },
+    {
+      "id": "ROL-V2-SELECT",
+      "route": "/roles/role-sales-manager",
+      "action": "policy-select",
+      "state": "default",
+      "file": "ROL-V2-SELECT.png",
+      "sha256": "13ec1fe5d434f99f26aede5b672d4d5d16b3c339892e936ac2d55e84ed7b3db6"
+    },
+    {
+      "id": "ROL-V2-REVIEW",
+      "route": "/roles/role-sales-manager",
+      "action": "policy-review",
+      "state": "default",
+      "file": "ROL-V2-REVIEW.png",
+      "sha256": "191e8f7aabe8db2848f08029e69416414ed540168c791210afdef9bbbca4dbc5"
+    },
+    {
+      "id": "CHK-SPACING",
+      "route": "/access-check?user=usr-001&platform=orion&action=identity~read-hr",
+      "action": "access-spacing",
+      "state": "default",
+      "file": "CHK-SPACING.png",
+      "sha256": "dd9d503c8afb445f15db9785c4f6fb03d00baa9a6aabc42209359fe27873f7af"
     }
   ],
-  "archive": "59ef259733e6bdbd868fb397bd898904c5cf0c0c1ebd4f179954d5d430c1bfcd"
+  "archive": "2d70a335cfc14c47585b0cea5988a8a9b587fccb952d3dff106b905ecfef57bd"
 }

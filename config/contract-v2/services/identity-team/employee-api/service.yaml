@@ -1,0 +1,4 @@
+service:
+  id: employee-api
+  name: 직원 API
+  organization: identity-team

@@ -7,10 +7,9 @@ test("new keys are absent until execution and existing metadata is preserved", a
   await expect(
     page.getByRole("button", { name: "발급 요청", exact: true }),
   ).toBeVisible();
-  await page.locator("summary").click();
-  const table = page.getByRole("table", { name: "기존 API 키", exact: true });
+  const table = page.getByRole("table", { name: "API 키 목록", exact: true });
   await expect(table).toBeVisible();
-  await page.getByLabel("기존 API 키 검색").fill("디렉터리");
+  await page.getByLabel("API 키 목록 검색").fill("디렉터리");
   await table
     .getByRole("link", { name: "디렉터리 동기화", exact: true })
     .click();

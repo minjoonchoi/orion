@@ -41,8 +41,8 @@ test("standalone uses the same menu pages and templates as the application witho
   ]) {
     await page.goto(route);
     await offline.goto(html + "#" + route);
-    await expect(offline.locator("main h1")).toHaveText(
-      await page.locator("main h1").innerText(),
+    await expect(offline.locator("main h1").first()).toHaveText(
+      await page.locator("main h1").first().innerText(),
     );
     await expect(
       offline.getByRole("navigation", { name: "주 메뉴", exact: true }),

@@ -8,3 +8,5 @@
 | [서비스별 키 발급 요청](api-key-request-contract.md)         | 이전 요청 메타데이터 API·키 이관 참고 | [결재·키 수명주기](../approval-key-workflow.md) |
 
 운영 전에는 이전 데이터와 새 모델의 식별자·권한·이력 매핑을 명시적으로 검증한다. 새 계약으로 자동 변환되거나 운영 서버가 구현되었다고 가정하지 않는다.
+
+- [이전 YAML 정의 계약](definition-management-v1.md): 기존 정의 API·정책·역할 부여 호환 유지용. 신규 스펙은 docs/definition-management.md.

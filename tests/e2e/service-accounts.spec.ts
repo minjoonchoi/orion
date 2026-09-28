@@ -93,7 +93,7 @@ test("empty associations, optional metadata and absent IDs", async ({
   }
   await page.goto("/service-accounts/sa-audit-export?tab=unknown");
   await expect(
-    page.getByRole("tab", { name: "역할 (0)", exact: true }),
+    page.getByRole("tab", { name: "정책", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
   await expect(page.getByText("기록 없음", { exact: true })).toBeVisible();
   await page.goto("/service-accounts/sa-approval-bot?tab=api-keys");

@@ -39,13 +39,13 @@ test("issuance modal keeps endpoint selection through searches and submits an ap
   await dialog
     .getByLabel("관리 서비스", { exact: true })
     .selectOption("svc-orion");
-  const first = dialog.getByRole("checkbox").first();
+  const first = dialog.locator("tbody").getByRole("checkbox").first();
   const label = await first.getAttribute("aria-label");
   await first.check();
   await dialog
     .getByLabel("엔드포인트 검색", { exact: true })
     .fill("no-such-endpoint");
-  await expect(dialog.getByRole("checkbox")).toHaveCount(0);
+  await expect(dialog.locator("tbody").getByRole("checkbox")).toHaveCount(0);
   await dialog.getByLabel("엔드포인트 검색", { exact: true }).fill("");
   await expect(
     dialog.getByRole("checkbox", { name: label!, exact: true }),
@@ -53,7 +53,7 @@ test("issuance modal keeps endpoint selection through searches and submits an ap
   await dialog
     .getByRole("button", { name: "선택만 보기 (1)", exact: true })
     .click();
-  await expect(dialog.getByRole("checkbox")).toHaveCount(1);
+  await expect(dialog.locator("tbody").getByRole("checkbox")).toHaveCount(1);
   await dialog
     .getByLabel("Secret name", { exact: true })
     .fill("orion/authoring/test");

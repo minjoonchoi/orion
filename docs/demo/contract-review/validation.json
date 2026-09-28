@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Action selection preserves separate response contracts",
+    "Cancel leaves applied snapshot unchanged",
+    "Acknowledged sync updates snapshot and history; Gateway stays pending",
+    "Invalid email falls back to redaction",
+    "Mobile has no document overflow",
+    "English mobile renders without document overflow"
+  ],
+  "errors": [],
+  "html_sha256": "cbc1ba681c178dbeef80c89950e5ae469d60ad22b9d9578ff3e8f4e0adb613a6"
+}

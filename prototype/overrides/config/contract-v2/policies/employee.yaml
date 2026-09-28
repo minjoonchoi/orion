@@ -1,0 +1,47 @@
+policies:
+  regional-reader:
+    name: 직원 기본 조회
+    assignable_to: role
+    effect: allow
+    workspaces:
+      sales-platform.sales-console:
+        pages:
+          regional-employees:
+            actions: [employee.read-regional-employees]
+  regional-contact-reader:
+    name: 직원 연락처 조회
+    assignable_to: role
+    effect: allow
+    workspaces:
+      sales-platform.sales-console:
+        pages:
+          regional-employees:
+            actions: [employee.read-regional-contacts]
+  regional-reader-backup:
+    name: 직원 기본 조회 · 공통 업무
+    assignable_to: role
+    effect: allow
+    workspaces:
+      sales-platform.sales-console:
+        pages:
+          regional-employees:
+            actions: [employee.read-regional-employees]
+  deny-regional-contacts:
+    name: 직원 연락처 조회 제한
+    assignable_to: role
+    effect: deny
+    workspaces:
+      sales-platform.sales-console:
+        pages:
+          regional-employees:
+            actions: [employee.read-regional-contacts]
+  service-employee-reader:
+    name: 서비스 직원 조회
+    assignable_to: service_account
+    effect: allow
+    actions: [employee.read-service-employees]
+  service-contact-reader:
+    name: 서비스 연락처 조회 · 사용자 속성 필요
+    assignable_to: service_account
+    effect: allow
+    actions: [employee.read-regional-contacts]

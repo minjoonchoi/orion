@@ -52,6 +52,7 @@ test("relationship counts open the corresponding tab", async ({ page }) => {
     const row = page
       .getByRole("row")
       .filter({ has: page.getByRole("link", { name, exact: true }) })
+      .filter({ has: page.getByRole("link", { name: count, exact: true }) })
       .first();
     await row.getByRole("link", { name: count, exact: true }).click();
     await expect(page).toHaveURL((url) => url.pathname + url.search === target);

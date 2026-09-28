@@ -1,3 +1,4 @@
+import { PolicyRoleDetail } from "@/features/definition-contract/policy-ui";
 import { loadWorkflow } from "@/features/approval-workflow/server";
 import { ManagedGrantScreen } from "@/features/approval-workflow/screens";
 import { Suspense } from "react";
@@ -27,11 +28,13 @@ export default async function Page({
 
   return (
     <Suspense>
-      {deployment().mode === "api" ? (
-        <LegacyScopedRoleScreen d={d} id={id} />
-      ) : (
-        <ScopedRoleScreen d={d} id={id} />
-      )}
+      <PolicyRoleDetail id={id}>
+        {deployment().mode === "api" ? (
+          <LegacyScopedRoleScreen d={d} id={id} />
+        ) : (
+          <ScopedRoleScreen d={d} id={id} />
+        )}
+      </PolicyRoleDetail>
     </Suspense>
   );
 }

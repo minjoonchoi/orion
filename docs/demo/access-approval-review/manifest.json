@@ -1,0 +1,41 @@
+{
+  "html": "4e01087da7a8a762cd4bbff1d91a8d645342fc9b90a31a431eee1124436cca8c",
+  "screens": [
+    {
+      "file": "approval-line.png",
+      "sha256": "191da498481f997d6257b7deb58d0afeb5ace264cad5a4a45f9fc5e6526cc891"
+    },
+    {
+      "file": "approval-request.png",
+      "sha256": "bf973a78b66ff6df6d5947ba7a97bdc72f2d448727b8cc23938eb5be687a6846"
+    },
+    {
+      "file": "approved-awaiting-grant.png",
+      "sha256": "7c2248dfbb53647fc77919f44d1100c702ec3765d278bdde609b028836a88e5b"
+    },
+    {
+      "file": "grant-completed.png",
+      "sha256": "5a3364d390267de5d785ba0d2c2524c3a87b51cb0486880b0588d776bb90adc1"
+    },
+    {
+      "file": "my-granted-access.png",
+      "sha256": "58a07355890ee2f5088e687aea2b3e785e03ba6d621741fee0f42ae4910c3dd4"
+    },
+    {
+      "file": "request-review.png",
+      "sha256": "2bd30cb793e848777a2b6286fd61be96e7283506fbc5df0a5699ab85e9c8e881"
+    },
+    {
+      "file": "request-submitted.png",
+      "sha256": "66cde31c3a3afc92001cae16e749b6f98d85979c5490f8199728f8e7a6f9d0ed"
+    },
+    {
+      "file": "requests-mobile-en.png",
+      "sha256": "bf388541622cb896cc52661fd8c4a7f3b8a6b1cb813afbca39f9b86498059dc8"
+    },
+    {
+      "file": "requests-mobile.png",
+      "sha256": "d4e519e873ac1a2de4825829aae65c3a5d60b128db11cda673c6bcc6cf7ca1e2"
+    }
+  ]
+}

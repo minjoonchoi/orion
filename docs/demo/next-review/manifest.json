@@ -1,0 +1,158 @@
+{
+  "html": "4e01087da7a8a762cd4bbff1d91a8d645342fc9b90a31a431eee1124436cca8c",
+  "base": "http://127.0.0.1:3102",
+  "results": [
+    {
+      "id": "POL-V2-LIST",
+      "difference": 0,
+      "passed": true
+    },
+    {
+      "id": "POL-V2-PAGE",
+      "difference": 0,
+      "passed": true
+    },
+    {
+      "id": "POL-V2-DIRECT",
+      "difference": 0,
+      "passed": true
+    },
+    {
+      "id": "SA-V2-POLICIES",
+      "difference": 0,
+      "passed": true
+    },
+    {
+      "id": "ROL-V2-REVIEW",
+      "difference": 0,
+      "passed": true
+    },
+    {
+      "id": "YAML-ACTION-DETAIL",
+      "difference": 0,
+      "passed": true
+    },
+    {
+      "id": "CHK-SPACING",
+      "difference": 0,
+      "passed": true
+    },
+    {
+      "id": "REQ-01-REVIEW",
+      "difference": 0,
+      "passed": true
+    },
+    {
+      "id": "REQ-02-SUBMITTED",
+      "difference": 0,
+      "passed": true
+    },
+    {
+      "id": "NEXT-SUBMIT-RELOAD-DOCUMENT-CANCEL-RELOAD",
+      "passed": true
+    },
+    {
+      "id": "NEXT-SERVER-ACTION-lead",
+      "passed": true
+    },
+    {
+      "id": "NEXT-SERVER-ACTION-security",
+      "passed": true
+    },
+    {
+      "id": "NEXT-SERVER-ACTION-ready",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "screens": [
+    {
+      "file": "CHK-SPACING-html.png",
+      "sha256": "ea0cf5bb368b514aa019e38b0ba808dae2304d2aa9ebc328914c16da341aaa9e"
+    },
+    {
+      "file": "CHK-SPACING-next.png",
+      "sha256": "ea0cf5bb368b514aa019e38b0ba808dae2304d2aa9ebc328914c16da341aaa9e"
+    },
+    {
+      "file": "NEXT-lead.png",
+      "sha256": "7678f7d07d12a866fb77eb82815dc375d78bb5f966b7af24a182d35fc2612d84"
+    },
+    {
+      "file": "NEXT-ready.png",
+      "sha256": "9f3d6c2ac46140416fdcf9bd39fcb14c813fef7f45f7a661a650877a1352f70a"
+    },
+    {
+      "file": "NEXT-security.png",
+      "sha256": "99ebf342a5286e6d8ec3b1b1b12c0d16a851baed6f05c16bf3ff9c19c7ee0d33"
+    },
+    {
+      "file": "POL-V2-DIRECT-html.png",
+      "sha256": "6f2f0e6ea5b2fb2777756c61c4dee4533d3fea4b40f55d538326eaf33965cf68"
+    },
+    {
+      "file": "POL-V2-DIRECT-next.png",
+      "sha256": "6f2f0e6ea5b2fb2777756c61c4dee4533d3fea4b40f55d538326eaf33965cf68"
+    },
+    {
+      "file": "POL-V2-LIST-html.png",
+      "sha256": "7a10532d4ce2625442090b2c04c44dbf338c90bde322d3ad5bd0d3094a3aa335"
+    },
+    {
+      "file": "POL-V2-LIST-next.png",
+      "sha256": "7a10532d4ce2625442090b2c04c44dbf338c90bde322d3ad5bd0d3094a3aa335"
+    },
+    {
+      "file": "POL-V2-PAGE-html.png",
+      "sha256": "00f159e3ceef4b79ec498c0a53db6ade02732621ea023de6776a4527b5cdd920"
+    },
+    {
+      "file": "POL-V2-PAGE-next.png",
+      "sha256": "00f159e3ceef4b79ec498c0a53db6ade02732621ea023de6776a4527b5cdd920"
+    },
+    {
+      "file": "REQ-01-REVIEW-html.png",
+      "sha256": "f739d40de9da25ef1cffa17312ce81c1302416f9efec2ded88487997dd084d0d"
+    },
+    {
+      "file": "REQ-01-REVIEW-next.png",
+      "sha256": "f739d40de9da25ef1cffa17312ce81c1302416f9efec2ded88487997dd084d0d"
+    },
+    {
+      "file": "REQ-02-SUBMITTED-html.png",
+      "sha256": "66cde31c3a3afc92001cae16e749b6f98d85979c5490f8199728f8e7a6f9d0ed"
+    },
+    {
+      "file": "REQ-02-SUBMITTED-next.png",
+      "sha256": "66cde31c3a3afc92001cae16e749b6f98d85979c5490f8199728f8e7a6f9d0ed"
+    },
+    {
+      "file": "ROL-V2-REVIEW-html.png",
+      "sha256": "191e8f7aabe8db2848f08029e69416414ed540168c791210afdef9bbbca4dbc5"
+    },
+    {
+      "file": "ROL-V2-REVIEW-next.png",
+      "sha256": "191e8f7aabe8db2848f08029e69416414ed540168c791210afdef9bbbca4dbc5"
+    },
+    {
+      "file": "SA-V2-POLICIES-html.png",
+      "sha256": "149a03dcefbf6bffb5954d50b9bd27370aa607a6a1bac89863d81e7e8180fd99"
+    },
+    {
+      "file": "SA-V2-POLICIES-next.png",
+      "sha256": "149a03dcefbf6bffb5954d50b9bd27370aa607a6a1bac89863d81e7e8180fd99"
+    },
+    {
+      "file": "YAML-ACTION-DETAIL-html.png",
+      "sha256": "d84a726a9597a59c2aea5d24d8ad27328d54c3014f9a322c8a4b378217abba0c"
+    },
+    {
+      "file": "YAML-ACTION-DETAIL-next.png",
+      "sha256": "d84a726a9597a59c2aea5d24d8ad27328d54c3014f9a322c8a4b378217abba0c"
+    },
+    {
+      "file": "cancelled-next.png",
+      "sha256": "df4db3e742a0b81ae37f0af3519ea405d862305f734479e9b3f0beaec6bd3a1d"
+    }
+  ]
+}

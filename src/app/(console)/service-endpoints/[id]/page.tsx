@@ -1,3 +1,4 @@
+import { ContractDetail } from "@/features/definition-contract/catalog";
 import { redirect } from "next/navigation";
 import { deployment } from "@/lib/api/server";
 import { legacyEndpoints } from "@/features/definitions/legacy-links";
@@ -13,7 +14,9 @@ export default async function Page({
     redirect("/service-endpoints/" + legacyEndpoints[id]);
   return (
     <Suspense>
-      <DefinitionsScreen kind="service-endpoints" id={id} />
+      <ContractDetail kind="endpoint" id={id}>
+        <DefinitionsScreen kind="service-endpoints" id={id} />
+      </ContractDetail>
     </Suspense>
   );
 }

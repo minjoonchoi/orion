@@ -38,7 +38,7 @@ export function Navigation() {
                 <li
                   key={item.href}
                   className={
-                    item.href === "/policies" || item.href === "/resources"
+                    item.href === "/resources"
                       ? "navigation-divider"
                       : undefined
                   }

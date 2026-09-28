@@ -1,0 +1,59 @@
+domain:
+  id: employee
+  name: 직원 관리
+  scopes:
+    sales-region:
+      name: 영업 지역
+      codes:
+        - { code: SEOUL, name: 서울 }
+        - { code: GYEONGGI, name: 경기 }
+        - { code: BUSAN, name: 부산 }
+      organizations:
+        - organization: sales-team-1
+          codes: [SEOUL, BUSAN]
+        - organization: org-platform
+          codes: [SEOUL]
+  actions:
+    read-regional-employees:
+      name: 담당 지역 직원 조회
+      endpoint:
+        service: employee-api
+        endpoint: search
+        request:
+          fields:
+            - keyword
+            - region_codes: { scope: sales-region }
+            - requester_email: { source: subject.email }
+        response:
+          fields:
+            - employee_name
+            - email_address
+            - region_code
+    read-regional-contacts:
+      name: 담당 지역 연락처 원문 조회
+      endpoint:
+        service: employee-api
+        endpoint: search
+        request:
+          fields:
+            - keyword
+            - region_codes: { scope: sales-region }
+            - requester_email: { source: subject.email }
+        response:
+          fields:
+            - employee_name: { unmask: true }
+            - email_address: { unmask: true }
+            - region_code
+    read-service-employees:
+      name: 서비스 직원 조회
+      endpoint:
+        service: employee-api
+        endpoint: search
+        request:
+          fields:
+            - keyword
+            - region_codes: { scope: sales-region }
+        response:
+          fields:
+            - employee_name
+            - region_code

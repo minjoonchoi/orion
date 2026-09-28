@@ -4,8 +4,20 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { createHash } from "node:crypto";
 import { chromium } from "playwright-core";
-import { screens, viewport, prepare } from "../tools/demo/screens.mjs";
+import {
+  screens as baseScreens,
+  contractScreens,
+  viewport,
+  prepare,
+} from "../tools/demo/screens.mjs";
 const preview = process.argv.includes("--preview");
+const hasContract =
+  preview ||
+  (await fs.access("src/features/definition-contract/screen.tsx").then(
+    () => true,
+    () => false,
+  ));
+const screens = [...baseScreens, ...(hasContract ? contractScreens : [])];
 const html = path.resolve(`docs/demo/${preview ? "preview" : "orion"}.html`);
 const directory = path.resolve(
   `docs/demo/${preview ? "preview-screenshots" : "screenshots"}`,

@@ -4,12 +4,26 @@ import pixelmatch from "pixelmatch";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { screens, viewport, prepare } from "../../tools/demo/screens.mjs";
+import {
+  screens,
+  contractScreens,
+  viewport,
+  prepare,
+} from "../../tools/demo/screens.mjs";
 const approved = fs.existsSync("docs/demo/approved.html")
   ? "docs/demo/approved.html"
   : "docs/demo/orion.html";
-for (const screen of screens.filter((s) =>
+for (const screen of [...screens, ...contractScreens].filter((s) =>
   [
+    "YAML-DOMAIN",
+    "YAML-ACTION-DETAIL",
+    "YAML-POLICY",
+    "YAML-ENDPOINT",
+    "YAML-PAGE",
+    "YAML-SCOPE-DETAIL",
+    "YAML-MASKING-MENU",
+    "YAML-SYNC-PAGE",
+    "YAML-05-REVIEW",
     "ME-01-ACCESS",
     "USR-03-ACCESS",
     "PLT-05-MEMBERS",
@@ -53,8 +67,8 @@ for (const screen of screens.filter((s) =>
         screen,
         pathToFileURL(path.resolve(approved)).href + "#",
       );
-      await expect(pages[1].locator("main h1")).toHaveText(
-        await pages[0].locator("main h1").innerText(),
+      await expect(pages[1].locator("main h1").first()).toHaveText(
+        await pages[0].locator("main h1").first().innerText(),
       );
       const captures = await Promise.all(
         pages.map((p) =>

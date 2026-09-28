@@ -1,0 +1,10 @@
+service: employee-api
+endpoints:
+  - id: health
+    name: 서비스 상태 조회
+    method: GET
+    path: /health
+    request: { fields: {} }
+    response:
+      fields:
+        status: { path: /status, type: string, privacy: false }

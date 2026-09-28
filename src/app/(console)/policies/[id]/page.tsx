@@ -1,3 +1,4 @@
+import { ContractDetail } from "@/features/definition-contract/catalog";
 import { loadWorkflow } from "@/features/approval-workflow/server";
 import { ManagedGrantScreen } from "@/features/approval-workflow/screens";
 import { Suspense } from "react";
@@ -20,7 +21,9 @@ export default async function Page({
     );
   return (
     <Suspense>
-      <DefinitionsScreen kind="policies" id={id} />
+      <ContractDetail kind="policy" id={id}>
+        <DefinitionsScreen kind="policies" id={id} />
+      </ContractDetail>
     </Suspense>
   );
 }
